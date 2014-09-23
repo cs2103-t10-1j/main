@@ -66,7 +66,7 @@ public class DateTest {
 		Date d = new Date();
 		assertEquals("Mar", d.getMonthName(3));
 	}
-	
+
 	@Test
 	public void testIsBefore() {
 		Date d1 = new Date(4, 2, new Time(10, "am"));
@@ -75,7 +75,7 @@ public class DateTest {
 		assertTrue(d3.isBefore(d2));
 		assertFalse(d1.isBefore(d2));
 	}
-	
+
 	@Test
 	public void testIsAfter() {
 		Date d1 = new Date(4, 2, new Time(10, "am"));

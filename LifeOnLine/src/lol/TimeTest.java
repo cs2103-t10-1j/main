@@ -17,7 +17,7 @@ public class TimeTest {
 		assertEquals("1410", t.convertTo24hr(2, 10, "pm"));
 		assertEquals("2359", t.convertTo24hr(11, 59, "pm"));
 	}
-	
+
 	@Test
 	public void testGetHour() {
 		Time t = new Time();
@@ -29,7 +29,7 @@ public class TimeTest {
 		assertEquals(2, t.getHour("1410"));
 		assertEquals(11, t.getHour("2359"));
 	}
-	
+
 	@Test
 	public void testGetMin() {
 		Time t = new Time();
@@ -41,7 +41,7 @@ public class TimeTest {
 		assertEquals(10, t.getMin("1410"));
 		assertEquals(59, t.getMin("2359"));
 	}
-	
+
 	@Test
 	public void testGetAmpm() {
 		Time t = new Time();
@@ -53,13 +53,13 @@ public class TimeTest {
 		assertEquals("pm", t.getAmpm("1410"));
 		assertEquals("pm", t.getAmpm("2359"));
 	}
-	
+
 	@Test
 	public void testToString() {
 		Time t = new Time("1342");
 		assertEquals("1.42pm", t.toString());
 	}
-	
+
 	@Test
 	public void testEquals() {
 		Time t1 = new Time(12, 00, "pm");
@@ -68,7 +68,7 @@ public class TimeTest {
 		assertTrue(t1.equals(t2));
 		assertFalse(t2.equals(t3));
 	}
-	
+
 	@Test
 	public void testIsBefore() {
 		Time t1 = new Time(11, 30, "am");
@@ -77,7 +77,7 @@ public class TimeTest {
 		assertTrue(t1.isBefore(t2));
 		assertTrue(t3.isBefore(t1));
 	}
-	
+
 	@Test
 	public void testIsAfter() {
 		Time t1 = new Time(11, 30, "am");
