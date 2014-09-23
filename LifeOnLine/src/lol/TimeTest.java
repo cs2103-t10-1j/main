@@ -53,5 +53,38 @@ public class TimeTest {
 		assertEquals("pm", t.getAmpm("1410"));
 		assertEquals("pm", t.getAmpm("2359"));
 	}
+	
+	@Test
+	public void testToString() {
+		Time t = new Time("1342");
+		assertEquals("1.42pm", t.toString());
+	}
+	
+	@Test
+	public void testEquals() {
+		Time t1 = new Time(12, 00, "pm");
+		Time t2 = new Time(12, "pm");
+		Time t3 = new Time();
+		assertTrue(t1.equals(t2));
+		assertFalse(t2.equals(t3));
+	}
+	
+	@Test
+	public void testIsBefore() {
+		Time t1 = new Time(11, 30, "am");
+		Time t2 = new Time(12, "pm");
+		Time t3 = new Time(2, 45, "am");
+		assertTrue(t1.isBefore(t2));
+		assertTrue(t3.isBefore(t1));
+	}
+	
+	@Test
+	public void testIsAfter() {
+		Time t1 = new Time(11, 30, "am");
+		Time t2 = new Time(12, "pm");
+		Time t3 = new Time(2, 45, "am");
+		assertTrue(t1.isAfter(t3));
+		assertTrue(t2.isAfter(t1));
+	}
 
 }

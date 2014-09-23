@@ -79,6 +79,40 @@ public class Time {
 		this.format24hr = format24hr;
 	}
 	
+	/********** Overriding methods ***********/
+	public String toString() {        // e.g. 1.43pm
+		return getHour() + "." + getMin() + getAmpm();
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof Time) {
+			Time other = (Time)obj;
+			return other.getFormat24hr().equals(this.getFormat24hr());
+		} else {
+			return false;
+		}
+	}
+	
+	/*********** Comparison methods ***********/
+	
+	/**
+	 * Checks whether a time is earlier than the parameter object
+	 * @param other  Time to be compared with
+	 * @return  true if "this" is earlier than "other", else false
+	 */
+	public boolean isBefore(Time other) {
+		return Integer.parseInt(this.format24hr) < Integer.parseInt(other.format24hr);
+	}
+	
+	/**
+	 * Checks whether a time is later than the parameter object
+	 * @param other  Time to be compared with
+	 * @return  true if "this" is later than "other", else false
+	 */
+	public boolean isAfter(Time other) {
+		return Integer.parseInt(this.format24hr) > Integer.parseInt(other.format24hr);
+	}
+	
 	/************ Conversion methods *************/
 	
 	/**
