@@ -18,7 +18,7 @@ public class Date {
 	private Time time; // Time of the day
 
 	/************ Constructors *************/
-	public Date() { // Default value 1.1.2014
+	public Date() { // Default value 1/1/2014
 		setDay(1);
 		setMonth(1);
 		setMonthName(getMonthName(1));
@@ -27,8 +27,8 @@ public class Date {
 		setTime(new Time());
 	}
 
-	public Date(int day, int month, int year, Time time) { // e.g 2.3.14 5am or
-															// 2.3.2014 5am
+	public Date(int day, int month, int year, Time time) { // e.g 2/3/14 5am or
+															// 2/3/2014 5am
 		setDay(day);
 		setMonth(month);
 		setMonthName(getMonthName(month));
@@ -46,7 +46,7 @@ public class Date {
 		setTime(time);
 	}
 
-	public Date(int day, int month, int year) { // e.g 2.3.14 or 2.3.2014
+	public Date(int day, int month, int year) { // e.g 2/3/14 or 2/3/2014
 		setDay(day);
 		setMonth(month);
 		setMonthName(getMonthName(month));
