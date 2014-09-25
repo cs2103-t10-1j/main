@@ -127,8 +127,7 @@ public class Date {
 			Date other = (Date) obj;
 			return other.getDay() == this.getDay()
 					&& other.getMonth() == this.getMonth()
-					&& other.getYear4Digit() == this.getYear4Digit()
-					&& other.getTime().equals(this.getTime());
+					&& other.getYear4Digit() == this.getYear4Digit();
 		} else {
 			return false;
 		}

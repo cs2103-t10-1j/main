@@ -11,7 +11,7 @@ package lol;
 public class LOLParser {
 
 	// Separator
-	public static final String SEPARATOR = "\\";
+	public static final String SEPARATOR = "\\\\";
 
 	// Dictionaries
 	public static final String[] DICTIONARY_ADD = { "add" };
@@ -79,8 +79,8 @@ public class LOLParser {
 	 */
 	public static String getDescription(String input) {
 		String details = removeFirstWord(input); // remove command
-		//return details.split(SEPARATOR)[0];
-		return details;
+		return details.split(SEPARATOR)[0];
+		//return details;
 	}
 
 	/**
@@ -143,8 +143,6 @@ public class LOLParser {
 		return new Task(getDescription(input), getLocation(input),getDueDate(input));
 	}
 	
-	/**************** Private methods ********************/
-
 	/**
 	 * Given a string that represents time, creates a time object
 	 * @param string  time in 12-hour format, e.g 4pm or 6.20am
@@ -232,7 +230,7 @@ public class LOLParser {
 		return (minute >= 0) && (minute < 60);
 	}
 
-	private static Date createDate(String string) {
+	public static Date createDate(String string) {
 		String[] dateSlash = string.split("/");
 		String[] dateSpace = string.split(" ");
 
@@ -243,7 +241,7 @@ public class LOLParser {
 					Integer.parseInt(dateSlash[1]),
 					Integer.parseInt(dateSlash[2]));
 		}
-
+		
 		// Date format 30 September 2014 or 30 Sep 2014 or 30 September 14 or 30
 		// Sep 14
 		if (dateSpace.length == 3
@@ -252,8 +250,8 @@ public class LOLParser {
 						MONTHS_LONG, dateSpace[1]))
 				&& isYearInRange(dateSpace[2])) {
 			int monthNum = getMonthNum(dateSpace[1]);
-			return new Date(Integer.parseInt(dateSlash[0]), monthNum,
-					Integer.parseInt(dateSlash[2]));
+			return new Date(Integer.parseInt(dateSpace[0]), monthNum,
+					Integer.parseInt(dateSpace[2]));
 		}
 
 		// Date format 30/9
@@ -269,7 +267,7 @@ public class LOLParser {
 				&& (hasWordInDictionary(MONTHS_SHORT, dateSpace[1]) || hasWordInDictionary(
 						MONTHS_LONG, dateSpace[1]))) {
 			int monthNum = getMonthNum(dateSpace[1]);
-			return new Date(Integer.parseInt(dateSlash[0]), monthNum);
+			return new Date(Integer.parseInt(dateSpace[0]), monthNum);
 		}
 
 		// Day of the week - Monday, Mon
@@ -300,7 +298,7 @@ public class LOLParser {
 		return -1;
 	}
 
-	private static boolean isDate(String string) {
+	public static boolean isDate(String string) {
 		String[] dateSlash = string.split("/");
 		String[] dateSpace = string.split(" ");
 
@@ -350,17 +348,17 @@ public class LOLParser {
 	}
 
 	private static boolean isDateInRange(String dateStr) {
-		int date = Integer.parseInt(dateStr);
+		int date = Integer.parseInt(dateStr.trim());
 		return (date > 0) && (date <= 31);
 	}
 
 	private static boolean isMonthInRange(String monthStr) {
-		int month = Integer.parseInt(monthStr);
+		int month = Integer.parseInt(monthStr.trim());
 		return (month > 0) && (month <= 12);
 	}
 
 	private static boolean isYearInRange(String yearStr) {
-		int year = Integer.parseInt(yearStr);
+		int year = Integer.parseInt(yearStr.trim());
 		return ((year > 10) && (year <= 99))
 				|| ((year > 2010) && (year <= 2099));
 	}

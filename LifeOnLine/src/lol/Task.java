@@ -46,12 +46,21 @@ public class Task implements Comparable<Task>{
 	}
 
 	public boolean equals(Object obj) {
-		if (obj instanceof Time) {
+		if (obj instanceof Task) {
 			Task other = (Task) obj;
-			return other.getTaskDueDate().getDay() == this.getTaskDueDate().getDay()
-			&& other.getTaskDueDate().getMonth() == this.getTaskDueDate().getMonth()
-			&& other.getTaskDueDate().getYear4Digit() == this.getTaskDueDate().getYear4Digit()
-			&& other.getTaskDueDate().getTime() == this.getTaskDueDate().getTime();
+			boolean isDateSame = false;
+			boolean isDescSame = false;
+			boolean isLocationSame = false;
+			if ((other.getTaskDueDate() == null && this.getTaskDueDate() == null) || (other.getTaskDueDate().equals(this.getTaskDueDate()))) {
+				isDateSame = true;
+			}
+			if (other.getTaskDescription().equals(this.getTaskDescription())) {
+				isDescSame = true;
+			}
+			if ((other.getTaskLocation() == null && this.getTaskLocation() == null) || (other.getTaskLocation().equals(this.getTaskLocation()))) {
+				isLocationSame = true;
+			}
+			return isDateSame && isDescSame && isLocationSame;
 		} else {
 			return false;
 		}
