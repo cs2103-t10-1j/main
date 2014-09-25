@@ -1,7 +1,16 @@
+/**
+ * NOT DONE YET
+ * Parses the user input
+ * User input formats:
+ * 
+ * add <description>\<location>\<due date>
+ * start and end time not implemented yet
+ */
 package lol;
 
 public class LOLParser {
 
+	// Separator
 	public static final String SEPARATOR = "\\";
 
 	// Dictionaries
@@ -12,18 +21,21 @@ public class LOLParser {
 	public static final String[] DICTIONARY_DONE = { "done" };
 	public static final String[] DICTIONARY_EXIT = { "exit" };
 
+	// Months
 	public static final String[] MONTHS_SHORT = { "jan", "feb", "mar", "apr",
 			"may", "jun", "jul", "aug", "sep", "oct", "nov", "dec" };
 	public static final String[] MONTHS_LONG = { "january", "february",
 			"march", "april", "may", "june", "july", "august", "september",
 			"october", "november", "december" };
 
+	// Days of the week
 	public static final String[] DAYS_SHORT = { "sun", "mon", "tue", "wed",
 			"thu", "fri", "sat" };
 	public static final String[] DAYS_LONG = { "sunday", "monday", "tuesday",
 			"wednesday", "thursday", "friday", "saturday" };
 	public static final String[] DAYS_IMMEDIATE = { "today", "tomorrow", "tmw" };
 
+	// Commands
 	public static final String COMMAND_ADD = "add";
 	public static final String COMMAND_DELETE = "delete";
 	public static final String COMMAND_SHOW = "show";
@@ -32,6 +44,13 @@ public class LOLParser {
 	public static final String COMMAND_EXIT = "exit";
 	public static final String COMMAND_INVALID = "invalid command";
 
+	/**
+	 * Returns the command name. Example: for input " add attend meeting \
+	 * meeting room 3 \ 16 Oct \ 2pm" returns add
+	 * 
+	 * @param input  user input
+	 * @return  command name
+	 */
 	public static String getCommandName(String input) {
 		String command = getFirstWord(input);
 
@@ -52,11 +71,23 @@ public class LOLParser {
 		}
 	}
 
+	/**
+	 * Returns description of task. Example: attend meeting
+	 * Precondition: Task has a description
+	 * @param input  user input
+	 * @return  task description
+	 */
 	public static String getDescription(String input) {
 		String details = removeFirstWord(input); // remove command
-		return details.split(SEPARATOR)[0];
+		//return details.split(SEPARATOR)[0];
+		return details;
 	}
 
+	/**
+	 * Returns location of task. Example: meeting room 3
+	 * @param input  user input
+	 * @return  location of task if it exists, else null
+	 */
 	public static String getLocation(String input) {
 		String details = removeFirstWord(input); // remove command
 		String[] detailsArray = details.split(SEPARATOR);
@@ -69,7 +100,12 @@ public class LOLParser {
 			return detailsArray[1];
 		}
 	}
-	
+
+	/**
+	 * Returns due date of task as a date object. Example: 16 Oct
+	 * @param input  user input
+	 * @return  due date if it exists, else null
+	 */
 	public static Date getDueDate(String input) {
 		String details = removeFirstWord(input); // remove command
 		String[] detailsArray = details.split(SEPARATOR);
@@ -81,46 +117,121 @@ public class LOLParser {
 				return createDate(detailsArray[i]);
 			}
 		}
-		return new Date();
+		return null;
+	}
+
+	/**
+	 * Returns start time of task as a time object. Example: 2pm
+	 * @param input  user input
+	 * @return  start time if it exists, else null
+	 */
+	public static Time getStartTime(String input) {
+		String details = removeFirstWord(input); // remove command
+		String[] detailsArray = details.split(SEPARATOR);
+
+		// 1st element is the description
+		// Check from 2nd element onwards
+		for (int i = 1; i < detailsArray.length; i++) {
+			if (isTime(detailsArray[i])) {
+				return createTime(detailsArray[i]);
+			}
+		}
+		return null;
 	}
 	
-	public static boolean isTime(String string) {
+	public static Task getTask(String input) {
+		return new Task(getDescription(input), getLocation(input),getDueDate(input));
+	}
+	
+	/**************** Private methods ********************/
+
+	/**
+	 * Given a string that represents time, creates a time object
+	 * @param string  time in 12-hour format, e.g 4pm or 6.20am
+	 * @return
+	 */
+	private static Time createTime(String string) {
+		string = string.trim();
+
+		// Time format 1.30pm or 1 pm
+		if ((string.endsWith("am") || string.endsWith("pm"))) {
+			String ampm = string.substring(string.length() - 2);
+			String hourMin = string.substring(0, string.length() - 2); // 1.30
+																		// or 1
+			String[] splitHourMin = hourMin.split(".");
+			if (splitHourMin.length == 1 && isHourInRange(splitHourMin[0])) {
+				return new Time(Integer.parseInt(splitHourMin[0]), ampm);
+			}
+			if (splitHourMin.length == 2 && isHourInRange(splitHourMin[0])
+					&& isMinuteInRange(splitHourMin[1])) {
+				return new Time(Integer.parseInt(splitHourMin[0]),
+						Integer.parseInt(splitHourMin[1]), ampm);
+			}
+		}
+		/*
+		 * // Time format 1 to 3 pm or 1.20 to 4.20pm if ((string.endsWith("am")
+		 * || string.endsWith("pm"))) { String hourMin = string.substring(0,
+		 * string.length() - 2); String[] times = hourMin.split(" "); if
+		 * (times.length == 3) { String[] splitHourMinStart =
+		 * times[0].split("."); String[] splitHourMinEnd = times[2].split(".");
+		 * if ((splitHourMinStart.length == 1 &&
+		 * isHourInRange(splitHourMinStart[0])) || (splitHourMinStart.length ==
+		 * 2 && isHourInRange(splitHourMinStart[0]) &&
+		 * isMinuteInRange(splitHourMinStart[1]))) { if ((splitHourMinEnd.length
+		 * == 1 && isHourInRange(splitHourMinEnd[0])) || (splitHourMinEnd.length
+		 * == 2 && isHourInRange(splitHourMinEnd[0]) &&
+		 * isMinuteInRange(splitHourMinEnd[1]))) { return true; } } }
+		 * 
+		 * }
+		 */
+		return null;
+	}
+
+	/**
+	 * Checks whether a string represents time in 12-hour format, e.g. 2pm or 1.20am 
+	 * @param string String to be checked
+	 * @return true if it represents 12-hour time, else false
+	 */
+	private static boolean isTime(String string) {
+		string = string.trim();
+
 		// Time format 1.30pm or 1 pm
 		if ((string.endsWith("am") || string.endsWith("pm"))) {
 			String hourMin = string.substring(0, string.length() - 2);
 			String[] splitHourMin = hourMin.split(".");
-			if ((splitHourMin.length == 1 && isHourInRange(splitHourMin[0])) || (splitHourMin.length == 2 && isHourInRange(splitHourMin[0]) && isMinuteInRange(splitHourMin[1]))) {
+			if ((splitHourMin.length == 1 && isHourInRange(splitHourMin[0]))
+					|| (splitHourMin.length == 2
+							&& isHourInRange(splitHourMin[0]) && isMinuteInRange(splitHourMin[1]))) {
 				return true;
 			}
 		}
-		
-		// Time format 1 to 3 pm or 1.20 to 4.20pm
-		if ((string.endsWith("am") || string.endsWith("pm"))) {
-			String hourMin = string.substring(0, string.length() - 2);
-			String[] times = hourMin.split(" ");
-			if (times.length == 3) {
-				String[] splitHourMinStart = times[0].split(".");
-				String[] splitHourMinEnd = times[2].split(".");
-				if ((splitHourMinStart.length == 1 && isHourInRange(splitHourMinStart[0])) || (splitHourMinStart.length == 2 && isHourInRange(splitHourMinStart[0]) && isMinuteInRange(splitHourMinStart[1]))) {
-					if ((splitHourMinEnd.length == 1 && isHourInRange(splitHourMinEnd[0])) || (splitHourMinEnd.length == 2 && isHourInRange(splitHourMinEnd[0]) && isMinuteInRange(splitHourMinEnd[1]))) {
-						return true;
-					}
-				}
-			}
-		}
+		/*
+		 * // Time format 1 to 3 pm or 1.20 to 4.20pm if ((string.endsWith("am")
+		 * || string.endsWith("pm"))) { String hourMin = string.substring(0,
+		 * string.length() - 2); String[] times = hourMin.split(" "); if
+		 * (times.length == 3) { String[] splitHourMinStart =
+		 * times[0].split("."); String[] splitHourMinEnd = times[2].split(".");
+		 * if ((splitHourMinStart.length == 1 &&
+		 * isHourInRange(splitHourMinStart[0])) || (splitHourMinStart.length ==
+		 * 2 && isHourInRange(splitHourMinStart[0]) &&
+		 * isMinuteInRange(splitHourMinStart[1]))) { if ((splitHourMinEnd.length
+		 * == 1 && isHourInRange(splitHourMinEnd[0])) || (splitHourMinEnd.length
+		 * == 2 && isHourInRange(splitHourMinEnd[0]) &&
+		 * isMinuteInRange(splitHourMinEnd[1]))) { return true; } } } }
+		 */
 		return false;
 	}
-	
+
 	private static boolean isHourInRange(String hourStr) {
 		int hour = Integer.parseInt(hourStr);
 		return (hour > 0) && (hour <= 12);
 	}
-	
+
 	private static boolean isMinuteInRange(String minuteStr) {
 		int minute = Integer.parseInt(minuteStr);
 		return (minute >= 0) && (minute < 60);
 	}
-	
+
 	private static Date createDate(String string) {
 		String[] dateSlash = string.split("/");
 		String[] dateSpace = string.split(" ");
@@ -128,7 +239,9 @@ public class LOLParser {
 		// Date format 30/9/2014 or 30/9/14
 		if (dateSlash.length == 3 && isDateInRange(dateSlash[0])
 				&& isMonthInRange(dateSlash[1]) && isYearInRange(dateSlash[2])) {
-			return new Date(Integer.parseInt(dateSlash[0]), Integer.parseInt(dateSlash[1]), Integer.parseInt(dateSlash[2]));
+			return new Date(Integer.parseInt(dateSlash[0]),
+					Integer.parseInt(dateSlash[1]),
+					Integer.parseInt(dateSlash[2]));
 		}
 
 		// Date format 30 September 2014 or 30 Sep 2014 or 30 September 14 or 30
@@ -139,13 +252,15 @@ public class LOLParser {
 						MONTHS_LONG, dateSpace[1]))
 				&& isYearInRange(dateSpace[2])) {
 			int monthNum = getMonthNum(dateSpace[1]);
-			return new Date(Integer.parseInt(dateSlash[0]), monthNum , Integer.parseInt(dateSlash[2]));
+			return new Date(Integer.parseInt(dateSlash[0]), monthNum,
+					Integer.parseInt(dateSlash[2]));
 		}
 
 		// Date format 30/9
 		if (dateSlash.length == 2 && isDateInRange(dateSlash[0])
 				&& isMonthInRange(dateSlash[1])) {
-			return new Date(Integer.parseInt(dateSlash[0]), Integer.parseInt(dateSlash[1]));
+			return new Date(Integer.parseInt(dateSlash[0]),
+					Integer.parseInt(dateSlash[1]));
 		}
 
 		// Date format 30 September or 30 Sep
@@ -171,13 +286,14 @@ public class LOLParser {
 			/* NOTE: do later */
 			return new Date();
 		}
-		
+
 		return new Date();
 	}
 
 	private static int getMonthNum(String month) {
 		for (int i = 0; i < MONTHS_SHORT.length; i++) {
-			if (month.equalsIgnoreCase(MONTHS_SHORT[i]) || month.equalsIgnoreCase(MONTHS_LONG[i])) {
+			if (month.equalsIgnoreCase(MONTHS_SHORT[i])
+					|| month.equalsIgnoreCase(MONTHS_LONG[i])) {
 				return i + 1;
 			}
 		}
@@ -256,7 +372,7 @@ public class LOLParser {
 	 *            Input string
 	 * @return Input string without the first word
 	 */
-	private static String removeFirstWord(String input) {
+	public static String removeFirstWord(String input) {
 		if (countWords(input) <= 1) {
 			return "";
 		} else {
