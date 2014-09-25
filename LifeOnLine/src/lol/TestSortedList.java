@@ -1,3 +1,5 @@
+package lol;
+
 import java.util.*;
 
 public class TestSortedList {

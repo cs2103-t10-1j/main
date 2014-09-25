@@ -1,3 +1,5 @@
+package lol;
+
 public class Task implements Comparable<Task>{
 
 	/************ Attributes ***************/
