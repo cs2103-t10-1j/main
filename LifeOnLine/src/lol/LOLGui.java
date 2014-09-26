@@ -54,10 +54,6 @@ public class LOLGui {
 				/*
 				 * Below is just an example of what will happen when user presses enter after 
 				 * typing something in the user input text field at the bottom of the GUI.
-				 * Controller will need to write methods in this anonymous inner class, which
-				 * means controller will need to replace the the code below (from line
-				 * 62 to 74) with controller's methods such as
-				 * passStringToParser(String), addTaskToStorage(task) etc.
 				 */
 				String inputStr = inputTxtFld.getText(); //this is to get the user input text
 				String displayStr = mainDisplayTxtFld.getText();
@@ -66,12 +62,16 @@ public class LOLGui {
 					displayStr = "";
 				}
 				
+				LOLMain control = new LOLMain(inputStr);
+				String feedback = control.getFeedback();
+				
 				//this set the text of feedback
-				feedbackDisplayTxtFld.setText("Read input --> "+ inputStr);
+				feedbackDisplayTxtFld.setText(feedback);
 				//this set the text of the main display text field
 				mainDisplayTxtFld.setText(displayStr + inputStr + "\n");
 				//this set the text of user input text field
 				inputTxtFld.setText("");
+				
 			}
 		});
 	}
