@@ -136,7 +136,7 @@ public class LOLParserTest {
 	@Test
 	public void testGetEditDescription() {
 		assertEquals("send letter",
-				LOLParser.getEditDescription("edit 6 send letter\\sat"));
+				LOLParser.getEditDescription("edit 6 send letter\\sun"));
 		assertEquals(
 				"send letter",
 				LOLParser
@@ -166,8 +166,8 @@ public class LOLParserTest {
 	public void testGetEditTask() {
 		assertEquals(new Task("send letter", null, new Date(27, 9)),
 				LOLParser.getEditTask("edit 6 send letter\\sat"));
-		assertEquals(new Task("send letter", "post office", new Date(19, 7)),
+		assertEquals(new Task("send letter", "post office", new Date(29, 7)),
 				LOLParser
-						.getEditTask("edit 6 send letter\\post office\\19 jul"));
+						.getEditTask("edit 6 send letter\\post office\\29 jul"));
 	}
 }

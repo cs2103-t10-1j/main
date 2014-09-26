@@ -268,22 +268,6 @@ public class LOLParser {
 						Integer.parseInt(splitHourMin[1]), ampm);
 			}
 		}
-		/*
-		 * // Time format 1 to 3 pm or 1.20 to 4.20pm if ((string.endsWith("am")
-		 * || string.endsWith("pm"))) { String hourMin = string.substring(0,
-		 * string.length() - 2); String[] times = hourMin.split(" "); if
-		 * (times.length == 3) { String[] splitHourMinStart =
-		 * times[0].split("."); String[] splitHourMinEnd = times[2].split(".");
-		 * if ((splitHourMinStart.length == 1 &&
-		 * isHourInRange(splitHourMinStart[0])) || (splitHourMinStart.length ==
-		 * 2 && isHourInRange(splitHourMinStart[0]) &&
-		 * isMinuteInRange(splitHourMinStart[1]))) { if ((splitHourMinEnd.length
-		 * == 1 && isHourInRange(splitHourMinEnd[0])) || (splitHourMinEnd.length
-		 * == 2 && isHourInRange(splitHourMinEnd[0]) &&
-		 * isMinuteInRange(splitHourMinEnd[1]))) { return true; } } }
-		 * 
-		 * }
-		 */
 		return null;
 	}
 
@@ -308,20 +292,6 @@ public class LOLParser {
 				return true;
 			}
 		}
-		/*
-		 * // Time format 1 to 3 pm or 1.20 to 4.20pm if ((string.endsWith("am")
-		 * || string.endsWith("pm"))) { String hourMin = string.substring(0,
-		 * string.length() - 2); String[] times = hourMin.split(" "); if
-		 * (times.length == 3) { String[] splitHourMinStart =
-		 * times[0].split("."); String[] splitHourMinEnd = times[2].split(".");
-		 * if ((splitHourMinStart.length == 1 &&
-		 * isHourInRange(splitHourMinStart[0])) || (splitHourMinStart.length ==
-		 * 2 && isHourInRange(splitHourMinStart[0]) &&
-		 * isMinuteInRange(splitHourMinStart[1]))) { if ((splitHourMinEnd.length
-		 * == 1 && isHourInRange(splitHourMinEnd[0])) || (splitHourMinEnd.length
-		 * == 2 && isHourInRange(splitHourMinEnd[0]) &&
-		 * isMinuteInRange(splitHourMinEnd[1]))) { return true; } } } }
-		 */
 		return false;
 	}
 
