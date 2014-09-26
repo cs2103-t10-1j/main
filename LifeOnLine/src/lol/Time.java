@@ -20,7 +20,7 @@ public class Time {
 		setHour(0);
 		setMin(0);
 		setAmpm("am");
-		setFormat24hr("0000");
+		setFormat24hr("2400"); // Time does not exist
 	}
 
 	public Time(int hour, int min, String ampm) { // e.g. 3.40pm

@@ -8,6 +8,12 @@
  */
 package lol;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
 public class LOLParser {
 
 	// Separator
@@ -44,12 +50,25 @@ public class LOLParser {
 	public static final String COMMAND_EXIT = "exit";
 	public static final String COMMAND_INVALID = "invalid command";
 
+	// Array indices
+	public static final int INDEX_DAY = 0;
+	public static final int INDEX_TODAY = 0;
+	public static final int INDEX_MONTH = 1;
+	public static final int INDEX_YEAR = 2;
+
+	// Array lengths
+	public static final int LENGTH_DAY_MONTH_YEAR = 3;
+	public static final int LENGTH_DAY_MONTH = 2;
+
+	/*********** Methods to return task details ***************/
+
 	/**
-	 * Returns the command name. Example: for input " add attend meeting \
-	 * meeting room 3 \ 16 Oct \ 2pm" returns add
+	 * Returns the command name. 
+	 * Example: add, delete, show, etc.
 	 * 
-	 * @param input  user input
-	 * @return  command name
+	 * @param input
+	 *            user input
+	 * @return command name
 	 */
 	public static String getCommandName(String input) {
 		String command = getFirstWord(input);
@@ -72,21 +91,27 @@ public class LOLParser {
 	}
 
 	/**
-	 * Returns description of task. Example: attend meeting
-	 * Precondition: Task has a description
-	 * @param input  user input
-	 * @return  task description
+	 * Returns description of task for add command. Example: for input "add attend meeting \
+	 * meeting room 3 \ 16 Oct \ 2pm" returns "attend meeting". Precondition: Task
+	 * has a description
+	 * 
+	 * @param input
+	 *            user input
+	 * @return task description
 	 */
 	public static String getDescription(String input) {
 		String details = removeFirstWord(input); // remove command
 		return details.split(SEPARATOR)[0];
-		//return details;
+		// return details;
 	}
 
 	/**
-	 * Returns location of task. Example: meeting room 3
-	 * @param input  user input
-	 * @return  location of task if it exists, else null
+	 * Returns location of task for add command. Example: for input " add attend meeting \
+	 * meeting room 3 \ 16 Oct \ 2pm" returns "meeting room 3"
+	 * 
+	 * @param input
+	 *            user input
+	 * @return location of task if it exists, else null
 	 */
 	public static String getLocation(String input) {
 		String details = removeFirstWord(input); // remove command
@@ -94,7 +119,8 @@ public class LOLParser {
 
 		// 1st element is the description
 		// If only 1 element or 2nd element is due date then no location
-		if (detailsArray.length < 2 || isDate(detailsArray[1])) {
+		if (detailsArray.length < 2 || isValidDate(detailsArray[1])
+				|| isValidDay(detailsArray[1])) {
 			return null;
 		} else {
 			return detailsArray[1];
@@ -102,9 +128,11 @@ public class LOLParser {
 	}
 
 	/**
-	 * Returns due date of task as a date object. Example: 16 Oct
-	 * @param input  user input
-	 * @return  due date if it exists, else null
+	 * Returns due date of task as a date object for add command.
+	 * 
+	 * @param input
+	 *            user input
+	 * @return due date if it exists, else null
 	 */
 	public static Date getDueDate(String input) {
 		String details = removeFirstWord(input); // remove command
@@ -113,7 +141,7 @@ public class LOLParser {
 		// 1st element is the description
 		// Check from 2nd element onwards
 		for (int i = 1; i < detailsArray.length; i++) {
-			if (isDate(detailsArray[i])) {
+			if (isValidDate(detailsArray[i]) || isValidDay(detailsArray[i])) {
 				return createDate(detailsArray[i]);
 			}
 		}
@@ -121,9 +149,11 @@ public class LOLParser {
 	}
 
 	/**
-	 * Returns start time of task as a time object. Example: 2pm
-	 * @param input  user input
-	 * @return  start time if it exists, else null
+	 * Returns start time of task as a time object for add command.
+	 * 
+	 * @param input
+	 *            user input
+	 * @return start time if it exists, else null
 	 */
 	public static Time getStartTime(String input) {
 		String details = removeFirstWord(input); // remove command
@@ -138,15 +168,87 @@ public class LOLParser {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Returns a Task object with details given in the parameter for add command
+	 * 
+	 * @param input
+	 *            user input
+	 * @return Task added
+	 */
 	public static Task getTask(String input) {
-		return new Task(getDescription(input), getLocation(input),getDueDate(input));
+		return new Task(getDescription(input), getLocation(input),
+				getDueDate(input));
 	}
 	
 	/**
-	 * Given a string that represents time, creates a time object
-	 * @param string  time in 12-hour format, e.g 4pm or 6.20am
-	 * @return
+	 * Returns index of task for delete/edit/done commands, counting from 1. 
+	 * Example: 'delete 1' returns 1. 
+	 * If index is not an integer or no the input does not contain an index, -1 is returned.
+	 * @param input   user input
+	 * @return  index of task if it is in the input and is an integer, else -1
+	 */
+	public static int getTaskIndex(String input) {
+		try {
+			return Integer.parseInt(input.split(" ")[1]);
+		} catch (Exception e) {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Returns description of task for edit command. Precondition: Task
+	 * has a description
+	 * 
+	 * @param input
+	 *            user input
+	 * @return task description
+	 */
+	public static String getEditDescription(String input) {
+		return getDescription(removeFirstWord(input));
+	}
+	
+	/**
+	 * Returns location of task for edit command
+	 * 
+	 * @param input
+	 *            user input
+	 * @return location of task if it exists, else null
+	 */
+	public static String getEditLocation(String input) {
+		return getLocation(removeFirstWord(input));
+	}
+	
+	/**
+	 * Returns due date of task as a date object for edit command.
+	 * 
+	 * @param input
+	 *            user input
+	 * @return due date if it exists, else null
+	 */
+	public static Date getEditDueDate(String input) {
+		return getDueDate(removeFirstWord(input));
+	}
+	
+	/**
+	 * Returns a Task object with details given in the parameter for edit command
+	 * 
+	 * @param input
+	 *            user input
+	 * @return Task added
+	 */
+	public static Task getEditTask(String input) {
+		return getTask(removeFirstWord(input));
+	}
+
+	/************* Start/end time methods *****************/
+
+	/**
+	 * Given a string that represents time, creates a Time object
+	 * 
+	 * @param string
+	 *            time in 12-hour format, e.g 4pm or 6.20am
+	 * @return Time object
 	 */
 	private static Time createTime(String string) {
 		string = string.trim();
@@ -186,8 +288,11 @@ public class LOLParser {
 	}
 
 	/**
-	 * Checks whether a string represents time in 12-hour format, e.g. 2pm or 1.20am 
-	 * @param string String to be checked
+	 * Checks whether a string represents time in 12-hour format, e.g. 2pm or
+	 * 1.20am
+	 * 
+	 * @param string
+	 *            String to be checked
 	 * @return true if it represents 12-hour time, else false
 	 */
 	private static boolean isTime(String string) {
@@ -220,74 +325,140 @@ public class LOLParser {
 		return false;
 	}
 
+	/**
+	 * Checks whether hour is between 1 and 12 (both inclusive)
+	 * 
+	 * @param hourStr
+	 *            String to be checked
+	 * @return true if hour is between 1 and 12 (both inclusive), else false
+	 */
 	private static boolean isHourInRange(String hourStr) {
 		int hour = Integer.parseInt(hourStr);
 		return (hour > 0) && (hour <= 12);
 	}
 
+	/**
+	 * Checks if minute is between 0 and 59 (both inclusive)
+	 * 
+	 * @param minuteStr
+	 *            String to be checked
+	 * @return true if minute is between 0 and 59 (both inclusive), else false
+	 */
 	private static boolean isMinuteInRange(String minuteStr) {
 		int minute = Integer.parseInt(minuteStr);
 		return (minute >= 0) && (minute < 60);
 	}
 
+	/**************** Due date methods ********************/
+
+	/**
+	 * Given a string that represents date, creates a Date object
+	 * 
+	 * @param string
+	 *            String representing date in any the following formats (not
+	 *            case-sensitive): 30/9/2014 (or) 30/9/14 (or) 30 September 2014
+	 *            (or) 30 Sep 2014 (or) 30 September 14 (or) 30 Sep 14 (or) 30/9
+	 *            (or) 30 September (or) 30 Sep (or) Day of the week - Monday,
+	 *            Mon, Sunday, Sun, etc. (or) today (or) tomorrow (or) tmw
+	 * @return Date object
+	 */
 	public static Date createDate(String string) {
-		String[] dateSlash = string.split("/");
-		String[] dateSpace = string.split(" ");
+		String[] dateSlash = string.split("/"); // separated by forward-slash
+		String[] dateSpace = string.split(" "); // separated by space
 
 		// Date format 30/9/2014 or 30/9/14
-		if (dateSlash.length == 3 && isDateInRange(dateSlash[0])
-				&& isMonthInRange(dateSlash[1]) && isYearInRange(dateSlash[2])) {
-			return new Date(Integer.parseInt(dateSlash[0]),
-					Integer.parseInt(dateSlash[1]),
-					Integer.parseInt(dateSlash[2]));
+		// if the date has 3 parts and day, month and year are within range
+		if (dateSlash.length == LENGTH_DAY_MONTH_YEAR
+				&& isDateInRange(dateSlash[INDEX_DAY])
+				&& isMonthInRange(dateSlash[INDEX_MONTH])
+				&& isYearInRange(dateSlash[INDEX_YEAR])) {
+			return new Date(Integer.parseInt(dateSlash[INDEX_DAY]),
+					Integer.parseInt(dateSlash[INDEX_MONTH]),
+					Integer.parseInt(dateSlash[INDEX_YEAR]));
 		}
-		
+
 		// Date format 30 September 2014 or 30 Sep 2014 or 30 September 14 or 30
 		// Sep 14
-		if (dateSpace.length == 3
-				&& isDateInRange(dateSpace[0])
-				&& (hasWordInDictionary(MONTHS_SHORT, dateSpace[1]) || hasWordInDictionary(
-						MONTHS_LONG, dateSpace[1]))
-				&& isYearInRange(dateSpace[2])) {
-			int monthNum = getMonthNum(dateSpace[1]);
-			return new Date(Integer.parseInt(dateSpace[0]), monthNum,
-					Integer.parseInt(dateSpace[2]));
+		// if the date has 3 parts, day and year are within range and month name
+		// is valid
+		if (dateSpace.length == LENGTH_DAY_MONTH_YEAR
+				&& isDateInRange(dateSpace[INDEX_DAY])
+				&& (hasWordInDictionary(MONTHS_SHORT, dateSpace[INDEX_MONTH]) || hasWordInDictionary(
+						MONTHS_LONG, dateSpace[INDEX_MONTH]))
+				&& isYearInRange(dateSpace[INDEX_YEAR])) {
+
+			// get number of month e.g 1 for jan
+			int monthNum = getMonthNum(dateSpace[INDEX_MONTH]);
+			return new Date(Integer.parseInt(dateSpace[INDEX_DAY]), monthNum,
+					Integer.parseInt(dateSpace[INDEX_YEAR]));
 		}
 
 		// Date format 30/9
-		if (dateSlash.length == 2 && isDateInRange(dateSlash[0])
-				&& isMonthInRange(dateSlash[1])) {
-			return new Date(Integer.parseInt(dateSlash[0]),
-					Integer.parseInt(dateSlash[1]));
+		// if the date has 2 parts and day and month are within range
+		if (dateSlash.length == LENGTH_DAY_MONTH
+				&& isDateInRange(dateSlash[INDEX_DAY])
+				&& isMonthInRange(dateSlash[INDEX_MONTH])) {
+			return new Date(Integer.parseInt(dateSlash[INDEX_DAY]),
+					Integer.parseInt(dateSlash[INDEX_MONTH]));
 		}
 
 		// Date format 30 September or 30 Sep
-		if (dateSpace.length == 2
-				&& isDateInRange(dateSpace[0])
-				&& (hasWordInDictionary(MONTHS_SHORT, dateSpace[1]) || hasWordInDictionary(
-						MONTHS_LONG, dateSpace[1]))) {
-			int monthNum = getMonthNum(dateSpace[1]);
-			return new Date(Integer.parseInt(dateSpace[0]), monthNum);
+		// if the date has 2 parts, day is within range and month name is valid
+		if (dateSpace.length == LENGTH_DAY_MONTH
+				&& isDateInRange(dateSpace[INDEX_DAY])
+				&& (hasWordInDictionary(MONTHS_SHORT, dateSpace[INDEX_MONTH]) || hasWordInDictionary(
+						MONTHS_LONG, dateSpace[INDEX_MONTH]))) {
+
+			// get number of month e.g 1 for jan
+			int monthNum = getMonthNum(dateSpace[INDEX_MONTH]);
+			return new Date(Integer.parseInt(dateSpace[INDEX_DAY]), monthNum);
 		}
 
 		// Day of the week - Monday, Mon
+		// if string has 1 word and day of the week is valid
 		if (countWords(string) == 1
 				&& (hasWordInDictionary(DAYS_SHORT, string) || hasWordInDictionary(
 						DAYS_LONG, string))) {
-			/* NOTE: do later */
-			return new Date();
+
+			// get index of today's day and due date, 0 - sun, 1 - mon and so on
+			int todaysDayOfTheWeekIndex = getTodaysDayOfTheWeekIndex(); // 0-6
+			int dueDatesDayOfTheWeekIndex = getDayOfTheWeekIndex(string); // 0-6
+
+			// how many days later is the due date from today, e.g 1 if due date
+			// is tomorrow
+			int numDaysLater = dueDatesDayOfTheWeekIndex
+					- todaysDayOfTheWeekIndex;
+
+			// if today's index > due date's index, due date is next week
+			// E.g. If today is Friday, Mon refers to next Monday
+			if (numDaysLater < 1) {
+				numDaysLater += 7;
+			}
+			return addDaysToToday(numDaysLater);
 		}
 
 		// today, tomorrow, tmw
 		if (countWords(string) == 1
 				&& hasWordInDictionary(DAYS_IMMEDIATE, string)) {
-			/* NOTE: do later */
-			return new Date();
+			if (string.equalsIgnoreCase(DAYS_IMMEDIATE[INDEX_TODAY])) { // today
+				return getTodaysDate();
+			} else { // tomorrow
+				return addDaysToToday(1);
+			}
 		}
 
-		return new Date();
+		return new Date(); // Date does not match any of the above formats
 	}
 
+	/**
+	 * Returns index of month, starting from 1. Example: 1 for Jan, 2 for Feb
+	 * ... 12 for Dec
+	 * 
+	 * @param month
+	 *            month name in 3-letters short form (jan) or full name of the
+	 *            month (january) - not case-sensitive
+	 * @return index of month
+	 */
 	private static int getMonthNum(String month) {
 		for (int i = 0; i < MONTHS_SHORT.length; i++) {
 			if (month.equalsIgnoreCase(MONTHS_SHORT[i])
@@ -298,40 +469,70 @@ public class LOLParser {
 		return -1;
 	}
 
-	public static boolean isDate(String string) {
-		String[] dateSlash = string.split("/");
-		String[] dateSpace = string.split(" ");
-
-		// Date format 30/9/2014 or 30/9/14
-		if (dateSlash.length == 3 && isDateInRange(dateSlash[0])
-				&& isMonthInRange(dateSlash[1]) && isYearInRange(dateSlash[2])) {
-			return true;
+	/**
+	 * Returns index of day of the week, starting from 0 for Sunday. Example: 0
+	 * for Sun, 1 for Mon, 2 for Tue ... 6 for Sat
+	 * 
+	 * @param string
+	 *            day name in 3-letters short form (mon) or full name of the day
+	 *            (monday) - not case-sensitive
+	 * @return index of day of the week
+	 */
+	public static int getDayOfTheWeekIndex(String string) {
+		for (int i = 0; i < DAYS_SHORT.length; i++) {
+			if (string.equalsIgnoreCase(DAYS_SHORT[i])
+					|| string.equalsIgnoreCase(DAYS_LONG[i])) {
+				return i;
+			}
 		}
+		return -1;
+	}
 
-		// Date format 30 September 2014 or 30 Sep 2014 or 30 September 14 or 30
-		// Sep 14
-		if (dateSpace.length == 3
-				&& isDateInRange(dateSpace[0])
-				&& (hasWordInDictionary(MONTHS_SHORT, dateSpace[1]) || hasWordInDictionary(
-						MONTHS_LONG, dateSpace[1]))
-				&& isYearInRange(dateSpace[2])) {
-			return true;
+	/**
+	 * Checks if a String represents date in any the following formats (not
+	 * case-sensitive): 30/9/2014 (or) 30/9/14 (or) 30 September 2014 (or) 30
+	 * Sep 2014 (or) 30 September 14 (or) 30 Sep 14 (or) 30/9 (or) 30 September
+	 * (or) 30 Sep
+	 * 
+	 * @param inDate
+	 *            string to be checked
+	 * @return true if it matches any of the above formats, else false
+	 */
+	public static boolean isValidDate(String inDate) {
+		List<SimpleDateFormat> dateFormats = new ArrayList<SimpleDateFormat>();
+
+		dateFormats.add(new SimpleDateFormat("d/M/yyyy")); // 14/3/2014
+		dateFormats.add(new SimpleDateFormat("d/M/yy")); // 14/3/14
+		dateFormats.add(new SimpleDateFormat("d MMM yyyy")); // 14 Mar 2014
+		dateFormats.add(new SimpleDateFormat("d MMM yy")); // 14 Mar 14
+		dateFormats.add(new SimpleDateFormat("d MMMM yyyy")); // 14 March 2014
+		dateFormats.add(new SimpleDateFormat("d MMMM yy")); // 14 March 14
+		dateFormats.add(new SimpleDateFormat("d/M")); // 14/3
+		dateFormats.add(new SimpleDateFormat("d MMM")); // 14 Mar
+		dateFormats.add(new SimpleDateFormat("d MMMM")); // 14 March
+
+		for (SimpleDateFormat format : dateFormats) {
+			format.setLenient(false);
+			try {
+				format.parse(inDate.trim());
+				return true;
+			} catch (ParseException pe) {
+				// Try other formats
+			}
 		}
+		return false;
+	}
 
-		// Date format 30/9
-		if (dateSlash.length == 2 && isDateInRange(dateSlash[0])
-				&& isMonthInRange(dateSlash[1])) {
-			return true;
-		}
-
-		// Date format 30 September or 30 Sep
-		if (dateSpace.length == 2
-				&& isDateInRange(dateSpace[0])
-				&& (hasWordInDictionary(MONTHS_SHORT, dateSpace[1]) || hasWordInDictionary(
-						MONTHS_LONG, dateSpace[1]))) {
-			return true;
-		}
-
+	/**
+	 * Checks if a string represents a day in any of the following formats: Day
+	 * of the week - Monday, Mon, Sunday, Sun, etc. (or) today (or) tomorrow
+	 * (or) tmw
+	 * 
+	 * @param string
+	 *            string to be checked
+	 * @return true if it matches any of the above formats, else false
+	 */
+	public static boolean isValidDay(String string) {
 		// Day of the week - Monday, Mon
 		if (countWords(string) == 1
 				&& (hasWordInDictionary(DAYS_SHORT, string) || hasWordInDictionary(
@@ -347,16 +548,84 @@ public class LOLParser {
 		return false;
 	}
 
+	/**
+	 * Returns today's date
+	 * 
+	 * @return Date object containing today's date
+	 */
+	public static Date getTodaysDate() {
+		Calendar rightNow = Calendar.getInstance(); // Get the current date
+		return new Date(rightNow.get(Calendar.DATE),
+				rightNow.get(Calendar.MONTH) + 1, rightNow.get(Calendar.YEAR));
+	}
+
+	/**
+	 * Returns a date which is a specified number of days after today
+	 * 
+	 * @param amount
+	 *            number of days after today
+	 * @return advanced date
+	 */
+	public static Date addDaysToToday(int amount) {
+		Calendar rightNow = Calendar.getInstance(); // Get the current date
+		rightNow.setTime(new java.util.Date());
+		rightNow.add(Calendar.DATE, amount);
+		return new Date(rightNow.get(Calendar.DATE),
+				rightNow.get(Calendar.MONTH) + 1, rightNow.get(Calendar.YEAR));
+	}
+
+	/**
+	 * @return which day of the week (sun, mon ... sat) it is today
+	 */
+	public static String getTodaysDayOfTheWeek() {
+		Calendar rightNow = Calendar.getInstance(); // Get the current date
+		// sun = 0, mon = 1 ... sat = 6
+		return DAYS_LONG[rightNow.get(Calendar.DAY_OF_WEEK) - 1];
+	}
+
+	/**
+	 * @return the index of which day of the week (0-sun, 1-mon ... 6-sat) it is
+	 *         today
+	 */
+	public static int getTodaysDayOfTheWeekIndex() {
+		Calendar rightNow = Calendar.getInstance(); // Get the current date
+		// sun = 0, mon = 1 ... sat = 6
+		return rightNow.get(Calendar.DAY_OF_WEEK) - 1;
+	}
+
+	/**
+	 * Checks whether date is between 1 and 31 (both inclusive)
+	 * 
+	 * @param dateStr
+	 *            string to be checked
+	 * @return true if date is between 1 and 31 (both inclusive), else false
+	 */
 	private static boolean isDateInRange(String dateStr) {
 		int date = Integer.parseInt(dateStr.trim());
 		return (date > 0) && (date <= 31);
 	}
 
+	/**
+	 * Checks whether month is between 1 and 12 (both inclusive)
+	 * 
+	 * @param monthStr
+	 *            string to be checked
+	 * @return true if month is between 1 and 12 (both inclusive), else false
+	 */
 	private static boolean isMonthInRange(String monthStr) {
 		int month = Integer.parseInt(monthStr.trim());
 		return (month > 0) && (month <= 12);
 	}
 
+	/**
+	 * Checks whether month is between 2010 and 2099 (10 and 99 for 2-digit
+	 * years)
+	 * 
+	 * @param yearStr
+	 *            year to be checked
+	 * @return true if month is between 2010 and 2099 (10 and 99 for 2-digit
+	 *         years), else false
+	 */
 	private static boolean isYearInRange(String yearStr) {
 		int year = Integer.parseInt(yearStr.trim());
 		return ((year > 10) && (year <= 99))

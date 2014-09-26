@@ -52,6 +52,7 @@ public class Date {
 		setMonthName(getMonthName(month));
 		setYear4Digit(getYear4Digit(year));
 		setYear2Digit(getYear2Digit(year));
+		setTime(new Time());
 	}
 
 	public Date(int day, int month) { // e.g 6/7
@@ -60,6 +61,7 @@ public class Date {
 		setMonthName(getMonthName(month));
 		setYear4Digit(CURRENT_YEAR);
 		setYear2Digit(CURRENT_YEAR % 100);
+		setTime(new Time());
 	}
 
 	/************ Accessors *************/
@@ -127,7 +129,8 @@ public class Date {
 			Date other = (Date) obj;
 			return other.getDay() == this.getDay()
 					&& other.getMonth() == this.getMonth()
-					&& other.getYear4Digit() == this.getYear4Digit();
+					&& other.getYear4Digit() == this.getYear4Digit()
+					&& other.getTime().equals(this.getTime());
 		} else {
 			return false;
 		}
