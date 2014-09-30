@@ -4,17 +4,21 @@ import java.util.LinkedList;
 
 public class TaskList {
 
-	private static LinkedList<Task> list = new LinkedList<Task>();
-
-	public static boolean add(Task taskObject) {
+	private  LinkedList<Task> list;
+	
+	public TaskList(){
+		list = new LinkedList<Task>();
+	}
+	
+	public boolean add(Task taskObject) {
 		return list.add(taskObject);
 	}
 
-	public static boolean delete(Task taskObject) {
+	public  boolean delete(Task taskObject) {
 		return list.removeFirstOccurrence(taskObject);
 	}
 
-	public static boolean deleteByIndex(int index) {
+	public boolean deleteByIndex(int index) {
 		try {
 			list.remove(index);
 		} catch (IndexOutOfBoundsException e) {
@@ -23,15 +27,15 @@ public class TaskList {
 		return true;
 	}
 
-	public static LinkedList<Task> getList() {
+	public LinkedList<Task> getList() {
 		return list;
 	}
 	
-	public static int size(){
+	public int size(){
 		return list.size();
 	}
 	
-	public static Task get(int index){
+	public Task get(int index){
 		try {
 			return list.get(index);
 		} catch (IndexOutOfBoundsException e) {
