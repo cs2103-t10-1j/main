@@ -42,8 +42,9 @@ public class LOLParserTest {
 		assertEquals(new Date(14, 9),
 				LOLParser.getDueDate("add buy milk\\supermarket\\14 sep"));
 
-		assertEquals(new Date(28, 9),
-				LOLParser.getDueDate("add buy milk\\supermarket\\sun"));
+		// date dependent
+		assertEquals(new Date(7, 10),
+				LOLParser.getDueDate("add buy milk\\supermarket\\tue"));
 		assertEquals(new Date(1, 1, 15),
 				LOLParser.getDueDate("add new year party\\grand hotel\\1/1/15"));
 	}
@@ -92,31 +93,34 @@ public class LOLParserTest {
 		assertEquals(new Date(30, 9, 2014), LOLParser.createDate("30/9/2014"));
 		assertEquals(new Date(1, 1, 15), LOLParser.createDate("1/1/15"));
 
-		assertEquals(new Date(26, 9, 2014), LOLParser.createDate("today"));
-		assertEquals(new Date(27, 9, 2014), LOLParser.createDate("saturday"));
-		assertEquals(new Date(27, 9, 2014), LOLParser.createDate("tmw"));
-		assertEquals(new Date(29, 9, 2014), LOLParser.createDate("monday"));
-		assertEquals(new Date(1, 10), LOLParser.createDate("wed"));
-		assertEquals(new Date(3, 10), LOLParser.createDate("fri"));
+		// all date dependent
+		assertEquals(new Date(30, 9, 2014), LOLParser.createDate("today"));
+		assertEquals(new Date(4, 10, 2014), LOLParser.createDate("saturday"));
+		assertEquals(new Date(1, 10, 2014), LOLParser.createDate("tmw"));
+		assertEquals(new Date(6, 10, 2014), LOLParser.createDate("monday"));
+		assertEquals(new Date(7, 10), LOLParser.createDate("tue"));
 	}
 
 	@Test
 	public void testGetTodaysDate() {
-		assertEquals(26, LOLParser.getTodaysDate().getDay());
+		// all date dependent
+		assertEquals(30, LOLParser.getTodaysDate().getDay());
 		assertEquals(9, LOLParser.getTodaysDate().getMonth());
-		assertEquals(new Date(26, 9, 2014), LOLParser.getTodaysDate());
+		assertEquals(new Date(30, 9, 2014), LOLParser.getTodaysDate());
 	}
 
 	@Test
 	public void testAddDaysToToday() {
-		assertEquals(new Date(27, 9, 2014), LOLParser.addDaysToToday(1));
-		assertEquals(new Date(1, 10, 2014), LOLParser.addDaysToToday(5));
-		assertEquals(new Date(4, 1, 2015), LOLParser.addDaysToToday(100));
+		// all date dependent
+		assertEquals(new Date(1, 10, 2014), LOLParser.addDaysToToday(1));
+		assertEquals(new Date(5, 10, 2014), LOLParser.addDaysToToday(5));
+		assertEquals(new Date(8, 1, 2015), LOLParser.addDaysToToday(100));
 	}
 
 	@Test
 	public void testGetTodaysDayOfTheWeek() {
-		assertEquals("friday", LOLParser.getTodaysDayOfTheWeek());
+		// date dependent
+		assertEquals("tuesday", LOLParser.getTodaysDayOfTheWeek());
 	}
 
 	@Test
@@ -154,7 +158,8 @@ public class LOLParserTest {
 
 	@Test
 	public void testGetEditDueDate() {
-		assertEquals(new Date(27, 9),
+		// date dependent
+		assertEquals(new Date(4,10),
 				LOLParser.getEditDueDate("edit 6 send letter\\sat"));
 		assertEquals(
 				new Date(19, 7),
@@ -164,10 +169,89 @@ public class LOLParserTest {
 
 	@Test
 	public void testGetEditTask() {
-		assertEquals(new Task("send letter", null, new Date(27, 9)),
+		// date dependent
+		assertEquals(new Task("send letter", null, new Date(4, 10)),
 				LOLParser.getEditTask("edit 6 send letter\\sat"));
 		assertEquals(new Task("send letter", "post office", new Date(29, 7)),
 				LOLParser
 						.getEditTask("edit 6 send letter\\post office\\29 jul"));
+	}
+	
+	@Test
+	public void testIsHourInRange() {
+		assertTrue(LOLParser.isHourInRange("3"));
+		assertTrue(LOLParser.isHourInRange("10"));
+		assertFalse(LOLParser.isHourInRange("0"));
+		assertFalse(LOLParser.isHourInRange("20"));
+		assertFalse(LOLParser.isHourInRange("-8"));
+	}
+	
+	@Test
+	public void testIsMinuteInRange() {
+		assertTrue(LOLParser.isMinuteInRange("3"));
+		assertTrue(LOLParser.isMinuteInRange("10"));
+		assertFalse(LOLParser.isMinuteInRange("60"));
+		assertTrue(LOLParser.isMinuteInRange("0"));
+		assertFalse(LOLParser.isMinuteInRange("-8"));
+	}
+	
+	@Test
+	public void testIs12hrTime() {
+		assertTrue(LOLParser.is12hrTime("3pm"));
+		assertTrue(LOLParser.is12hrTime("1.30am"));
+		assertTrue(LOLParser.is12hrTime("2.00pm"));
+		assertFalse(LOLParser.is12hrTime("13pm"));
+		assertFalse(LOLParser.is12hrTime("5qm"));
+	}
+	
+	@Test
+	public void testIsTimeRange() {
+		assertTrue(LOLParser.isTimeRange("1pm to 3pm"));
+		assertTrue(LOLParser.isTimeRange("2am to 9pm"));
+		assertTrue(LOLParser.isTimeRange("1 to 3pm"));
+		assertTrue(LOLParser.isTimeRange("11 to 1pm"));
+		assertTrue(LOLParser.isTimeRange("1pm-3pm"));
+		assertTrue(LOLParser.isTimeRange("2am-9pm"));
+		assertTrue(LOLParser.isTimeRange("1-3pm"));
+		assertTrue(LOLParser.isTimeRange("11-1pm"));
+		assertFalse(LOLParser.isTimeRange("1pm to "));
+	}
+	
+	@Test
+	public void testIsTimeWithoutAmpm() {
+		assertTrue(LOLParser.isTimeWithoutAmpm("5.45"));
+		assertTrue(LOLParser.isTimeWithoutAmpm("11.45"));
+		assertFalse(LOLParser.isTimeWithoutAmpm("5.45pm"));
+	}
+	
+	@Test
+	public void testIs24hrTime() {
+		assertTrue(LOLParser.is24hrTime("0000"));
+		assertTrue(LOLParser.is24hrTime("2359"));
+		assertTrue(LOLParser.is24hrTime("1200"));
+		assertTrue(LOLParser.is24hrTime("1448"));
+		assertTrue(LOLParser.is24hrTime("2200"));
+		assertFalse(LOLParser.is24hrTime("2400"));
+		assertFalse(LOLParser.is24hrTime("2060"));
+		assertFalse(LOLParser.is24hrTime("21"));
+		assertFalse(LOLParser.is24hrTime("21000"));
+		assertFalse(LOLParser.is24hrTime("abc"));
+	}
+	
+	@Test
+	public void testCreate12hrTime() {
+		assertEquals(new Time(1,30,"pm"), LOLParser.create12hrTime("1.30pm"));
+	}
+	
+	@Test
+	public void testCreateStartTimeFromRange() {
+		assertEquals(new Time(1,30,"pm"), LOLParser.createStartTimeFromRange("1.30pm to 7pm"));
+		//assertEquals(new Time(11,30,"am"), LOLParser.createStartTimeFromRange("11.30 to 2pm"));
+		assertEquals(new Time(1,"pm"), LOLParser.createStartTimeFromRange("1 to 7pm"));
+		//assertEquals(new Time(11,"am"), LOLParser.createStartTimeFromRange("11 to 2pm"));
+		assertEquals(new Time(1,30,"pm"), LOLParser.createStartTimeFromRange("1.30pm-7pm"));
+		//assertEquals(new Time(11,30,"am"), LOLParser.createStartTimeFromRange("11.30-2pm"));
+		assertEquals(new Time(1,"pm"), LOLParser.createStartTimeFromRange("1-7pm"));
+		//assertEquals(new Time(11,"am"), LOLParser.createStartTimeFromRange("11-2pm"));
 	}
 }
