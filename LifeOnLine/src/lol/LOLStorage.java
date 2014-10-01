@@ -1,6 +1,6 @@
 package lol;
 
-public class Storage {
+public class LOLStorage {
 private static TaskList list = new TaskList();
 
 public static TaskList load(){
