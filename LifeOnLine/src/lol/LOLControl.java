@@ -24,45 +24,44 @@ public class LOLControl {
 		if (getCommandType(userInput) == "COMMAND_DEL") {
 			return executeDel(userInput);
 		}
-		if (getCommandType(userInput) == "COMMAND_INVALID") {
+		else {
 			return executeInvalid(userInput);
 		}
 	}
 
-	private static String getCommandType(String userInput) {
+	public static String getCommandType(String userInput) {
 		String command = LOLParser.getCommandName(userInput);
 		return command;
 	}
 
-	private static String executeAdd(String userInput) {
+	public static String executeAdd(String userInput) {
 		Task newTask = LOLParser.getTask(userInput);
 		list.add(newTask);
 		LOLStorage.save();
 		return showFeedback(newTask, COMMAND_ADD);
 	}
 
-	private static String executeDel(String userInput) {
+	public static String executeDel(String userInput) {
 		Task delTask = LOLParser.getTask(userInput);
 		list.delete(delTask);
 		LOLStorage.save();
 		return showFeedback(delTask, COMMAND_DEL);
 	}
 
-	private static String executeInvalid(String userInput) {
+	public static String executeInvalid(String userInput) {
 		Task invalidTask = LOLParser.getTask(userInput);
 		return showFeedback(invalidTask, COMMAND_INVALID);
 	}
 
-	private static String showFeedback(Task task, String commandType) {
+	public static String showFeedback(Task task, String commandType) {
 		if (commandType == COMMAND_ADD) {
 			return (QUOTE + task + QUOTE + FEEDBACK_ADD_SUCCESS);
 		}
 		if (commandType == COMMAND_DEL) {
 			return (QUOTE + task + QUOTE + FEEDBACK_DEL_SUCCESS);
 		}
-		if (commandType == COMMAND_INVALID) {
+		else
 			return (FEEDBACK_INVALID);
-		}
 	}
 
 }
