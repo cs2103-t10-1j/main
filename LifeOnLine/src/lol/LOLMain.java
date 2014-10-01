@@ -1,19 +1,19 @@
 package lol;
 
 public class LOLMain {
-	public String userInput;
-	public String feedback;
+	private static String feedback;
+	private static String showToUser;
 	
-	public LOLMain(String userInput){
-		this.userInput = userInput;
-		this.feedback = passStringToParser(userInput);
+	public static void passStringToControl(String userInput){
+		feedback = LOLControl.executeUserInput(userInput);
 	}
 	
-	public String passStringToParser(String userInput){
-		return "String has been passed to Parser: " + userInput;
-	}
-	
-	public String getFeedback(){
+	public static String getFeedback(){
 		return feedback;
+	}
+	
+	//used to get String for task display from control
+	public static String getShowToUser(){
+		return showToUser;
 	}
 }
