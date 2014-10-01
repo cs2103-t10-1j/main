@@ -6,8 +6,8 @@ public class LOLControl {
 	public static final String COMMAND_ADD = "add";
 	public static final String COMMAND_DEL = "delete";
 	public static final String COMMAND_INVALID = "invalid command";
-	public static final String FEEDBACK_ADD_SUCCESS = "added successfully";
-	public static final String FEEDBACK_DEL_SUCCESS = "deleted successfully";
+	public static final String FEEDBACK_ADD_SUCCESS = " added successfully";
+	public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully";
 	public static final String FEEDBACK_INVALID = "That is an invalid action";
 
 	/********** Load Storage ***********/
