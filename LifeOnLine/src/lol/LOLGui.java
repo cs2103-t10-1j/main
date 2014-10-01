@@ -62,13 +62,15 @@ public class LOLGui {
 					displayStr = "";
 				}
 				
-				LOLMain control = new LOLMain(inputStr);
-				String feedback = control.getFeedback();
+				LOLMain.passStringToControl(inputStr);
+				String feedback =  LOLMain.getFeedback();
 				
 				//this set the text of feedback
 				feedbackDisplayTxtFld.setText(feedback);
+				
 				//this set the text of the main display text field
-				mainDisplayTxtFld.setText(displayStr + inputStr + "\n");
+				//mainDisplayTxtFld.setText();
+				
 				//this set the text of user input text field
 				inputTxtFld.setText("");
 				

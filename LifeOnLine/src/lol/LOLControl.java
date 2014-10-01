@@ -17,16 +17,18 @@ public class LOLControl {
 	/********** Controller methods ***********/
 
 	public static String executeUserInput(String userInput) {
-		if (getCommandType(userInput) == "COMMAND_ADD") {
+		if (getCommandType(userInput).equals(COMMAND_ADD)) {
 			return executeAdd(userInput);
 		}
 
-		if (getCommandType(userInput) == "COMMAND_DEL") {
+		if (getCommandType(userInput).equals(COMMAND_DEL)) {
 			return executeDel(userInput);
 		}
-		if (getCommandType(userInput) == "COMMAND_INVALID") {
+		if (getCommandType(userInput).equals(COMMAND_INVALID)) {
 			return executeInvalid(userInput);
 		}
+		
+		return "stub 2";
 	}
 
 	private static String getCommandType(String userInput) {
@@ -54,15 +56,17 @@ public class LOLControl {
 	}
 
 	private static String showFeedback(Task task, String commandType) {
-		if (commandType == COMMAND_ADD) {
+		if (commandType.equals(COMMAND_ADD)) {
 			return (QUOTE + task + QUOTE + FEEDBACK_ADD_SUCCESS);
 		}
-		if (commandType == COMMAND_DEL) {
+		if (commandType.equals(COMMAND_DEL)) {
 			return (QUOTE + task + QUOTE + FEEDBACK_DEL_SUCCESS);
 		}
-		if (commandType == COMMAND_INVALID) {
+		if (commandType.equals(COMMAND_INVALID)) {
 			return (FEEDBACK_INVALID);
 		}
+		
+		return "stub";
 	}
 
 }
