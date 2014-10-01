@@ -8,7 +8,7 @@ public class LOLControl {
 	public static final String COMMAND_INVALID = "invalid command";
 	public static final String FEEDBACK_ADD_SUCCESS = " added successfully";
 	public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully";
-	public static final String FEEDBACK_INVALID = "That is an invalid action";
+	public static final String FEEDBACK_INVALID = "That is an invalid action!";
 
 	/********** Load Storage ***********/
 
@@ -36,16 +36,24 @@ public class LOLControl {
 
 	public static String executeAdd(String userInput) {
 		Task newTask = LOLParser.getTask(userInput);
-		list.add(newTask);
+		
+		if (list.add(newTask)) {
 		LOLStorage.save();
 		return showFeedback(newTask, COMMAND_ADD);
+		}
+		else
+			return executeInvalid(userInput);
 	}
 
 	public static String executeDel(String userInput) {
 		Task delTask = LOLParser.getTask(userInput);
-		list.delete(delTask);
+		
+		if (list.delete(delTask)) {
 		LOLStorage.save();
 		return showFeedback(delTask, COMMAND_DEL);
+	}
+		else 
+			return executeInvalid(userInput);
 	}
 
 	public static String executeInvalid(String userInput) {
