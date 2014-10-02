@@ -1,6 +1,7 @@
 package lol;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -69,8 +70,14 @@ public class LOLGui {
 				feedbackDisplayTxtFld.setText(feedback);
 				
 				//this set the text of the main display text field
-				//mainDisplayTxtFld.setText();
+				TaskList list = LOLStorage.load();
 				
+				mainDisplayTxtFld.setText("");
+				
+				for(int i = 0 ; i < list.size(); i++)
+				{
+					mainDisplayTxtFld.append(list.get(i).toString() + "\n");
+				}
 				//this set the text of user input text field
 				inputTxtFld.setText("");
 				
