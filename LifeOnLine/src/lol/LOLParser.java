@@ -799,7 +799,7 @@ public class LOLParser {
 	 *            Input string
 	 * @return First word of input
 	 */
-	private static String getFirstWord(String input) {
+	public static String getFirstWord(String input) {
 		if (countWords(input) <= 1) {
 			return input;
 		} else {
@@ -816,7 +816,7 @@ public class LOLParser {
 	 *            Input string
 	 * @return Number of words in input string
 	 */
-	private static int countWords(String input) {
+	public static int countWords(String input) {
 		input = input.trim();
 
 		if (input.isEmpty()) { // Zero words
@@ -844,7 +844,7 @@ public class LOLParser {
 	 * @return true if word appears in dictionary, false otherwise
 	 */
 
-	private static boolean hasWordInDictionary(String[] dictionary, String word) {
+	public static boolean hasWordInDictionary(String[] dictionary, String word) {
 		for (int i = 0; i < dictionary.length; i++) {
 			if (dictionary[i].equalsIgnoreCase(word)) {
 				return true;
