@@ -33,10 +33,11 @@ public class DateParser {
 	 *            string to be checked
 	 * @return true if it matches any of the above formats, else false
 	 */
-	public static boolean isValidDate(String inDate) {
+	public boolean isValidDate(String inDate) {
 		inDate = inDate.trim();
 		List<SimpleDateFormat> dateFormats = new ArrayList<SimpleDateFormat>();
 
+		// Allowed date formats
 		dateFormats.add(new SimpleDateFormat("d/M/yyyy")); // 14/3/2014
 		dateFormats.add(new SimpleDateFormat("d/M/yy")); // 14/3/14
 		dateFormats.add(new SimpleDateFormat("d MMM yyyy")); // 14 Mar 2014
@@ -64,9 +65,13 @@ public class DateParser {
 	 * 
 	 * @param string
 	 *            String representing date in any of the allowed formats
-	 * @return Date object
+	 * @return Date object if string is a valid date, else null
 	 */
 	public Date createDate(String string) {
+		if (!isValidDate(string)) {
+			return null;
+		}
+
 		String[] dateSlash = string.split("/"); // separated by forward-slash
 		String[] dateSpace = string.split(" "); // separated by space
 
@@ -149,9 +154,9 @@ public class DateParser {
 	 * @param month
 	 *            month name in 3-letters short form (jan) or full name of the
 	 *            month (january) - not case-sensitive
-	 * @return index of month
+	 * @return index of month if month is valid, else -1
 	 */
-	public static int getMonthNum(String month) {
+	public int getMonthNum(String month) {
 		for (int i = 0; i < Constants.MONTHS_SHORT.length; i++) {
 			if (month.equalsIgnoreCase(Constants.MONTHS_SHORT[i])
 					|| month.equalsIgnoreCase(Constants.MONTHS_LONG[i])) {
@@ -168,9 +173,9 @@ public class DateParser {
 	 * @param string
 	 *            day name in 3-letters short form (mon) or full name of the day
 	 *            (monday) - not case-sensitive
-	 * @return index of day of the week
+	 * @return index of day of the week if valid, else -1
 	 */
-	public static int getDayOfTheWeekIndex(String string) {
+	public int getDayOfTheWeekIndex(String string) {
 		for (int i = 0; i < Constants.DAYS_SHORT.length; i++) {
 			if (string.equalsIgnoreCase(Constants.DAYS_SHORT[i])
 					|| string.equalsIgnoreCase(Constants.DAYS_LONG[i])) {
@@ -223,8 +228,9 @@ public class DateParser {
 	 * Returns a date which is a specified number of days after today
 	 * 
 	 * @param amount
-	 *            number of days after today
-	 * @return advanced date
+	 *            number of days after today, if negative then decrement
+	 * @return advanced date if amount is positive, earlier date if amount is
+	 *         negative
 	 */
 	public Date addDaysToToday(int amount) {
 		Calendar rightNow = Calendar.getInstance(); // Get the current date
@@ -235,7 +241,7 @@ public class DateParser {
 	}
 
 	/**
-	 * @return which day of the week (sun, mon ... sat) it is today
+	 * @return which day of the week (sunday, monday ... saturday) it is today
 	 */
 	public String getTodaysDayOfTheWeek() {
 		Calendar rightNow = Calendar.getInstance(); // Get the current date
