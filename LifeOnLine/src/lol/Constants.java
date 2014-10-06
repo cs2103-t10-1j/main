@@ -44,5 +44,9 @@ public class Constants {
 		// Array lengths
 		public static final int LENGTH_DAY_MONTH_YEAR = 3;
 		public static final int LENGTH_DAY_MONTH = 2;
+		
+		// am/pm
+		public static final String STRING_AM = "am";
+		public static final String STRING_PM = "pm";
 
 }
