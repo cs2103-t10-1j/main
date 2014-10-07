@@ -10,7 +10,7 @@ public class TimeParserTest {
 	public void testIs12hrTime() {
 		TimeParser tp = new TimeParser();
 		assertTrue(tp.is12hrTime("2pm"));
-		assertTrue(tp.is12hrTime("2.30am"));
+		assertTrue(tp.is12hrTime("2.30 am"));
 		assertFalse(tp.is12hrTime("19.20am"));
 	}
 
@@ -29,7 +29,7 @@ public class TimeParserTest {
 		assertTrue(tp.isTimeRange("11am-1pm"));
 		assertTrue(tp.isTimeRange("4-6pm"));
 		assertTrue(tp.isTimeRange("4pm-6pm"));
-		assertTrue(tp.isTimeRange("11 to 1pm"));
+		assertTrue(tp.isTimeRange("11  to 1pm"));
 		assertTrue(tp.isTimeRange("11am to 1pm"));
 		assertTrue(tp.isTimeRange("4 to 6pm"));
 		assertTrue(tp.isTimeRange("4pm to 6pm"));

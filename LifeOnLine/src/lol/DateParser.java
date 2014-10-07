@@ -104,8 +104,8 @@ public class DateParser {
 		// if the date has 2 parts
 		if (dateSpace.length == Constants.LENGTH_DAY_MONTH) {
 			// get number of month e.g 1 for jan
-			int monthNum = getMonthNum(dateSpace[LOLParser.INDEX_MONTH]);
-			return new Date(Integer.parseInt(dateSpace[LOLParser.INDEX_DAY]),
+			int monthNum = getMonthNum(dateSpace[Constants.INDEX_MONTH]);
+			return new Date(Integer.parseInt(dateSpace[Constants.INDEX_DAY]),
 					monthNum);
 		}
 
