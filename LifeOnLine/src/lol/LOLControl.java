@@ -3,9 +3,6 @@ package lol;
 public class LOLControl {
 
 	public static final String QUOTE = "\"";
-	public static final String COMMAND_ADD = "add";
-	public static final String COMMAND_DEL = "delete";
-	public static final String COMMAND_INVALID = "invalid command";
 	public static final String FEEDBACK_ADD_SUCCESS = " added successfully";
 	public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully";
 	public static final String FEEDBACK_INVALID = "That is an invalid action!";
@@ -17,11 +14,11 @@ public class LOLControl {
 	/********** Controller methods ***********/
 
 	public static String executeUserInput(String userInput) {
-		if (getCommandType(userInput).equals(COMMAND_ADD)) {
+		if (getCommandType(userInput).equals(Constants.COMMAND_ADD)) {
 			return executeAdd(userInput);
 		}
 
-		if (getCommandType(userInput).equals(COMMAND_DEL)) {
+		if (getCommandType(userInput).equals(Constants.COMMAND_DELETE)) {
 			return executeDel(userInput);
 		}
 		else {
@@ -39,7 +36,7 @@ public class LOLControl {
 		
 		if (list.add(newTask)) {
 		LOLStorage.save();
-		return showFeedback(newTask, COMMAND_ADD);
+		return showFeedback(newTask, Constants.COMMAND_ADD);
 		}
 		else
 			return executeInvalid(userInput);
@@ -50,7 +47,7 @@ public class LOLControl {
 		
 		if (list.delete(delTask)) {
 		LOLStorage.save();
-		return showFeedback(delTask, COMMAND_DEL);
+		return showFeedback(delTask, Constants.COMMAND_DELETE);
 	}
 		else 
 			return executeInvalid(userInput);
@@ -58,14 +55,14 @@ public class LOLControl {
 
 	public static String executeInvalid(String userInput) {
 		Task invalidTask = LOLParser.getTask(userInput);
-		return showFeedback(invalidTask, COMMAND_INVALID);
+		return showFeedback(invalidTask, Constants.COMMAND_INVALID);
 	}
 
 	public static String showFeedback(Task task, String commandType) {
-		if (commandType.equals(COMMAND_ADD)) {
+		if (commandType.equals(Constants.COMMAND_ADD)) {
 			return (QUOTE + task + QUOTE + FEEDBACK_ADD_SUCCESS);
 		}
-		if (commandType.equals(COMMAND_DEL)) {
+		if (commandType.equals(Constants.COMMAND_DELETE)) {
 			return (QUOTE + task + QUOTE + FEEDBACK_DEL_SUCCESS);
 		}
 		else
