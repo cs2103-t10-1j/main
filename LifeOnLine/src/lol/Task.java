@@ -6,12 +6,14 @@ public class Task implements Comparable<Task>{
 	private String description;
 	private String location;
 	private Date dueDate;
+	private boolean isDone;
 
 	/************ Constructors *************/
 	public Task(String description, String location, Date dueDate) {
 		setDescription(description);
 		setLocation(location);
 		setDueDate(dueDate);
+		setIsDone(false);
 	}
 
 	/************ Accessors *************/
@@ -26,6 +28,10 @@ public class Task implements Comparable<Task>{
 	public Date getTaskDueDate() {
 		return dueDate;
 	}
+	
+	public boolean getIsDone() {
+		return isDone;
+	}
 
 	/************ Mutators *************/
 	public void setDescription(String description) {
@@ -38,6 +44,10 @@ public class Task implements Comparable<Task>{
 
 	public void setDueDate(Date date) {
 		this.dueDate = date;
+	}
+	
+	public void setIsDone(boolean isDone) {
+		this.isDone = isDone;
 	}
 
 	/********** Overriding methods ***********/
