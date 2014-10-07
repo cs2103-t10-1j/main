@@ -10,51 +10,7 @@ package lol;
 
 
 public class LOLParser {
-
-	// Separator
-	public static final String SEPARATOR = "\\\\";
-
-	// Dictionaries
-	public static final String[] DICTIONARY_ADD = { "add" };
-	public static final String[] DICTIONARY_DELETE = { "delete" };
-	public static final String[] DICTIONARY_SHOW = { "show" };
-	public static final String[] DICTIONARY_EDIT = { "edit" };
-	public static final String[] DICTIONARY_DONE = { "done" };
-	public static final String[] DICTIONARY_EXIT = { "exit" };
-
-	// Months
-	public static final String[] MONTHS_SHORT = { "jan", "feb", "mar", "apr",
-			"may", "jun", "jul", "aug", "sep", "oct", "nov", "dec" };
-	public static final String[] MONTHS_LONG = { "january", "february",
-			"march", "april", "may", "june", "july", "august", "september",
-			"october", "november", "december" };
-
-	// Days of the week
-	public static final String[] DAYS_SHORT = { "sun", "mon", "tue", "wed",
-			"thu", "fri", "sat" };
-	public static final String[] DAYS_LONG = { "sunday", "monday", "tuesday",
-			"wednesday", "thursday", "friday", "saturday" };
-	public static final String[] DAYS_IMMEDIATE = { "today", "tomorrow", "tmw" };
-
-	// Commands
-	public static final String COMMAND_ADD = "add";
-	public static final String COMMAND_DELETE = "delete";
-	public static final String COMMAND_SHOW = "show";
-	public static final String COMMAND_EDIT = "edit";
-	public static final String COMMAND_DONE = "done";
-	public static final String COMMAND_EXIT = "exit";
-	public static final String COMMAND_INVALID = "invalid command";
-
-	// Array indices
-	public static final int INDEX_DAY = 0;
-	public static final int INDEX_TODAY = 0;
-	public static final int INDEX_MONTH = 1;
-	public static final int INDEX_YEAR = 2;
-
-	// Array lengths
-	public static final int LENGTH_DAY_MONTH_YEAR = 3;
-	public static final int LENGTH_DAY_MONTH = 2;
-
+	
 	/*********** Methods to return task details ***************/
 
 	/**
@@ -68,106 +24,21 @@ public class LOLParser {
 	public static String getCommandName(String input) {
 		String command = getFirstWord(input);
 
-		if (hasWordInDictionary(DICTIONARY_ADD, command)) {
-			return COMMAND_ADD;
-		} else if (hasWordInDictionary(DICTIONARY_DELETE, command)) {
-			return COMMAND_DELETE;
-		} else if (hasWordInDictionary(DICTIONARY_SHOW, command)) {
-			return COMMAND_SHOW;
-		} else if (hasWordInDictionary(DICTIONARY_EDIT, command)) {
-			return COMMAND_EDIT;
-		} else if (hasWordInDictionary(DICTIONARY_DONE, command)) {
-			return COMMAND_DONE;
-		} else if (hasWordInDictionary(DICTIONARY_EXIT, command)) {
-			return COMMAND_EXIT;
+		if (hasWordInDictionary(Constants.DICTIONARY_ADD, command)) {
+			return Constants.COMMAND_ADD;
+		} else if (hasWordInDictionary(Constants.DICTIONARY_DELETE, command)) {
+			return Constants.COMMAND_DELETE;
+		} else if (hasWordInDictionary(Constants.DICTIONARY_SHOW, command)) {
+			return Constants.COMMAND_SHOW;
+		} else if (hasWordInDictionary(Constants.DICTIONARY_EDIT, command)) {
+			return Constants.COMMAND_EDIT;
+		} else if (hasWordInDictionary(Constants.DICTIONARY_DONE, command)) {
+			return Constants.COMMAND_DONE;
+		} else if (hasWordInDictionary(Constants.DICTIONARY_EXIT, command)) {
+			return Constants.COMMAND_EXIT;
 		} else {
-			return COMMAND_INVALID;
+			return Constants.COMMAND_INVALID;
 		}
-	}
-
-	/**
-	 * Returns description of task for add command. Example: for input "add attend meeting \
-	 * meeting room 3 \ 16 Oct \ 2pm" returns "attend meeting". Precondition: Task
-	 * has a description
-	 * 
-	 * @param input
-	 *            user input
-	 * @return task description
-	 */
-	public static String getDescription(String input) {
-		String details = removeFirstWord(input); // remove command
-		return details.split(SEPARATOR)[0];
-	}
-
-	/**
-	 * Returns location of task for add command. Example: for input " add attend meeting \
-	 * meeting room 3 \ 16 Oct \ 2pm" returns "meeting room 3"
-	 * 
-	 * @param input
-	 *            user input
-	 * @return location of task if it exists, else null
-	 */
-	public static String getLocation(String input) {
-		String details = removeFirstWord(input); // remove command
-		String[] detailsArray = details.split(SEPARATOR);
-		DateParser dp = new DateParser();
-
-		// 1st element is the description
-		// If only 1 element or 2nd element is due date then no location
-		if (detailsArray.length < 2 || dp.isValidDate(detailsArray[1])
-				|| dp.isValidDay(detailsArray[1])) {
-			return null;
-		} else {
-			return detailsArray[1];
-		}
-	}
-
-	/**
-	 * Returns due date of task as a date object for add command.
-	 * 
-	 * @param input
-	 *            user input
-	 * @return due date if it exists, else null
-	 */
-	public static Date getDueDate(String input) {
-		String details = removeFirstWord(input); // remove command
-		String[] detailsArray = details.split(SEPARATOR);
-		DateParser dp = new DateParser();
-
-		// 1st element is the description
-		// Check from 2nd element onwards
-		for (int i = 1; i < detailsArray.length; i++) {
-			if (dp.isValidDate(detailsArray[i]) || dp.isValidDay(detailsArray[i])) {
-				return dp.createDate(detailsArray[i]);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns start time of task as a time object for add command.
-	 * 
-	 * @param input
-	 *            user input
-	 * @return start time if it exists, else null
-	 */
-	public static Time getStartTime(String input) {
-		String details = removeFirstWord(input); // remove command
-		String[] detailsArray = details.split(SEPARATOR);
-		TimeParser tp = new TimeParser();
-
-		// 1st element is the description
-		// Check from 2nd element onwards
-		for (int i = 1; i < detailsArray.length; i++) {
-			if (tp.is12hrTime(detailsArray[i])) {
-				return tp.create12hrTime(detailsArray[i]);
-			} else if (tp.is24hrTime(detailsArray[i])) {
-				return new Time(detailsArray[i]);
-			} else if (tp.isTimeRange(detailsArray[i])) {
-				return tp.createStartTimeFromRange(detailsArray[i]);
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -196,6 +67,103 @@ public class LOLParser {
 			return -1;
 		}
 	}
+	
+	/**
+	 * Returns a Task object with details given in the parameter for edit command
+	 * 
+	 * @param input
+	 *            user input
+	 * @return Task added
+	 */
+	public static Task getEditTask(String input) {
+		return getTask(removeFirstWord(input));
+	}
+	
+	/**
+	 * Returns description of task for add command. Example: for input "add attend meeting \
+	 * meeting room 3 \ 16 Oct \ 2pm" returns "attend meeting". Precondition: Task
+	 * has a description
+	 * 
+	 * @param input
+	 *            user input
+	 * @return task description
+	 */
+	public static String getDescription(String input) {
+		String details = removeFirstWord(input); // remove command
+		return details.split(Constants.SEPARATOR)[0];
+	}
+
+	/**
+	 * Returns location of task for add command. Example: for input " add attend meeting \
+	 * meeting room 3 \ 16 Oct \ 2pm" returns "meeting room 3"
+	 * 
+	 * @param input
+	 *            user input
+	 * @return location of task if it exists, else null
+	 */
+	public static String getLocation(String input) {
+		String details = removeFirstWord(input); // remove command
+		String[] detailsArray = details.split(Constants.SEPARATOR);
+		DateParser dp = new DateParser();
+
+		// 1st element is the description
+		// If only 1 element or 2nd element is due date then no location
+		if (detailsArray.length < 2 || dp.isValidDate(detailsArray[1])
+				|| dp.isValidDay(detailsArray[1])) {
+			return null;
+		} else {
+			return detailsArray[1];
+		}
+	}
+
+	/**
+	 * Returns due date of task as a date object for add command.
+	 * 
+	 * @param input
+	 *            user input
+	 * @return due date if it exists, else null
+	 */
+	public static Date getDueDate(String input) {
+		String details = removeFirstWord(input); // remove command
+		String[] detailsArray = details.split(Constants.SEPARATOR);
+		DateParser dp = new DateParser();
+
+		// 1st element is the description
+		// Check from 2nd element onwards
+		for (int i = 1; i < detailsArray.length; i++) {
+			if (dp.isValidDate(detailsArray[i]) || dp.isValidDay(detailsArray[i])) {
+				return dp.createDate(detailsArray[i]);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns start time of task as a time object for add command.
+	 * 
+	 * @param input
+	 *            user input
+	 * @return start time if it exists, else null
+	 */
+	public static Time getStartTime(String input) {
+		String details = removeFirstWord(input); // remove command
+		String[] detailsArray = details.split(Constants.SEPARATOR);
+		TimeParser tp = new TimeParser();
+
+		// 1st element is the description
+		// Check from 2nd element onwards
+		for (int i = 1; i < detailsArray.length; i++) {
+			if (tp.is12hrTime(detailsArray[i])) {
+				return tp.create12hrTime(detailsArray[i]);
+			} else if (tp.is24hrTime(detailsArray[i])) {
+				return new Time(detailsArray[i]);
+			} else if (tp.isTimeRange(detailsArray[i])) {
+				return tp.createStartTimeFromRange(detailsArray[i]);
+			}
+		}
+		return null;
+	}
+
 	
 	/**
 	 * Returns description of task for edit command. Precondition: Task
@@ -231,18 +199,6 @@ public class LOLParser {
 		return getDueDate(removeFirstWord(input));
 	}
 	
-	/**
-	 * Returns a Task object with details given in the parameter for edit command
-	 * 
-	 * @param input
-	 *            user input
-	 * @return Task added
-	 */
-	public static Task getEditTask(String input) {
-		return getTask(removeFirstWord(input));
-	}
-	
-
 	/**
 	 * Remove the first word of the input and returns the resulting string
 	 * 
