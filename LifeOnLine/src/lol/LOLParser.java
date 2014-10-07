@@ -50,7 +50,7 @@ public class LOLParser {
 	 */
 	public static Task getTask(String input) {
 		return new Task(getDescription(input), getLocation(input),
-				getDueDate(input));
+				getDueDate(input), getStartTime(input), getEndTime(input));
 	}
 	
 	/**
@@ -105,11 +105,12 @@ public class LOLParser {
 		String details = removeFirstWord(input); // remove command
 		String[] detailsArray = details.split(Constants.SEPARATOR);
 		DateParser dp = new DateParser();
+		TimeParser tp = new TimeParser();
 
 		// 1st element is the description
 		// If only 1 element or 2nd element is due date then no location
 		if (detailsArray.length < 2 || dp.isValidDate(detailsArray[1])
-				|| dp.isValidDay(detailsArray[1])) {
+				|| dp.isValidDay(detailsArray[1]) || tp.is12hrTime(detailsArray[1]) || tp.is24hrTime(detailsArray[1]) || tp.isTimeRange(detailsArray[1])) {
 			return null;
 		} else {
 			return detailsArray[1];
@@ -134,6 +135,10 @@ public class LOLParser {
 			if (dp.isValidDate(detailsArray[i]) || dp.isValidDay(detailsArray[i])) {
 				return dp.createDate(detailsArray[i]);
 			}
+		}
+		
+		if (getStartTime(input) != null) {
+			return dp.getTodaysDate();
 		}
 		return null;
 	}
@@ -164,6 +169,27 @@ public class LOLParser {
 		return null;
 	}
 
+	/**
+	 * Returns end time of task as a time object for add command.
+	 * 
+	 * @param input
+	 *            user input
+	 * @return end time if it exists, else null
+	 */
+	public static Time getEndTime(String input) {
+		String details = removeFirstWord(input); // remove command
+		String[] detailsArray = details.split(Constants.SEPARATOR);
+		TimeParser tp = new TimeParser();
+
+		// 1st element is the description
+		// Check from 2nd element onwards
+		for (int i = 1; i < detailsArray.length; i++) {
+			if (tp.isTimeRange(detailsArray[i])) {
+				return tp.createEndTimeFromRange(detailsArray[i]);
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * Returns description of task for edit command. Precondition: Task

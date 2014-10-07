@@ -43,8 +43,10 @@ public class LOLParserTest {
 				LOLParser.getDueDate("add buy milk\\supermarket\\14 sep"));
 
 		// date dependent
-		assertEquals(new Date(7, 10),
-				LOLParser.getDueDate("add buy milk\\supermarket\\tue"));
+		assertEquals(new Date(15, 10),
+				LOLParser.getDueDate("add buy milk\\supermarket\\wed"));
+		assertEquals(new Date(8, 10),
+				LOLParser.getDueDate("add buy milk\\supermarket\\11.50pm"));
 		assertEquals(new Date(1, 1, 15),
 				LOLParser.getDueDate("add new year party\\grand hotel\\1/1/15"));
 	}
@@ -55,6 +57,8 @@ public class LOLParserTest {
 				LOLParser.getTask("add buy milk\\14 sep"));
 		assertEquals(new Task("buy milk", null, null),
 				LOLParser.getTask("add buy milk"));
+		assertEquals(new Task("buy bread", null, new Date(8, 10), new Time(11, 30, "pm"), null),
+				LOLParser.getTask("add buy bread\\11.30pm"));
 	}
 
 	@Test
@@ -86,7 +90,7 @@ public class LOLParserTest {
 	@Test
 	public void testGetEditDueDate() {
 		// date dependent
-		assertEquals(new Date(4,10),
+		assertEquals(new Date(11,10),
 				LOLParser.getEditDueDate("edit 6 send letter\\sat"));
 		assertEquals(
 				new Date(19, 7),
@@ -97,11 +101,25 @@ public class LOLParserTest {
 	@Test
 	public void testGetEditTask() {
 		// date dependent
-		assertEquals(new Task("send letter", null, new Date(4, 10)),
+		assertEquals(new Task("send letter", null, new Date(11, 10)),
 				LOLParser.getEditTask("edit 6 send letter\\sat"));
 		assertEquals(new Task("send letter", "post office", new Date(29, 7)),
 				LOLParser
 						.getEditTask("edit 6 send letter\\post office\\29 jul"));
+	}
+	
+	@Test
+	public void testGetStartTime() {
+		assertEquals(new Time(2, 20, "am"), LOLParser.getStartTime("add send letter\\3 nov\\2.20am"));
+		assertEquals(new Time(2, 20, "am"), LOLParser.getStartTime("add send letter\\post office\\3 nov\\2.20-3am"));
+		assertEquals(new Time(2, 20, "am"), LOLParser.getStartTime("add send letter\\2.20am"));
+	}
+	
+	@Test
+	public void testGetEndTime() {
+		assertEquals(new Time(2, 20, "am"), LOLParser.getEndTime("add send letter\\3 nov\\2-2.20am"));
+		assertEquals(new Time("0300"), LOLParser.getEndTime("add send letter\\post office\\3 nov\\2.20 to 3am"));
+		assertEquals(new Time(4, 5, "am"), LOLParser.getEndTime("add send letter\\2.20am to 4.05 am"));
 	}
 	
 }

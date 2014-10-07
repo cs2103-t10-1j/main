@@ -68,7 +68,7 @@ public class DateParser {
 	 * @return Date object if string is a valid date, else null
 	 */
 	public Date createDate(String string) {
-		if (!isValidDate(string)) {
+		if (!isValidDate(string) && !isValidDay(string)) {
 			return null;
 		}
 
