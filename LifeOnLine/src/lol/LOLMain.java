@@ -4,6 +4,10 @@ public class LOLMain {
 	private static String feedback;
 	private static String showToUser;
 	
+	public static void main(String[] args){
+		new LOLGui();
+	}
+	
 	public static void passStringToControl(String userInput){
 		feedback = LOLControl.executeUserInput(userInput);
 	}
