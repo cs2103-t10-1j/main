@@ -3,18 +3,18 @@ package lol;
 public class CommandLine {
 
 	private String commandType;
-	String command;
+	private Task object;
 	
-	public CommandLine(String commandType, String command){
+	public CommandLine(String commandType, Task ob){
 	this.commandType = commandType;
-	this.command = command;
+	this.object = ob;
 	}
 	
 	public String getCommandType (){
 		return commandType;
 	}
 	
-	public String getCommand(){
-		return command;
+	public Task getTask(){
+		return object;
 	}
 }
