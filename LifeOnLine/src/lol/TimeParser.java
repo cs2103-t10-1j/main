@@ -184,110 +184,139 @@ public class TimeParser {
 	 */
 	public Time create12hrTime(String string) {
 		string = string.trim();
+		if (!is12hrTime(string)) {
+			return null;
+		}
 
-		String ampm = string.substring(string.length() - 2);
-		String hourMin = string.substring(0, string.length() - 2); // 1.30 or 1
-		String[] splitHourMin = hourMin.split("\\.");
+		try {
+			String ampm = string.substring(string.length()
+					- Constants.LENGTH_AM_PM);
+			String hourMin = string.substring(Constants.INDEX_BEGIN,
+					string.length() - Constants.LENGTH_AM_PM).trim(); // 1.30 or
+																		// 1
+			String[] splitHourMin = hourMin.split(Constants.SEPARATOR_DOT);
 
-		if (splitHourMin.length == 1) {
-			return new Time(Integer.parseInt(splitHourMin[0]), ampm);
-		} else if (splitHourMin.length == 2) {
-			return new Time(Integer.parseInt(splitHourMin[0]),
-					Integer.parseInt(splitHourMin[1]), ampm);
+			if (splitHourMin.length == Constants.LENGTH_HOUR) {
+				return new Time(
+						Integer.parseInt(splitHourMin[Constants.INDEX_HOUR]),
+						ampm);
+			} else if (splitHourMin.length == Constants.LENGTH_HOUR_MINUTE) {
+				return new Time(
+						Integer.parseInt(splitHourMin[Constants.INDEX_HOUR]),
+						Integer.parseInt(splitHourMin[Constants.INDEX_MINUTE]),
+						ampm);
+			}
+		} catch (Exception e) {
+			return null;
 		}
 		return null;
 	}
 
 	/**
 	 * Given a string that represents a time range, creates a Time object of
-	 * start time Precondition: valid time range format is passed as a parameter
+	 * start time
 	 * 
 	 * @param string
 	 *            time range in the following formats: 11am to 1 pm, 4pm to 6pm,
 	 *            11 to 1pm, 4 to 6pm, 11am-1pm, 4pm-6pm, 11-1pm, 4-6pm
-	 * @return start time as a Time object
+	 * @return start time as a Time object, null if invalid format
 	 */
 	public Time createStartTimeFromRange(String string) {
 		string = string.trim();
+		String[] times = {};
 
-		if (string.contains(" to ")) {
-			String[] times = string.split(" to ");
+		try {
+			if (!isTimeRange(string)) {
+				return null;
+			}
+			if (string.contains(Constants.SEPARATOR_TO)) {
+				times = string.split(Constants.SEPARATOR_TO);
+			} else if (string.contains(Constants.SEPARATOR_DASH)) {
+				times = string.split(Constants.SEPARATOR_DASH);
+			} else {
+				return null;
+			}
 
 			// 11am to 1pm, 4pm to 6pm
-			if (is12hrTime(times[0].trim()) && is12hrTime(times[1].trim())) {
-				return create12hrTime(times[0]);
+			if (is12hrTime(times[Constants.INDEX_START_TIME].trim())
+					&& is12hrTime(times[Constants.INDEX_END_TIME].trim())) {
+				return create12hrTime(times[Constants.INDEX_START_TIME]);
 			}
 
 			// 11 to 1pm, 4 to 6pm
-			if (isTimeWithoutAmpm(times[0].trim())
-					&& is12hrTime(times[1].trim())) {
+			if (isTimeWithoutAmpm(times[Constants.INDEX_START_TIME].trim())
+					&& is12hrTime(times[Constants.INDEX_END_TIME].trim())) {
 
-				String ampm = times[1].substring(times[1].length() - 2); // suffix
-																			// of
-																			// end
-																			// time
+				times[Constants.INDEX_END_TIME] = times[Constants.INDEX_END_TIME]
+						.trim();
+				String ampm = times[Constants.INDEX_END_TIME].substring(
+						times[Constants.INDEX_END_TIME].length()
+								- Constants.LENGTH_AM_PM).trim(); // suffix of
+																	// end time
 
-				// start time
-				String[] splitHourMin = times[0].split("\\.");
-				for (int i = 0; i < splitHourMin.length; i++) {
-					splitHourMin[i] = splitHourMin[i].trim();
+				String startTimeWithoutAmpm = times[Constants.INDEX_START_TIME]
+						.trim();
+				times[Constants.INDEX_END_TIME] = times[Constants.INDEX_END_TIME]
+						.trim();
+				String endTimeWithoutAmpm = times[Constants.INDEX_END_TIME]
+						.substring(0, times[Constants.INDEX_END_TIME].length()
+								- Constants.LENGTH_AM_PM);
+
+				if (Float.parseFloat(startTimeWithoutAmpm) >= Float
+						.parseFloat(endTimeWithoutAmpm)) {
+					ampm = toggleAmPm(ampm);
 				}
-
-				if (splitHourMin.length == 1) {
-					if (Integer.parseInt(splitHourMin[0]) > Integer
-							.parseInt(times[1].substring(0,
-									times[1].length() - 2).split("\\.")[0])) {
-						if (ampm.equals(Constants.STRING_AM)) {
-							ampm = Constants.STRING_PM;
-						}
-					}
-					return new Time(Integer.parseInt(splitHourMin[0]), ampm);
-				} else if (splitHourMin.length == 2) {
-					return new Time(Integer.parseInt(splitHourMin[0]),
-							Integer.parseInt(splitHourMin[1].trim()), ampm);
-				}
+				return create12hrTime(startTimeWithoutAmpm + ampm);
 			}
+			return null;
+		} catch (Exception e) {
+			return null;
 		}
-
-		if (string.contains("-")) {
-			String[] times = string.split("-");
-
-			// 11am-1pm, 4pm-6pm
-			if (is12hrTime(times[0].trim()) && is12hrTime(times[1].trim())) {
-				return create12hrTime(times[0]);
-			}
-
-			// 11-1pm, 4-6pm
-			if (isTimeWithoutAmpm(times[0].trim())
-					&& is12hrTime(times[1].trim())) {
-
-				String ampm = times[1].substring(times[1].length() - 2); // suffix
-																			// of
-																			// end
-																			// time
-
-				// start time
-				String[] splitHourMin = times[0].split("\\.");
-				for (int i = 0; i < splitHourMin.length; i++) {
-					splitHourMin[i] = splitHourMin[i].trim();
-				}
-
-				if (splitHourMin.length == 1) {
-					if (Integer.parseInt(splitHourMin[0]) > Integer
-							.parseInt(times[1].substring(0,
-									times[1].length() - 2).split("\\.")[0])) {
-						if (ampm.equals(Constants.STRING_AM)) {
-							ampm = Constants.STRING_PM;
-						}
-					}
-					return new Time(Integer.parseInt(splitHourMin[0]), ampm);
-				} else if (splitHourMin.length == 2) {
-					return new Time(Integer.parseInt(splitHourMin[0]),
-							Integer.parseInt(splitHourMin[1].trim()), ampm);
-				}
-			}
-		}
-		return null;
 	}
 
+	/**
+	 * Given a string that represents a time range, creates a Time object of end
+	 * time
+	 * 
+	 * @param string
+	 *            time range in the following formats: 11am to 1 pm, 4pm to 6pm,
+	 *            11 to 1pm, 4 to 6pm, 11am-1pm, 4pm-6pm, 11-1pm, 4-6pm
+	 * @return end time as a Time object, null if invalid format
+	 */
+	public Time createEndTimeFromRange(String string) {
+		string = string.trim();
+		String[] times = {};
+
+		try {
+			if (!isTimeRange(string)) {
+				return null;
+			}
+			if (string.contains(Constants.SEPARATOR_TO)) {
+				times = string.split(Constants.SEPARATOR_TO);
+			} else if (string.contains(Constants.SEPARATOR_DASH)) {
+				times = string.split(Constants.SEPARATOR_DASH);
+			} else {
+				return null;
+			}
+			return create12hrTime(times[Constants.INDEX_END_TIME]);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Returns the opposite am/pm value of the parameter. If input is "am", it
+	 * returns "pm" and vice-versa.
+	 * 
+	 * @param ampm
+	 *            "am" or "pm"
+	 * @return opposite value
+	 */
+	public String toggleAmPm(String ampm) {
+		if (ampm.equalsIgnoreCase(Constants.STRING_AM)) {
+			return Constants.STRING_PM;
+		} else {
+			return Constants.STRING_AM;
+		}
+	}
 }
