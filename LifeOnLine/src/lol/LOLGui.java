@@ -10,7 +10,6 @@ public class LOLGui {
 		//line 10 to 46 create LOL's GUI
 		JFrame frame = new JFrame("LOL - Life On Line");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new BorderLayout());
 		
 		JPanel displayPanel = new JPanel(); 
 		displayPanel.setLayout(new BorderLayout());
@@ -22,27 +21,31 @@ public class LOLGui {
 		JPanel feedbackAndInputPanel = new JPanel();
 		feedbackAndInputPanel.setLayout(new GridLayout(2,1));
 		
-		final JTextArea mainDisplayTxtFld = new JTextArea(5, 20);
+		final JTextArea mainDisplayTxtFld = new JTextArea(10, 20);
 		mainDisplayTxtFld.setEditable(false);
 		mainDisplayTxtFld.setText("Welcome to LOL!");
 		JScrollPane scrollPane = new JScrollPane(mainDisplayTxtFld);
 		displayPanel.add(scrollPane, BorderLayout.CENTER);
 		
-		feedbackPanel.add("West", new JLabel("Feedback: "));
+		feedbackPanel.add(new JLabel("Feedback: "));
 		
-		final JTextField feedbackDisplayTxtFld = new JTextField();
+		final JTextArea feedbackDisplayTxtFld = new JTextArea(2, 28);
 		feedbackDisplayTxtFld.setEditable(false);
 		feedbackDisplayTxtFld.setText("Feedback will be displayed here.");
-		feedbackPanel.add("Center", feedbackDisplayTxtFld);
+		feedbackDisplayTxtFld.setLineWrap(true);
+		feedbackDisplayTxtFld.setBorder(BorderFactory.createLineBorder(Color.gray));
+		feedbackPanel.add(feedbackDisplayTxtFld);
 		
-		final JTextField inputTxtFld = new JTextField(25);
+		final JTextField inputTxtFld = new JTextField(35);
 		inputPanel.add("South", inputTxtFld);
 		
 		feedbackAndInputPanel.add(feedbackPanel);
 		feedbackAndInputPanel.add(inputPanel);
 		
-		frame.add(displayPanel, BorderLayout.CENTER);
-		frame.add(feedbackAndInputPanel, BorderLayout.SOUTH);
+		Container contentPane = frame.getContentPane();
+		contentPane.setLayout(new BorderLayout());
+		contentPane.add(displayPanel, BorderLayout.CENTER);
+		contentPane.add(feedbackAndInputPanel, BorderLayout.SOUTH);
 		
 		frame.pack();
 		frame.setVisible(true);
@@ -52,10 +55,6 @@ public class LOLGui {
 		inputTxtFld.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg){
-				/*
-				 * Below is just an example of what will happen when user presses enter after 
-				 * typing something in the user input text field at the bottom of the GUI.
-				 */
 				String inputStr = inputTxtFld.getText(); //this is to get the user input text
 				String displayStr = mainDisplayTxtFld.getText();
 				
@@ -80,7 +79,6 @@ public class LOLGui {
 				}
 				//this set the text of user input text field
 				inputTxtFld.setText("");
-				
 			}
 		});
 	}
