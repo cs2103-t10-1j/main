@@ -8,6 +8,11 @@ public class LOLControl {
 
 	/********** Controller methods ***********/
 
+
+	public static TaskList<Task> getTaskList() {
+		return list;
+	}
+	
 	public static String executeUserInput(String userInput) {
 		if (getCommandType(userInput).equals(Constants.COMMAND_ADD)) {
 			return executeAdd(userInput);
