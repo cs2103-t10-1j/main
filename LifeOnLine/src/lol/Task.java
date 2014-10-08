@@ -6,6 +6,8 @@ public class Task implements Comparable<Task>{
 	private String description;
 	private String location;
 	private Date dueDate;
+	private Time startTime;
+	private Time endTime;
 	private boolean isDone;
 
 	/************ Constructors *************/
@@ -13,6 +15,17 @@ public class Task implements Comparable<Task>{
 		setDescription(description);
 		setLocation(location);
 		setDueDate(dueDate);
+		setStartTime(null);
+		setEndTime(null);
+		setIsDone(false);
+	}
+	
+	public Task(String description, String location, Date dueDate, Time startTime, Time endTime) {
+		setDescription(description);
+		setLocation(location);
+		setDueDate(dueDate);
+		setStartTime(startTime);
+		setEndTime(endTime);
 		setIsDone(false);
 	}
 
@@ -27,6 +40,14 @@ public class Task implements Comparable<Task>{
 
 	public Date getTaskDueDate() {
 		return dueDate;
+	}
+	
+	public Time getStartTime() {
+		return startTime;
+	}
+	
+	public Time getEndTime() {
+		return endTime;
 	}
 	
 	public boolean getIsDone() {
@@ -46,6 +67,14 @@ public class Task implements Comparable<Task>{
 		this.dueDate = date;
 	}
 	
+	public void setStartTime(Time startTime) {
+		this.startTime = startTime;
+	}
+	
+	public void setEndTime(Time endTime) {
+		this.endTime = endTime;
+	}
+
 	public void setIsDone(boolean isDone) {
 		this.isDone = isDone;
 	}
@@ -59,18 +88,33 @@ public class Task implements Comparable<Task>{
 		if (obj instanceof Task) {
 			Task other = (Task) obj;
 			boolean isDateSame = false;
+			boolean isStartTimeSame = false;
+			boolean isEndTimeSame = false;
 			boolean isDescSame = false;
 			boolean isLocationSame = false;
+
+			if ((other.getStartTime() == null && this.getStartTime() == null) || (other.getStartTime().equals(this.getStartTime()))) {
+				isStartTimeSame = true;
+			}
+			
+			if ((other.getEndTime() == null && this.getEndTime() == null) || (other.getEndTime().equals(this.getEndTime()))) {
+				isEndTimeSame = true;
+			}
+			
 			if ((other.getTaskDueDate() == null && this.getTaskDueDate() == null) || (other.getTaskDueDate().equals(this.getTaskDueDate()))) {
 				isDateSame = true;
 			}
-			if (other.getTaskDescription().equals(this.getTaskDescription())) {
-				isDescSame = true;
-			}
+
 			if ((other.getTaskLocation() == null && this.getTaskLocation() == null) || (other.getTaskLocation().equals(this.getTaskLocation()))) {
 				isLocationSame = true;
 			}
-			return isDateSame && isDescSame && isLocationSame;
+			
+			if (other.getTaskDescription().equals(this.getTaskDescription())) {
+				isDescSame = true;
+			}
+			
+			
+			return isDateSame && isDescSame && isLocationSame && isStartTimeSame && isEndTimeSame;
 		} else {
 			return false;
 		}
@@ -80,8 +124,23 @@ public class Task implements Comparable<Task>{
 		final int BEFORE = -1;
 		final int EQUAL = 0;
 		final int AFTER = 1;
-
-		if (this.isBefore(that)) {
+		
+		// Task with date will be higher priority than tasks without date
+		if ((that.getTaskDueDate() == null) && (this.getTaskDueDate() != null)) {
+			return BEFORE;
+		}
+		
+		// Task without date will be lower priority than tasks with date
+		else if ((this.getTaskDueDate() == null) && (that.getTaskDueDate() != null)) {
+			return AFTER;
+		}
+		
+		// If all are tasks without date order in which user entered 
+		else if ((this.getTaskDueDate() == null) && (that.getTaskDueDate() == null)) {
+			return AFTER;
+		}
+		
+		else if (this.isBefore(that)) {
 			return BEFORE;
 		}
 
@@ -95,10 +154,10 @@ public class Task implements Comparable<Task>{
 
 	/********** Comparison methods ***********/
 	public boolean isBefore(Task other) {
-		return this.getTaskDueDate().isBefore(other.getTaskDueDate());
+		return this.getTaskDueDate().isBefore(other.getTaskDueDate()) || (this.getTaskDueDate().equals(other.getTaskDueDate()) && (this.getStartTime().isBefore(other.getStartTime())));
 	}
 
 	public boolean isAfter(Task other) {
-		return this.getTaskDueDate().isAfter(other.getTaskDueDate());
+		return this.getTaskDueDate().isAfter(other.getTaskDueDate()) || (this.getTaskDueDate().equals(other.getTaskDueDate()) && (this.getStartTime().isAfter(other.getStartTime())));
 	}
 }
