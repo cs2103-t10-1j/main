@@ -1,8 +1,9 @@
 package lol;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
-public class TaskList {
+public class TaskList <E extends Comparable <Task>> {
 
 	private  LinkedList<Task> list;
 	
@@ -25,6 +26,10 @@ public class TaskList {
 			return false;
 		}
 		return true;
+	}
+
+	public void sortList() {
+		Collections.sort(list);
 	}
 
 	public LinkedList<Task> getList() {

@@ -69,7 +69,7 @@ public class LOLGui {
 				feedbackDisplayTxtFld.setText(feedback);
 				
 				//this set the text of the main display text field
-				TaskList list = LOLStorage.load();
+				TaskList<Task> list = LOLStorage.load();
 				
 				mainDisplayTxtFld.setText("");
 				

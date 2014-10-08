@@ -1,9 +1,9 @@
 package lol;
 
 public class LOLStorage {
-private static TaskList list = new TaskList();
+private static TaskList<Task> list = new TaskList<Task>();
 
-public static TaskList load(){
+public static TaskList<Task> load(){
 	return list;
 }
 
