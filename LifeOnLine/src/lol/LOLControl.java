@@ -90,15 +90,28 @@ public class LOLControl {
 			Task undoCmdTask = undoCmd.getTask();
 
 			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
-				list.delete(undoCmdTask);
-				LOLStorage.save();
-			}
-
-			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
 				list.add(undoCmdTask);
 				list.sortList();
 				LOLStorage.save();
 			}
+
+			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
+				list.delete(undoCmdTask);
+				LOLStorage.save();
+			}
+			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
+				
+				Task undoCmdTaskNew = History.pop().getTask();
+				Task undoCmdTaskOld = History.pop().getTask();
+			
+				list.delete(undoCmdTaskNew);
+				list.add(undoCmdTaskOld);
+				list.sortList();
+				LOLStorage.save();
+				
+				
+			}
+			
 			return showFeedback(null, Constants.COMMAND_UNDO);
 		}
 	}

@@ -4,9 +4,9 @@ import java.util.Stack;
 
 public class History {
 	
-	private static final String undoAddCommandType = "delete";
-	private static final String undoDeleteCommandType = "add";
-	
+	private static final String undoAddCommandType = "add";
+	private static final String undoDeleteCommandType = "delete";
+	private static final String undoEditCommandType = "edit";
 	
 	private static Stack<CommandLine> undoStack = new Stack<CommandLine>();
 	
@@ -22,6 +22,7 @@ public class History {
 	{
 		undoDelete(oldTask);
 		undoAdd(newTask);
+		undoStack.push(new CommandLine(undoEditCommandType, null));
 	}
 	
 	public static CommandLine pop()
