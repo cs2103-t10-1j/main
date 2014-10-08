@@ -91,11 +91,13 @@ public class LOLControl {
 
 			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
 				list.delete(undoCmdTask);
+				LOLStorage.save();
 			}
 
 			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
 				list.add(undoCmdTask);
 				list.sortList();
+				LOLStorage.save();
 			}
 			return showFeedback(null, Constants.COMMAND_UNDO);
 		}
