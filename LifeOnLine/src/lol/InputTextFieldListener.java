@@ -18,6 +18,11 @@ public class InputTextFieldListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event){ 
 		String inputStr = inputTF.getText();
+		
+		if(inputStr.trim().equalsIgnoreCase("exit")){ //this line should let control handle
+			System.exit(0);
+		}
+		
 		String feedback = passStringToControlAndGetFeedback(inputStr);
 
 		refreshMainDisplayTA();
@@ -65,6 +70,12 @@ public class InputTextFieldListener implements ActionListener {
 			if(dueStartTime != null && dueEndTime != null){
 				str = addTimeStr(str, dueStartTime, dueEndTime);
 			}
+			else if(dueStartTime != null){
+				str = addTimeStr(str, dueStartTime);
+			}
+			if(task.getTaskLocation() != null){
+				str = addLocationStr(str, task.getTaskLocation());
+			}
 			str = formatString(str, i+1);
 
 			strToShow = strToShow + str;
@@ -77,7 +88,17 @@ public class InputTextFieldListener implements ActionListener {
 		str = "[" + startTime.getFormat24hr() + " - " + endTime.getFormat24hr() + "] " + str;
 		return str;
 	}
+	
+	public String addTimeStr(String str, Time startTime){
+		str = "[" + startTime.getFormat24hr() + "] " + str;
+		return str;
+	}
 
+	public String addLocationStr(String str, String location){
+		str = str + " at [" + location + "]";
+		return str;
+	}
+	
 	public String formatString(String str, int i){
 		str = addNumbering(str, i);
 		str = addNewLine(str);
