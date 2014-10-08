@@ -12,6 +12,7 @@ public class LOLParserTest {
 		assertEquals("delete", LOLParser.getCommandName("delete 2"));
 		assertEquals("edit", LOLParser.getCommandName("edit 5"));
 		assertEquals("show", LOLParser.getCommandName("show"));
+		assertEquals("undo", LOLParser.getCommandName("undo "));
 	}
 
 	@Test

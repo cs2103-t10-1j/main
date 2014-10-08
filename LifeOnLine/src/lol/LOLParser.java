@@ -34,6 +34,8 @@ public class LOLParser {
 			return Constants.COMMAND_EDIT;
 		} else if (hasWordInDictionary(Constants.DICTIONARY_DONE, command)) {
 			return Constants.COMMAND_DONE;
+		} else if (hasWordInDictionary(Constants.DICTIONARY_UNDO, command)) {
+			return Constants.COMMAND_UNDO;
 		} else if (hasWordInDictionary(Constants.DICTIONARY_EXIT, command)) {
 			return Constants.COMMAND_EXIT;
 		} else {
@@ -301,6 +303,7 @@ public class LOLParser {
 	 */
 
 	public static boolean hasWordInDictionary(String[] dictionary, String word) {
+		word = word.trim();
 		for (int i = 0; i < dictionary.length; i++) {
 			if (dictionary[i].equalsIgnoreCase(word)) {
 				return true;

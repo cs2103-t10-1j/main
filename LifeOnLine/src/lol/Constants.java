@@ -13,6 +13,7 @@ public class Constants {
 		public static final String[] DICTIONARY_SHOW = { "show" };
 		public static final String[] DICTIONARY_EDIT = { "edit" };
 		public static final String[] DICTIONARY_DONE = { "done" };
+		public static final String[] DICTIONARY_UNDO = { "undo" };
 		public static final String[] DICTIONARY_EXIT = { "exit" };
 
 		// Months
