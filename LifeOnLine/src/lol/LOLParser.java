@@ -90,7 +90,9 @@ public class LOLParser {
 	 */
 	public static String getDescription(String input) {
 		String details = removeFirstWord(input); // remove command
-		return details.split(Constants.SEPARATOR)[0];
+		String[] detailsArray = details.split(Constants.SEPARATOR);
+		detailsArray = removeSpaces(detailsArray);
+		return detailsArray[Constants.INDEX_BEGIN];
 	}
 
 	/**
@@ -104,6 +106,7 @@ public class LOLParser {
 	public static String getLocation(String input) {
 		String details = removeFirstWord(input); // remove command
 		String[] detailsArray = details.split(Constants.SEPARATOR);
+		detailsArray = removeSpaces(detailsArray);
 		DateParser dp = new DateParser();
 		TimeParser tp = new TimeParser();
 
@@ -127,6 +130,7 @@ public class LOLParser {
 	public static Date getDueDate(String input) {
 		String details = removeFirstWord(input); // remove command
 		String[] detailsArray = details.split(Constants.SEPARATOR);
+		detailsArray = removeSpaces(detailsArray);
 		DateParser dp = new DateParser();
 
 		// 1st element is the description
@@ -153,6 +157,7 @@ public class LOLParser {
 	public static Time getStartTime(String input) {
 		String details = removeFirstWord(input); // remove command
 		String[] detailsArray = details.split(Constants.SEPARATOR);
+		detailsArray = removeSpaces(detailsArray);
 		TimeParser tp = new TimeParser();
 
 		// 1st element is the description
@@ -179,6 +184,7 @@ public class LOLParser {
 	public static Time getEndTime(String input) {
 		String details = removeFirstWord(input); // remove command
 		String[] detailsArray = details.split(Constants.SEPARATOR);
+		detailsArray = removeSpaces(detailsArray);
 		TimeParser tp = new TimeParser();
 
 		// 1st element is the description
@@ -301,6 +307,13 @@ public class LOLParser {
 			}
 		}
 		return false;
+	}
+	
+	public static String[] removeSpaces(String[] details) {
+		for (int i = 0; i < details.length; i++) {
+			details[i] = details[i].trim();
+		}
+		return details;
 	}
 
 }
