@@ -78,8 +78,27 @@ public class LOLControl {
 	}
 
 	public static String executeUndo(String userInput) {
-		History.pop();
-		return showFeedback(null, Constants.COMMAND_UNDO);
+		if (History.isEmpty()) {
+			return Constants.FEEDBACK_UNDO_FAILURE;
+		}
+
+		else {
+			
+			CommandLine undoCmd = History.pop();
+
+			String undoCmdType = undoCmd.getCommandType();
+			Task undoCmdTask = undoCmd.getTask();
+
+			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
+				list.delete(undoCmdTask);
+			}
+
+			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
+				list.add(undoCmdTask);
+				list.sortList();
+			}
+			return showFeedback(null, Constants.COMMAND_UNDO);
+		}
 	}
 
 	public static String executeInvalid(String userInput) {
