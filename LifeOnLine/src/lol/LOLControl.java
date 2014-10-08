@@ -8,11 +8,10 @@ public class LOLControl {
 
 	/********** Controller methods ***********/
 
-
 	public static TaskList<Task> getTaskList() {
 		return list;
 	}
-	
+
 	public static String executeUserInput(String userInput) {
 		if (getCommandType(userInput).equals(Constants.COMMAND_ADD)) {
 			return executeAdd(userInput);
@@ -24,6 +23,10 @@ public class LOLControl {
 
 		if (getCommandType(userInput).equals(Constants.COMMAND_EDIT)) {
 			return executeEdit(userInput);
+		}
+
+		if (getCommandType(userInput).equals(Constants.COMMAND_UNDO)) {
+			return executeUndo(userInput);
 		}
 
 		else {
@@ -40,6 +43,7 @@ public class LOLControl {
 		Task newTask = LOLParser.getTask(userInput);
 
 		if (list.add(newTask)) {
+			History.undoAdd(newTask);
 			list.sortList();
 			LOLStorage.save();
 			return showFeedback(newTask, Constants.COMMAND_ADD);
@@ -52,6 +56,7 @@ public class LOLControl {
 		Task delTask = list.get(taskIndex - 1);
 
 		if (list.deleteByIndex(taskIndex - 1)) {
+			History.undoDelete(delTask);
 			LOLStorage.save();
 			return showFeedback(delTask, Constants.COMMAND_DELETE);
 		} else
@@ -64,11 +69,17 @@ public class LOLControl {
 		Task oldTask = list.get(taskIndex - 1);
 
 		if ((list.deleteByIndex(taskIndex - 1)) && (list.add(editTask))) {
+			History.undoEdit(editTask, oldTask);
 			list.sortList();
 			LOLStorage.save();
 			return showFeedback(oldTask, Constants.COMMAND_EDIT);
 		} else
 			return executeInvalid(userInput);
+	}
+
+	public static String executeUndo(String userInput) {
+		History.pop();
+		return showFeedback(null, Constants.COMMAND_UNDO);
 	}
 
 	public static String executeInvalid(String userInput) {
@@ -85,6 +96,9 @@ public class LOLControl {
 		}
 		if (commandType.equals(Constants.COMMAND_EDIT)) {
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_EDIT_SUCCESS);
+		}
+		if (commandType.equals(Constants.COMMAND_UNDO)) {
+			return (Constants.FEEDBACK_UNDO_SUCCESS);
 		} else
 			return (Constants.FEEDBACK_INVALID);
 	}
