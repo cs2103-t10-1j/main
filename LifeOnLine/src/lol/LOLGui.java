@@ -1,9 +1,7 @@
 package lol;
 
 import javax.swing.*;
-
 import java.awt.*;
-import java.awt.event.*;
 
 public class LOLGui {
 	public LOLGui(){
@@ -21,23 +19,23 @@ public class LOLGui {
 		JPanel feedbackAndInputPanel = new JPanel();
 		feedbackAndInputPanel.setLayout(new GridLayout(2,1));
 		
-		final JTextArea mainDisplayTxtFld = new JTextArea(10, 20);
-		mainDisplayTxtFld.setEditable(false);
-		mainDisplayTxtFld.setText("Welcome to LOL!");
-		JScrollPane scrollPane = new JScrollPane(mainDisplayTxtFld);
+		final JTextArea mainDisplayTA = new JTextArea(10, 20);
+		mainDisplayTA.setEditable(false);
+		mainDisplayTA.setText("Welcome to LOL!");
+		JScrollPane scrollPane = new JScrollPane(mainDisplayTA);
 		displayPanel.add(scrollPane, BorderLayout.CENTER);
 		
 		feedbackPanel.add(new JLabel("Feedback: "));
 		
-		final JTextArea feedbackDisplayTxtFld = new JTextArea(2, 28);
-		feedbackDisplayTxtFld.setEditable(false);
-		feedbackDisplayTxtFld.setText("Feedback will be displayed here.");
-		feedbackDisplayTxtFld.setLineWrap(true);
-		feedbackDisplayTxtFld.setBorder(BorderFactory.createLineBorder(Color.gray));
-		feedbackPanel.add(feedbackDisplayTxtFld);
+		final JTextArea feedbackDisplayTA = new JTextArea(2, 28);
+		feedbackDisplayTA.setEditable(false);
+		feedbackDisplayTA.setText("Feedback will be displayed here.");
+		feedbackDisplayTA.setLineWrap(true);
+		feedbackDisplayTA.setBorder(BorderFactory.createLineBorder(Color.gray));
+		feedbackPanel.add(feedbackDisplayTA);
 		
-		final JTextField inputTxtFld = new JTextField(35);
-		inputPanel.add("South", inputTxtFld);
+		final JTextField inputTF = new JTextField(35);
+		inputPanel.add("South", inputTF);
 		
 		feedbackAndInputPanel.add(feedbackPanel);
 		feedbackAndInputPanel.add(inputPanel);
@@ -50,37 +48,8 @@ public class LOLGui {
 		frame.pack();
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
-			
-		//actionPerformed() is the method that determines what will happen if user presses enter
-		inputTxtFld.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent arg){
-				String inputStr = inputTxtFld.getText(); //this is to get the user input text
-				String displayStr = mainDisplayTxtFld.getText();
-				
-				if(displayStr.equals("Welcome to LOL!")){
-					displayStr = "";
-				}
-				
-				LOLMain.passStringToControl(inputStr);
-				String feedback =  LOLMain.getFeedback();
-				
-				//this set the text of feedback
-				feedbackDisplayTxtFld.setText(feedback);
-				
-				//this set the text of the main display text field
-				TaskList list = LOLStorage.load();
-				
-				mainDisplayTxtFld.setText("");
-				
-				for(int i = 0 ; i < list.size(); i++)
-				{
-					mainDisplayTxtFld.append(list.get(i).toString() + "\n");
-				}
-				//this set the text of user input text field
-				inputTxtFld.setText("");
-			}
-		});
+		
+		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTA, feedbackDisplayTA, inputTF));
 	}
 }
 
