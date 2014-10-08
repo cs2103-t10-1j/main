@@ -124,8 +124,23 @@ public class Task implements Comparable<Task>{
 		final int BEFORE = -1;
 		final int EQUAL = 0;
 		final int AFTER = 1;
-
-		if (this.isBefore(that)) {
+		
+		// Task with date will be higher priority than tasks without date
+		if ((that.getTaskDueDate() == null) && (this.getTaskDueDate() != null)) {
+			return BEFORE;
+		}
+		
+		// Task without date will be lower priority than tasks with date
+		else if ((this.getTaskDueDate() == null) && (that.getTaskDueDate() != null)) {
+			return AFTER;
+		}
+		
+		// If all are tasks without date order in which user entered 
+		else if ((this.getTaskDueDate() == null) && (that.getTaskDueDate() == null)) {
+			return AFTER;
+		}
+		
+		else if (this.isBefore(that)) {
 			return BEFORE;
 		}
 

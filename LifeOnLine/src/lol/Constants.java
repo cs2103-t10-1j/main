@@ -62,4 +62,11 @@ public class Constants {
 		public static final String STRING_AM = "am";
 		public static final String STRING_PM = "pm";
 
+		// Feedback Strings
+		public static final String QUOTE = "\"";
+		public static final String FEEDBACK_ADD_SUCCESS = " added successfully";
+		public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully";
+		public static final String FEEDBACK_EDIT_SUCCESS = " was editted succesfully";
+		public static final String FEEDBACK_INVALID = "That is an invalid action!";
+
 }
