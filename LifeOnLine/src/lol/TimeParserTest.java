@@ -84,4 +84,10 @@ public class TimeParserTest {
 		assertEquals(new Time(9, "pm"), tp.createEndTimeFromRange("7.40-9pm"));
 		assertEquals(new Time(4, "am"), tp.createEndTimeFromRange("3.10 - 4 am"));
 	}
+	/*
+	@Test
+	public void testGetCurrentTime() {
+		TimeParser tp = new TimeParser();
+		assertEquals(new Time("1751"), tp.getCurrentTime());
+	}*/
 }

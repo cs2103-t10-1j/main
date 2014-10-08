@@ -22,6 +22,8 @@
  */
 package lol;
 
+import java.util.Calendar;
+
 public class TimeParser {
 	/**
 	 * Checks whether a string represents time in 12-hour format, e.g. 2pm or
@@ -318,5 +320,23 @@ public class TimeParser {
 		} else {
 			return Constants.STRING_AM;
 		}
+	}
+
+	/**
+	 * Returns current time as a Time object
+	 * @return current time
+	 */
+	public Time getCurrentTime() {
+		Calendar rightNow = Calendar.getInstance(); // Get the current date and
+													// time
+		int hour = rightNow.get(Calendar.HOUR);
+		if (hour == 0) {
+			hour = 12;
+		}
+		int minute = rightNow.get(Calendar.MINUTE);
+		String ampm = rightNow.get(Calendar.AM_PM) == Calendar.AM ? Constants.STRING_AM
+				: Constants.STRING_PM;
+
+		return new Time(hour, minute, ampm);
 	}
 }
