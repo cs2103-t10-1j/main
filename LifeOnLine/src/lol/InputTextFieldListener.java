@@ -18,7 +18,7 @@ public class InputTextFieldListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event){ 
 		String inputStr = inputTF.getText();
-		String feedback =  passStringToControlAndGetFeedback(inputStr);
+		String feedback = passStringToControlAndGetFeedback(inputStr);
 
 		refreshMainDisplayTA();
 
@@ -34,15 +34,13 @@ public class InputTextFieldListener implements ActionListener {
 	public void refreshMainDisplayTA(){
 		clear(mainDisplayTA);
 
-		//stub
-		//should get list from controller
-		TaskList list = LOLStorage.load();
-		showInMainDisplayTA(list);
+		TaskList<Task> taskList = LOLControl.getTaskList();
+		showInMainDisplayTA(taskList);
 	}
 
-	public void showInMainDisplayTA(TaskList taskList){
+	public void showInMainDisplayTA(TaskList<Task> taskList){
 		String strToShow = "";
-		Date previousDueDate = new Date(); //need to change
+		Date previousDueDate = new Date(); //need to change: set date's parameter as impossible date
 
 		for(int i = 0; i < taskList.size(); i++){
 			Task task = taskList.get(i);
@@ -55,9 +53,12 @@ public class InputTextFieldListener implements ActionListener {
 				int dueYear = currentDueDate.getYear4Digit();
 				
 				strToShow = strToShow + dateFormatAsHeader(dueDay, dueMonth, dueYear);
-				previousDueDate = currentDueDate;
 			}
-
+			else if(currentDueDate == null && previousDueDate != null){
+				strToShow = strToShow + dateFormatAsHeader(0, 0, 0);
+			}
+			previousDueDate = currentDueDate;
+			
 			strToShow = strToShow + formatString(taskDescription, i+1);
 		}
 
@@ -78,11 +79,19 @@ public class InputTextFieldListener implements ActionListener {
 	public String dateFormatAsHeader(int dueDay, int dueMonth, int dueYear){
 		String str = "";
 
-		str = str + "===============";
+		str = str + "===========================";
 		str = addNewLine(str);
-		str = str + dueDay + "/" + dueMonth + "/" + dueYear;
-		str = addNewLine(str);
-		str = str + "===============";
+		
+		if(dueDay != 0 && dueMonth != 0 && dueYear != 0){
+			str = str + dueDay + "/" + dueMonth + "/" + dueYear;
+			str = addNewLine(str);	
+		}
+		else{
+			str = str + "To-Do Tasks (without due date)";
+			str = addNewLine(str);
+		}
+		
+		str = str + "===========================";
 		str = addNewLine(str);
 		
 		return str;
