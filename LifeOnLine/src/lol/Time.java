@@ -81,7 +81,8 @@ public class Time {
 
 	/********** Overriding methods ***********/
 	public String toString() { // e.g. 1.43pm
-		return getHour() + "." + getMin() + getAmpm();
+		DecimalFormat df = new DecimalFormat("00");
+		return getHour() + "." + df.format(getMin()) + getAmpm();
 	}
 
 	public boolean equals(Object obj) {

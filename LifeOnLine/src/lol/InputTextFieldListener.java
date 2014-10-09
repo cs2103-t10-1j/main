@@ -131,12 +131,12 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	}
 
 	public String addTimeStr(String str, Time startTime, Time endTime){
-		str = "[" + startTime.getFormat24hr() + " - " + endTime.getFormat24hr() + "] " + str;
+		str = "[" + startTime.toString() + " - " + endTime.toString() + "] " + str;
 		return str;
 	}
 	
 	public String addTimeStr(String str, Time startTime){
-		str = "[" + startTime.getFormat24hr() + "] " + str;
+		str = "[" + startTime.toString() + "] " + str;
 		return str;
 	}
 
