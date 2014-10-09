@@ -4,17 +4,21 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class InputTextFieldListener implements ActionListener {
+public class InputTextFieldListener implements ActionListener, KeyListener {
+	final String[] commands = {"", "add ", "delete ", "edit ", "done ", "undo ", "redo "};
 	JTextField inputTF;
 	JTextArea mainDisplayTA;
 	JTextArea mainDisplayTA2;
 	JTextArea feedbackDisplayTA;
+	Integer i;
 
-	public InputTextFieldListener(JTextArea mainDisplayTA,JTextArea mainDisplayTA2, JTextArea feedbackDisplayTA, JTextField inputTF){
+	public InputTextFieldListener(JTextArea mainDisplayTA,JTextArea mainDisplayTA2, JTextArea feedbackDisplayTA, JTextField inputTF, Integer i){
 		this.inputTF = inputTF;
 		this.mainDisplayTA = mainDisplayTA;
 		this.feedbackDisplayTA = feedbackDisplayTA;
 		this.mainDisplayTA2 = mainDisplayTA2;
+		this.i = i;
+		inputTF.addKeyListener(this);
 	}
 
 	@Override
@@ -32,6 +36,8 @@ public class InputTextFieldListener implements ActionListener {
 		feedbackDisplayTA.setText(feedback);
 
 		clear(inputTF);
+		i = new Integer(0);
+		
 	}
 
 	public String passStringToControlAndGetFeedback(String inputStr){
@@ -182,4 +188,31 @@ public class InputTextFieldListener implements ActionListener {
 	public void clear(JTextArea TA){
 		TA.setText("");
 	}
+	
+	   /** Handle the key typed event from the text field. */
+ public void keyTyped(KeyEvent e) {
+    ;
+ }
+
+ /** Handle the key-pressed event from the text field. */
+ public void keyPressed(KeyEvent e) {
+     ;
+ }
+
+ /** Handle the key-released event from the text field. */
+ public void keyReleased(KeyEvent e) {
+ 	if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+ 		i = new Integer((i.intValue() + 1)%commands.length);
+			inputTF.setText(commands[i.intValue()]);
+			inputTF.grabFocus();
+		}
+ 	if (e.getKeyCode() == KeyEvent.VK_UP) {
+ 		if((i.intValue()-1)<0)
+ 			i = new Integer((i.intValue() - 1)+commands.length);
+ 		else
+ 			i = new Integer((i.intValue() - 1));
+			inputTF.setText(commands[i.intValue()]);
+			inputTF.grabFocus();
+		}
+ }
 }

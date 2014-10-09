@@ -2,8 +2,10 @@ package lol;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 public class LOLGui {
+	final Integer i = new Integer(0);
 	public LOLGui(){
 		//line 10 to 46 create LOL's GUI
 		JFrame frame = new JFrame("LOL - Life On Line");
@@ -40,8 +42,8 @@ public class LOLGui {
 		feedbackDisplayTA.setBorder(BorderFactory.createLineBorder(Color.red));
 		feedbackPanel.add(feedbackDisplayTA);
 		
+		
 		final JTextField inputTF = new JTextField(35);
-		inputTF.setText("add ");
 		inputPanel.add("South", inputTF);
 		
 		feedbackAndInputPanel.add(feedbackPanel);
@@ -56,7 +58,22 @@ public class LOLGui {
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 		
-		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTA,mainDisplayTA2, feedbackDisplayTA, inputTF));
+	
+		
+		frame.addWindowListener( new WindowAdapter() {
+		    public void windowOpened( WindowEvent e ){
+		        inputTF.requestFocus();
+		    }
+		});
+	
+		
+		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTA,mainDisplayTA2, feedbackDisplayTA, inputTF, i));
+		
 	}
+
+	
+    
+    
 }
+
 
