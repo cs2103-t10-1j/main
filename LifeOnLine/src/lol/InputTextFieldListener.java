@@ -7,12 +7,14 @@ import javax.swing.*;
 public class InputTextFieldListener implements ActionListener {
 	JTextField inputTF;
 	JTextArea mainDisplayTA;
+	JTextArea mainDisplayTA2;
 	JTextArea feedbackDisplayTA;
 
-	public InputTextFieldListener(JTextArea mainDisplayTA, JTextArea feedbackDisplayTA, JTextField inputTF){
+	public InputTextFieldListener(JTextArea mainDisplayTA,JTextArea mainDisplayTA2, JTextArea feedbackDisplayTA, JTextField inputTF){
 		this.inputTF = inputTF;
 		this.mainDisplayTA = mainDisplayTA;
 		this.feedbackDisplayTA = feedbackDisplayTA;
+		this.mainDisplayTA2 = mainDisplayTA2;
 	}
 
 	@Override
@@ -38,6 +40,7 @@ public class InputTextFieldListener implements ActionListener {
 
 	public void refreshMainDisplayTA(){
 		clear(mainDisplayTA);
+		clear(mainDisplayTA2);
 
 		TaskList<Task> taskList = LOLControl.getTaskList();
 		showInMainDisplayTA(taskList);
@@ -45,6 +48,7 @@ public class InputTextFieldListener implements ActionListener {
 
 	public void showInMainDisplayTA(TaskList<Task> taskList){
 		String strToShow = "";
+		String strToShow2 = "";
 		Date previousDueDate = new Date(); //need to change: set date's parameter as impossible date
 
 		for(int i = 0; i < taskList.size(); i++){
@@ -60,10 +64,43 @@ public class InputTextFieldListener implements ActionListener {
 				int dueYear = currentDueDate.getYear4Digit();
 
 				strToShow = strToShow + dateFormatAsHeader(dueDay, dueMonth, dueYear);
-			}
-			else if(currentDueDate == null && previousDueDate != null){
-				strToShow = strToShow + dateFormatAsHeader(0, 0, 0);
-			}
+			    
+				previousDueDate = currentDueDate;
+
+				String str = taskDescription;
+				if(dueStartTime != null && dueEndTime != null){
+					str = addTimeStr(str, dueStartTime, dueEndTime);
+				}
+				else if(dueStartTime != null){
+					str = addTimeStr(str, dueStartTime);
+				}
+				if(task.getTaskLocation() != null){
+					str = addLocationStr(str, task.getTaskLocation());
+				}
+				str = formatString(str, i+1);
+
+				strToShow = strToShow + str;
+			}else if(currentDueDate != null && currentDueDate.equals(previousDueDate)){
+				previousDueDate = currentDueDate;
+
+				String str = taskDescription;
+				if(dueStartTime != null && dueEndTime != null){
+					str = addTimeStr(str, dueStartTime, dueEndTime);
+				}
+				else if(dueStartTime != null){
+					str = addTimeStr(str, dueStartTime);
+				}
+				if(task.getTaskLocation() != null){
+					str = addLocationStr(str, task.getTaskLocation());
+				}
+				str = formatString(str, i+1);
+
+				strToShow = strToShow + str;
+			}else {
+				if(currentDueDate == null && previousDueDate != null){
+				strToShow2 = strToShow2 + dateFormatAsHeader(0, 0, 0);
+				}
+			
 			previousDueDate = currentDueDate;
 
 			String str = taskDescription;
@@ -78,10 +115,13 @@ public class InputTextFieldListener implements ActionListener {
 			}
 			str = formatString(str, i+1);
 
-			strToShow = strToShow + str;
+			
+			strToShow2 = strToShow2 + str;
+			}
 		}
 
 		mainDisplayTA.setText(strToShow);
+		mainDisplayTA2.setText(strToShow2);
 	}
 
 	public String addTimeStr(String str, Time startTime, Time endTime){

@@ -19,11 +19,17 @@ public class LOLGui {
 		JPanel feedbackAndInputPanel = new JPanel();
 		feedbackAndInputPanel.setLayout(new GridLayout(2,1));
 		
-		final JTextArea mainDisplayTA = new JTextArea(10, 20);
+		final JTextArea mainDisplayTA = new JTextArea(15, 19);
 		mainDisplayTA.setEditable(false);
-		mainDisplayTA.setText("Welcome to LOL!");
+		mainDisplayTA.setText("**Upcoming Tasks List**");
 		JScrollPane scrollPane = new JScrollPane(mainDisplayTA);
-		displayPanel.add(scrollPane, BorderLayout.CENTER);
+		displayPanel.add(scrollPane, BorderLayout.WEST);
+		
+		final JTextArea mainDisplayTA2 = new JTextArea(15, 19);
+		mainDisplayTA2.setEditable(false);
+		mainDisplayTA2.setText("**To-Do Anytime List**");
+		JScrollPane scrollPane2 = new JScrollPane(mainDisplayTA2);
+		displayPanel.add(scrollPane2, BorderLayout.EAST);
 		
 		feedbackPanel.add(new JLabel("Feedback: "));
 		
@@ -31,10 +37,11 @@ public class LOLGui {
 		feedbackDisplayTA.setEditable(false);
 		feedbackDisplayTA.setText("Feedback will be displayed here.");
 		feedbackDisplayTA.setLineWrap(true);
-		feedbackDisplayTA.setBorder(BorderFactory.createLineBorder(Color.gray));
+		feedbackDisplayTA.setBorder(BorderFactory.createLineBorder(Color.red));
 		feedbackPanel.add(feedbackDisplayTA);
 		
 		final JTextField inputTF = new JTextField(35);
+		inputTF.setText("add ");
 		inputPanel.add("South", inputTF);
 		
 		feedbackAndInputPanel.add(feedbackPanel);
@@ -49,7 +56,7 @@ public class LOLGui {
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 		
-		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTA, feedbackDisplayTA, inputTF));
+		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTA,mainDisplayTA2, feedbackDisplayTA, inputTF));
 	}
 }
 
