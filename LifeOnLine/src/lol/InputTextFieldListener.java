@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class InputTextFieldListener implements ActionListener, KeyListener {
-	final String[] commands = {"", "add ", "delete ", "edit ", "done ", "undo ", "redo "};
+	final String[] commands = {"", "add ", "delete ", "edit ", "done ", "undo", "redo"};
 	JTextField inputTF;
 	JTextArea mainDisplayTA;
 	JTextArea mainDisplayTA2;
