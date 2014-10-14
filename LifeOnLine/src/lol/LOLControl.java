@@ -78,13 +78,13 @@ public class LOLControl {
 	}
 
 	public static String executeUndo(String userInput) {
-		if (History.isEmpty()) {
+		if (History.isEmptyUndoStack()) {
 			return Constants.FEEDBACK_UNDO_FAILURE;
 		}
 
 		else {
 			
-			CommandLine undoCmd = History.pop();
+			CommandLine undoCmd = History.popUndoStack();
 
 			String undoCmdType = undoCmd.getCommandType();
 			Task undoCmdTask = undoCmd.getTask();
@@ -92,21 +92,28 @@ public class LOLControl {
 			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
 				list.add(undoCmdTask);
 				list.sortList();
+				History.redoAdd(undoCmd);
 				LOLStorage.save();
 			}
 
 			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
 				list.delete(undoCmdTask);
+				History.redoAdd(undoCmd);
 				LOLStorage.save();
 			}
 			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
 				
-				Task undoCmdTaskNew = History.pop().getTask();
-				Task undoCmdTaskOld = History.pop().getTask();
+				CommandLine undoCmdNew = History.popUndoStack();
+				CommandLine undoCmdOld = History.popUndoStack();
+				Task undoCmdTaskNew = undoCmdNew.getTask();
+				Task undoCmdTaskOld = undoCmdOld.getTask();
 			
 				list.delete(undoCmdTaskNew);
 				list.add(undoCmdTaskOld);
 				list.sortList();
+				History.redoAdd(undoCmd);
+				History.redoAdd(undoCmdOld);
+				History.redoAdd(undoCmdNew);
 				LOLStorage.save();
 				
 				
