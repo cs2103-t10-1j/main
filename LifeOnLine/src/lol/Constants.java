@@ -14,6 +14,7 @@ public class Constants {
 		public static final String[] DICTIONARY_EDIT = { "edit" };
 		public static final String[] DICTIONARY_DONE = { "done" };
 		public static final String[] DICTIONARY_UNDO = { "undo" };
+		public static final String[] DICTIONARY_REDO = { "redo" };
 		public static final String[] DICTIONARY_EXIT = { "exit" };
 
 		// Months
@@ -36,6 +37,7 @@ public class Constants {
 		public static final String COMMAND_SHOW = "show";
 		public static final String COMMAND_EDIT = "edit";
 		public static final String COMMAND_UNDO = "undo";
+		public static final String COMMAND_REDO = "redo";
 		public static final String COMMAND_DONE = "done";
 		public static final String COMMAND_EXIT = "exit";
 		public static final String COMMAND_INVALID = "invalid command";
@@ -71,6 +73,8 @@ public class Constants {
 		public static final String FEEDBACK_EDIT_SUCCESS = " was editted succesfully";
 		public static final String FEEDBACK_UNDO_SUCCESS = "Last action has been undone!";
 		public static final String FEEDBACK_UNDO_FAILURE = "Nothing to undo!";
+		public static final String FEEDBACK_REDO_SUCCESS = "Redone!!";
+		public static final String FEEDBACK_REDO_FAILURE = "Nothing to redo!";
 		public static final String FEEDBACK_INVALID = "That is an invalid action!";
 
 }

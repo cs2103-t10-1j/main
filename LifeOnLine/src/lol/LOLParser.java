@@ -36,7 +36,9 @@ public class LOLParser {
 			return Constants.COMMAND_DONE;
 		} else if (hasWordInDictionary(Constants.DICTIONARY_UNDO, command)) {
 			return Constants.COMMAND_UNDO;
-		} else if (hasWordInDictionary(Constants.DICTIONARY_EXIT, command)) {
+		}  else if (hasWordInDictionary(Constants.DICTIONARY_REDO, command)) {
+			return Constants.COMMAND_REDO;
+		}  else if (hasWordInDictionary(Constants.DICTIONARY_EXIT, command)) {
 			return Constants.COMMAND_EXIT;
 		} else {
 			return Constants.COMMAND_INVALID;

@@ -52,7 +52,7 @@ public class History {
 
 	public static CommandLine peekRedoQueue() {
 		if (redoQueue.peek() != null)
-			return redoQueue.element();
+			return redoQueue.remove();
 		else
 			return null;
 	}

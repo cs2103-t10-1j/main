@@ -28,11 +28,16 @@ public class LOLControl {
 		if (getCommandType(userInput).equals(Constants.COMMAND_UNDO)) {
 			return executeUndo(userInput);
 		}
+		if (getCommandType(userInput).equals(Constants.COMMAND_REDO)) {
+			return executeRedo(userInput);
+		}
 
 		else {
 			return executeInvalid(userInput);
 		}
 	}
+
+	
 
 	public static String getCommandType(String userInput) {
 		String command = LOLParser.getCommandName(userInput);
@@ -123,6 +128,50 @@ public class LOLControl {
 		}
 	}
 
+	public static String executeRedo(String userInput) {
+		if (History.isEmptyRedoQueue()) {
+			return Constants.FEEDBACK_REDO_FAILURE;
+		}
+
+		else {
+			
+			CommandLine undoCmd = History.peekRedoQueue();
+
+			String undoCmdType = undoCmd.getCommandType();
+			Task undoCmdTask = undoCmd.getTask();
+
+			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
+				list.delete(undoCmdTask);
+				History.undoDelete(undoCmdTask);
+				LOLStorage.save();
+			}
+
+			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
+				list.add(undoCmdTask);
+				list.sortList();
+				History.undoAdd(undoCmdTask);
+				LOLStorage.save();
+			}
+			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
+				
+				CommandLine undoCmdOld = History.peekRedoQueue();
+				CommandLine undoCmdNew = History.peekRedoQueue();
+				Task undoCmdTaskNew = undoCmdNew.getTask();
+				Task undoCmdTaskOld = undoCmdOld.getTask();
+			
+				list.add(undoCmdTaskNew);
+				list.delete(undoCmdTaskOld);
+				list.sortList();
+				History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
+				LOLStorage.save();
+				
+				
+			}
+			
+			return showFeedback(null, Constants.COMMAND_REDO);
+		}
+	}
+	
 	public static String executeInvalid(String userInput) {
 		Task invalidTask = LOLParser.getTask(userInput);
 		return showFeedback(invalidTask, Constants.COMMAND_INVALID);
@@ -140,7 +189,10 @@ public class LOLControl {
 		}
 		if (commandType.equals(Constants.COMMAND_UNDO)) {
 			return (Constants.FEEDBACK_UNDO_SUCCESS);
-		} else
+		} 
+		if (commandType.equals(Constants.COMMAND_REDO)) {
+			return (Constants.FEEDBACK_REDO_SUCCESS);
+		}else
 			return (Constants.FEEDBACK_INVALID);
 	}
 }
