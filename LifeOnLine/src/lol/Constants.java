@@ -71,6 +71,7 @@ public class Constants {
 		public static final String FEEDBACK_ADD_SUCCESS = " added successfully";
 		public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully";
 		public static final String FEEDBACK_EDIT_SUCCESS = " was editted succesfully";
+		public static final String FEEDBACK_DONE_SUCCESS = " has been completed!";
 		public static final String FEEDBACK_UNDO_SUCCESS = "Last action has been undone!";
 		public static final String FEEDBACK_UNDO_FAILURE = "Nothing to undo!";
 		public static final String FEEDBACK_REDO_SUCCESS = "Redone!!";

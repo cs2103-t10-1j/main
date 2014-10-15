@@ -29,6 +29,10 @@ public class LOLControl {
 		if (getCommandType(userInput).equals(Constants.COMMAND_EDIT)) {
 			return executeEdit(userInput);
 		}
+	
+		if (getCommandType(userInput).equals(Constants.COMMAND_DONE)) {
+			return executeDone(userInput);
+		}
 
 		if (getCommandType(userInput).equals(Constants.COMMAND_UNDO)) {
 			return executeUndo(userInput);
@@ -69,7 +73,7 @@ public class LOLControl {
 			LOLStorage.save();
 			return showFeedback(delTask, Constants.COMMAND_DELETE);
 		} else
-			logger.log(Level.WARNING, "Processing Error, deleting invalid index");
+//			logger.log(Level.WARNING, "Processing Error, deleting invalid index");
 		return executeInvalid(userInput);
 	}
 
@@ -85,6 +89,27 @@ public class LOLControl {
 			return showFeedback(oldTask, Constants.COMMAND_EDIT);
 		} else
 			return executeInvalid(userInput);
+	}
+
+	public static String executeDone(String userInput) {
+		int taskIndex = LOLParser.getTaskIndex(userInput);
+		Task undoneTask = list.get(taskIndex - 1);
+		
+		Task doneTask = list.get(taskIndex - 1);
+		
+		try {
+		doneTask.setIsDone(true);
+		} catch (Exception ex) {
+			logger.log(Level.WARNING, "Processing Error, task does not exist");
+		}
+		
+		if ((list.deleteByIndex(taskIndex - 1)) && (list.add(doneTask))) {
+			History.undoEdit(doneTask, undoneTask);
+			list.sortList();
+			LOLStorage.save();
+			return showFeedback(doneTask, Constants.COMMAND_DONE);
+		} else
+		return executeInvalid(userInput);
 	}
 
 	public static String executeUndo(String userInput) {
@@ -189,6 +214,9 @@ public class LOLControl {
 		}
 		if (commandType.equals(Constants.COMMAND_EDIT)) {
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_EDIT_SUCCESS);
+		}
+		if (commandType.equals(Constants.COMMAND_DONE)) {
+			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_DONE_SUCCESS);
 		}
 		if (commandType.equals(Constants.COMMAND_UNDO)) {
 			return (Constants.FEEDBACK_UNDO_SUCCESS);
