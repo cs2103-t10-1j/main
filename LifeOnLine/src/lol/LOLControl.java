@@ -1,6 +1,10 @@
 package lol;
 
+import java.util.logging.*;
+
 public class LOLControl {
+
+	private static Logger logger = Logger.getLogger("LOLControl");
 
 	/********** Load Storage ***********/
 
@@ -13,6 +17,7 @@ public class LOLControl {
 	}
 
 	public static String executeUserInput(String userInput) {
+
 		if (getCommandType(userInput).equals(Constants.COMMAND_ADD)) {
 			return executeAdd(userInput);
 		}
@@ -33,11 +38,10 @@ public class LOLControl {
 		}
 
 		else {
+			logger.log(Level.WARNING, "Processing Error, unsupported CommandType entered");
 			return executeInvalid(userInput);
 		}
 	}
-
-	
 
 	public static String getCommandType(String userInput) {
 		String command = LOLParser.getCommandName(userInput);
@@ -65,7 +69,8 @@ public class LOLControl {
 			LOLStorage.save();
 			return showFeedback(delTask, Constants.COMMAND_DELETE);
 		} else
-			return executeInvalid(userInput);
+			logger.log(Level.WARNING, "Processing Error, deleting invalid index");
+		return executeInvalid(userInput);
 	}
 
 	public static String executeEdit(String userInput) {
@@ -88,7 +93,7 @@ public class LOLControl {
 		}
 
 		else {
-			
+
 			CommandLine undoCmd = History.popUndoStack();
 
 			String undoCmdType = undoCmd.getCommandType();
@@ -107,12 +112,12 @@ public class LOLControl {
 				LOLStorage.save();
 			}
 			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
-				
+
 				CommandLine undoCmdNew = History.popUndoStack();
 				CommandLine undoCmdOld = History.popUndoStack();
 				Task undoCmdTaskNew = undoCmdNew.getTask();
 				Task undoCmdTaskOld = undoCmdOld.getTask();
-			
+
 				list.delete(undoCmdTaskNew);
 				list.add(undoCmdTaskOld);
 				list.sortList();
@@ -120,10 +125,9 @@ public class LOLControl {
 				History.redoAdd(undoCmdOld);
 				History.redoAdd(undoCmdNew);
 				LOLStorage.save();
-				
-				
+
 			}
-			
+
 			return showFeedback(null, Constants.COMMAND_UNDO);
 		}
 	}
@@ -134,7 +138,7 @@ public class LOLControl {
 		}
 
 		else {
-			
+
 			CommandLine undoCmd = History.peekRedoQueue();
 
 			String undoCmdType = undoCmd.getCommandType();
@@ -153,25 +157,24 @@ public class LOLControl {
 				LOLStorage.save();
 			}
 			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
-				
+
 				CommandLine undoCmdOld = History.peekRedoQueue();
 				CommandLine undoCmdNew = History.peekRedoQueue();
 				Task undoCmdTaskNew = undoCmdNew.getTask();
 				Task undoCmdTaskOld = undoCmdOld.getTask();
-			
+
 				list.add(undoCmdTaskNew);
 				list.delete(undoCmdTaskOld);
 				list.sortList();
 				History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
 				LOLStorage.save();
-				
-				
+
 			}
-			
+
 			return showFeedback(null, Constants.COMMAND_REDO);
 		}
 	}
-	
+
 	public static String executeInvalid(String userInput) {
 		Task invalidTask = LOLParser.getTask(userInput);
 		return showFeedback(invalidTask, Constants.COMMAND_INVALID);
@@ -189,10 +192,10 @@ public class LOLControl {
 		}
 		if (commandType.equals(Constants.COMMAND_UNDO)) {
 			return (Constants.FEEDBACK_UNDO_SUCCESS);
-		} 
+		}
 		if (commandType.equals(Constants.COMMAND_REDO)) {
 			return (Constants.FEEDBACK_REDO_SUCCESS);
-		}else
+		} else
 			return (Constants.FEEDBACK_INVALID);
 	}
 }
