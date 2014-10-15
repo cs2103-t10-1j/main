@@ -29,9 +29,13 @@ public class LOLControl {
 		if (getCommandType(userInput).equals(Constants.COMMAND_EDIT)) {
 			return executeEdit(userInput);
 		}
-	
+
 		if (getCommandType(userInput).equals(Constants.COMMAND_DONE)) {
 			return executeDone(userInput);
+		}
+
+		if (getCommandType(userInput).equals(Constants.COMMAND_NOT_DONE)) {
+			return executeNotDone(userInput);
 		}
 
 		if (getCommandType(userInput).equals(Constants.COMMAND_UNDO)) {
@@ -42,7 +46,8 @@ public class LOLControl {
 		}
 
 		else {
-			logger.log(Level.WARNING, "Processing Error, unsupported CommandType entered");
+			logger.log(Level.WARNING,
+					"Processing Error, unsupported CommandType entered");
 			return executeInvalid(userInput);
 		}
 	}
@@ -73,7 +78,8 @@ public class LOLControl {
 			LOLStorage.save();
 			return showFeedback(delTask, Constants.COMMAND_DELETE);
 		} else
-//			logger.log(Level.WARNING, "Processing Error, deleting invalid index");
+			logger.log(Level.WARNING,
+					"Processing Error, deleting invalid index");
 		return executeInvalid(userInput);
 	}
 
@@ -93,22 +99,47 @@ public class LOLControl {
 
 	public static String executeDone(String userInput) {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
-		Task undoneTask = list.get(taskIndex - 1);
-		
-		Task doneTask = list.get(taskIndex - 1);
-		
+
 		try {
-		doneTask.setIsDone(true);
+			Task undoneTask = list.get(taskIndex - 1);
+
+			Task doneTask = new Task(undoneTask.getTaskDescription(),
+					undoneTask.getTaskLocation(), undoneTask.getTaskDueDate(),
+					undoneTask.getStartTime(), undoneTask.getEndTime());
+
+			doneTask.setIsDone(true);
+
+			if (list.set(taskIndex - 1, doneTask)) {
+				History.undoEdit(doneTask, undoneTask);
+				LOLStorage.save();
+				return showFeedback(doneTask, Constants.COMMAND_DONE);
+			}
 		} catch (Exception ex) {
 			logger.log(Level.WARNING, "Processing Error, task does not exist");
 		}
-		
-		if ((list.deleteByIndex(taskIndex - 1)) && (list.add(doneTask))) {
-			History.undoEdit(doneTask, undoneTask);
-			list.sortList();
-			LOLStorage.save();
-			return showFeedback(doneTask, Constants.COMMAND_DONE);
-		} else
+		return executeInvalid(userInput);
+	}
+
+	public static String executeNotDone(String userInput) {
+		int taskIndex = LOLParser.getTaskIndex(userInput);
+
+		try {
+			Task doneTask = list.get(taskIndex - 1);
+
+			Task notDoneTask = new Task(doneTask.getTaskDescription(),
+					doneTask.getTaskLocation(), doneTask.getTaskDueDate(),
+					doneTask.getStartTime(), doneTask.getEndTime());
+
+			notDoneTask.setIsDone(false);
+
+			if (list.set(taskIndex - 1, notDoneTask)) {
+				History.undoEdit(notDoneTask, doneTask);
+				LOLStorage.save();
+				return showFeedback(notDoneTask, Constants.COMMAND_NOT_DONE);
+			}
+		} catch (Exception ex) {
+			logger.log(Level.WARNING, "Processing Error, task does not exist");
+		}
 		return executeInvalid(userInput);
 	}
 
@@ -217,6 +248,9 @@ public class LOLControl {
 		}
 		if (commandType.equals(Constants.COMMAND_DONE)) {
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_DONE_SUCCESS);
+		}
+		if (commandType.equals(Constants.COMMAND_NOT_DONE)) {
+			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_NOT_DONE_SUCCESS);
 		}
 		if (commandType.equals(Constants.COMMAND_UNDO)) {
 			return (Constants.FEEDBACK_UNDO_SUCCESS);
