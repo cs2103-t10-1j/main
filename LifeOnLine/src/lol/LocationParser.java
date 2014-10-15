@@ -73,6 +73,7 @@ public class LocationParser {
 		if (nextKeywordIndex == Constants.NOT_FOUND) {
 			return getUserInput().substring(index).trim();
 		} else {
+			assert nextKeywordIndex > 0;
 			return getUserInput().substring(index, nextKeywordIndex).trim();
 		}
 	}
@@ -115,7 +116,6 @@ public class LocationParser {
 		} else {
 			return Constants.NOT_FOUND;
 		}
-
 	}
 
 	public boolean isIndexOutOfBounds(int index) {
