@@ -7,12 +7,12 @@ import javax.swing.*;
 public class InputTextFieldListener implements ActionListener, KeyListener {
 	final String[] commands = {"", "add ", "delete ", "edit ", "done ", "undo", "redo"};
 	JTextField inputTF;
-	JTextArea mainDisplayTA;
-	JTextArea mainDisplayTA2;
+	JTextPane mainDisplayTA;
+	JTextPane mainDisplayTA2;
 	JTextArea feedbackDisplayTA;
 	Integer i;
 
-	public InputTextFieldListener(JTextArea mainDisplayTA,JTextArea mainDisplayTA2, JTextArea feedbackDisplayTA, JTextField inputTF, Integer i){
+	public InputTextFieldListener(JTextPane mainDisplayTA,JTextPane mainDisplayTA2, JTextArea feedbackDisplayTA, JTextField inputTF, Integer i){
 		this.inputTF = inputTF;
 		this.mainDisplayTA = mainDisplayTA;
 		this.feedbackDisplayTA = feedbackDisplayTA;
@@ -187,6 +187,10 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 	public void clear(JTextArea TA){
 		TA.setText("");
+	}
+	
+	public void clear(JTextPane TP){
+		TP.setText("");
 	}
 	
 	   /** Handle the key typed event from the text field. */

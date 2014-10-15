@@ -18,20 +18,26 @@ public class LOLGui {
 		JPanel inputPanel = new JPanel();
 		inputPanel.setLayout(new FlowLayout());
 		
+		//a panel for mainDisplayTP and mainDisplayTP2
+		JPanel mainDisplayPanel = new JPanel();
+		mainDisplayPanel.setLayout(new GridLayout(1, 2));
+		
 		JPanel feedbackAndInputPanel = new JPanel();
 		feedbackAndInputPanel.setLayout(new GridLayout(2,1));
 		
-		final JTextArea mainDisplayTA = new JTextArea(15, 19);
-		mainDisplayTA.setEditable(false);
-		mainDisplayTA.setText("**Upcoming Tasks List**");
-		JScrollPane scrollPane = new JScrollPane(mainDisplayTA);
-		displayPanel.add(scrollPane, BorderLayout.WEST);
+		final JTextPane mainDisplayTP = new JTextPane();
+		mainDisplayTP.setEditable(false);
+		mainDisplayTP.setText("**Upcoming Tasks List**");
+		JScrollPane scrollPane = new JScrollPane(mainDisplayTP);
+		mainDisplayPanel.add(scrollPane);
 		
-		final JTextArea mainDisplayTA2 = new JTextArea(15, 19);
-		mainDisplayTA2.setEditable(false);
-		mainDisplayTA2.setText("**To-Do Anytime List**");
-		JScrollPane scrollPane2 = new JScrollPane(mainDisplayTA2);
-		displayPanel.add(scrollPane2, BorderLayout.EAST);
+		final JTextPane mainDisplayTP2 = new JTextPane();
+		mainDisplayTP2.setEditable(false);
+		mainDisplayTP2.setText("**To-Do Anytime List**");
+		JScrollPane scrollPane2 = new JScrollPane(mainDisplayTP2);
+		mainDisplayPanel.add(scrollPane2);
+		
+		displayPanel.add(mainDisplayPanel, BorderLayout.CENTER);
 		
 		feedbackPanel.add(new JLabel("Feedback: "));
 		
@@ -54,11 +60,10 @@ public class LOLGui {
 		contentPane.add(displayPanel, BorderLayout.CENTER);
 		contentPane.add(feedbackAndInputPanel, BorderLayout.SOUTH);
 		
-		frame.pack();
+		frame.setSize(new Dimension(500, 500));
+		//frame.pack();
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
-		
-	
 		
 		frame.addWindowListener( new WindowAdapter() {
 		    public void windowOpened( WindowEvent e ){
@@ -66,14 +71,8 @@ public class LOLGui {
 		    }
 		});
 	
-		
-		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTA,mainDisplayTA2, feedbackDisplayTA, inputTF, i));
-		
-	}
-
-	
-    
-    
+		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP,mainDisplayTP2, feedbackDisplayTA, inputTF, i));	
+	}  
 }
 
 
