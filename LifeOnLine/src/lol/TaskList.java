@@ -47,4 +47,13 @@ public class TaskList <E extends Comparable <Task>> {
 			return null;
 		}
 	}
+
+	public boolean set(int index, Task taskObject) {
+		try {
+			list.set(index, taskObject);
+		} catch (IndexOutOfBoundsException e) {
+			return false;
+		}
+		return true;
+	}
 }

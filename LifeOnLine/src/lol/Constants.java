@@ -13,6 +13,7 @@ public class Constants {
 		public static final String[] DICTIONARY_SHOW = { "show" };
 		public static final String[] DICTIONARY_EDIT = { "edit" };
 		public static final String[] DICTIONARY_DONE = { "done" };
+		public static final String[] DICTIONARY_NOT_DONE = { "undone" };
 		public static final String[] DICTIONARY_UNDO = { "undo" };
 		public static final String[] DICTIONARY_REDO = { "redo" };
 		public static final String[] DICTIONARY_EXIT = { "exit" };
@@ -39,6 +40,7 @@ public class Constants {
 		public static final String COMMAND_UNDO = "undo";
 		public static final String COMMAND_REDO = "redo";
 		public static final String COMMAND_DONE = "done";
+		public static final String COMMAND_NOT_DONE = "undone";
 		public static final String COMMAND_EXIT = "exit";
 		public static final String COMMAND_INVALID = "invalid command";
 
@@ -72,6 +74,7 @@ public class Constants {
 		public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully";
 		public static final String FEEDBACK_EDIT_SUCCESS = " was editted succesfully";
 		public static final String FEEDBACK_DONE_SUCCESS = " has been completed!";
+		public static final String FEEDBACK_NOT_DONE_SUCCESS = " is now pending completion!";
 		public static final String FEEDBACK_UNDO_SUCCESS = "Last action has been undone!";
 		public static final String FEEDBACK_UNDO_FAILURE = "Nothing to undo!";
 		public static final String FEEDBACK_REDO_SUCCESS = "Redone!!";
