@@ -8,8 +8,13 @@
  */
 package lol;
 
+import java.util.logging.*;
+
 
 public class LOLParser {
+	private static Logger logger = Logger.getLogger("LOLParser");
+	static FileHandler handler;
+
 	
 	/*********** Methods to return task details ***************/
 
@@ -68,8 +73,13 @@ public class LOLParser {
 	 */
 	public static int getTaskIndex(String input) {
 		try {
+			handler = new FileHandler("logfile%g.txt", true);
+			logger.addHandler(handler);
+			handler.setFormatter(new SimpleFormatter());
+			logger.log(Level.INFO, "going to start processing");
 			return Integer.parseInt(input.split(" ")[1]);
 		} catch (Exception e) {
+			logger.log(Level.WARNING, "processing error", e);
 			return -1;
 		}
 	}

@@ -94,13 +94,14 @@ public class LocationParser {
 			if (hasWordInDictionary(Constants.KEYWORDS, word)) {
 				Pattern p = Pattern.compile("\\b" + word + "\\b");
 				Matcher m = p.matcher(temp);
-				
+
 				if (m.find()) {
 					int keywordIndex = m.start() + beginIndex;
-					if (minIndex == Constants.NOT_FOUND || keywordIndex < minIndex) {
+					if (minIndex == Constants.NOT_FOUND
+							|| keywordIndex < minIndex) {
 						minIndex = keywordIndex;
 					}
-				}	
+				}
 			}
 		}
 		return minIndex;
