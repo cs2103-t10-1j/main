@@ -28,10 +28,8 @@ public class History {
 	}
 
 	public static CommandLine popUndoStack() {
-		if (undoStack.empty()) {
-			return null;
-		} else
-			return undoStack.pop();
+		assert !undoStack.empty() : "empty undo stack popped";
+		return undoStack.pop();
 	}
 
 	public static boolean isEmptyUndoStack() {
@@ -43,7 +41,7 @@ public class History {
 	}
 
 	public static boolean isEmptyRedoQueue() {
-		if (redoQueue.peek() == null) {
+		if (redoQueue.size() == 0) {
 			return true;
 		} else {
 			return false;
@@ -51,10 +49,9 @@ public class History {
 	}
 
 	public static CommandLine peekRedoQueue() {
-		if (redoQueue.peek() != null)
-			return redoQueue.remove();
-		else
-			return null;
+		assert redoQueue.size() != 0 : "empty redo queue peeked";
+		return redoQueue.remove();
+
 	}
 
 }
