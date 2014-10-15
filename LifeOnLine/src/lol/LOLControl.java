@@ -29,7 +29,7 @@ public class LOLControl {
 		if (getCommandType(userInput).equals(Constants.COMMAND_EDIT)) {
 			return executeEdit(userInput);
 		}
-	
+
 		if (getCommandType(userInput).equals(Constants.COMMAND_DONE)) {
 			return executeDone(userInput);
 		}
@@ -42,7 +42,8 @@ public class LOLControl {
 		}
 
 		else {
-			logger.log(Level.WARNING, "Processing Error, unsupported CommandType entered");
+			logger.log(Level.WARNING,
+					"Processing Error, unsupported CommandType entered");
 			return executeInvalid(userInput);
 		}
 	}
@@ -73,7 +74,8 @@ public class LOLControl {
 			LOLStorage.save();
 			return showFeedback(delTask, Constants.COMMAND_DELETE);
 		} else
-//			logger.log(Level.WARNING, "Processing Error, deleting invalid index");
+			logger.log(Level.WARNING,
+					"Processing Error, deleting invalid index");
 		return executeInvalid(userInput);
 	}
 
@@ -94,22 +96,24 @@ public class LOLControl {
 	public static String executeDone(String userInput) {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
 		Task undoneTask = list.get(taskIndex - 1);
-		
-		Task doneTask = list.get(taskIndex - 1);
-		
+
+		Task doneTask = new Task(undoneTask.getTaskDescription(),
+				undoneTask.getTaskLocation(), undoneTask.getTaskDueDate(),
+				undoneTask.getStartTime(), undoneTask.getEndTime());
+
 		try {
-		doneTask.setIsDone(true);
+			doneTask.setIsDone(true);
 		} catch (Exception ex) {
 			logger.log(Level.WARNING, "Processing Error, task does not exist");
 		}
-		
+
 		if ((list.deleteByIndex(taskIndex - 1)) && (list.add(doneTask))) {
 			History.undoEdit(doneTask, undoneTask);
 			list.sortList();
 			LOLStorage.save();
 			return showFeedback(doneTask, Constants.COMMAND_DONE);
 		} else
-		return executeInvalid(userInput);
+			return executeInvalid(userInput);
 	}
 
 	public static String executeUndo(String userInput) {
