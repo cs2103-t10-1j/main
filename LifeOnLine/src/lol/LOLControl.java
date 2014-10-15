@@ -103,6 +103,10 @@ public class LOLControl {
 		try {
 			Task undoneTask = list.get(taskIndex - 1);
 
+			if (undoneTask.getIsDone()){
+				return Constants.FEEDBACK_DONE_FAILURE;
+			}
+
 			Task doneTask = new Task(undoneTask.getTaskDescription(),
 					undoneTask.getTaskLocation(), undoneTask.getTaskDueDate(),
 					undoneTask.getStartTime(), undoneTask.getEndTime());
@@ -125,6 +129,10 @@ public class LOLControl {
 
 		try {
 			Task doneTask = list.get(taskIndex - 1);
+			
+			if (!doneTask.getIsDone()){
+				return Constants.FEEDBACK_NOT_DONE_FAILURE;
+			}
 
 			Task notDoneTask = new Task(doneTask.getTaskDescription(),
 					doneTask.getTaskLocation(), doneTask.getTaskDueDate(),
