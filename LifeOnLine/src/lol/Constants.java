@@ -77,5 +77,24 @@ public class Constants {
 		public static final String FEEDBACK_REDO_SUCCESS = "Redone!!";
 		public static final String FEEDBACK_REDO_FAILURE = "Nothing to redo!";
 		public static final String FEEDBACK_INVALID = "That is an invalid action!";
+		
+		// not found
+		public static int NOT_FOUND = -1;
+		
+		// keywords
+		public static final String[] KEYWORDS = { "at", "on", "by", "from" };
+		
+		// index of keywords
+		public static final int INDEX_KEYWORD_AT = 0;
+		
+		// regex
+		public static final String REGEX_ONE_OR_MORE_SPACES = "\\s+";
+		public static final String[] REGEX_KEYWORDS = { "\\bat\\b" };
+		
+		// space
+		public static final String SPACE = " ";
+		
+		// error messages
+		public static final String ERROR_MULTIPLE_LOCATION = "Error! More than one location.";
 
 }
