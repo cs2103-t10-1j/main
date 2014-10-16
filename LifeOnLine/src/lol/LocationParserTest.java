@@ -98,4 +98,12 @@ public class LocationParserTest {
 		String[] arr3 = { "to" , "8.30", "am"};
 		assertTrue(lp.hasTime("6am", arr3));
 	}
+	
+	@Test
+	public void testGetUserInputWithoutLocation() {
+		LocationParser lp = new LocationParser("  add    buy pizza   at 10am at   clementi on   23 oct ");
+		assertEquals("add buy pizza at 10am on 23 oct", lp.getUserInputWithoutLocation());
+		LocationParser lp2 = new LocationParser("  add    buy pizza   at 10am  on   23 oct ");
+		assertEquals("add buy pizza at 10am on 23 oct", lp2.getUserInputWithoutLocation());
+	}
 }

@@ -21,37 +21,53 @@ public class LocationParser {
 		this.userInput = userInput;
 	}
 
+	/**
+	 * Returns the location from the user input
+	 * 
+	 * @return location if it exists, else null
+	 */
 	public String getLocation() {
 		try {
 			TimeParser tp = new TimeParser();
 			DateParser dp = new DateParser();
 			cleanUp();
-			
-			int countAts = countNumberOfAt();
-			
-			if (countAts == 1) {
-				String parameter = getParameterStartingAtIndex(getIndexOfAt() + 3);
-				if (!tp.isValidTimeFormat(parameter) && !dp.isValidDateFormat(parameter)) {
+
+			if (countNumberOfAt() == 1) {
+				String parameter = getParameterStartingAtIndex(getIndexOfAt()
+						+ Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT]
+								.length() + 1);
+				if (!tp.isValidTimeFormat(parameter)
+						&& !dp.isValidDateFormat(parameter)) {
 					return parameter;
 				} else {
 					return null;
 				}
 			} else {
 				Pattern p = Pattern
-						.compile("\\bat\\b");
+						.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_AT]);
 				Matcher m = p.matcher(getUserInput());
 
 				while (m.find()) {
 					String parameter = getParameterStartingAtIndex(m.end() + 1);
-					if (!tp.isValidTimeFormat(parameter) && !dp.isValidDateFormat(parameter)) {
+					if (!tp.isValidTimeFormat(parameter)
+							&& !dp.isValidDateFormat(parameter)) {
 						return parameter;
-					} 
+					}
 				}
 				return null;
 			}
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	/**
+	 * Returns user input excluding the location and the keyword "at" preceding it
+	 * @return   user input excluding the location and the keyword "at" preceding it
+	 */
+	public String getUserInputWithoutLocation() {
+		cleanUp();
+		return userInput.replaceAll("\\bat\\b\\s\\b" + getLocation() + "\\b\\s", Constants.EMPTY_STRING);
 	}
 
 	/**
@@ -62,7 +78,8 @@ public class LocationParser {
 	public String cleanUp() {
 		String input = getUserInput();
 		input = input.trim();
-		input = input.replaceAll("\\s+", " ");
+		input = input.replaceAll(Constants.REGEX_ONE_OR_MORE_SPACES,
+				Constants.SPACE);
 		setUserInput(input);
 		return input;
 	}
@@ -120,8 +137,12 @@ public class LocationParser {
 
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
-			String[] nextWords = { "", "", "", "" }; // next 4 words
-			
+			// find next 4 words because date and time formats can have at most
+			// 5 words
+			String[] nextWords = { Constants.EMPTY_STRING,
+					Constants.EMPTY_STRING, Constants.EMPTY_STRING,
+					Constants.EMPTY_STRING };
+
 			if (i < words.length - 4) {
 				int index = 0;
 				while (index < 4) {
@@ -149,8 +170,9 @@ public class LocationParser {
 			} else {
 				assert i == words.length - 1;
 			}
-			
-			if (isReservedWord(word) || hasDate(word, nextWords) || hasTime(word, nextWords)) {
+
+			if (isReservedWord(word) || hasDate(word, nextWords)
+					|| hasTime(word, nextWords)) {
 				Pattern p = Pattern.compile("\\b" + word + "\\b");
 				Matcher m = p.matcher(temp);
 
@@ -165,34 +187,83 @@ public class LocationParser {
 		}
 		return minIndex;
 	}
-	
+
+	/**
+	 * Checks whether the word and the next 4 words form a valid date
+	 * 
+	 * @param word
+	 *            first word
+	 * @param nextWords
+	 *            second to fifth words, if there are less than 4 elements,
+	 *            empty strings are entered for the array element
+	 * @return true if word and nextWords contain a valid date, else false
+	 */
 	public boolean hasDate(String word, String[] nextWords) {
 		DateParser dp = new DateParser();
 		try {
-			return dp.isValidDateFormat(word) || dp.isValidDateFormat(word + " " + nextWords[0]) || dp.isValidDateFormat(word + " " + nextWords[0] + " " + nextWords[1]) || dp.isValidDateFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]) || dp.isValidDateFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2] + " " + nextWords[3]);
+			return dp.isValidDateFormat(word)
+					|| dp.isValidDateFormat(word + " " + nextWords[0])
+					|| dp.isValidDateFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1])
+					|| dp.isValidDateFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2])
+					|| dp.isValidDateFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2] + " "
+							+ nextWords[3]);
 		} catch (Exception e) {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Checks whether the word and the next 4 words form a valid time or time
+	 * range
+	 * 
+	 * @param word
+	 *            first word
+	 * @param nextWords
+	 *            second to fifth words, if there are less than 4 elements,
+	 *            empty strings are entered for the array element
+	 * @return true if word and nextWords contain a valid time format, else
+	 *         false
+	 */
 	public boolean hasTime(String word, String[] nextWords) {
 		TimeParser tp = new TimeParser();
 		try {
-			return tp.isValidTimeFormat(word) || tp.isValidTimeFormat(word + " " + nextWords[0]) || tp.isValidTimeFormat(word + " " + nextWords[0] + " " + nextWords[1]) || tp.isValidTimeFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]) || tp.isValidTimeFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2] + " " + nextWords[3]);
-		}
-		catch (Exception e) {
+			return tp.isValidTimeFormat(word)
+					|| tp.isValidTimeFormat(word + " " + nextWords[0])
+					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1])
+					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2])
+					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2] + " "
+							+ nextWords[3]);
+		} catch (Exception e) {
 			return false;
 		}
 	}
+
 	/**
-	 * Checks is a word is a keyword (at, by etc.) or reserved word (days of the week, today, tomorrow, tmw)
-	 * @param word   word to be checked
-	 * @return  true if a word is a keyword or reserved word, else false
+	 * Checks is a word is a keyword (at, by etc.) or reserved word (days of the
+	 * week, today, tomorrow, tmw)
+	 * 
+	 * @param word
+	 *            word to be checked
+	 * @return true if a word is a keyword or reserved word, else false
 	 */
 	public boolean isReservedWord(String word) {
-		return hasWordInDictionary(Constants.KEYWORDS, word) || hasWordInDictionary(Constants.DAYS_IMMEDIATE, word) || hasWordInDictionary(Constants.DAYS_LONG, word) || hasWordInDictionary(Constants.DAYS_SHORT, word);
+		return hasWordInDictionary(Constants.KEYWORDS, word)
+				|| hasWordInDictionary(Constants.DAYS_IMMEDIATE, word)
+				|| hasWordInDictionary(Constants.DAYS_LONG, word)
+				|| hasWordInDictionary(Constants.DAYS_SHORT, word);
 	}
 
+	/**
+	 * Returns the index of first occurrence of the word "at" in userInput
+	 * 
+	 * @return index of first occurrence of the word "at" in userInput
+	 */
 	public int getIndexOfAt() {
 		Pattern p = Pattern
 				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_AT]);
@@ -205,10 +276,26 @@ public class LocationParser {
 		}
 	}
 
+	/**
+	 * Checks whether index is out of bounds for userInput
+	 * 
+	 * @param index
+	 *            index to be checked
+	 * @return true if index out of bounds, else false
+	 */
 	public boolean isIndexOutOfBounds(int index) {
 		return index < 0 || index >= getUserInput().length();
 	}
 
+	/**
+	 * Check whether a word appears in a dictionary
+	 * 
+	 * @param dictionary
+	 *            Dictionary to be searched
+	 * @param word
+	 *            Word to search for
+	 * @return true if word appears in dictionary, false otherwise
+	 */
 	public boolean hasWordInDictionary(String[] dictionary, String word) {
 		word = word.trim();
 		for (int i = 0; i < dictionary.length; i++) {

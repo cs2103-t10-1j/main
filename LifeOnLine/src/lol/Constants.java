@@ -99,6 +99,9 @@ public class Constants {
 		// space
 		public static final String SPACE = " ";
 		
+		// empty string
+		public static final String EMPTY_STRING = "";
+		
 		// error messages
 		public static final String ERROR_MULTIPLE_LOCATION = "Error! More than one location.";
 
