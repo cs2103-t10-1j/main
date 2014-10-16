@@ -74,5 +74,28 @@ public class LocationParserTest {
 		LocationParser lp = new LocationParser("abc");
 		assertTrue(lp.isReservedWord("sunday"));
 	}
-
+	
+	@Test
+	public void testHasDate() {
+		LocationParser lp = new LocationParser("abc");
+		String[] arr1 = { "nov" , "now"};
+		assertTrue(lp.hasDate("6", arr1));
+		String[] arr2 = { "nov" , "now"};
+		assertTrue(lp.hasDate("6/10", arr2));
+		String[] arr3 = { "october" , "15", "16"};
+		assertTrue(lp.hasDate("6", arr3));
+		String[] arr4 = { "octopus" , "15", "16"};
+		assertFalse(lp.hasDate("6", arr4));
+	}
+	
+	@Test
+	public void testHasTime() {
+		LocationParser lp = new LocationParser("abc");
+		String[] arr1 = { "am" , "-", "7" , "am"};
+		assertTrue(lp.hasTime("6", arr1));
+		String[] arr2 = { "am" , "n"};
+		assertTrue(lp.hasTime("6.30", arr2));
+		String[] arr3 = { "to" , "8.30", "am"};
+		assertTrue(lp.hasTime("6am", arr3));
+	}
 }

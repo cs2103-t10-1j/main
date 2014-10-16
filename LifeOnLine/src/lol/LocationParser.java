@@ -3,7 +3,6 @@
  */
 package lol;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -118,14 +117,9 @@ public class LocationParser {
 		String temp = getUserInput().substring(beginIndex);
 		String[] words = temp.split(Constants.SPACE);
 		int minIndex = Constants.NOT_FOUND;
-		
-		System.out.println("******************************");
-		System.out.println(userInput);
-		System.out.println("******************************");
 
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
-			System.out.println("word: " + word);
 			String[] nextWords = { "", "", "", "" }; // next 4 words
 			
 			if (i < words.length - 4) {
@@ -134,30 +128,26 @@ public class LocationParser {
 					nextWords[index] = words[i + 1 + index];
 					index++;
 				}
-				System.out.println("<4 " + Arrays.toString(nextWords));
 			} else if (i < words.length - 3) {
 				int index = 0;
 				while (index < 3) {
 					nextWords[index] = words[i + 1 + index];
 					index++;
 				}
-				System.out.println("<3 " + Arrays.toString(nextWords));
 			} else if (i < words.length - 2) {
 				int index = 0;
 				while (index < 2) {
 					nextWords[index] = words[i + 1 + index];
 					index++;
 				}
-				System.out.println("<2 " + Arrays.toString(nextWords));
 			} else if (i < words.length - 1) {
 				int index = 0;
 				while (index < 1) {
 					nextWords[index] = words[i + 1 + index];
 					index++;
 				}
-				System.out.println("<1 " + Arrays.toString(nextWords));
 			} else {
-				System.out.println("last " + Arrays.toString(nextWords));
+				assert i == words.length - 1;
 			}
 			
 			if (isReservedWord(word) || hasDate(word, nextWords) || hasTime(word, nextWords)) {
@@ -178,12 +168,21 @@ public class LocationParser {
 	
 	public boolean hasDate(String word, String[] nextWords) {
 		DateParser dp = new DateParser();
-		return dp.isValidDateFormat(word) || dp.isValidDateFormat(word + " " + nextWords[0]) || dp.isValidDateFormat(word + " " + nextWords[0] + " " + nextWords[1]) || dp.isValidDateFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]) || dp.isValidDateFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2] + " " + nextWords[3]);
+		try {
+			return dp.isValidDateFormat(word) || dp.isValidDateFormat(word + " " + nextWords[0]) || dp.isValidDateFormat(word + " " + nextWords[0] + " " + nextWords[1]) || dp.isValidDateFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]) || dp.isValidDateFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2] + " " + nextWords[3]);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	public boolean hasTime(String word, String[] nextWords) {
 		TimeParser tp = new TimeParser();
-		return tp.isValidTimeFormat(word) || tp.isValidTimeFormat(word + " " + nextWords[0]) || tp.isValidTimeFormat(word + " " + nextWords[0] + " " + nextWords[1]) || tp.isValidTimeFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]) || tp.isValidTimeFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2] + " " + nextWords[3]);
+		try {
+			return tp.isValidTimeFormat(word) || tp.isValidTimeFormat(word + " " + nextWords[0]) || tp.isValidTimeFormat(word + " " + nextWords[0] + " " + nextWords[1]) || tp.isValidTimeFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]) || tp.isValidTimeFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2] + " " + nextWords[3]);
+		}
+		catch (Exception e) {
+			return false;
+		}
 	}
 	/**
 	 * Checks is a word is a keyword (at, by etc.) or reserved word (days of the week, today, tomorrow, tmw)

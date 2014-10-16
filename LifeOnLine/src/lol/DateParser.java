@@ -49,19 +49,37 @@ public class DateParser {
 		// Allowed date formats
 		dateFormats.add(new SimpleDateFormat("d/M/yyyy")); // 14/3/2014
 		dateFormats.add(new SimpleDateFormat("d/M/yy")); // 14/3/14
-		dateFormats.add(new SimpleDateFormat("d MMM yyyy")); // 14 Mar 2014
-		dateFormats.add(new SimpleDateFormat("d MMM yy")); // 14 Mar 14
 		dateFormats.add(new SimpleDateFormat("d MMMM yyyy")); // 14 March 2014
 		dateFormats.add(new SimpleDateFormat("d MMMM yy")); // 14 March 14
 		dateFormats.add(new SimpleDateFormat("d/M")); // 14/3
-		dateFormats.add(new SimpleDateFormat("d MMM")); // 14 Mar
-		dateFormats.add(new SimpleDateFormat("d MMMM")); // 14 March
+		
 
 		for (SimpleDateFormat format : dateFormats) {
 			format.setLenient(false);
 			try {
 				format.parse(inDate.trim());
 				return true;
+			} catch (ParseException pe) {
+				// Try other formats
+			}
+		}
+		
+		List<SimpleDateFormat> dateFormatsAbbreviatedMonth = new ArrayList<SimpleDateFormat>();
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM yyyy")); // 14 Mar 2014
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM yy")); // 14 Mar 14
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM")); // 14 Mar
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMMM")); // 14 March
+		
+		for (SimpleDateFormat format : dateFormatsAbbreviatedMonth) {
+			format.setLenient(false);
+			try {
+				format.parse(inDate.trim());
+				String month = getNthWord(inDate, 2);
+				for (String fullMonthName : Constants.MONTHS_LONG) {
+					if (fullMonthName.contains(month)) {
+						return true;
+					}
+				}
 			} catch (ParseException pe) {
 				// Try other formats
 			}
@@ -267,4 +285,32 @@ public class DateParser {
 		// sun = 0, mon = 1 ... sat = 6
 		return rightNow.get(Calendar.DAY_OF_WEEK) - 1;
 	}
+	
+	/**
+	 * Removes multiple spaces between words, leading and trailing spaces
+	 * @param input  string to be cleaned up
+	 * @return string without extra spaces
+	 */
+	public String cleanUp(String input) {
+		input = input.trim();
+		input = input.replaceAll("\\s+", " ");
+		return input;
+	}
+	
+	/**
+	 * Returns the Nth word of an input, where n starts from 1, e.g. 1 for 1st word
+	 * @param input  input string
+	 * @param n      the index of word to return, starting from 1
+	 * @return       Nth word of input
+	 */
+	public String getNthWord(String input, int n) {
+		input = cleanUp(input);
+		String[] words = input.split(Constants.SPACE);
+		if (words.length < n) {
+			return "";
+		} else {
+			return words[n - 1];
+		}
+	}
+
 }

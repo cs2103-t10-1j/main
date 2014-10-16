@@ -101,5 +101,7 @@ public class TimeParserTest {
 		assertTrue(tp.isTimeRange("11  to 1pm"));
 		assertTrue(tp.isTimeRange("11am to 1pm"));
 		assertTrue(tp.is24hrTime("0800"));
+		assertTrue(tp.isValidTimeFormat("6 am - 7 am"));
+		assertTrue(tp.isValidTimeFormat("6  am to  7 am"));
 	}
 }

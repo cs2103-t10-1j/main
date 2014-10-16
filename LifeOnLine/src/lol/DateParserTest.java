@@ -20,6 +20,9 @@ public class DateParserTest {
 		assertTrue(dp.isValidDate("31/10/2014"));
 		assertFalse(dp.isValidDate("31/13/14"));
 		assertFalse(dp.isValidDate("abcde"));
+		assertFalse(dp.isValidDate("5 novel"));
+		assertTrue(dp.isValidDate("16 octo 15"));
+		assertFalse(dp.isValidDate("16"));
 	}
 
 	@Test
