@@ -36,9 +36,9 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent event){ 
 		String inputStr = inputTF.getText();
 
-		if(inputStr.trim().equalsIgnoreCase("exit")){ //this line should let control handle
-			System.exit(0);
-		}
+//		if(inputStr.trim().equalsIgnoreCase("exit")){ //this line should let control handle
+//			System.exit(0);
+//		}
 
 		String feedback = passStringToControlAndGetFeedback(inputStr);
 		feedbackDisplayTA.setText(feedback);

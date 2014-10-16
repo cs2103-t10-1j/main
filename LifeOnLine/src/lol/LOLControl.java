@@ -44,6 +44,9 @@ public class LOLControl {
 		if (getCommandType(userInput).equals(Constants.COMMAND_REDO)) {
 			return executeRedo(userInput);
 		}
+		if (getCommandType(userInput).equals(Constants.COMMAND_EXIT)) {
+			return executeExit(userInput);
+		}
 
 		else {
 			logger.log(Level.WARNING,
@@ -97,13 +100,18 @@ public class LOLControl {
 			return executeInvalid(userInput);
 	}
 
+	public static String executeSearch(String userInput) {
+	//TODO	
+		return null;
+	}
+
 	public static String executeDone(String userInput) {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
 
 		try {
 			Task undoneTask = list.get(taskIndex - 1);
 
-			if (undoneTask.getIsDone()){
+			if (undoneTask.getIsDone()) {
 				return Constants.FEEDBACK_DONE_FAILURE;
 			}
 
@@ -129,8 +137,8 @@ public class LOLControl {
 
 		try {
 			Task doneTask = list.get(taskIndex - 1);
-			
-			if (!doneTask.getIsDone()){
+
+			if (!doneTask.getIsDone()) {
 				return Constants.FEEDBACK_NOT_DONE_FAILURE;
 			}
 
@@ -239,6 +247,11 @@ public class LOLControl {
 		}
 	}
 
+	public static String executeExit(String userInput) {
+		System.exit(0);
+		return showFeedback(null, Constants.COMMAND_EXIT);
+	}
+
 	public static String executeInvalid(String userInput) {
 		Task invalidTask = LOLParser.getTask(userInput);
 		return showFeedback(invalidTask, Constants.COMMAND_INVALID);
@@ -265,6 +278,9 @@ public class LOLControl {
 		}
 		if (commandType.equals(Constants.COMMAND_REDO)) {
 			return (Constants.FEEDBACK_REDO_SUCCESS);
+		}
+		if (commandType.equals(Constants.COMMAND_EXIT)) {
+			return (null);
 		} else
 			return (Constants.FEEDBACK_INVALID);
 	}
