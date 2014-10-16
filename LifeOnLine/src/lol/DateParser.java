@@ -25,6 +25,15 @@ import java.util.Calendar;
 import java.util.List;
 
 public class DateParser {
+	
+	/**
+	 * Checks if a string is a valid date format
+	 * @param inDate  string to be checked
+	 * @return  true if inDate is a valid date format, else false
+	 */
+	public boolean isValidDateFormat(String inDate) {
+		return isValidDate(inDate) || isValidDay(inDate);
+	}
 
 	/**
 	 * Checks if a String represents date in any of the allowed formats

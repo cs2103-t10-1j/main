@@ -8,8 +8,20 @@ public class LocationParserTest {
 
 	@Test
 	public void testGetLocation() {
-		LocationParser lp = new LocationParser("add buy pizza at clementi on 23 oct at 10am");
+		LocationParser lp = new LocationParser("   add    buy pizza at  clementi on 23   oct at   10am   ");
 		assertEquals("clementi", lp.getLocation());
+		LocationParser lp1 = new LocationParser("   add   buy pizza at 3am  on sun   at  clementi ");
+		assertEquals("clementi", lp1.getLocation());
+		LocationParser lp2 = new LocationParser("   add    buy pizza  on 23   oct at   10am   ");
+		assertEquals(null, lp2.getLocation());
+		LocationParser lp3 = new LocationParser("   add    buy pizza    ");
+		assertEquals(null, lp3.getLocation());
+		LocationParser lp4 = new LocationParser("   add    buy pizza  at jurong  tomorrow  ");
+		assertEquals("jurong", lp4.getLocation());
+		LocationParser lp5 = new LocationParser("add at clementi 6 oct  buy pizza    ");
+		assertEquals("clementi", lp5.getLocation());
+		LocationParser lp6 = new LocationParser("add at westside 9am  buy pizza    ");
+		assertEquals("westside", lp6.getLocation());
 	}
 
 	@Test
@@ -33,8 +45,8 @@ public class LocationParserTest {
 	@Test
 	public void testGetIndexOfNextKeyword() {
 		LocationParser lp = new LocationParser("add buy pizza at clementi on 23 oct at 10am");
-		assertEquals(14, lp.getIndexOfNextKeyword(0));
-		assertEquals(26, lp.getIndexOfNextKeyword(17));
+		assertEquals(14, lp.getIndexOfNextReservedWord(0));
+		assertEquals(26, lp.getIndexOfNextReservedWord(17));
 	}
 
 	@Test
@@ -55,6 +67,12 @@ public class LocationParserTest {
 	public void testHasWordInDictionary() {
 		LocationParser lp = new LocationParser("add buy pizza at clementi on 23 oct at 10am");
 		assertTrue(lp.hasWordInDictionary(Constants.KEYWORDS, "at"));
+	}
+	
+	@Test
+	public void testIsReservedWord() {
+		LocationParser lp = new LocationParser("abc");
+		assertTrue(lp.isReservedWord("sunday"));
 	}
 
 }

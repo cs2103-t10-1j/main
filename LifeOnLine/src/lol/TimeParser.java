@@ -26,6 +26,15 @@ import java.util.Calendar;
 
 public class TimeParser {
 	/**
+	 * Checks whether a string is a valid time format
+	 * @param string  String to be checked
+	 * @return true if string is a valid time format, else false
+	 */
+	public boolean isValidTimeFormat(String string) {
+		return is12hrTime(string) || is24hrTime(string) || isTimeRange(string) || isTimeWithoutAmpm(string);
+	}
+	
+	/**
 	 * Checks whether a string represents time in 12-hour format, e.g. 2pm or
 	 * 1.20am
 	 * 
