@@ -32,7 +32,7 @@ public class TaskList<E extends Comparable<Task>> {
 		list.clear();
 	}
 
-	public void sortList() {
+	public void sort() {
 		Collections.sort(list);
 	}
 

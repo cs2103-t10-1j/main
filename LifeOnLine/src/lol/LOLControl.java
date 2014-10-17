@@ -15,7 +15,6 @@ public class LOLControl {
 	/********** Controller methods ***********/
 
 	public static TaskList<Task> getTaskList() {
-		markOverdueTasks(list);
 		return list;
 	}
 
@@ -68,7 +67,7 @@ public class LOLControl {
 
 		if (list.add(newTask)) {
 			History.undoAdd(newTask);
-			list.sortList();
+			sortList(list);
 			LOLStorage.save();
 			return showFeedback(newTask, Constants.COMMAND_ADD);
 		} else
@@ -80,6 +79,7 @@ public class LOLControl {
 		Task delTask = list.get(taskIndex - 1);
 
 		if (list.deleteByIndex(taskIndex - 1)) {
+			sortList(list);
 			History.undoDelete(delTask);
 			LOLStorage.save();
 			return showFeedback(delTask, Constants.COMMAND_DELETE);
@@ -95,8 +95,8 @@ public class LOLControl {
 		Task oldTask = list.get(taskIndex - 1);
 
 		if ((list.deleteByIndex(taskIndex - 1)) && (list.add(editTask))) {
+			sortList(list);
 			History.undoEdit(editTask, oldTask);
-			list.sortList();
 			LOLStorage.save();
 			return showFeedback(oldTask, Constants.COMMAND_EDIT);
 		} else
@@ -125,6 +125,7 @@ public class LOLControl {
 			doneTask.setIsDone(true);
 
 			if (list.set(taskIndex - 1, doneTask)) {
+				sortList(list);
 				History.undoEdit(doneTask, undoneTask);
 				LOLStorage.save();
 				return showFeedback(doneTask, Constants.COMMAND_DONE);
@@ -152,6 +153,7 @@ public class LOLControl {
 			notDoneTask.setIsDone(false);
 
 			if (list.set(taskIndex - 1, notDoneTask)) {
+				sortList(list);
 				History.undoEdit(notDoneTask, doneTask);
 				LOLStorage.save();
 				return showFeedback(notDoneTask, Constants.COMMAND_NOT_DONE);
@@ -176,13 +178,14 @@ public class LOLControl {
 
 			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
 				list.add(undoCmdTask);
-				list.sortList();
+				sortList(list);
 				History.redoAdd(undoCmd);
 				LOLStorage.save();
 			}
 
 			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
 				list.delete(undoCmdTask);
+				sortList(list);
 				History.redoAdd(undoCmd);
 				LOLStorage.save();
 			}
@@ -195,7 +198,7 @@ public class LOLControl {
 
 				list.delete(undoCmdTaskNew);
 				list.add(undoCmdTaskOld);
-				list.sortList();
+				sortList(list);
 				History.redoAdd(undoCmd);
 				History.redoAdd(undoCmdOld);
 				History.redoAdd(undoCmdNew);
@@ -221,13 +224,14 @@ public class LOLControl {
 
 			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
 				list.delete(undoCmdTask);
+				sortList(list);
 				History.undoDelete(undoCmdTask);
 				LOLStorage.save();
 			}
 
 			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
 				list.add(undoCmdTask);
-				list.sortList();
+				sortList(list);
 				History.undoAdd(undoCmdTask);
 				LOLStorage.save();
 			}
@@ -240,7 +244,7 @@ public class LOLControl {
 
 				list.add(undoCmdTaskNew);
 				list.delete(undoCmdTaskOld);
-				list.sortList();
+				sortList(list);
 				History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
 				LOLStorage.save();
 
@@ -286,6 +290,11 @@ public class LOLControl {
 			return (null);
 		} else
 			return (Constants.FEEDBACK_INVALID);
+	}
+
+	public static void sortList(TaskList<Task> list) {
+		list.sort();
+		markOverdueTasks(list);
 	}
 
 	public static void markOverdueTasks(TaskList<Task> list) {
