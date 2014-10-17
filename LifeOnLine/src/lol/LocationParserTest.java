@@ -105,5 +105,7 @@ public class LocationParserTest {
 		assertEquals("add buy pizza at 10am on 23 oct", lp.getUserInputWithoutLocation());
 		LocationParser lp2 = new LocationParser("  add    buy pizza   at 10am  on   23 oct ");
 		assertEquals("add buy pizza at 10am on 23 oct", lp2.getUserInputWithoutLocation());
+		LocationParser lp3 = new LocationParser("  add    buy pizza   at 10am  on   21 oct  at clementi");
+		assertEquals("add buy pizza at 10am on 21 oct", lp3.getUserInputWithoutLocation());
 	}
 }

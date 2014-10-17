@@ -14,6 +14,8 @@
  * 
  * Day of the week: Monday, Mon, Sunday, sun
  * Today, tomorrow, tmw
+ * 
+ * Month names can have 3 or more letters.
  */
 
 package lol;
@@ -23,13 +25,147 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DateParser {
+	private String userInput;
+	private String dateKeyword; // keyword preceding date - on, by or no keyword
+
+	public DateParser() {
+		this("");
+	}
+
+	public DateParser(String userInput) {
+		setUserInput(userInput);
+		setDateKeyword("");
+	}
+
+	public String getUserInput() {
+		return userInput;
+	}
+	
+	public String getDateKeyword() {
+		return dateKeyword;
+	}
+
+	public void setUserInput(String userInput) {
+		this.userInput = userInput;
+	}
+	
+	public void setDateKeyword(String dateKeyword) {
+		this.dateKeyword = dateKeyword;
+	}
+
+	public Date getDueDate() {
+		cleanUp();
+
+		// on
+		Pattern pOn = Pattern.compile("\\bon\\b");
+		Matcher mOn = pOn.matcher(getUserInput());
+
+		while (mOn.find()) {
+			String parameter = getParameterStartingAtIndex(mOn.end());
+			if (isValidDateFormat(parameter)) {
+				setDateKeyword("on");
+				return createDate(parameter);
+			}
+		}
+
+		// by
+		Pattern pBy = Pattern.compile("\\bby\\b");
+		Matcher mBy = pBy.matcher(getUserInput());
+
+		while (mBy.find()) {
+			String parameter = getParameterStartingAtIndex(mBy.end());
+			if (isValidDateFormat(parameter)) {
+				setDateKeyword("by");
+				return createDate(parameter);
+			}
+		}
+
+		// no keyword
+		String temp = getUserInput();
+		String[] words = temp.split(" ");
+
+		for (int i = 0; i < words.length; i++) {
+			String word = words[i];
+			if (isValidDay(word)) {
+				return createDate(word);
+			}
+			
+			// find next 4 words because date and time formats can have at most
+			// 5 words
+			String[] nextWords = getNext4Words(words, i);
+
+			if (hasDate(word, nextWords)) {
+				Pattern p = Pattern.compile("\\b" + word + "\\b");
+				Matcher m = p.matcher(temp);
+
+				if (m.find()) {
+					String parameter = getParameterStartingAtIndex(m.start());
+					return createDate(parameter);
+				}
+			}
+		}
+		return null;
+	}
+
+	public String getUserInputWithoutDueDate() {
+		if (getDueDate() == null) {
+			return getUserInput();
+		}
+		String keyword = getDateKeyword();
+		String date = "";
+		
+		if (keyword.isEmpty()) {
+			String temp = getUserInput();
+			String[] words = temp.split(" ");
+
+			for (int i = 0; i < words.length; i++) {
+				String word = words[i];
+				if (isValidDay(word)) {
+					date = word.trim();
+				}
+				
+				// find next 4 words because date and time formats can have at most
+				// 5 words
+				String[] nextWords = getNext4Words(words, i);
+
+				if (hasDate(word, nextWords)) {
+					Pattern p = Pattern.compile("\\b" + word + "\\b");
+					Matcher m = p.matcher(temp);
+
+					if (m.find()) {
+						date = getParameterStartingAtIndex(m.start()).trim();
+					}
+				}
+			}
+		} else {
+			Pattern p = Pattern.compile("\\b" + keyword + "\\b");
+			Matcher m = p.matcher(getUserInput());
+
+			while (m.find()) {
+				String parameter = getParameterStartingAtIndex(m.end());
+				if (isValidDateFormat(parameter)) {
+					date = parameter.trim();
+				}
+			}
+		}
+		
+		if (getDateKeyword().isEmpty()) {
+			return cleanUp(getUserInput().replaceAll("\\b" + date + "\\b", " "));
+		} else {
+			return cleanUp(getUserInput().replaceAll("\\b" + keyword + "\\b\\s\\b" + date + "\\b", " "));
+		}
+	}
 	
 	/**
 	 * Checks if a string is a valid date format
-	 * @param inDate  string to be checked
-	 * @return  true if inDate is a valid date format, else false
+	 * 
+	 * @param inDate
+	 *            string to be checked
+	 * @return true if inDate is a valid date format, else false
 	 */
 	public boolean isValidDateFormat(String inDate) {
 		return isValidDate(inDate) || isValidDay(inDate);
@@ -52,7 +188,6 @@ public class DateParser {
 		dateFormats.add(new SimpleDateFormat("d MMMM yyyy")); // 14 March 2014
 		dateFormats.add(new SimpleDateFormat("d MMMM yy")); // 14 March 14
 		dateFormats.add(new SimpleDateFormat("d/M")); // 14/3
-		
 
 		for (SimpleDateFormat format : dateFormats) {
 			format.setLenient(false);
@@ -63,13 +198,19 @@ public class DateParser {
 				// Try other formats
 			}
 		}
-		
+
 		List<SimpleDateFormat> dateFormatsAbbreviatedMonth = new ArrayList<SimpleDateFormat>();
-		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM yyyy")); // 14 Mar 2014
-		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM yy")); // 14 Mar 14
-		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM")); // 14 Mar
-		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMMM")); // 14 March
-		
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM yyyy")); // 14
+																				// Mar
+																				// 2014
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM yy")); // 14
+																			// Mar
+																			// 14
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM")); // 14
+																		// Mar
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMMM")); // 14
+																			// March
+
 		for (SimpleDateFormat format : dateFormatsAbbreviatedMonth) {
 			format.setLenient(false);
 			try {
@@ -100,7 +241,9 @@ public class DateParser {
 		}
 
 		String[] dateSlash = string.split("/"); // separated by forward-slash
+		dateSlash = cleanUp(dateSlash);
 		String[] dateSpace = string.split(" "); // separated by space
+		dateSpace = cleanUp(dateSpace);
 
 		// Date format 30/9/2014 or 30/9/14
 		// if the date has 3 parts
@@ -285,10 +428,12 @@ public class DateParser {
 		// sun = 0, mon = 1 ... sat = 6
 		return rightNow.get(Calendar.DAY_OF_WEEK) - 1;
 	}
-	
+
 	/**
 	 * Removes multiple spaces between words, leading and trailing spaces
-	 * @param input  string to be cleaned up
+	 * 
+	 * @param input
+	 *            string to be cleaned up
 	 * @return string without extra spaces
 	 */
 	public String cleanUp(String input) {
@@ -297,11 +442,40 @@ public class DateParser {
 		return input;
 	}
 	
+	public String[] cleanUp(String[] input) {
+		for (int i = 0; i < input.length; i++) {
+			String temp = input[i];
+			temp = temp.trim();
+			temp = cleanUp(temp);
+			input[i] = temp;
+		}
+		return input;
+	}
+
 	/**
-	 * Returns the Nth word of an input, where n starts from 1, e.g. 1 for 1st word
-	 * @param input  input string
-	 * @param n      the index of word to return, starting from 1
-	 * @return       Nth word of input
+	 * Removes multiple spaces between words, leading and trailing spaces in the
+	 * userInput
+	 * 
+	 * @return string without extra spaces
+	 */
+	public String cleanUp() {
+		String input = getUserInput();
+		input = input.trim();
+		input = input.replaceAll(Constants.REGEX_ONE_OR_MORE_SPACES,
+				Constants.SPACE);
+		setUserInput(input);
+		return input;
+	}
+
+	/**
+	 * Returns the Nth word of an input, where n starts from 1, e.g. 1 for 1st
+	 * word
+	 * 
+	 * @param input
+	 *            input string
+	 * @param n
+	 *            the index of word to return, starting from 1
+	 * @return Nth word of input
 	 */
 	public String getNthWord(String input, int n) {
 		input = cleanUp(input);
@@ -312,5 +486,226 @@ public class DateParser {
 			return words[n - 1];
 		}
 	}
+
+	/**
+	 * Returns a due date starting from 'index' till
+	 * the occurrence of another reserved word or the end of the string or another parameter,
+	 * whichever is earlier
+	 * 
+	 * @param index
+	 *            index of userInput at which the paramter to be returned starts
+	 * @return parameter starting from index
+	 */
+	public String getParameterStartingAtIndex(int index) {
+		if (isIndexOutOfBounds(index)) {
+			return null;
+		}
+		String parameter;
+		int nextKeywordIndex = getIndexOfNextReservedWord(index + 1);
+		
+		if (nextKeywordIndex == Constants.NOT_FOUND) {
+			parameter = getUserInput().substring(index).trim();
+		} else {
+			assert nextKeywordIndex > 0;
+			parameter = getUserInput().substring(index, nextKeywordIndex).trim();
+		}
+		
+		// Check if the due date is followed by a description
+		return removeDescriptionFromDueDateIfAny(parameter);
+
+	}
+	
+	public String removeDescriptionFromDueDateIfAny(String date) {
+		String[] words = date.split(" ");
+		String firstWord = words[0];
+		String[] nextWords = getNext4Words(words, 0);
+		
+		if (isValidDateFormat(firstWord)) {
+			return firstWord.trim();
+		} else if (isValidDateFormat(firstWord + " " + nextWords[0])) {
+			return (firstWord + " " + nextWords[0]).trim();
+		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " " + nextWords[1])) {
+			return (firstWord + " " + nextWords[0] + " " + nextWords[1]).trim();
+		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2])) {
+			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]).trim();
+		} else {
+			return date;
+		}
+	}
+
+	/**
+	 * Returns the starting index of the next keyword
+	 * 
+	 * @param beginIndex
+	 *            index of userInput to start searching from
+	 * @return starting index of next keyword, -1 if not found
+	 */
+	public int getIndexOfNextReservedWord(int beginIndex) {
+		String temp = getUserInput().substring(beginIndex);
+		String[] words = temp.split(Constants.SPACE);
+		int minIndex = Constants.NOT_FOUND;
+
+		for (int i = 0; i < words.length; i++) {
+			String word = words[i];
+			String[] nextWords = getNext4Words(words, i);
+
+			if (isReservedWord(word)
+					|| hasTime(word, nextWords)) {
+				Pattern p = Pattern.compile("\\b" + word + "\\b");
+				Matcher m = p.matcher(temp);
+
+				if (m.find()) {
+					int keywordIndex = m.start() + beginIndex;
+					if (minIndex == Constants.NOT_FOUND
+							|| keywordIndex < minIndex) {
+						minIndex = keywordIndex;
+					}
+				}
+			}
+		}
+		return minIndex;
+	}
+
+	/**
+	 * Checks whether the word and the next 4 words form a valid date
+	 * 
+	 * @param word
+	 *            first word
+	 * @param nextWords
+	 *            second to fifth words, if there are less than 4 elements,
+	 *            empty strings are entered for the array element
+	 * @return true if word and nextWords contain a valid date, else false
+	 */
+	public boolean hasDate(String word, String[] nextWords) {
+		try {
+			return isValidDateFormat(word)
+					|| isValidDateFormat(word + " " + nextWords[0])
+					|| isValidDateFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1])
+					|| isValidDateFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2])
+					|| isValidDateFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2] + " "
+							+ nextWords[3]);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Checks whether the word and the next 4 words form a valid time or time
+	 * range
+	 * 
+	 * @param word
+	 *            first word
+	 * @param nextWords
+	 *            second to fifth words, if there are less than 4 elements,
+	 *            empty strings are entered for the array element
+	 * @return true if word and nextWords contain a valid time format, else
+	 *         false
+	 */
+	public boolean hasTime(String word, String[] nextWords) {
+		TimeParser tp = new TimeParser();
+		try {
+			return tp.isValidTimeFormat(word)
+					|| tp.isValidTimeFormat(word + " " + nextWords[0])
+					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1])
+					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2])
+					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2] + " "
+							+ nextWords[3]);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Checks is a word is a keyword (at, by etc.) or reserved word (days of the
+	 * week, today, tomorrow, tmw)
+	 * 
+	 * @param word
+	 *            word to be checked
+	 * @return true if a word is a keyword or reserved word, else false
+	 */
+	public boolean isReservedWord(String word) {
+		return hasWordInDictionary(Constants.KEYWORDS, word)
+				|| hasWordInDictionary(Constants.DAYS_IMMEDIATE, word)
+				|| hasWordInDictionary(Constants.DAYS_LONG, word)
+				|| hasWordInDictionary(Constants.DAYS_SHORT, word);
+	}
+
+	/**
+	 * Checks whether index is out of bounds for userInput
+	 * 
+	 * @param index
+	 *            index to be checked
+	 * @return true if index out of bounds, else false
+	 */
+	public boolean isIndexOutOfBounds(int index) {
+		return index < 0 || index >= getUserInput().length();
+	}
+
+	/**
+	 * Check whether a word appears in a dictionary
+	 * 
+	 * @param dictionary
+	 *            Dictionary to be searched
+	 * @param word
+	 *            Word to search for
+	 * @return true if word appears in dictionary, false otherwise
+	 */
+	public boolean hasWordInDictionary(String[] dictionary, String word) {
+		word = word.trim();
+		for (int i = 0; i < dictionary.length; i++) {
+			if (dictionary[i].equalsIgnoreCase(word)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns the next 4 words of userInput, starting from the index i + 1
+	 * @param words  Array of words in userInput
+	 * @param i  The index of the first word
+	 * @return   The next 4 words after index i. If there are less than 4 words, the empty words are represented by empty strings
+	 */
+	public String[] getNext4Words(String[] words, int i) {
+		String[] nextWords = { Constants.EMPTY_STRING,
+				Constants.EMPTY_STRING, Constants.EMPTY_STRING,
+				Constants.EMPTY_STRING };
+
+		if (i < words.length - 4) {
+			int index = 0;
+			while (index < 4) {
+				nextWords[index] = words[i + 1 + index];
+				index++;
+			}
+		} else if (i < words.length - 3) {
+			int index = 0;
+			while (index < 3) {
+				nextWords[index] = words[i + 1 + index];
+				index++;
+			}
+		} else if (i < words.length - 2) {
+			int index = 0;
+			while (index < 2) {
+				nextWords[index] = words[i + 1 + index];
+				index++;
+			}
+		} else if (i < words.length - 1) {
+			int index = 0;
+			while (index < 1) {
+				nextWords[index] = words[i + 1 + index];
+				index++;
+			}
+		} else {
+			assert i == words.length - 1;
+		}
+		return nextWords;
+	}
+
 
 }

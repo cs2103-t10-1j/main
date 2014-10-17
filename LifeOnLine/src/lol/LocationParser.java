@@ -67,11 +67,12 @@ public class LocationParser {
 	 */
 	public String getUserInputWithoutLocation() {
 		cleanUp();
-		return userInput.replaceAll("\\bat\\b\\s\\b" + getLocation() + "\\b\\s", Constants.EMPTY_STRING);
+		String output = userInput.replaceAll("\\bat\\b\\s\\b" + getLocation() + "\\b", Constants.EMPTY_STRING);
+		return cleanUp(output);
 	}
 
 	/**
-	 * Removes multiple spaces between words, leading and trailing spaces
+	 * Removes multiple spaces between words, leading and trailing spaces in the userInput
 	 * 
 	 * @return string without extra spaces
 	 */
@@ -81,6 +82,19 @@ public class LocationParser {
 		input = input.replaceAll(Constants.REGEX_ONE_OR_MORE_SPACES,
 				Constants.SPACE);
 		setUserInput(input);
+		return input;
+	}
+	
+	/**
+	 * Removes multiple spaces between words, leading and trailing spaces
+	 * 
+	 * @param input
+	 *            string to be cleaned up
+	 * @return string without extra spaces
+	 */
+	public String cleanUp(String input) {
+		input = input.trim();
+		input = input.replaceAll("\\s+", " ");
 		return input;
 	}
 

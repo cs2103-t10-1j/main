@@ -5,6 +5,31 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class DateParserTest {
+	@Test
+	public void testGetDueDate() {
+		DateParser dp1 = new DateParser("  add   buy   pizza  at clementi  on  29 oct at   10am ");
+		assertEquals(new Date(29, 10), dp1.getDueDate());
+		assertEquals("on", dp1.getDateKeyword());
+		DateParser dp = new DateParser("  add  do something by  31/12 at home  at   10am ");
+		assertEquals(new Date(31, 12), dp.getDueDate());
+		assertEquals("by", dp.getDateKeyword());
+		DateParser dp2 = new DateParser("  add by  31/12 do something  at home  at   10am ");
+		assertEquals(new Date(31, 12), dp2.getDueDate());
+		DateParser dp3 = new DateParser("  add do something 12/11");
+		assertEquals(new Date(12, 11), dp3.getDueDate());
+	}
+	
+	@Test
+	public void testGetUserInputWithoutDueDate() {
+		DateParser dp1 = new DateParser("  add   buy   pizza  at clementi  on  29 oct at   10am ");
+		assertEquals("add buy pizza at clementi at 10am", dp1.getUserInputWithoutDueDate());
+		DateParser dp2 = new DateParser("  add   buy   pizza at   10am  at clementi  by  29 oct ");
+		assertEquals("add buy pizza at 10am at clementi", dp2.getUserInputWithoutDueDate());
+		DateParser dp3 = new DateParser("  add   buy   pizza  at clementi at   10am ");
+		assertEquals("add buy pizza at clementi at 10am", dp3.getUserInputWithoutDueDate());
+		DateParser dp4 = new DateParser("  add 30/10  buy   pizza  at clementi at   10am ");
+		assertEquals("add buy pizza at clementi at 10am", dp4.getUserInputWithoutDueDate());
+	}
 
 	@Test
 	public void testIsValidDate() {
@@ -90,5 +115,13 @@ public class DateParserTest {
 		assertEquals(1, dp.getTodaysDayOfTheWeekIndex());
 	}
 	*/
+	
+	@Test
+	public void testRemoveDescriptionFromDueDateIfAny() {
+		DateParser dp = new DateParser();
+		assertEquals("31/12", dp.removeDescriptionFromDueDateIfAny("31/12 do something"));
+		assertEquals("mon", dp.removeDescriptionFromDueDateIfAny("mon do something"));
+		assertEquals("31/12/15", dp.removeDescriptionFromDueDateIfAny("31/12/15"));
+	}
 
 }
