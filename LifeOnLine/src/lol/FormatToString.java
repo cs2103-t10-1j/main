@@ -36,9 +36,9 @@ public class FormatToString {
 
 	private void formatAsHeader(Task task){
 		String headerStr;
-		if(!task.getIsDone()){
-		headerStr = HEADER_OVERDUE + newLine();
-		strToShow.add(new StringWithFormat(headerStr, FORMAT_HEADER_OVERDUE));
+		if(task.getIsOverdue()){
+			headerStr = HEADER_OVERDUE + newLine();
+			strToShow.add(new StringWithFormat(headerStr, FORMAT_HEADER_OVERDUE));
 		}
 		else if(task.getTaskDueDate() != null){
 			Date dueDate = task.getTaskDueDate();

@@ -91,7 +91,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 					&& currentDueDate.getYear4Digit() == -9999) : "impossible date entered";
 
 			//add header
-			if(!task.getIsOverdue()){
+			if(task.getIsOverdue()){
 				taskToFormat.format(isHeader, task, i);
 			}
 			else if(currentDueDate != null && !currentDueDate.equals(previousDueDate)){
