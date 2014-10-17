@@ -64,8 +64,8 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	public void showInMainDisplayTA(TaskList<Task> taskList){
 		String strToShow = "";
 		String strToShow2 = "";
-		Date previousDueDate = new Date(); //need to change: set date's parameter as impossible date
-
+		Date previousDueDate = new Date(-1, -1, -9999, null);
+	
 		for(int i = 0; i < taskList.size(); i++){
 			Task task = taskList.get(i);
 			String taskDescription = task.getTaskDescription(); //useless line?
@@ -73,6 +73,10 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 			Time dueEndTime = task.getEndTime();
 
 			Date currentDueDate = task.getTaskDueDate();
+			
+			assert (currentDueDate.getDay() == -1 && currentDueDate.getMonth() == -1 
+					&& currentDueDate.getYear4Digit() == -9999) : "impossible date entered";
+			
 			if(currentDueDate != null && !currentDueDate.equals(previousDueDate)){
 				int dueDay = currentDueDate.getDay();
 				int dueMonth = currentDueDate.getMonth();
