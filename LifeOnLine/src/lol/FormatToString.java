@@ -5,6 +5,8 @@ import java.util.LinkedList;
 public class FormatToString {
 	public static LinkedList<StringWithFormat> strToShow = 
 			new LinkedList<StringWithFormat>();
+	
+	public static boolean hasOverdueHeader = false;
 
 	final static String HEADER_OVERDUE = "Overdue Task";
 	final static String HEADER_FLOATING = "Task With No date";
@@ -37,8 +39,11 @@ public class FormatToString {
 	private void formatAsHeader(Task task){
 		String headerStr;
 		if(task.getIsOverdue()){
-			headerStr = HEADER_OVERDUE + newLine();
-			strToShow.add(new StringWithFormat(headerStr, FORMAT_HEADER_OVERDUE));
+			if(!hasOverdueHeader){
+				headerStr = HEADER_OVERDUE + newLine();
+				strToShow.add(new StringWithFormat(headerStr, FORMAT_HEADER_OVERDUE));
+				hasOverdueHeader = true;
+			}
 		}
 		else if(task.getTaskDueDate() != null){
 			Date dueDate = task.getTaskDueDate();

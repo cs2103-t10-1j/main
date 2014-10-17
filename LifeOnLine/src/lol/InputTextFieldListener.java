@@ -80,7 +80,9 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		Date previousDueDate = new Date(-1, -1, -9999, null);
 
 		FormatToString taskToFormat = new FormatToString();
-		FormatToString.strToShow.clear();
+		//below two lines should be removed and added to another class
+		FormatToString.strToShow.clear(); 
+		FormatToString.hasOverdueHeader = false;
 		
 		for(int i = 0; i < taskList.size(); i++){
 			Task task = taskList.get(i);
