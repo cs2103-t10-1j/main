@@ -10,9 +10,12 @@ public class LOLControl {
 
 	public static TaskList<Task> list = LOLStorage.load();
 
+	// public static TaskList<Task> tempList = new TaskList<Task>();
+
 	/********** Controller methods ***********/
 
 	public static TaskList<Task> getTaskList() {
+		markOverdueTasks(list);
 		return list;
 	}
 
@@ -101,7 +104,7 @@ public class LOLControl {
 	}
 
 	public static String executeSearch(String userInput) {
-	//TODO	
+		// TODO
 		return null;
 	}
 
@@ -284,4 +287,70 @@ public class LOLControl {
 		} else
 			return (Constants.FEEDBACK_INVALID);
 	}
+
+	public static void markOverdueTasks(TaskList<Task> list) {
+
+		TimeParser tp = new TimeParser();
+		DateParser dp = new DateParser();
+
+		Time currentTime = tp.getCurrentTime();
+		Date currentDate = dp.getTodaysDate();
+
+		for (int i = 0; i < list.size(); i++) {
+
+			if (list.size() == 0) {
+				break;
+			}
+
+			else if (list.get(i).getTaskDueDate() == null) {
+				continue;
+			}
+
+			else if (list.get(i).getTaskDueDate() != null
+					&& list.get(i).getStartTime() == null) {
+
+				if (list.get(i).getTaskDueDate().isBefore(currentDate)) {
+
+					list.get(i).setIsOverdue(true);
+				}
+
+				else {
+					continue;
+				}
+			}
+
+			else if (list.get(i).getTaskDueDate() != null
+					&& list.get(i).getStartTime() != null
+					&& list.get(i).getEndTime() != null) {
+
+				if (list.get(i).getTaskDueDate().isBefore(currentDate)
+						|| list.get(i).getTaskDueDate().equals(currentDate)
+						&& list.get(i).getEndTime().isBefore(currentTime)) {
+
+					list.get(i).setIsOverdue(true);
+				}
+
+				else {
+					continue;
+				}
+			}
+
+			else if (list.get(i).getTaskDueDate() != null
+					&& list.get(i).getStartTime() != null
+					&& list.get(i).getEndTime() == null) {
+
+				if (list.get(i).getTaskDueDate().isBefore(currentDate)
+						|| list.get(i).getTaskDueDate().equals(currentDate)
+						&& list.get(i).getStartTime().isBefore(currentTime)) {
+
+					list.get(i).setIsOverdue(true);
+				}
+
+				else {
+					continue;
+				}
+			}
+		}
+	}
+
 }

@@ -3,19 +3,19 @@ package lol;
 import java.util.Collections;
 import java.util.LinkedList;
 
-public class TaskList <E extends Comparable <Task>> {
+public class TaskList<E extends Comparable<Task>> {
 
-	private  LinkedList<Task> list;
-	
-	public TaskList(){
+	private LinkedList<Task> list;
+
+	public TaskList() {
 		list = new LinkedList<Task>();
 	}
-	
+
 	public boolean add(Task taskObject) {
 		return list.add(taskObject);
 	}
 
-	public  boolean delete(Task taskObject) {
+	public boolean delete(Task taskObject) {
 		return list.removeFirstOccurrence(taskObject);
 	}
 
@@ -28,6 +28,10 @@ public class TaskList <E extends Comparable <Task>> {
 		return true;
 	}
 
+	public void clear() {
+		list.clear();
+	}
+
 	public void sortList() {
 		Collections.sort(list);
 	}
@@ -35,12 +39,12 @@ public class TaskList <E extends Comparable <Task>> {
 	public LinkedList<Task> getList() {
 		return list;
 	}
-	
-	public int size(){
+
+	public int size() {
 		return list.size();
 	}
-	
-	public Task get(int index){
+
+	public Task get(int index) {
 		try {
 			return list.get(index);
 		} catch (IndexOutOfBoundsException e) {
