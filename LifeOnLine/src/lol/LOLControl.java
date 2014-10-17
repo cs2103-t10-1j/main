@@ -8,14 +8,17 @@ public class LOLControl {
 
 	/********** Load Storage ***********/
 
-	public static TaskList<Task> list = LOLStorage.load();
+	private static TaskList<Task> storageList = LOLStorage.load();
 
-	// public static TaskList<Task> tempList = new TaskList<Task>();
+	/********** Initialize Temporary Storage ***********/
+
+	// private static TaskList<Task> searchList = new TaskList<Task>();
+	private static TaskList<Task> displayList = new TaskList<Task>();
 
 	/********** Controller methods ***********/
 
 	public static TaskList<Task> getTaskList() {
-		return list;
+		return displayList;
 	}
 
 	public static String executeUserInput(String userInput) {
@@ -62,25 +65,25 @@ public class LOLControl {
 		return command;
 	}
 
-	public static String executeAdd(String userInput) {
+	private static String executeAdd(String userInput) {
 		Task newTask = LOLParser.getTask(userInput);
 
-		if (list.add(newTask)) {
+		if (storageList.add(newTask)) {
 			History.undoAdd(newTask);
-			sortList(list);
+			ControlDisplay.refreshDisplay(storageList);
 			LOLStorage.save();
 			return showFeedback(newTask, Constants.COMMAND_ADD);
 		} else
 			return executeInvalid(userInput);
 	}
 
-	public static String executeDel(String userInput) {
+	private static String executeDel(String userInput) {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
-		Task delTask = list.get(taskIndex - 1);
+		Task delTask = displayList.get(taskIndex - 1);
 
-		if (list.deleteByIndex(taskIndex - 1)) {
-			sortList(list);
+		if (storageList.delete(delTask)) {
 			History.undoDelete(delTask);
+			ControlDisplay.refreshDisplay(storageList);
 			LOLStorage.save();
 			return showFeedback(delTask, Constants.COMMAND_DELETE);
 		} else
@@ -89,30 +92,31 @@ public class LOLControl {
 		return executeInvalid(userInput);
 	}
 
-	public static String executeEdit(String userInput) {
+	private static String executeEdit(String userInput) {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
 		Task editTask = LOLParser.getEditTask(userInput);
-		Task oldTask = list.get(taskIndex - 1);
+		Task oldTask = displayList.get(taskIndex - 1);
 
-		if ((list.deleteByIndex(taskIndex - 1)) && (list.add(editTask))) {
-			sortList(list);
+		if ((storageList.delete(oldTask)) && (storageList.add(editTask))) {
 			History.undoEdit(editTask, oldTask);
+			ControlDisplay.refreshDisplay(storageList);
 			LOLStorage.save();
 			return showFeedback(oldTask, Constants.COMMAND_EDIT);
 		} else
 			return executeInvalid(userInput);
 	}
 
-	public static String executeSearch(String userInput) {
-		// TODO
-		return null;
-	}
+	// private static String executeSearch(String userInput) {
+	// TODO
+	// return null;
+	// }
 
-	public static String executeDone(String userInput) {
+	private static String executeDone(String userInput) {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
 
 		try {
-			Task undoneTask = list.get(taskIndex - 1);
+			Task undoneTask = displayList.get(taskIndex - 1);
+			int undoneTaskStorageIndex = storageList.indexOf(undoneTask);
 
 			if (undoneTask.getIsDone()) {
 				return Constants.FEEDBACK_DONE_FAILURE;
@@ -124,9 +128,9 @@ public class LOLControl {
 
 			doneTask.setIsDone(true);
 
-			if (list.set(taskIndex - 1, doneTask)) {
-				sortList(list);
+			if (storageList.set(undoneTaskStorageIndex, doneTask)) {
 				History.undoEdit(doneTask, undoneTask);
+				ControlDisplay.refreshDisplay(storageList);
 				LOLStorage.save();
 				return showFeedback(doneTask, Constants.COMMAND_DONE);
 			}
@@ -136,11 +140,12 @@ public class LOLControl {
 		return executeInvalid(userInput);
 	}
 
-	public static String executeNotDone(String userInput) {
+	private static String executeNotDone(String userInput) {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
 
 		try {
-			Task doneTask = list.get(taskIndex - 1);
+			Task doneTask = displayList.get(taskIndex - 1);
+			int doneTaskStorageIndex = storageList.indexOf(doneTask);
 
 			if (!doneTask.getIsDone()) {
 				return Constants.FEEDBACK_NOT_DONE_FAILURE;
@@ -152,9 +157,9 @@ public class LOLControl {
 
 			notDoneTask.setIsDone(false);
 
-			if (list.set(taskIndex - 1, notDoneTask)) {
-				sortList(list);
+			if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
 				History.undoEdit(notDoneTask, doneTask);
+				ControlDisplay.refreshDisplay(storageList);
 				LOLStorage.save();
 				return showFeedback(notDoneTask, Constants.COMMAND_NOT_DONE);
 			}
@@ -164,7 +169,7 @@ public class LOLControl {
 		return executeInvalid(userInput);
 	}
 
-	public static String executeUndo(String userInput) {
+	private static String executeUndo(String userInput) {
 		if (History.isEmptyUndoStack()) {
 			return Constants.FEEDBACK_UNDO_FAILURE;
 		}
@@ -177,16 +182,16 @@ public class LOLControl {
 			Task undoCmdTask = undoCmd.getTask();
 
 			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
-				list.add(undoCmdTask);
-				sortList(list);
+				storageList.add(undoCmdTask);
 				History.redoAdd(undoCmd);
+				ControlDisplay.refreshDisplay(storageList);
 				LOLStorage.save();
 			}
 
 			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
-				list.delete(undoCmdTask);
-				sortList(list);
+				storageList.delete(undoCmdTask);
 				History.redoAdd(undoCmd);
+				ControlDisplay.refreshDisplay(storageList);
 				LOLStorage.save();
 			}
 			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
@@ -196,12 +201,12 @@ public class LOLControl {
 				Task undoCmdTaskNew = undoCmdNew.getTask();
 				Task undoCmdTaskOld = undoCmdOld.getTask();
 
-				list.delete(undoCmdTaskNew);
-				list.add(undoCmdTaskOld);
-				sortList(list);
+				storageList.delete(undoCmdTaskNew);
+				storageList.add(undoCmdTaskOld);
 				History.redoAdd(undoCmd);
 				History.redoAdd(undoCmdOld);
 				History.redoAdd(undoCmdNew);
+				ControlDisplay.refreshDisplay(storageList);
 				LOLStorage.save();
 
 			}
@@ -210,7 +215,7 @@ public class LOLControl {
 		}
 	}
 
-	public static String executeRedo(String userInput) {
+	private static String executeRedo(String userInput) {
 		if (History.isEmptyRedoQueue()) {
 			return Constants.FEEDBACK_REDO_FAILURE;
 		}
@@ -223,16 +228,16 @@ public class LOLControl {
 			Task undoCmdTask = undoCmd.getTask();
 
 			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
-				list.delete(undoCmdTask);
-				sortList(list);
+				storageList.delete(undoCmdTask);
 				History.undoDelete(undoCmdTask);
+				ControlDisplay.refreshDisplay(storageList);
 				LOLStorage.save();
 			}
 
 			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
-				list.add(undoCmdTask);
-				sortList(list);
+				storageList.add(undoCmdTask);
 				History.undoAdd(undoCmdTask);
+				ControlDisplay.refreshDisplay(storageList);
 				LOLStorage.save();
 			}
 			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
@@ -242,29 +247,28 @@ public class LOLControl {
 				Task undoCmdTaskNew = undoCmdNew.getTask();
 				Task undoCmdTaskOld = undoCmdOld.getTask();
 
-				list.add(undoCmdTaskNew);
-				list.delete(undoCmdTaskOld);
-				sortList(list);
+				storageList.add(undoCmdTaskNew);
+				storageList.delete(undoCmdTaskOld);
 				History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
+				ControlDisplay.refreshDisplay(storageList);
 				LOLStorage.save();
-
 			}
 
 			return showFeedback(null, Constants.COMMAND_REDO);
 		}
 	}
 
-	public static String executeExit(String userInput) {
+	private static String executeExit(String userInput) {
 		System.exit(0);
 		return showFeedback(null, Constants.COMMAND_EXIT);
 	}
 
-	public static String executeInvalid(String userInput) {
+	private static String executeInvalid(String userInput) {
 		Task invalidTask = LOLParser.getTask(userInput);
 		return showFeedback(invalidTask, Constants.COMMAND_INVALID);
 	}
 
-	public static String showFeedback(Task task, String commandType) {
+	private static String showFeedback(Task task, String commandType) {
 		if (commandType.equals(Constants.COMMAND_ADD)) {
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_ADD_SUCCESS);
 		}
@@ -291,75 +295,4 @@ public class LOLControl {
 		} else
 			return (Constants.FEEDBACK_INVALID);
 	}
-
-	public static void sortList(TaskList<Task> list) {
-		list.sort();
-		markOverdueTasks(list);
-	}
-
-	public static void markOverdueTasks(TaskList<Task> list) {
-
-		TimeParser tp = new TimeParser();
-		DateParser dp = new DateParser();
-
-		Time currentTime = tp.getCurrentTime();
-		Date currentDate = dp.getTodaysDate();
-
-		for (int i = 0; i < list.size(); i++) {
-
-			if (list.size() == 0) {
-				break;
-			}
-
-			else if (list.get(i).getTaskDueDate() == null) {
-				continue;
-			}
-
-			else if (list.get(i).getTaskDueDate() != null
-					&& list.get(i).getStartTime() == null) {
-
-				if (list.get(i).getTaskDueDate().isBefore(currentDate)) {
-
-					list.get(i).setIsOverdue(true);
-				}
-
-				else {
-					continue;
-				}
-			}
-
-			else if (list.get(i).getTaskDueDate() != null
-					&& list.get(i).getStartTime() != null
-					&& list.get(i).getEndTime() != null) {
-
-				if (list.get(i).getTaskDueDate().isBefore(currentDate)
-						|| list.get(i).getTaskDueDate().equals(currentDate)
-						&& list.get(i).getEndTime().isBefore(currentTime)) {
-
-					list.get(i).setIsOverdue(true);
-				}
-
-				else {
-					continue;
-				}
-			}
-
-			else if (list.get(i).getTaskDueDate() != null
-					&& list.get(i).getStartTime() != null
-					&& list.get(i).getEndTime() == null) {
-
-				if (list.get(i).getTaskDueDate().isBefore(currentDate)
-						|| list.get(i).getTaskDueDate().equals(currentDate)
-						&& list.get(i).getStartTime().isBefore(currentTime)) {
-
-					list.get(i).setIsOverdue(true);
-				}
-
-				else {
-					continue;
-				}
-			}
-		}
-	}
-
 }

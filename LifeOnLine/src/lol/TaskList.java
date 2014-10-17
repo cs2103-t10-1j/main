@@ -27,6 +27,10 @@ public class TaskList<E extends Comparable<Task>> {
 		}
 		return true;
 	}
+	
+	public int indexOf(Task taskObject) {
+		return list.indexOf(taskObject);
+	}
 
 	public void clear() {
 		list.clear();
