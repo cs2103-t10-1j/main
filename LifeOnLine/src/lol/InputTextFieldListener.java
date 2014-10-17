@@ -1,5 +1,6 @@
 package lol;
 
+import java.awt.Color;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -19,11 +20,25 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	JTextArea feedbackDisplayTA;
 	Integer i;
 
+	final boolean isHeader = true;
+
+	final String FORMAT_HEADER_OVERDUE = "overdue header";
+	final String FORMAT_HEADER_FLOATING = "floating header";
+	final String FORMAT_HEADER_NORMAL = "normal header";
+	final String FORMAT_TIME = "time";
+	final String FORMAT_DESCRIPTION = "description";
+	final String FORMAT_LOCATION = "location";
+	final String FORMAT_OVERDUE = "overdue";
+	final String FORMAT_TIME_STRIKE = "time strike";
+	final String FORMAT_DESCRIPTION_STRIKE = "description strike";
+	final String FORMAT_LOCATION_STRIKE = "location strike";
+	final String FORMAT_OVERDUE_STRIKE = "overdue strike";
+
 	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextArea feedbackDisplayTA, JTextField inputTF, Integer i){
 		this.inputTF = inputTF;
 
 		this.mainDisplayTP = mainDisplayTP;
-		mainDisplayTP.setDocument(doc);
+		this.mainDisplayTP.setDocument(doc);
 		this.mainDisplayTP2 = mainDisplayTP2;
 		this.mainDisplayTP2.setDocument(doc2);
 
@@ -34,189 +49,112 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event){ 
+
 		String inputStr = inputTF.getText();
+		refreshFeedbackDisplay(inputStr);
 
-//		if(inputStr.trim().equalsIgnoreCase("exit")){ //this line should let control handle
-//			System.exit(0);
-//		}
-
-		String feedback = passStringToControlAndGetFeedback(inputStr);
-		feedbackDisplayTA.setText(feedback);
-
-		refreshMainDisplayTA();
+		TaskList<Task> taskList = LOLControl.getTaskList();
+		refreshMainDisplay(taskList);
 
 		clear(inputTF);
 		i = new Integer(0);
+	}
+
+	public void refreshFeedbackDisplay(String inputStr){
+		String feedback = passStringToControlAndGetFeedback(inputStr);
+		feedbackDisplayTA.setText(feedback);
 	}
 
 	public String passStringToControlAndGetFeedback(String inputStr){
 		return LOLControl.executeUserInput(inputStr);
 	}
 
-	public void refreshMainDisplayTA(){
+	public void refreshMainDisplay(TaskList<Task> taskList){
 		clear(mainDisplayTP);
 		clear(mainDisplayTP2);
 
-		TaskList<Task> taskList = LOLControl.getTaskList();
 		showInMainDisplayTA(taskList);
 	}
 
 	public void showInMainDisplayTA(TaskList<Task> taskList){
-		String strToShow = "";
-		String strToShow2 = "";
 		Date previousDueDate = new Date(-1, -1, -9999, null);
-	
+
+		FormatToString taskToFormat = new FormatToString();
+		FormatToString.strToShow.clear();
+		
 		for(int i = 0; i < taskList.size(); i++){
 			Task task = taskList.get(i);
-			String taskDescription = task.getTaskDescription(); //useless line?
-			Time dueStartTime = task.getStartTime();
-			Time dueEndTime = task.getEndTime();
 
 			Date currentDueDate = task.getTaskDueDate();
-			
+
 			assert (currentDueDate.getDay() == -1 && currentDueDate.getMonth() == -1 
 					&& currentDueDate.getYear4Digit() == -9999) : "impossible date entered";
-			
+
+			//add header
+			//if(!task.getIsOverdue()){
+				//taskToFormat.format(isHeader, task, i);
+			//}
 			if(currentDueDate != null && !currentDueDate.equals(previousDueDate)){
-				int dueDay = currentDueDate.getDay();
-				int dueMonth = currentDueDate.getMonth();
-				int dueYear = currentDueDate.getYear4Digit();
-
-				strToShow = strToShow + dateFormatAsHeader(dueDay, dueMonth, dueYear);
-
 				previousDueDate = currentDueDate;
 
-				String str = taskDescription;
-				if(dueStartTime != null && dueEndTime != null){
-					str = addTimeStr(str, dueStartTime, dueEndTime);
-				}
-				else if(dueStartTime != null){
-					str = addTimeStr(str, dueStartTime);
-				}
-				if(task.getTaskLocation() != null){
-					str = addLocationStr(str, task.getTaskLocation());
-				}
-				str = formatString(str, i+1);
-
-				if(task.getIsDone()){
-					addStrikeThroughToTask(strToShow, str, doc);
-					strToShow = "";
-				}
-				else{
-					strToShow = strToShow + str;
-				}
+				taskToFormat.format(isHeader, task, i);
 			}
-			else if(currentDueDate != null && currentDueDate.equals(previousDueDate)){
-				previousDueDate = currentDueDate;
-
-				String str = taskDescription;
-				if(dueStartTime != null && dueEndTime != null){
-					str = addTimeStr(str, dueStartTime, dueEndTime);
-				}
-				else if(dueStartTime != null){
-					str = addTimeStr(str, dueStartTime);
-				}
-				if(task.getTaskLocation() != null){
-					str = addLocationStr(str, task.getTaskLocation());
-				}
-				str = formatString(str, i+1);
-
-				if(task.getIsDone()){
-					addStrikeThroughToTask(strToShow, str, doc);
-					strToShow = "";
-				}
-				else{
-					strToShow = strToShow + str;
-				}
+			else if(currentDueDate == null){
+				taskToFormat.format(isHeader, task, i);
 			}
-			else {
-				if(currentDueDate == null && previousDueDate != null){
-					strToShow2 = strToShow2 + dateFormatAsHeader(0, 0, 0);
-				}
 
-				previousDueDate = currentDueDate;
-
-				String str = taskDescription;
-				if(dueStartTime != null && dueEndTime != null){
-					str = addTimeStr(str, dueStartTime, dueEndTime);
-				}
-				else if(dueStartTime != null){
-					str = addTimeStr(str, dueStartTime);
-				}
-				if(task.getTaskLocation() != null){
-					str = addLocationStr(str, task.getTaskLocation());
-				}
-				str = formatString(str, i+1);
-				
-				if(task.getIsDone()){
-					addStrikeThroughToTask(strToShow2, str, doc2);
-					strToShow2 = "";
-				}
-				else{
-					strToShow2 = strToShow2 + str;
-				}
-			}
+			taskToFormat.format(!isHeader, task, i);
 		}
-
-		addStrikeThroughToTask(strToShow, null, doc);
-		addStrikeThroughToTask(strToShow2, null, doc2);
+		
+		addToDisplay(doc);
 	}
 
-	public String addTimeStr(String str, Time startTime, Time endTime){
-		str = "[" + startTime.toString() + " - " + endTime.toString() + "] " + str;
-		return str;
-	}
+	public void addToDisplay(StyledDocument doc){
+		Style style = doc.addStyle(FORMAT_HEADER_FLOATING, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Color.BLUE);
 
-	public String addTimeStr(String str, Time startTime){
-		str = "[" + startTime.toString() + "] " + str;
-		return str;
-	}
+		style = doc.addStyle(FORMAT_HEADER_NORMAL, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Color.BLUE);
 
-	public String addLocationStr(String str, String location){
-		str = str + " at [" + location + "]";
-		return str;
-	}
+		style = doc.addStyle(FORMAT_HEADER_OVERDUE, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Color.RED);
 
-	public String formatString(String str, int i){
-		str = addNumbering(str, i);
-		str = addNewLine(str);
+		style = doc.addStyle(FORMAT_DESCRIPTION, null);
 
-		return str;
-	}
+		style = doc.addStyle(FORMAT_TIME, null);
+		StyleConstants.setForeground(style, Color.ORANGE);
 
-	public String addNumbering(String str, int number){
-		return number + ". " + str;
-	}
+		style = doc.addStyle(FORMAT_LOCATION, null);
+		StyleConstants.setForeground(style, Color.YELLOW);
+		
+		style = doc.addStyle(FORMAT_HEADER_OVERDUE, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Color.RED);
+		
+		style = doc.addStyle(FORMAT_TIME_STRIKE, null);
+		StyleConstants.setForeground(style, Color.ORANGE);
+		StyleConstants.setStrikeThrough(style, true);
+		
+		style = doc.addStyle(FORMAT_DESCRIPTION_STRIKE, null);
+		StyleConstants.setStrikeThrough(style, true);
+		
+		style = doc.addStyle(FORMAT_LOCATION_STRIKE, null);
+		StyleConstants.setForeground(style, Color.YELLOW);
+		StyleConstants.setStrikeThrough(style, true);
 
-	public String dateFormatAsHeader(int dueDay, int dueMonth, int dueYear){
-		String str = "";
-
-		str = str + "===========================";
-		str = addNewLine(str);
-
-		if(dueDay != 0 && dueMonth != 0 && dueYear != 0){
-			str = str + dueDay + "/" + dueMonth + "/" + dueYear;
-			str = addNewLine(str);	
-		}
-		else{
-			str = str + "To-Do Tasks (without due date)";
-			str = addNewLine(str);
-		}
-
-		str = str + "===========================";
-		str = addNewLine(str);
-
-		return str;
-	}
-
-	public void addStrikeThroughToTask(String str, String doneTaskStr, StyledDocument doc){
-
-		Style style = doc.addStyle("strike", null);
+		style = doc.addStyle(FORMAT_OVERDUE_STRIKE, null);
+		StyleConstants.setForeground(style, Color.RED);
 		StyleConstants.setStrikeThrough(style, true);
 
 		try {
-			doc.insertString(doc.getLength(), str, null);
-			doc.insertString(doc.getLength(), doneTaskStr, doc.getStyle("strike"));
+			for(int i = 0; i < FormatToString.strToShow.size(); i++){
+				doc.insertString(doc.getLength(), FormatToString.strToShow.get(i).getString() 
+						, doc.getStyle(FormatToString.strToShow.get(i).getFormat()));
+			}
+
 		} catch (BadLocationException badLocationException) {
 			System.err.println("Oops");
 		}
