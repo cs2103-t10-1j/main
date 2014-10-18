@@ -14,8 +14,8 @@ import javax.swing.text.StyledDocument;
 public class InputTextFieldListener implements ActionListener, KeyListener {
 	final String[] commands = {"", "add ", "delete ", "edit ", "done ", "undo", "redo"};
 	JTextField inputTF;
-	JTextPane mainDisplayTP;
-	StyledDocument doc = new DefaultStyledDocument();
+	JTextPane mainDisplayTP1;
+	StyledDocument doc1 = new DefaultStyledDocument();
 	JTextPane mainDisplayTP2;
 	StyledDocument doc2 = new DefaultStyledDocument();
 	JTextArea feedbackDisplayTA;
@@ -26,9 +26,9 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextArea feedbackDisplayTA, JTextField inputTF, Integer i){
 		this.inputTF = inputTF;
 
-		this.mainDisplayTP = mainDisplayTP;
-		this.mainDisplayTP.setDocument(doc);
-		addStyleToDoc(doc);
+		this.mainDisplayTP1 = mainDisplayTP;
+		this.mainDisplayTP1.setDocument(doc1);
+		addStyleToDoc(doc1);
 		this.mainDisplayTP2 = mainDisplayTP2;
 		this.mainDisplayTP2.setDocument(doc2);
 		addStyleToDoc(doc2);
@@ -104,7 +104,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	}
 
 	public void refreshMainDisplay(TaskList<Task> taskList){
-		clear(mainDisplayTP);
+		clear(mainDisplayTP1);
 		clear(mainDisplayTP2);
 
 		showInMainDisplayTP(taskList);
@@ -144,13 +144,13 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 				toBeDisplayedIn = Constants.DISPLAY_IN_TP2;
 			}
 
-			assert !(toBeDisplayedIn == 0) : "toBeDisplayed in is 0";
+			assert !(toBeDisplayedIn == 0) : "toBeDisplayed in is 0 which is invalid";
 
 			//add task below header
 			taskToFormat.format(!isHeader, task, i, toBeDisplayedIn);
 		}
 
-		addToDisplay(doc, doc2);
+		addToDisplay(doc1, doc2);
 	}
 
 	public void addToDisplay(StyledDocument doc, StyledDocument doc2){
