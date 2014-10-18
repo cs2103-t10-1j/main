@@ -17,6 +17,10 @@ public class DateParserTest {
 		assertEquals(new Date(31, 12), dp2.getDueDate());
 		DateParser dp3 = new DateParser("  add do something 12/11");
 		assertEquals(new Date(12, 11), dp3.getDueDate());
+		DateParser dp4 = new DateParser("add eat at 10 food place 10 oct ");
+		assertEquals(new Date(10, 10), dp4.getDueDate());
+		DateParser dp5 = new DateParser("add eat 3 pizzas on 3 nov at 3 pm");
+		assertEquals(new Date(3, 11), dp5.getDueDate());
 	}
 	
 	@Test
@@ -29,6 +33,14 @@ public class DateParserTest {
 		assertEquals("add buy pizza at clementi at 10am", dp3.getUserInputWithoutDueDate());
 		DateParser dp4 = new DateParser("  add 30/10  buy   pizza  at clementi at   10am ");
 		assertEquals("add buy pizza at clementi at 10am", dp4.getUserInputWithoutDueDate());
+		DateParser dp5 = new DateParser("  add eat at 10 food place 10 oct");
+		assertEquals("add eat at 10 food place", dp5.getUserInputWithoutDueDate());
+		DateParser dp6 = new DateParser("add on mon do something 8-10pm");
+		assertEquals("add do something 8-10pm", dp6.getUserInputWithoutDueDate());
+		DateParser dp7 = new DateParser("add eat 3 pizzas on 3 nov at 3 pm");
+		assertEquals("add eat 3 pizzas at 3 pm", dp7.getUserInputWithoutDueDate());
+		DateParser dp8 = new DateParser("add mon do this");
+		assertEquals("add do this", dp8.getUserInputWithoutDueDate());
 	}
 
 	@Test
@@ -86,6 +98,16 @@ public class DateParserTest {
 		assertTrue(dp.isValidDay("tmw"));
 		assertFalse(dp.isValidDay("abcde"));
 	}
+	
+	@Test
+	public void testRemoveDescriptionFromDueDateIfAny() {
+		DateParser dp = new DateParser();
+		assertEquals("31/12", dp.removeDescriptionFromDueDateIfAny("31/12 do something"));
+		assertEquals("mon", dp.removeDescriptionFromDueDateIfAny("mon do something"));
+		assertEquals("31/12/15", dp.removeDescriptionFromDueDateIfAny("31/12/15"));
+		assertEquals("31 oct 2015", dp.removeDescriptionFromDueDateIfAny("31 oct 2015 do that"));
+	}
+
 
 	// The following methods depend on the current date.
 	
@@ -116,12 +138,4 @@ public class DateParserTest {
 	}
 	*/
 	
-	@Test
-	public void testRemoveDescriptionFromDueDateIfAny() {
-		DateParser dp = new DateParser();
-		assertEquals("31/12", dp.removeDescriptionFromDueDateIfAny("31/12 do something"));
-		assertEquals("mon", dp.removeDescriptionFromDueDateIfAny("mon do something"));
-		assertEquals("31/12/15", dp.removeDescriptionFromDueDateIfAny("31/12/15"));
-	}
-
 }

@@ -99,7 +99,7 @@ public class DateParser {
 			String[] nextWords = getNext4Words(words, i);
 
 			if (hasDate(word, nextWords)) {
-				Pattern p = Pattern.compile("\\b" + word + "\\b");
+				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b" + nextWords[0] + "\\b");
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
@@ -126,6 +126,7 @@ public class DateParser {
 				String word = words[i];
 				if (isValidDay(word)) {
 					date = word.trim();
+					break;
 				}
 				
 				// find next 4 words because date and time formats can have at most
@@ -133,7 +134,7 @@ public class DateParser {
 				String[] nextWords = getNext4Words(words, i);
 
 				if (hasDate(word, nextWords)) {
-					Pattern p = Pattern.compile("\\b" + word + "\\b");
+					Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b" + nextWords[0] + "\\b");
 					Matcher m = p.matcher(temp);
 
 					if (m.find()) {
@@ -147,6 +148,7 @@ public class DateParser {
 
 			while (m.find()) {
 				String parameter = getParameterStartingAtIndex(m.end());
+				
 				if (isValidDateFormat(parameter)) {
 					date = parameter.trim();
 				}
@@ -442,6 +444,11 @@ public class DateParser {
 		return input;
 	}
 	
+	/**
+	 * Removes multiple spaces between words, leading and trailing spaces for all strings in an array
+	 * @param input  array containing strings to be formatted
+	 * @return  array with formatted strings
+	 */
 	public String[] cleanUp(String[] input) {
 		for (int i = 0; i < input.length; i++) {
 			String temp = input[i];
@@ -515,6 +522,15 @@ public class DateParser {
 
 	}
 	
+	public boolean isYear(String year) {
+		try {
+			int yr = Integer.parseInt(year);
+			return (yr > 9 && yr < 100) || (yr > 2010 && yr < 2099);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 	public String removeDescriptionFromDueDateIfAny(String date) {
 		String[] words = date.split(" ");
 		String firstWord = words[0];
@@ -522,11 +538,11 @@ public class DateParser {
 		
 		if (isValidDateFormat(firstWord)) {
 			return firstWord.trim();
-		} else if (isValidDateFormat(firstWord + " " + nextWords[0])) {
+		} else if (isValidDateFormat(firstWord + " " + nextWords[0]) && !(isYear(nextWords[1]))) {
 			return (firstWord + " " + nextWords[0]).trim();
-		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " " + nextWords[1])) {
+		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " " + nextWords[1]) && !(isYear(nextWords[2]))) {
 			return (firstWord + " " + nextWords[0] + " " + nextWords[1]).trim();
-		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2])) {
+		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]) && !(isYear(nextWords[3]))) {
 			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]).trim();
 		} else {
 			return date;
@@ -549,9 +565,9 @@ public class DateParser {
 			String word = words[i];
 			String[] nextWords = getNext4Words(words, i);
 
-			if (isReservedWord(word)
+			if (isKeyword(word)
 					|| hasTime(word, nextWords)) {
-				Pattern p = Pattern.compile("\\b" + word + "\\b");
+				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b" + nextWords[0] + "\\b");
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
@@ -622,18 +638,15 @@ public class DateParser {
 	}
 
 	/**
-	 * Checks is a word is a keyword (at, by etc.) or reserved word (days of the
+	 * Checks is a word is a keyword (at, by etc.) but not a reserved word (days of the
 	 * week, today, tomorrow, tmw)
 	 * 
 	 * @param word
 	 *            word to be checked
-	 * @return true if a word is a keyword or reserved word, else false
+	 * @return true if a word is a keyword but not reserved word, else false
 	 */
-	public boolean isReservedWord(String word) {
-		return hasWordInDictionary(Constants.KEYWORDS, word)
-				|| hasWordInDictionary(Constants.DAYS_IMMEDIATE, word)
-				|| hasWordInDictionary(Constants.DAYS_LONG, word)
-				|| hasWordInDictionary(Constants.DAYS_SHORT, word);
+	public boolean isKeyword(String word) {
+		return hasWordInDictionary(Constants.KEYWORDS, word);
 	}
 
 	/**

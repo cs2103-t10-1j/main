@@ -36,6 +36,7 @@ public class LocationParser {
 				String parameter = getParameterStartingAtIndex(getIndexOfAt()
 						+ Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT]
 								.length() + 1);
+				
 				if (!tp.isValidTimeFormat(parameter)
 						&& !dp.isValidDateFormat(parameter)) {
 					return parameter;
@@ -128,7 +129,7 @@ public class LocationParser {
 		if (isIndexOutOfBounds(index)) {
 			return null;
 		}
-		int nextKeywordIndex = getIndexOfNextReservedWord(index + 1);
+		int nextKeywordIndex = getIndexOfNextReservedWord(index + 2);
 		if (nextKeywordIndex == Constants.NOT_FOUND) {
 			return getUserInput().substring(index).trim();
 		} else {

@@ -5,6 +5,77 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class TimeParserTest {
+	@Test
+	public void testGetUserInputWithoutTime() {
+		TimeParser tp = new TimeParser("add send letter at post office at 2.20am");
+		assertEquals("add send letter at post office", tp.getUserInputWithoutTime());
+		TimeParser tp1 = new TimeParser(" add   send letter  by 1800 at post  office on mon");
+		assertEquals("add send letter at post office on mon", tp1.getUserInputWithoutTime());
+		TimeParser tp2 = new TimeParser("add from 7pm meeting");
+		assertEquals("add meeting", tp2.getUserInputWithoutTime());
+		TimeParser tp3 = new TimeParser("add 4am do something");
+		assertEquals("add do something", tp3.getUserInputWithoutTime());
+		TimeParser tp4 = new TimeParser("add 11 meetings 11-4pm");
+		assertEquals("add 11 meetings", tp4.getUserInputWithoutTime());
+		TimeParser tp5 = new TimeParser("add something from 1 pm to 2 pm ");
+		assertEquals("add something", tp5.getUserInputWithoutTime());
+		TimeParser tp6 = new TimeParser("add something");
+		assertEquals("add something", tp6.getUserInputWithoutTime());
+		TimeParser tp7 = new TimeParser("add eat 3 pizzas at 3 pm");
+		assertEquals("add eat 3 pizzas", tp7.getUserInputWithoutTime());
+		TimeParser tp8 = new TimeParser("add eat 3 pizzas by 3 pm");
+		assertEquals("add eat 3 pizzas", tp8.getUserInputWithoutTime());
+		TimeParser tp9 = new TimeParser("add eat 3 pizzas 3 pm");
+		assertEquals("add eat 3 pizzas", tp9.getUserInputWithoutTime());
+	}
+	@Test
+	public void testGetStartTime() {
+		TimeParser tp = new TimeParser("add send letter at post office at 2.20am");
+		assertEquals(new Time(2, 20, "am"), tp.getStartTime());
+		TimeParser tp1 = new TimeParser(" add   send letter  by 1800 at post  office on mon");
+		assertEquals(new Time(6, "pm"), tp1.getStartTime());
+		TimeParser tp2 = new TimeParser("add from 7pm meeting");
+		assertEquals(new Time("1900"), tp2.getStartTime());
+		TimeParser tp3 = new TimeParser("add 4am do something");
+		assertEquals(new Time(4, "am"), tp3.getStartTime());
+		TimeParser tp4 = new TimeParser("add 11 meetings 11-4pm");
+		assertEquals(new Time(11, "am"), tp4.getStartTime());
+		TimeParser tp5 = new TimeParser("add something from 1 pm to 2 pm ");
+		assertEquals(new Time("1300"), tp5.getStartTime());
+		TimeParser tp9 = new TimeParser("add eat 3 pizzas 3 pm");
+		assertEquals(new Time("1500"), tp9.getStartTime());
+	}
+	
+	@Test
+	public void testGetEndTime() {
+		TimeParser tp2 = new TimeParser("add meeting 11pm");
+		assertEquals(null, tp2.getEndTime());
+		TimeParser tp3 = new TimeParser("add from 3-6pm do something");
+		assertEquals(new Time(6, "pm"), tp3.getEndTime());
+		TimeParser tp4 = new TimeParser("add meeting 11-4pm");
+		assertEquals(new Time(4, "pm"), tp4.getEndTime());
+		TimeParser tp5 = new TimeParser("add something from 1 pm to 2 pm ");
+		assertEquals(new Time("1400"), tp5.getEndTime());
+	}
+	
+	@Test
+	public void testRemoveDescriptionAfterTimeIfAny() {
+		TimeParser tp = new TimeParser();
+		assertEquals("7am", tp.removeDescriptionAfterTimeIfAny("7am do this"));
+		assertEquals("7 am", tp.removeDescriptionAfterTimeIfAny("7 am do this"));
+		assertEquals("8 am - 9 am", tp.removeDescriptionAfterTimeIfAny("8 am - 9 am do this"));
+	}
+	
+	@Test
+	public void testHasTime() {
+		TimeParser tp = new TimeParser();
+		String[] nextWords = {"am", "to", "8", "am"};
+		assertTrue(tp.hasTime("7", nextWords));
+		String[] nextWords1 = {"", "", "", ""};
+		assertTrue(tp.hasTime("7am", nextWords1));
+		String[] nextWords2 = {"am", "", "", ""};
+		assertTrue(tp.hasTime("7", nextWords2));
+	}
 
 	@Test
 	public void testIs12hrTime() {
@@ -94,13 +165,13 @@ public class TimeParserTest {
 	@Test
 	public void testIsValidTimeFormat() {
 		TimeParser tp = new TimeParser();
-		assertTrue(tp.is12hrTime("2pm"));
-		assertTrue(tp.is12hrTime("2.30 am"));
-		assertTrue(tp.isTimeRange("4-6pm"));
-		assertTrue(tp.isTimeRange("4pm-6pm"));
-		assertTrue(tp.isTimeRange("11  to 1pm"));
-		assertTrue(tp.isTimeRange("11am to 1pm"));
-		assertTrue(tp.is24hrTime("0800"));
+		assertTrue(tp.isValidTimeFormat("2pm"));
+		assertTrue(tp.isValidTimeFormat("2.30 am"));
+		assertTrue(tp.isValidTimeFormat("4-6pm"));
+		assertTrue(tp.isValidTimeFormat("4pm-6pm"));
+		assertTrue(tp.isValidTimeFormat("11  to 1pm"));
+		assertTrue(tp.isValidTimeFormat("11am to 1pm"));
+		assertTrue(tp.isValidTimeFormat("0800"));
 		assertTrue(tp.isValidTimeFormat("6 am - 7 am"));
 		assertTrue(tp.isValidTimeFormat("6  am to  7 am"));
 	}
