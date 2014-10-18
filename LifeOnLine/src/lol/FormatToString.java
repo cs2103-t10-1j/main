@@ -3,31 +3,33 @@ package lol;
 import java.util.LinkedList;
 
 public class FormatToString {
-	public static LinkedList<StringWithFormat> strToShow = 
-			new LinkedList<StringWithFormat>();
+	public static LinkedList<StringWithFormat> strToShow1 = 
+			new LinkedList<StringWithFormat>(); //this is for TP1
 	
+	public static LinkedList<StringWithFormat> strToShow2 = 
+			new LinkedList<StringWithFormat>(); //this is for TP2
+	
+	private static LinkedList<StringWithFormat> strToShowTemp =
+			new LinkedList<StringWithFormat>();
+
 	public static boolean hasOverdueHeader = false;
-
-	final static String HEADER_OVERDUE = "Overdue Task";
-	final static String HEADER_FLOATING = "Task With No date";
-
-	final static String FORMAT_HEADER_OVERDUE = "overdue header";
-	final static String FORMAT_HEADER_FLOATING = "floating header";
-	final static String FORMAT_HEADER_NORMAL = "normal header";
-	final static String FORMAT_TIME = "time";
-	final static String FORMAT_DESCRIPTION = "description";
-	final static String FORMAT_LOCATION = "location";
-	final static String FORMAT_OVERDUE = "overdue";
-	final static String FORMAT_NONE = "null";
-	final static String FORMAT_TIME_STRIKE = "time strike";
-	final static String FORMAT_DESCRIPTION_STRIKE = "description strike";
-	final static String FORMAT_LOCATION_STRIKE = "location strike";
-	final static String FORMAT_OVERDUE_STRIKE = "overdue strike";
+	public static boolean hasFloatingHeader = false;
 
 	public FormatToString(){
 	}
 
-	public void format(boolean isHeader, Task task, int i){
+	public void format(boolean isHeader, Task task, int i, int toBeDisplayedIn){
+		switch(toBeDisplayedIn){
+		case Constants.DISPLAY_IN_TP1:
+			strToShowTemp = strToShow1;
+			break;
+		case Constants.DISPLAY_IN_TP2:
+			strToShowTemp = strToShow2;
+			break;
+		default:
+			assert false : "variable toBeDisplayedIn is incorrect";
+		}
+		
 		if(isHeader){
 			formatAsHeader(task);
 		}
@@ -35,13 +37,21 @@ public class FormatToString {
 			formatAsTask(i, task);
 		}
 	}
+	
+	//private void copy(LinkedList<StringWithFormat> list1, LinkedList<StringWithFormat> list2){
+		//for(int j = 0; j < list1.size(); j++){
+			//StringWithFormat.copy(list1.get(j), list2.get(j));
+	//	}
+		//list1.clear();
+	//}
 
 	private void formatAsHeader(Task task){
 		String headerStr;
+		
 		if(task.getIsOverdue()){
 			if(!hasOverdueHeader){
-				headerStr = HEADER_OVERDUE + newLine();
-				strToShow.add(new StringWithFormat(headerStr, FORMAT_HEADER_OVERDUE));
+				headerStr = Constants.HEADER_OVERDUE + newLine();
+				strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_OVERDUE));
 				hasOverdueHeader = true;
 			}
 		}
@@ -52,11 +62,14 @@ public class FormatToString {
 			int dueYear = dueDate.getYear4Digit();
 
 			headerStr = dateFormatAsHeader(dueDay, dueMonth, dueYear);
-			strToShow.add(new StringWithFormat(headerStr, FORMAT_HEADER_NORMAL));
+			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_NORMAL));
 		}
 		else{
-			headerStr = HEADER_FLOATING + newLine();
-			strToShow.add(new StringWithFormat(headerStr, FORMAT_HEADER_FLOATING));
+			if(!hasFloatingHeader){
+				headerStr = Constants.HEADER_FLOATING + newLine();
+				strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_FLOATING));
+				hasFloatingHeader = true;
+			}
 		}
 	}
 
@@ -67,82 +80,95 @@ public class FormatToString {
 		String location = task.getTaskLocation();
 		boolean isDone = task.getIsDone();
 
-		strToShow.add(new StringWithFormat(numbering(i), FORMAT_NONE));
+		strToShowTemp.add(new StringWithFormat(numbering(i), Constants.FORMAT_NONE));
 
 		//add time with format
 		if(dueStartTime != null && dueEndTime != null)
 		{
 			String time = timeStr(dueStartTime, dueEndTime);
 			if(isDone){
-				strToShow.add(new StringWithFormat(time, FORMAT_TIME_STRIKE));
+				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_TIME_STRIKE));
 			}
 			else{
-				strToShow.add(new StringWithFormat(time, FORMAT_TIME));
+				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_TIME));
 			}
 		}
 		else if(dueStartTime != null){
 			String time = timeStr(dueStartTime);
 			if(isDone){
-				strToShow.add(new StringWithFormat(time, FORMAT_TIME_STRIKE));
+				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_TIME_STRIKE));
 			}
 			else{
-				strToShow.add(new StringWithFormat(time, FORMAT_TIME));
+				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_TIME));
 			}
 		}
 
 		//add description with format
 		if(isDone){
-			strToShow.add(new StringWithFormat(description, FORMAT_DESCRIPTION_STRIKE));
+			strToShowTemp.add(new StringWithFormat(description, Constants.FORMAT_DESCRIPTION_STRIKE));
 		}
 		else{
-			strToShow.add(new StringWithFormat(description, FORMAT_DESCRIPTION));
+			strToShowTemp.add(new StringWithFormat(description, Constants.FORMAT_DESCRIPTION));
 		}
 
 		//add location with format
 		if(location != null){
 			location = locationStr(location);
 			if(isDone){
-				strToShow.add(new StringWithFormat(location, FORMAT_LOCATION_STRIKE));
+				strToShowTemp.add(new StringWithFormat(location, Constants.FORMAT_LOCATION_STRIKE));
 			}
 			else{
-				strToShow.add(new StringWithFormat(location, FORMAT_LOCATION));
+				strToShowTemp.add(new StringWithFormat(location, Constants.FORMAT_LOCATION));
 			}
 		}
 
-		strToShow.add(new StringWithFormat(newLine(), FORMAT_NONE));
-
-		//for(int k = 0; i < strToShow.size(); k++){
-		//	System.out.println(strToShow.get(k));
-		//}
+		strToShowTemp.add(new StringWithFormat(newLine(), Constants.FORMAT_NONE));
 	}
 
 
-	public static String newLine(){ //should format to final string
+	private static String newLine(){ //should format to final string
 		return "\n";
 	}
 
-	public static String numbering(int i){
+	private static String numbering(int i){
 		return (i + 1) + ". ";
 	}
 
-	public static String timeStr(Time startTime, Time endTime){
+	private static String timeStr(Time startTime, Time endTime){
 		return "[" + startTime.toString() + " - " + endTime.toString() + "] ";
 	}
 
-	public static String timeStr(Time startTime){
+	private static String timeStr(Time startTime){
 		return "[" + startTime.toString() + "] ";
 
 	}
 
-	public static String locationStr(String location){
+	private static String locationStr(String location){
 		return " at [" + location + "]";
 	}
 
-	public static String dateFormatAsHeader(int dueDay, int dueMonth, int dueYear){
+	private static String dateFormatAsHeader(int dueDay, int dueMonth, int dueYear){
 		return dueDay + "/" + dueMonth + "/" + dueYear + newLine();
 	}
 
-	public static LinkedList<StringWithFormat> getLinkedList(){
-		return strToShow;
+	public static LinkedList<StringWithFormat> getLinkedList(int num){
+		switch(num){
+		case 1:
+			return strToShow1;
+		case 2:
+			return strToShow2;
+		default:
+			assert false : "Parameter of FormatTostring.getLinkedList(num) is wrong";
+			return strToShow1;
+		}
+	}
+	
+	public static void clearAllLinkedList(){
+		strToShow1.clear();
+		strToShow2.clear();
+	}
+	
+	public static int getLinkedListNum(){
+		return 2;
 	}
 }

@@ -24,4 +24,9 @@ public class StringWithFormat {
 	public String getFormat(){
 		return format;
 	}
+	
+	public static void copy(StringWithFormat str1, StringWithFormat str2){
+		str2.setString(str1.getString());
+		str2.setFormat(str1.getFormat());
+	}
 }
