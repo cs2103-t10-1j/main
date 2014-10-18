@@ -2,6 +2,7 @@ package lol;
 
 import java.awt.Color;
 import java.awt.event.*;
+import java.util.LinkedList;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -22,34 +23,67 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 	final boolean isHeader = true;
 
-	final String FORMAT_HEADER_OVERDUE = "overdue header";
-	final String FORMAT_HEADER_FLOATING = "floating header";
-	final String FORMAT_HEADER_NORMAL = "normal header";
-	final String FORMAT_TIME = "time";
-	final String FORMAT_DESCRIPTION = "description";
-	final String FORMAT_LOCATION = "location";
-	final String FORMAT_OVERDUE = "overdue";
-	final String FORMAT_TIME_STRIKE = "time strike";
-	final String FORMAT_DESCRIPTION_STRIKE = "description strike";
-	final String FORMAT_LOCATION_STRIKE = "location strike";
-	final String FORMAT_OVERDUE_STRIKE = "overdue strike";
-
 	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextArea feedbackDisplayTA, JTextField inputTF, Integer i){
 		this.inputTF = inputTF;
 
 		this.mainDisplayTP = mainDisplayTP;
 		this.mainDisplayTP.setDocument(doc);
+		addStyleToDoc(doc);
 		this.mainDisplayTP2 = mainDisplayTP2;
 		this.mainDisplayTP2.setDocument(doc2);
+		addStyleToDoc(doc2);
 
 		this.feedbackDisplayTA = feedbackDisplayTA;
 		this.i = i;
 		inputTF.addKeyListener(this);
 	}
 
+	//this method add different styles to document which are needed to display task of
+	//different type and to display time, location and description of task in different 
+	//font type
+	private void addStyleToDoc(StyledDocument doc){
+		Style style = doc.addStyle(Constants.FORMAT_HEADER_FLOATING, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Color.BLUE);
+
+		style = doc.addStyle(Constants.FORMAT_HEADER_NORMAL, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Color.BLUE);
+
+		style = doc.addStyle(Constants.FORMAT_HEADER_OVERDUE, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Color.RED);
+
+		style = doc.addStyle(Constants.FORMAT_DESCRIPTION, null);
+
+		style = doc.addStyle(Constants.FORMAT_TIME, null);
+		StyleConstants.setForeground(style, Color.ORANGE);
+
+		style = doc.addStyle(Constants.FORMAT_LOCATION, null);
+		StyleConstants.setForeground(style, Color.YELLOW);
+
+		style = doc.addStyle(Constants.FORMAT_HEADER_OVERDUE, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Color.RED);
+
+		style = doc.addStyle(Constants.FORMAT_TIME_STRIKE, null);
+		StyleConstants.setForeground(style, Color.ORANGE);
+		StyleConstants.setStrikeThrough(style, true);
+
+		style = doc.addStyle(Constants.FORMAT_DESCRIPTION_STRIKE, null);
+		StyleConstants.setStrikeThrough(style, true);
+
+		style = doc.addStyle(Constants.FORMAT_LOCATION_STRIKE, null);
+		StyleConstants.setForeground(style, Color.YELLOW);
+		StyleConstants.setStrikeThrough(style, true);
+
+		style = doc.addStyle(Constants.FORMAT_OVERDUE_STRIKE, null);
+		StyleConstants.setForeground(style, Color.RED);
+		StyleConstants.setStrikeThrough(style, true);
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent event){ 
-
 		String inputStr = inputTF.getText();
 		refreshFeedbackDisplay(inputStr);
 
@@ -73,17 +107,18 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		clear(mainDisplayTP);
 		clear(mainDisplayTP2);
 
-		showInMainDisplayTA(taskList);
+		showInMainDisplayTP(taskList);
 	}
 
-	public void showInMainDisplayTA(TaskList<Task> taskList){
-		Date previousDueDate = new Date(-1, -1, -9999, null);
+	public void showInMainDisplayTP(TaskList<Task> taskList){
+		Date previousDueDate = new Date(-1, -1, -9999, null); //set as impossible date
 
 		FormatToString taskToFormat = new FormatToString();
-		//below two lines should be removed and added to another class
-		FormatToString.strToShow.clear(); 
+		//below 3 lines should be removed and added to another class
+		FormatToString.clearAllLinkedList();
 		FormatToString.hasOverdueHeader = false;
-		
+		FormatToString.hasFloatingHeader = false;
+
 		for(int i = 0; i < taskList.size(); i++){
 			Task task = taskList.get(i);
 
@@ -92,89 +127,57 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 			assert (currentDueDate.getDay() == -1 && currentDueDate.getMonth() == -1 
 					&& currentDueDate.getYear4Digit() == -9999) : "impossible date entered";
 
+			int toBeDisplayedIn = 0;
 			//add header
 			if(task.getIsOverdue()){
-				taskToFormat.format(isHeader, task, i);
+				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP1);
+				toBeDisplayedIn = Constants.DISPLAY_IN_TP1;
 			}
 			else if(currentDueDate != null && !currentDueDate.equals(previousDueDate)){
 				previousDueDate = currentDueDate;
 
-				taskToFormat.format(isHeader, task, i);
+				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP1);
+				toBeDisplayedIn = Constants.DISPLAY_IN_TP1;
 			}
 			else if(currentDueDate == null){
-				taskToFormat.format(isHeader, task, i);
+				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP2);
+				toBeDisplayedIn = Constants.DISPLAY_IN_TP2;
 			}
 
-			taskToFormat.format(!isHeader, task, i);
+			assert !(toBeDisplayedIn == 0) : "toBeDisplayed in is 0";
+
+			//add task below header
+			taskToFormat.format(!isHeader, task, i, toBeDisplayedIn);
 		}
-		
-		addToDisplay(doc);
+
+		addToDisplay(doc, doc2);
 	}
 
-	public void addToDisplay(StyledDocument doc){
-		Style style = doc.addStyle(FORMAT_HEADER_FLOATING, null);
-		StyleConstants.setBold(style, true);
-		StyleConstants.setForeground(style, Color.BLUE);
-
-		style = doc.addStyle(FORMAT_HEADER_NORMAL, null);
-		StyleConstants.setBold(style, true);
-		StyleConstants.setForeground(style, Color.BLUE);
-
-		style = doc.addStyle(FORMAT_HEADER_OVERDUE, null);
-		StyleConstants.setBold(style, true);
-		StyleConstants.setForeground(style, Color.RED);
-
-		style = doc.addStyle(FORMAT_DESCRIPTION, null);
-
-		style = doc.addStyle(FORMAT_TIME, null);
-		StyleConstants.setForeground(style, Color.ORANGE);
-
-		style = doc.addStyle(FORMAT_LOCATION, null);
-		StyleConstants.setForeground(style, Color.YELLOW);
-		
-		style = doc.addStyle(FORMAT_HEADER_OVERDUE, null);
-		StyleConstants.setBold(style, true);
-		StyleConstants.setForeground(style, Color.RED);
-		
-		style = doc.addStyle(FORMAT_TIME_STRIKE, null);
-		StyleConstants.setForeground(style, Color.ORANGE);
-		StyleConstants.setStrikeThrough(style, true);
-		
-		style = doc.addStyle(FORMAT_DESCRIPTION_STRIKE, null);
-		StyleConstants.setStrikeThrough(style, true);
-		
-		style = doc.addStyle(FORMAT_LOCATION_STRIKE, null);
-		StyleConstants.setForeground(style, Color.YELLOW);
-		StyleConstants.setStrikeThrough(style, true);
-
-		style = doc.addStyle(FORMAT_OVERDUE_STRIKE, null);
-		StyleConstants.setForeground(style, Color.RED);
-		StyleConstants.setStrikeThrough(style, true);
-
+	public void addToDisplay(StyledDocument doc, StyledDocument doc2){
 		try {
-			for(int i = 0; i < FormatToString.strToShow.size(); i++){
-				doc.insertString(doc.getLength(), FormatToString.strToShow.get(i).getString() 
-						, doc.getStyle(FormatToString.strToShow.get(i).getFormat()));
-			}
+			for(int j = 1; j <= FormatToString.getLinkedListNum(); j++){
+				LinkedList<StringWithFormat> strToShow = FormatToString.getLinkedList(j);
 
-		} catch (BadLocationException badLocationException) {
+				for(int i = 0; i < strToShow.size(); i++){
+					if(j==1){
+						doc.insertString(doc.getLength(), strToShow.get(i).getString(), doc.getStyle(strToShow.get(i).getFormat()));
+					}
+					else if(j==2){
+						doc2.insertString(doc2.getLength(), strToShow.get(i).getString(), doc2.getStyle(strToShow.get(i).getFormat()));
+					}
+				}
+			}
+		} 
+		catch (BadLocationException badLocationException) {
 			System.err.println("Oops");
 		}
 	}
 
-	public String addNewLine(String str){
-		return str + "\n";
-	}
-
-	public void clear(JTextField TF){
+	private void clear(JTextField TF){
 		TF.setText("");
 	}
 
-	public void clear(JTextArea TA){
-		TA.setText("");
-	}
-
-	public void clear(JTextPane TP){
+	private void clear(JTextPane TP){
 		TP.setText("");
 	}
 
