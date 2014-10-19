@@ -61,6 +61,7 @@ public class Task implements Comparable<Task> {
 	public boolean getIsOverdue() {
 		return isOverdue;
 	}
+
 	/************ Mutators *************/
 	public void setDescription(String description) {
 		this.description = description;
@@ -115,12 +116,16 @@ public class Task implements Comparable<Task> {
 			}
 
 			if ((other.getTaskDueDate() == null && this.getTaskDueDate() == null)
-					|| (other.getTaskDueDate().equals(this.getTaskDueDate()))) {
+					|| ((other.getTaskDueDate() != null && this
+							.getTaskDueDate() != null) && (other
+							.getTaskDueDate().equals(this.getTaskDueDate())))) {
 				isDateSame = true;
 			}
 
 			if ((other.getTaskLocation() == null && this.getTaskLocation() == null)
-					|| (other.getTaskLocation().equals(this.getTaskLocation()))) {
+					|| ((other.getTaskLocation() != null && this
+							.getTaskLocation() != null) && (other
+							.getTaskLocation().equals(this.getTaskLocation())))) {
 				isLocationSame = true;
 			}
 
@@ -157,7 +162,7 @@ public class Task implements Comparable<Task> {
 				&& (that.getTaskDueDate() == null)) {
 			return AFTER;
 		}
-		
+
 		// same date, null time -> equal priority
 		else if (((this.getTaskDueDate() != null) && (that.getTaskDueDate() != null))
 				&& (this.getTaskDueDate().equals(that.getTaskDueDate()))
@@ -165,7 +170,7 @@ public class Task implements Comparable<Task> {
 
 			return EQUAL;
 		}
-		
+
 		// same date, null time has lower priority
 		else if (((this.getTaskDueDate() != null) && (that.getTaskDueDate() != null))
 				&& (this.getTaskDueDate().equals(that.getTaskDueDate()))
@@ -173,7 +178,7 @@ public class Task implements Comparable<Task> {
 
 			return AFTER;
 		}
-		
+
 		// same date, non-null time has higher priorty
 		else if (((this.getTaskDueDate() != null) && (that.getTaskDueDate() != null))
 				&& (this.getTaskDueDate().equals(that.getTaskDueDate()))
