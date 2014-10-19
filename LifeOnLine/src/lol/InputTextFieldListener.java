@@ -152,6 +152,11 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 			//add task below header
 			taskToFormat.format(!isHeader, task, i, toBeDisplayedIn);
+			
+			//add a line between overdue task and upcoming task
+			if(i+1 < taskList.size() && task.getIsOverdue() && !taskList.get(i+1).getIsOverdue() && taskList.get(i+1).getTaskDueDate() != null){
+				FormatToString.getLinkedList(1).add(new StringWithFormat("=================================" + "\n", Constants.FORMAT_HEADER_OVERDUE));
+			}
 		}
 
 		addToDisplay(doc1, doc2);

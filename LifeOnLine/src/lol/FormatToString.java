@@ -48,18 +48,24 @@ public class FormatToString {
 	private void formatAsHeader(Task task){
 		String headerStr;
 		
-		if(task.getIsOverdue()){
-			if(!hasOverdueHeader){
+		if(task.getIsOverdue() && !hasOverdueHeader){
 				headerStr = Constants.HEADER_OVERDUE + newLine();
 				strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_OVERDUE));
 				hasOverdueHeader = true;
-			}
+				
+				headerStr = dateFormatAsHeader(task.getTaskDueDate());
+				strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_OVERDUE));
 		}
 		else if(task.getTaskDueDate() != null){
 			Date dueDate = task.getTaskDueDate();
 
 			headerStr = dateFormatAsHeader(dueDate);
+			if(task.getIsOverdue()){
+				strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_OVERDUE));
+			}
+			else{
 			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_NORMAL));
+			}
 		}
 		else{
 			if(!hasFloatingHeader){
