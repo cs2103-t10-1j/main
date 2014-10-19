@@ -6,8 +6,9 @@
 
 package lol;
 
+import java.util.Calendar;
+
 public class Date {
-	private static final int CURRENT_YEAR = 2014;
 
 	/************ Attributes ***************/
 	private int day; // from 1 to 31
@@ -18,12 +19,12 @@ public class Date {
 	private Time time; // Time of the day
 
 	/************ Constructors *************/
-	public Date() { // Default value 1/1/2014
+	public Date() { // Default value 1 Jan of current year
 		setDay(1);
 		setMonth(1);
 		setMonthName(getMonthName(1));
-		setYear4Digit(CURRENT_YEAR);
-		setYear2Digit(CURRENT_YEAR % 100);
+		setYear4Digit(getCurrentYear());
+		setYear2Digit(getCurrentYear() % 100);
 		setTime(new Time());
 	}
 
@@ -41,8 +42,19 @@ public class Date {
 		setDay(day);
 		setMonth(month);
 		setMonthName(getMonthName(month));
-		setYear4Digit(CURRENT_YEAR);
-		setYear2Digit(CURRENT_YEAR % 100);
+		
+		int currYear = getCurrentYear();
+		int currMonth = getCurrentMonth();
+		int currDay = getCurrentDay();
+		
+		if (month < currMonth || (month == currMonth && day < currDay)) {
+			setYear4Digit(currYear + 1);
+			setYear2Digit((currYear + 1) % 100);
+		} else {
+			setYear4Digit(currYear);
+			setYear2Digit(currYear % 100);
+		}
+		
 		setTime(time);
 	}
 
@@ -59,8 +71,18 @@ public class Date {
 		setDay(day);
 		setMonth(month);
 		setMonthName(getMonthName(month));
-		setYear4Digit(CURRENT_YEAR);
-		setYear2Digit(CURRENT_YEAR % 100);
+		
+		int currYear = getCurrentYear();
+		int currMonth = getCurrentMonth();
+		int currDay = getCurrentDay();
+		
+		if (month < currMonth || (month == currMonth && day < currDay)) {
+			setYear4Digit(currYear + 1);
+			setYear2Digit((currYear + 1) % 100);
+		} else {
+			setYear4Digit(currYear);
+			setYear2Digit(currYear % 100);
+		}
 		setTime(new Time());
 	}
 
@@ -87,6 +109,18 @@ public class Date {
 
 	public Time getTime() {
 		return time;
+	}
+	
+	public int getCurrentYear() {
+		return getTodaysDate().getYear4Digit();
+	}
+	
+	public int getCurrentMonth() {
+		return getTodaysDate().getMonth();
+	}
+	
+	public int getCurrentDay() {
+		return getTodaysDate().getDay();
 	}
 
 	/************ Mutators *************/
@@ -116,7 +150,7 @@ public class Date {
 
 	/********** Overriding methods ***********/
 	public String toString() { // e.g. 14 Nov 15 or 7 Dec
-		if (getYear4Digit() == CURRENT_YEAR) {
+		if (getYear4Digit() == getCurrentYear()) {
 			return getDay() + " " + getMonthName();
 		} else {
 			return getDay() + " " + getMonthName() + " " + getYear2Digit();
@@ -231,5 +265,16 @@ public class Date {
 		} else {
 			return year - 2000;
 		}
+	}
+	
+	/**
+	 * Returns today's date
+	 * 
+	 * @return Date object containing today's date
+	 */
+	public Date getTodaysDate() {
+		Calendar rightNow = Calendar.getInstance(); // Get the current date
+		return new Date(rightNow.get(Calendar.DATE),
+				rightNow.get(Calendar.MONTH) + 1, rightNow.get(Calendar.YEAR));
 	}
 }
