@@ -16,6 +16,7 @@ public class Constants {
 		public static final String[] DICTIONARY_NOT_DONE = { "undone" };
 		public static final String[] DICTIONARY_UNDO = { "undo" };
 		public static final String[] DICTIONARY_REDO = { "redo" };
+		public static final String[] DICTIONARY_VIEW_HOMESCREEN = { "home" };
 		public static final String[] DICTIONARY_EXIT = { "exit" };
 
 		// Months
@@ -41,6 +42,7 @@ public class Constants {
 		public static final String COMMAND_REDO = "redo";
 		public static final String COMMAND_DONE = "done";
 		public static final String COMMAND_NOT_DONE = "undone";
+		public static final String COMMAND_VIEW_HOMESCREEN = "home";
 		public static final String COMMAND_EXIT = "exit";
 		public static final String COMMAND_INVALID = "invalid command";
 
@@ -70,9 +72,13 @@ public class Constants {
 
 		// Feedback Strings
 		public static final String QUOTE = "\"";
+		public static final String LINEBREAK = "\n";
 		public static final String FEEDBACK_ADD_SUCCESS = " added successfully";
 		public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully";
 		public static final String FEEDBACK_EDIT_SUCCESS = " was editted succesfully";
+		public static final String FEEDBACK_SHOW_SUCCESS = "Displaying search results for ";
+		public static final String FEEDBACK_SHOW_SUCCESS_2 = " task(s) found";
+		public static final String FEEDBACK_SHOW_FAILURE = "There are no tasks due on that day!";
 		public static final String FEEDBACK_DONE_SUCCESS = " has been completed!";
 		public static final String FEEDBACK_DONE_FAILURE = "That task has already been completed!";
 		public static final String FEEDBACK_NOT_DONE_SUCCESS = " is now pending completion!";
@@ -81,6 +87,7 @@ public class Constants {
 		public static final String FEEDBACK_UNDO_FAILURE = "Nothing to undo!";
 		public static final String FEEDBACK_REDO_SUCCESS = "Redone!!";
 		public static final String FEEDBACK_REDO_FAILURE = "Nothing to redo!";
+		public static final String FEEDBACK_VIEW_HOMESCREEN = "Displaying all tasks";
 		public static final String FEEDBACK_INVALID = "That is an invalid action!";
 		
 		// not found

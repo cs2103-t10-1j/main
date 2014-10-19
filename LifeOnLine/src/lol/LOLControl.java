@@ -12,7 +12,7 @@ public class LOLControl {
 
 	/********** Initialize Temporary Storage ***********/
 
-	// private static TaskList<Task> searchList = new TaskList<Task>();
+	private static TaskList<Task> searchList = new TaskList<Task>();
 	private static TaskList<Task> displayList = new TaskList<Task>();
 
 	/********** Controller methods ***********/
@@ -35,6 +35,10 @@ public class LOLControl {
 			return executeEdit(userInput);
 		}
 
+		if (getCommandType(userInput).equals(Constants.COMMAND_SHOW)) {
+			return executeShow(userInput);
+		}
+
 		if (getCommandType(userInput).equals(Constants.COMMAND_DONE)) {
 			return executeDone(userInput);
 		}
@@ -49,6 +53,11 @@ public class LOLControl {
 		if (getCommandType(userInput).equals(Constants.COMMAND_REDO)) {
 			return executeRedo(userInput);
 		}
+		
+		if (getCommandType(userInput).equals(Constants.COMMAND_VIEW_HOMESCREEN)) {
+			return executeHomeScreen(userInput);
+		}
+		
 		if (getCommandType(userInput).equals(Constants.COMMAND_EXIT)) {
 			return executeExit(userInput);
 		}
@@ -95,8 +104,9 @@ public class LOLControl {
 	private static String executeEdit(String userInput) {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
 		Task taskAtIndex = displayList.get(taskIndex - 1);
-		Task oldTask = new Task(taskAtIndex.getTaskDescription(), taskAtIndex.getTaskLocation(),
-				taskAtIndex.getTaskDueDate(), taskAtIndex.getStartTime(), taskAtIndex.getEndTime());
+		Task oldTask = new Task(taskAtIndex.getTaskDescription(),
+				taskAtIndex.getTaskLocation(), taskAtIndex.getTaskDueDate(),
+				taskAtIndex.getStartTime(), taskAtIndex.getEndTime());
 		Task editTask = LOLParser.getEditTask(userInput, oldTask);
 
 		if ((storageList.delete(taskAtIndex)) && (storageList.add(editTask))) {
@@ -106,6 +116,46 @@ public class LOLControl {
 			return showFeedback(oldTask, Constants.COMMAND_EDIT);
 		} else
 			return executeInvalid(userInput);
+	}
+
+	private static String executeShow(String userInput) {
+		Date searchDate = LOLParser.getDateForShowCommand(userInput);
+
+		if (searchDate == null) {
+			return executeInvalid(userInput);
+		}
+		Task searchTask = new Task(null, null, searchDate);
+
+		if (storageList.size() == 0) {
+			return Constants.FEEDBACK_SHOW_FAILURE;
+		}
+
+		else {
+			int count = 0;
+			searchList.clear();
+
+			for (int i = 0; i < storageList.size(); i++) {
+
+				if (storageList.get(i).getTaskDueDate() == null) {
+					continue;
+				}
+
+				if (storageList.get(i).getTaskDueDate().equals(searchDate)) {
+					searchList.add(storageList.get(i));
+					count++;
+				}
+			}
+
+			if (count == 0) {
+				ControlDisplay.refreshDisplay(searchList);
+				return Constants.FEEDBACK_SHOW_FAILURE;
+			}
+
+			else {
+				ControlDisplay.refreshDisplay(searchList);
+				return showFeedback(searchTask, Constants.COMMAND_SHOW);
+			}
+		}
 	}
 
 	// private static String executeSearch(String userInput) {
@@ -260,6 +310,11 @@ public class LOLControl {
 		}
 	}
 
+	private static String executeHomeScreen(String userInput) {
+		ControlDisplay.refreshDisplay(storageList);
+		return showFeedback(null, Constants.COMMAND_VIEW_HOMESCREEN);
+	}
+
 	private static String executeExit(String userInput) {
 		System.exit(0);
 		return showFeedback(null, Constants.COMMAND_EXIT);
@@ -280,6 +335,10 @@ public class LOLControl {
 		if (commandType.equals(Constants.COMMAND_EDIT)) {
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_EDIT_SUCCESS);
 		}
+		if (commandType.equals(Constants.COMMAND_SHOW)) {
+			return (Constants.FEEDBACK_SHOW_SUCCESS + task.getTaskDueDate()
+					+ Constants.LINEBREAK + searchList.size() + Constants.FEEDBACK_SHOW_SUCCESS_2);
+		}
 		if (commandType.equals(Constants.COMMAND_DONE)) {
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_DONE_SUCCESS);
 		}
@@ -291,6 +350,9 @@ public class LOLControl {
 		}
 		if (commandType.equals(Constants.COMMAND_REDO)) {
 			return (Constants.FEEDBACK_REDO_SUCCESS);
+		}
+		if (commandType.equals(Constants.COMMAND_VIEW_HOMESCREEN)) {
+			return (Constants.FEEDBACK_VIEW_HOMESCREEN);
 		}
 		if (commandType.equals(Constants.COMMAND_EXIT)) {
 			return (null);
