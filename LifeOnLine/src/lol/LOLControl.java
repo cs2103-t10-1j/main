@@ -94,12 +94,13 @@ public class LOLControl {
 
 	private static String executeEdit(String userInput) {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
-		// CHANGE THIS LINE FOR EDIT TASK
-		Task editTask = LOLParser.getEditTask(userInput, null);
-		Task oldTask = displayList.get(taskIndex - 1);
+		Task taskAtIndex = displayList.get(taskIndex - 1);
+		Task oldTask = new Task(taskAtIndex.getTaskDescription(), taskAtIndex.getTaskLocation(),
+				taskAtIndex.getTaskDueDate(), taskAtIndex.getStartTime(), taskAtIndex.getEndTime());
+		Task editTask = LOLParser.getEditTask(userInput, oldTask);
 
-		if ((storageList.delete(oldTask)) && (storageList.add(editTask))) {
-			History.undoEdit(editTask, oldTask);
+		if ((storageList.delete(taskAtIndex)) && (storageList.add(editTask))) {
+			History.undoEdit(editTask, taskAtIndex);
 			ControlDisplay.refreshDisplay(storageList);
 			LOLStorage.save();
 			return showFeedback(oldTask, Constants.COMMAND_EDIT);
