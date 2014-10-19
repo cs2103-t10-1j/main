@@ -53,5 +53,9 @@ public class History {
 		return redoQueue.remove();
 
 	}
+	
+	public static void emptyRedoQueue(){
+		redoQueue = new LinkedList<CommandLine>();
+	}
 
 }

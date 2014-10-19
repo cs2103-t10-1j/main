@@ -149,13 +149,8 @@ public class Date {
 	}
 
 	/********** Overriding methods ***********/
-	public String toString() { // e.g. 14 Nov 15 or 7 Dec
-		if (getYear4Digit() == getCurrentYear()) {
-			return getDay() + " " + getMonthName();
-		} else {
-			return getDay() + " " + getMonthName() + " " + getYear2Digit();
-		}
-
+	public String toString() { // e.g. 7 Dec 2015
+			return getDay() + " " + getMonthName() + " " + getYear4Digit();
 	}
 
 	public boolean equals(Object obj) {

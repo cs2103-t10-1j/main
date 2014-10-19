@@ -128,7 +128,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 			Date currentDueDate = task.getTaskDueDate();
 
-			assert (currentDueDate.getDay() == -1 && currentDueDate.getMonth() == -1 
+			assert !(currentDueDate.getDay() == -1 && currentDueDate.getMonth() == -1 
 					&& currentDueDate.getYear4Digit() == -9999) : "impossible date entered";
 
 			int toBeDisplayedIn = 0;
