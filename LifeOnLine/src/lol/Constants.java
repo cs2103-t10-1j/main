@@ -11,6 +11,7 @@ public class Constants {
 		public static final String[] DICTIONARY_ADD = { "add" };
 		public static final String[] DICTIONARY_DELETE = { "delete" };
 		public static final String[] DICTIONARY_SHOW = { "show" };
+		public static final String[] DICTIONARY_SEARCH = { "search" };
 		public static final String[] DICTIONARY_EDIT = { "edit" };
 		public static final String[] DICTIONARY_DONE = { "done" };
 		public static final String[] DICTIONARY_NOT_DONE = { "undone" };
@@ -37,6 +38,7 @@ public class Constants {
 		public static final String COMMAND_ADD = "add";
 		public static final String COMMAND_DELETE = "delete";
 		public static final String COMMAND_SHOW = "show";
+		public static final String COMMAND_SEARCH = "search";
 		public static final String COMMAND_EDIT = "edit";
 		public static final String COMMAND_UNDO = "undo";
 		public static final String COMMAND_REDO = "redo";
@@ -77,8 +79,10 @@ public class Constants {
 		public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully";
 		public static final String FEEDBACK_EDIT_SUCCESS = " was editted succesfully";
 		public static final String FEEDBACK_SHOW_SUCCESS = "Displaying search results for ";
-		public static final String FEEDBACK_SHOW_SUCCESS_2 = " task(s) found";
+		public static final String FEEDBACK_SEARCH_SUCCESS = "Search results for tasks with the keyword(s): ";
+		public static final String FEEDBACK_SHOW_HITS = " task(s) found";
 		public static final String FEEDBACK_SHOW_FAILURE = "There are no tasks due on that day!";
+		public static final String FEEDBACK_SEARCH_FAILURE = "No tasks were found with the keyword(s): ";
 		public static final String FEEDBACK_DONE_SUCCESS = " has been completed!";
 		public static final String FEEDBACK_DONE_FAILURE = "That task has already been completed!";
 		public static final String FEEDBACK_NOT_DONE_SUCCESS = " is now pending completion!";
