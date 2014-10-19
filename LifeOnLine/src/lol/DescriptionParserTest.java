@@ -23,4 +23,14 @@ public class DescriptionParserTest {
 		DescriptionParser dp = new DescriptionParser("abc");
 		assertEquals("two three four", dp.removeFirstWord("one two three four"));
 	}
+	
+	@Test
+	public void testGetDescriptionForEdit() {
+		DescriptionParser dp = new DescriptionParser("do something 8-10pm");
+		assertEquals("do something", dp.getDescriptionForEdit());
+		DescriptionParser dp1 = new DescriptionParser("at post office");
+		assertEquals(null, dp1.getDescriptionForEdit());
+		DescriptionParser dp2 = new DescriptionParser("11 dec 8-10pm");
+		assertEquals(null, dp2.getDescriptionForEdit());
+	}
 }

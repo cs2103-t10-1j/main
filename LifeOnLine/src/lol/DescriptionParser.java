@@ -32,6 +32,32 @@ public class DescriptionParser {
 	}
 	
 	/**
+	 * This method is called with user input without the command name and index.
+	 * @return
+	 */
+	public String getDescriptionForEdit() {
+		cleanUp();
+		// user input without command name and index
+		// for example, for input "edit 3 do something today", inputWithoutCommandAndIndex is "do something today"
+		String inputWithoutCommandAndIndex = getUserInput();
+		
+		LocationParser lp = new LocationParser(inputWithoutCommandAndIndex);
+		String inputWithoutLocation = lp.getUserInputWithoutLocation();
+		
+		DateParser datep = new DateParser(inputWithoutLocation);
+		String inputWithoutLocationAndDate = datep.getUserInputWithoutDueDate();
+		
+		TimeParser tp = new TimeParser(inputWithoutLocationAndDate);
+		String inputWithoutLocationDateAndTime = tp.getUserInputWithoutTime();
+		
+		if (inputWithoutLocationDateAndTime.isEmpty()) {
+			return null;
+		} else {
+			return inputWithoutLocationDateAndTime.trim();
+		}
+	}
+	
+	/**
 	 * Removes multiple spaces between words, leading and trailing spaces in the
 	 * userInput
 	 * 

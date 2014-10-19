@@ -32,4 +32,12 @@ public class LOLParserTest {
 		assertEquals(6, LOLParser.getTaskIndex("edit 6 send letter sat"));
 		assertEquals(-1, LOLParser.getTaskIndex("delete tt"));
 	}
+	
+	@Test
+	public void testGetEditTask() {
+		assertEquals(new Task("buy milk", "supermarket", null), LOLParser.getEditTask("edit 6 at supermarket", new Task("buy milk", null, null)));
+		assertEquals(new Task("buy milk", "supermarket", null), LOLParser.getEditTask("edit 6 buy milk", new Task("buy juice", "supermarket", null)));
+		assertEquals(new Task("buy milk", "supermarket", new Date(13,11)), LOLParser.getEditTask("edit 6 13 nov", new Task("buy milk", "supermarket", null)));
+		assertEquals(new Task("eat food", null, new Date(19,10), new Time("1800"), null), LOLParser.getEditTask("edit 2 6pm", new Task("eat food", null, new Date(19,10), new Time("1700"), null)));
+	}
 }

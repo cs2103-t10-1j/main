@@ -94,7 +94,8 @@ public class LOLControl {
 
 	private static String executeEdit(String userInput) {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
-		Task editTask = LOLParser.getEditTask(userInput);
+		// CHANGE THIS LINE FOR EDIT TASK
+		Task editTask = LOLParser.getEditTask(userInput, null);
 		Task oldTask = displayList.get(taskIndex - 1);
 
 		if ((storageList.delete(oldTask)) && (storageList.add(editTask))) {
