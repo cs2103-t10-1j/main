@@ -39,6 +39,10 @@ public class LOLControl {
 			return executeShow(userInput);
 		}
 
+		if (getCommandType(userInput).equals(Constants.COMMAND_SEARCH)) {
+			return executeSearch(userInput);
+		}
+
 		if (getCommandType(userInput).equals(Constants.COMMAND_DONE)) {
 			return executeDone(userInput);
 		}
@@ -53,11 +57,11 @@ public class LOLControl {
 		if (getCommandType(userInput).equals(Constants.COMMAND_REDO)) {
 			return executeRedo(userInput);
 		}
-		
+
 		if (getCommandType(userInput).equals(Constants.COMMAND_VIEW_HOMESCREEN)) {
 			return executeHomeScreen(userInput);
 		}
-		
+
 		if (getCommandType(userInput).equals(Constants.COMMAND_EXIT)) {
 			return executeExit(userInput);
 		}
@@ -158,10 +162,44 @@ public class LOLControl {
 		}
 	}
 
-	// private static String executeSearch(String userInput) {
-	// TODO
-	// return null;
-	// }
+	private static String executeSearch(String userInput) {
+		DateParser dp = new DateParser();
+		String searchKey = LOLParser.getKeywordsForSearchCommand(userInput);
+		Task searchTask = new Task(searchKey, null, null);
+
+		if (dp.isValidDateFormat(searchKey)) {
+			return executeShow(userInput);
+		}
+
+		if (storageList.size() == 0) {
+			return (Constants.FEEDBACK_SEARCH_FAILURE + Constants.QUOTE
+					+ searchKey + Constants.QUOTE);
+		}
+
+		else {
+			int count = 0;
+			searchList.clear();
+
+			for (int i = 0; i < storageList.size(); i++) {
+
+				if (storageList.get(i).getTaskDescription().contains(searchKey)) {
+					searchList.add(storageList.get(i));
+					count++;
+				}
+			}
+
+			if (count == 0) {
+				ControlDisplay.refreshDisplay(searchList);
+				return (Constants.FEEDBACK_SEARCH_FAILURE + Constants.QUOTE
+						+ searchKey + Constants.QUOTE);
+			}
+			
+			else {
+				ControlDisplay.refreshDisplay(searchList);
+				return showFeedback(searchTask, Constants.COMMAND_SEARCH);
+			}
+		}
+	}
 
 	private static String executeDone(String userInput) {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
@@ -321,8 +359,7 @@ public class LOLControl {
 	}
 
 	private static String executeInvalid(String userInput) {
-		Task invalidTask = LOLParser.getTask(userInput);
-		return showFeedback(invalidTask, Constants.COMMAND_INVALID);
+		return showFeedback(null, Constants.COMMAND_INVALID);
 	}
 
 	private static String showFeedback(Task task, String commandType) {
@@ -337,7 +374,11 @@ public class LOLControl {
 		}
 		if (commandType.equals(Constants.COMMAND_SHOW)) {
 			return (Constants.FEEDBACK_SHOW_SUCCESS + task.getTaskDueDate()
-					+ Constants.LINEBREAK + searchList.size() + Constants.FEEDBACK_SHOW_SUCCESS_2);
+					+ Constants.LINEBREAK + searchList.size() + Constants.FEEDBACK_SHOW_HITS);
+		}
+		if (commandType.equals(Constants.COMMAND_SEARCH)) {
+			return (Constants.FEEDBACK_SEARCH_SUCCESS + task.getTaskDescription()
+					+ Constants.LINEBREAK + searchList.size() + Constants.FEEDBACK_SHOW_HITS);
 		}
 		if (commandType.equals(Constants.COMMAND_DONE)) {
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_DONE_SUCCESS);

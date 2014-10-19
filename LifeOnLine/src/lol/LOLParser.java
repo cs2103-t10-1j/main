@@ -32,6 +32,8 @@ public class LOLParser {
 			return Constants.COMMAND_DELETE;
 		} else if (hasWordInDictionary(Constants.DICTIONARY_SHOW, command)) {
 			return Constants.COMMAND_SHOW;
+		} else if (hasWordInDictionary(Constants.DICTIONARY_SEARCH, command)) {
+			return Constants.COMMAND_SEARCH;
 		} else if (hasWordInDictionary(Constants.DICTIONARY_EDIT, command)) {
 			return Constants.COMMAND_EDIT;
 		} else if (hasWordInDictionary(Constants.DICTIONARY_DONE, command)) {
