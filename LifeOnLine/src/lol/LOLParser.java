@@ -42,6 +42,8 @@ public class LOLParser {
 			return Constants.COMMAND_UNDO;
 		} else if (hasWordInDictionary(Constants.DICTIONARY_REDO, command)) {
 			return Constants.COMMAND_REDO;
+		} else if (hasWordInDictionary(Constants.DICTIONARY_VIEW_HOMESCREEN, command)) {
+			return Constants.COMMAND_VIEW_HOMESCREEN;
 		} else if (hasWordInDictionary(Constants.DICTIONARY_EXIT, command)) {
 			return Constants.COMMAND_EXIT;
 		} else {
