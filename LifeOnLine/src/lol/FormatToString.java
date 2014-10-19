@@ -57,11 +57,8 @@ public class FormatToString {
 		}
 		else if(task.getTaskDueDate() != null){
 			Date dueDate = task.getTaskDueDate();
-			int dueDay = dueDate.getDay();
-			int dueMonth = dueDate.getMonth();
-			int dueYear = dueDate.getYear4Digit();
 
-			headerStr = dateFormatAsHeader(dueDay, dueMonth, dueYear);
+			headerStr = dateFormatAsHeader(dueDate);
 			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_NORMAL));
 		}
 		else{
@@ -147,8 +144,8 @@ public class FormatToString {
 		return " at [" + location + "]";
 	}
 
-	private static String dateFormatAsHeader(int dueDay, int dueMonth, int dueYear){
-		return dueDay + "/" + dueMonth + "/" + dueYear + newLine();
+	private static String dateFormatAsHeader(Date dueDate){
+		return dueDate.toString() + newLine();
 	}
 
 	public static LinkedList<StringWithFormat> getLinkedList(int num){
