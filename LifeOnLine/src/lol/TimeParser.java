@@ -27,9 +27,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TimeParser {
+	/************* Attributes ***************/
 	private String userInput;
 	private String timeKeyword; // keyword preceding time - at, by, from or no keyword
 
+	/************* Constructors ***************/
 	public TimeParser() {
 		this("");
 	}
@@ -39,6 +41,7 @@ public class TimeParser {
 		setTimeKeyword("");
 	}
 
+	/************* Accessors ***************/
 	public String getUserInput() {
 		return userInput;
 	}
@@ -47,6 +50,7 @@ public class TimeParser {
 		return timeKeyword;
 	}
 
+	/************* Mutators ***************/
 	public void setUserInput(String userInput) {
 		this.userInput = userInput;
 	}
@@ -55,6 +59,13 @@ public class TimeParser {
 		this.timeKeyword = timeKeyword;
 	}
 
+	/************* Other methods ***************/
+	
+	/**
+	 * Returns the start time of task in userInput
+	 * 
+	 * @return start of a task in userInput if it exists, else returns null
+	 */
 	public Time getStartTime() {
 		cleanUp();
 
@@ -156,6 +167,11 @@ public class TimeParser {
 		return null;
 	}
 	
+	/**
+	 * Returns the end time of task in userInput
+	 * 
+	 * @return end of a task in userInput if it exists, else returns null
+	 */
 	public Time getEndTime() {
 		cleanUp();
 
@@ -224,6 +240,12 @@ public class TimeParser {
 		return null;
 	}
 	
+	/**
+	 * Returns the userInput without start time, end time, time range and keywords preceding that
+	 * time. Example: if userInput is "add task on 6 oct 6-9pm", returns "add task on 6 oct"
+	 * 
+	 * @return userInput without time and keywords preceding that time
+	 */
 	public String getUserInputWithoutTime() {
 		if (getStartTime() == null) {
 			return getUserInput();
@@ -691,6 +713,14 @@ public class TimeParser {
 
 	}
 	
+	/**
+	 * Removes task description after a time or time range, if any
+	 * 
+	 * @param time
+	 *            String containing a time or time range which may or may not be followed
+	 *            by a task description
+	 * @return time or time range as a string
+	 */
 	public String removeDescriptionAfterTimeIfAny(String time) {
 		String[] words = time.split(" ");
 		String firstWord = words[0];

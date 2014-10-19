@@ -29,9 +29,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DateParser {
+	/************* Attributes ***************/
 	private String userInput;
 	private String dateKeyword; // keyword preceding date - on, by or no keyword
 
+	/************* Constructors ***************/
 	public DateParser() {
 		this("");
 	}
@@ -41,22 +43,31 @@ public class DateParser {
 		setDateKeyword("");
 	}
 
+	/************* Accessors ***************/
 	public String getUserInput() {
 		return userInput;
 	}
-	
+
 	public String getDateKeyword() {
 		return dateKeyword;
 	}
 
+	/************* Mutators ***************/
 	public void setUserInput(String userInput) {
 		this.userInput = userInput;
 	}
-	
+
 	public void setDateKeyword(String dateKeyword) {
 		this.dateKeyword = dateKeyword;
 	}
 
+	/************* Other methods ***************/
+
+	/**
+	 * Returns the due date of task in userInput
+	 * 
+	 * @return due date of a task in userInput if it exists, else returns null
+	 */
 	public Date getDueDate() {
 		cleanUp();
 
@@ -93,13 +104,14 @@ public class DateParser {
 			if (isValidDay(word)) {
 				return createDate(word);
 			}
-			
+
 			// find next 4 words because date and time formats can have at most
 			// 5 words
 			String[] nextWords = getNext4Words(words, i);
 
 			if (hasDate(word, nextWords)) {
-				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b" + nextWords[0] + "\\b");
+				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
+						+ nextWords[0] + "\\b");
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
@@ -111,13 +123,20 @@ public class DateParser {
 		return null;
 	}
 
+	/**
+	 * Returns the userInput without the due date and keywords preceding that
+	 * due date Example: if userInput is "add task on 6 oct", returns "add task"
+	 * 
+	 * @return userInput without the due date and keywords preceding that due
+	 *         date
+	 */
 	public String getUserInputWithoutDueDate() {
 		if (getDueDate() == null) {
 			return getUserInput();
 		}
 		String keyword = getDateKeyword();
 		String date = "";
-		
+
 		if (keyword.isEmpty()) {
 			String temp = getUserInput();
 			String[] words = temp.split(" ");
@@ -128,13 +147,15 @@ public class DateParser {
 					date = word.trim();
 					break;
 				}
-				
-				// find next 4 words because date and time formats can have at most
+
+				// find next 4 words because date and time formats can have at
+				// most
 				// 5 words
 				String[] nextWords = getNext4Words(words, i);
 
 				if (hasDate(word, nextWords)) {
-					Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b" + nextWords[0] + "\\b");
+					Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
+							+ nextWords[0] + "\\b");
 					Matcher m = p.matcher(temp);
 
 					if (m.find()) {
@@ -149,20 +170,21 @@ public class DateParser {
 
 			while (m.find()) {
 				String parameter = getParameterStartingAtIndex(m.end());
-				
+
 				if (isValidDateFormat(parameter)) {
 					date = parameter.trim();
 				}
 			}
 		}
-		
+
 		if (getDateKeyword().isEmpty()) {
 			return cleanUp(getUserInput().replaceAll("\\b" + date + "\\b", " "));
 		} else {
-			return cleanUp(getUserInput().replaceAll("\\b" + keyword + "\\b\\s\\b" + date + "\\b", " "));
+			return cleanUp(getUserInput().replaceAll(
+					"\\b" + keyword + "\\b\\s\\b" + date + "\\b", " "));
 		}
 	}
-	
+
 	/**
 	 * Checks if a string is a valid date format
 	 * 
@@ -251,7 +273,9 @@ public class DateParser {
 		// Date format 30/9/2014 or 30/9/14
 		// if the date has 3 parts
 		if (dateSlash.length == Constants.LENGTH_DAY_MONTH_YEAR) {
-			if (Integer.parseInt(dateSlash[Constants.INDEX_DAY]) < 0 || Integer.parseInt(dateSlash[Constants.INDEX_MONTH]) < 0 || Integer.parseInt(dateSlash[Constants.INDEX_YEAR]) < 0) {
+			if (Integer.parseInt(dateSlash[Constants.INDEX_DAY]) < 0
+					|| Integer.parseInt(dateSlash[Constants.INDEX_MONTH]) < 0
+					|| Integer.parseInt(dateSlash[Constants.INDEX_YEAR]) < 0) {
 				return null;
 			}
 			return new Date(Integer.parseInt(dateSlash[Constants.INDEX_DAY]),
@@ -265,7 +289,9 @@ public class DateParser {
 		if (dateSpace.length == Constants.LENGTH_DAY_MONTH_YEAR) {
 			// get number of month e.g 1 for jan
 			int monthNum = getMonthNum(dateSpace[Constants.INDEX_MONTH]);
-			if (Integer.parseInt(dateSpace[Constants.INDEX_DAY]) < 0 || monthNum < 0 || Integer.parseInt(dateSpace[Constants.INDEX_YEAR]) < 0) {
+			if (Integer.parseInt(dateSpace[Constants.INDEX_DAY]) < 0
+					|| monthNum < 0
+					|| Integer.parseInt(dateSpace[Constants.INDEX_YEAR]) < 0) {
 				return null;
 			}
 			return new Date(Integer.parseInt(dateSpace[Constants.INDEX_DAY]),
@@ -275,7 +301,8 @@ public class DateParser {
 		// Date format 30/9
 		// if the date has 2 parts
 		if (dateSlash.length == Constants.LENGTH_DAY_MONTH) {
-			if (Integer.parseInt(dateSlash[Constants.INDEX_DAY]) < 0 || Integer.parseInt(dateSlash[Constants.INDEX_MONTH]) < 0) {
+			if (Integer.parseInt(dateSlash[Constants.INDEX_DAY]) < 0
+					|| Integer.parseInt(dateSlash[Constants.INDEX_MONTH]) < 0) {
 				return null;
 			}
 			return new Date(Integer.parseInt(dateSlash[Constants.INDEX_DAY]),
@@ -287,7 +314,8 @@ public class DateParser {
 		if (dateSpace.length == Constants.LENGTH_DAY_MONTH) {
 			// get number of month e.g 1 for jan
 			int monthNum = getMonthNum(dateSpace[Constants.INDEX_MONTH]);
-			if (Integer.parseInt(dateSpace[Constants.INDEX_DAY]) < 0 || monthNum < 0) {
+			if (Integer.parseInt(dateSpace[Constants.INDEX_DAY]) < 0
+					|| monthNum < 0) {
 				return null;
 			}
 			return new Date(Integer.parseInt(dateSpace[Constants.INDEX_DAY]),
@@ -456,11 +484,14 @@ public class DateParser {
 		input = input.replaceAll("\\s+", " ");
 		return input;
 	}
-	
+
 	/**
-	 * Removes multiple spaces between words, leading and trailing spaces for all strings in an array
-	 * @param input  array containing strings to be formatted
-	 * @return  array with formatted strings
+	 * Removes multiple spaces between words, leading and trailing spaces for
+	 * all strings in an array
+	 * 
+	 * @param input
+	 *            array containing strings to be formatted
+	 * @return array with formatted strings
 	 */
 	public String[] cleanUp(String[] input) {
 		for (int i = 0; i < input.length; i++) {
@@ -508,9 +539,9 @@ public class DateParser {
 	}
 
 	/**
-	 * Returns a due date starting from 'index' till
-	 * the occurrence of another reserved word or the end of the string or another parameter,
-	 * whichever is earlier
+	 * Returns a due date starting from 'index' till the occurrence of another
+	 * reserved word or the end of the string or another parameter, whichever is
+	 * earlier
 	 * 
 	 * @param index
 	 *            index of userInput at which the paramter to be returned starts
@@ -522,19 +553,28 @@ public class DateParser {
 		}
 		String parameter;
 		int nextKeywordIndex = getIndexOfNextReservedWord(index + 1);
-		
+
 		if (nextKeywordIndex == Constants.NOT_FOUND) {
 			parameter = getUserInput().substring(index).trim();
 		} else {
 			assert nextKeywordIndex > 0;
-			parameter = getUserInput().substring(index, nextKeywordIndex).trim();
+			parameter = getUserInput().substring(index, nextKeywordIndex)
+					.trim();
 		}
-		
+
 		// Check if the due date is followed by a description
 		return removeDescriptionFromDueDateIfAny(parameter);
 
 	}
-	
+
+	/**
+	 * Checks if a string represents a 2 digit year from 10 to 99 or 4 digit
+	 * year from 2010 to 2099
+	 * 
+	 * @param year
+	 *            string to be checked
+	 * @return true if the string is a year, else false
+	 */
 	public boolean isYear(String year) {
 		try {
 			int yr = Integer.parseInt(year);
@@ -543,20 +583,34 @@ public class DateParser {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Removes task description after a due date, if any
+	 * 
+	 * @param date
+	 *            String containing a due date which may or may not be followed
+	 *            by a task description
+	 * @return due date as a string
+	 */
 	public String removeDescriptionFromDueDateIfAny(String date) {
 		String[] words = date.split(" ");
 		String firstWord = words[0];
 		String[] nextWords = getNext4Words(words, 0);
-		
+
 		if (isValidDateFormat(firstWord)) {
 			return firstWord.trim();
-		} else if (isValidDateFormat(firstWord + " " + nextWords[0]) && !(isYear(nextWords[1]))) {
+		} else if (isValidDateFormat(firstWord + " " + nextWords[0])
+				&& !(isYear(nextWords[1]))) {
 			return (firstWord + " " + nextWords[0]).trim();
-		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " " + nextWords[1]) && !(isYear(nextWords[2]))) {
+		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " "
+				+ nextWords[1])
+				&& !(isYear(nextWords[2]))) {
 			return (firstWord + " " + nextWords[0] + " " + nextWords[1]).trim();
-		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]) && !(isYear(nextWords[3]))) {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]).trim();
+		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " "
+				+ nextWords[1] + " " + nextWords[2])
+				&& !(isYear(nextWords[3]))) {
+			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2])
+					.trim();
 		} else {
 			return date;
 		}
@@ -578,9 +632,9 @@ public class DateParser {
 			String word = words[i];
 			String[] nextWords = getNext4Words(words, i);
 
-			if (isKeyword(word)
-					|| hasTime(word, nextWords)) {
-				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b" + nextWords[0] + "\\b");
+			if (isKeyword(word) || hasTime(word, nextWords)) {
+				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
+						+ nextWords[0] + "\\b");
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
@@ -651,8 +705,8 @@ public class DateParser {
 	}
 
 	/**
-	 * Checks is a word is a keyword (at, by etc.) but not a reserved word (days of the
-	 * week, today, tomorrow, tmw)
+	 * Checks is a word is a keyword (at, by etc.) but not a reserved word (days
+	 * of the week, today, tomorrow, tmw)
 	 * 
 	 * @param word
 	 *            word to be checked
@@ -691,17 +745,20 @@ public class DateParser {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the next 4 words of userInput, starting from the index i + 1
-	 * @param words  Array of words in userInput
-	 * @param i  The index of the first word
-	 * @return   The next 4 words after index i. If there are less than 4 words, the empty words are represented by empty strings
+	 * 
+	 * @param words
+	 *            Array of words in userInput
+	 * @param i
+	 *            The index of the first word
+	 * @return The next 4 words after index i. If there are less than 4 words,
+	 *         the empty words are represented by empty strings
 	 */
 	public String[] getNext4Words(String[] words, int i) {
-		String[] nextWords = { Constants.EMPTY_STRING,
-				Constants.EMPTY_STRING, Constants.EMPTY_STRING,
-				Constants.EMPTY_STRING };
+		String[] nextWords = { Constants.EMPTY_STRING, Constants.EMPTY_STRING,
+				Constants.EMPTY_STRING, Constants.EMPTY_STRING };
 
 		if (i < words.length - 4) {
 			int index = 0;
@@ -732,6 +789,5 @@ public class DateParser {
 		}
 		return nextWords;
 	}
-
 
 }

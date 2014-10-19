@@ -76,7 +76,6 @@ public class LOLParser {
 				date = dtp.addDaysToToday(1);
 			}
 		}
-
 		return new Task(description, location, date, startTime, endTime);
 	}
 
@@ -156,6 +155,54 @@ public class LOLParser {
 	}
 
 	/**
+	 * Returns the date entered after show command as a Date object
+	 * 
+	 * @param input
+	 *            user input
+	 * @return if the date entered after the command is a valid format then the
+	 *         method returns a Date object, else returns null
+	 */
+	public static Date getDateForShowCommand(String input) {
+		try {
+			input = cleanUp(input);
+			String date = removeFirstWord(input);
+			DateParser dp = new DateParser();
+			if (dp.isValidDateFormat(date)) {
+				return dp.createDate(date);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Return number of words in a string
+	 * 
+	 * @param input
+	 *            Input string
+	 * @return Number of words in input string
+	 */
+	public static int countWords(String input) {
+		input = cleanUp(input);
+		return input.split(" ").length;
+	}
+	
+	/**
+	 * Removes multiple spaces between words, leading and trailing spaces
+	 * 
+	 * @param input
+	 *            string to be cleaned up
+	 * @return string without extra spaces
+	 */
+	public static String cleanUp(String input) {
+		input = input.trim();
+		input = input.replaceAll("\\s+", " ");
+		return input;
+	}
+
+	/**
 	 * Remove the first word of the input and returns the resulting string
 	 * 
 	 * @param input
@@ -198,31 +245,6 @@ public class LOLParser {
 		} catch (Exception e) {
 			return input;
 		}
-	}
-
-	/**
-	 * Return number of words in a string
-	 * 
-	 * @param input
-	 *            Input string
-	 * @return Number of words in input string
-	 */
-	public static int countWords(String input) {
-		input = input.trim();
-
-		if (input.isEmpty()) { // Zero words
-			return 0;
-		}
-
-		int numWords = 1; // There is at least one word in the string
-
-		for (int i = 0; i < input.length(); i++) {
-			// Disregard multiple spaces between 2 words
-			if (input.charAt(i) == ' ' && input.charAt(i - 1) != ' ') {
-				numWords++;
-			}
-		}
-		return numWords;
 	}
 
 	/**

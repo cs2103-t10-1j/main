@@ -40,4 +40,15 @@ public class LOLParserTest {
 		assertEquals(new Task("buy milk", "supermarket", new Date(13,11)), LOLParser.getEditTask("edit 6 13 nov", new Task("buy milk", "supermarket", null)));
 		assertEquals(new Task("eat food", null, new Date(19,10), new Time("1800"), null), LOLParser.getEditTask("edit 2 6pm", new Task("eat food", null, new Date(19,10), new Time("1700"), null)));
 	}
+	
+	@Test
+	public void testGetDateForShowCommand() {
+		assertEquals(new Date(20,11), LOLParser.getDateForShowCommand("show 20/11/14"));
+		assertEquals(null, LOLParser.getDateForShowCommand("show 20 novv"));
+	}
+	
+	@Test
+	public void testCountWords() {
+		assertEquals(5, LOLParser.countWords("add on mon  do   something  "));
+	}
 }
