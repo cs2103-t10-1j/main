@@ -140,6 +140,7 @@ public class DateParser {
 					if (m.find()) {
 						date = getParameterStartingAtIndex(m.start()).trim();
 					}
+					break;
 				}
 			}
 		} else {

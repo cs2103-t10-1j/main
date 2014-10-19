@@ -137,7 +137,7 @@ public class TimeParser {
 			String[] nextWords = getNext4Words(words, i);
 
 			if (hasTime(word, nextWords)) {
-				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b" + nextWords[0] + "\\b");
+				Pattern p = Pattern.compile(word + "\\s*" + nextWords[0]);
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
@@ -233,6 +233,7 @@ public class TimeParser {
 
 		if (keyword.isEmpty()) {
 			String temp = getUserInput();
+			
 			String[] words = temp.split(" ");
 
 			for (int i = 0; i < words.length; i++) {
@@ -244,13 +245,15 @@ public class TimeParser {
 				
 				// find next 4 words because time formats can have at most 5 words
 				String[] nextWords = getNext4Words(words, i);
+				
 				if (hasTime(word, nextWords)) {
-					Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b" + nextWords[0] + "\\b");
+					Pattern p = Pattern.compile(word + "\\s*" + nextWords[0]);
 					Matcher m = p.matcher(temp);
 
 					if (m.find()) {
 						time = getParameterStartingAtIndex(m.start()).trim();
 					}
+					break;
 				}
 			}
 		} else {
@@ -348,9 +351,11 @@ public class TimeParser {
 		try {
 			if (string.contains(Constants.SEPARATOR_TO)) {
 				times = string.split(Constants.SEPARATOR_TO);
+				times = cleanUp(times);
 				containsSeparator = true;
 			} else if (string.contains(Constants.SEPARATOR_DASH)) {
 				times = string.split(Constants.SEPARATOR_DASH);
+				times = cleanUp(times);
 				containsSeparator = true;
 			}
 
@@ -669,19 +674,18 @@ public class TimeParser {
 	 * @return parameter starting from index
 	 */
 	public String getParameterStartingAtIndex(int index) {
+		
 		if (isIndexOutOfBounds(index)) {
 			return null;
 		}
 		String parameter;
 		int nextKeywordIndex = getIndexOfNextReservedWord(index + 1);
-		
 		if (nextKeywordIndex == Constants.NOT_FOUND) {
 			parameter = getUserInput().substring(index).trim();
 		} else {
 			assert nextKeywordIndex > 0;
 			parameter = getUserInput().substring(index, nextKeywordIndex).trim();
 		}
-		
 		// Check if the due date is followed by a description
 		return removeDescriptionAfterTimeIfAny(parameter);
 
@@ -725,7 +729,7 @@ public class TimeParser {
 
 			if (isReservedWord(word)
 					|| hasDate(word, nextWords)) {
-				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b" + nextWords[0] + "\\b");
+				Pattern p = Pattern.compile(word + "\\s*" + nextWords[0]);
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
