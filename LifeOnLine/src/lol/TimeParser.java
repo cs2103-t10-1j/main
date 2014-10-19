@@ -323,8 +323,8 @@ public class TimeParser {
 	 * @return true if it represents 12-hour time, else false
 	 */
 	public boolean is12hrTime(String string) {
-		string = string.trim();
 		try {
+			string = string.trim();
 			// Time format 1.30pm or 1 pm
 			if ((string.endsWith(Constants.STRING_AM) || string
 					.endsWith(Constants.STRING_PM))) {
@@ -349,11 +349,12 @@ public class TimeParser {
 	 * @return true if it represents 24-hour time, else false
 	 */
 	public boolean is24hrTime(String string) {
-		string = string.trim();
-		if (string.length() != Constants.LENGTH_24HOUR_FORMAT) {
-			return false;
-		}
 		try {
+			string = string.trim();
+			if (string.length() != Constants.LENGTH_24HOUR_FORMAT) {
+				return false;
+			}
+			
 			int hour = Integer.parseInt(string.substring(Constants.INDEX_BEGIN,
 					Constants.LENGTH_AM_PM));
 			int min = Integer
