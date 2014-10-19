@@ -51,4 +51,12 @@ public class LOLParserTest {
 	public void testCountWords() {
 		assertEquals(5, LOLParser.countWords("add on mon  do   something  "));
 	}
+	
+	@Test
+	public void testGetKeywordsForSearchCommand() {
+		assertEquals("friends", LOLParser.getKeywordsForSearchCommand("search friends"));
+		assertEquals("10 oct", LOLParser.getKeywordsForSearchCommand("search 10 oct"));
+		assertEquals("dinner with friends", LOLParser.getKeywordsForSearchCommand("search dinner with friends"));
+		assertEquals(null, LOLParser.getKeywordsForSearchCommand("search"));
+	}
 }

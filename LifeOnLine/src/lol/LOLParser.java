@@ -1,10 +1,10 @@
 /**
- * NOT DONE YET
- * Parses the user input
- * User input formats:
- * 
- * add <description>\<location>\<due date>
- * start and end time not implemented yet
+ * Parses the user input and returns command name
+ * add - returns a Task object with details of task to be added
+ * delete, done - returns task index
+ * edit - returns task index and Task object of the new task
+ * show - returns Date object of the date specified after 'show' command
+ * search - returns keywords to be searched
  */
 package lol;
 
@@ -178,6 +178,27 @@ public class LOLParser {
 	}
 
 	/**
+	 * Returns keywords for search command
+	 * 
+	 * @param input
+	 *            user input
+	 * @return Keywords after search command. If the user input contains 1 or no
+	 *         words, returns null.
+	 */
+	public static String getKeywordsForSearchCommand(String input) {
+		try {
+			input = cleanUp(input);
+			if (countWords(input) <= 1) {
+				return null;
+			} else {
+				return removeFirstWord(input);
+			}
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/**
 	 * Return number of words in a string
 	 * 
 	 * @param input
@@ -188,7 +209,7 @@ public class LOLParser {
 		input = cleanUp(input);
 		return input.split(" ").length;
 	}
-	
+
 	/**
 	 * Removes multiple spaces between words, leading and trailing spaces
 	 * 
