@@ -21,6 +21,8 @@ public class DateParserTest {
 		assertEquals(new Date(10, 10), dp4.getDueDate());
 		DateParser dp5 = new DateParser("add eat 3 pizzas on 3 nov at 3 pm");
 		assertEquals(new Date(3, 11), dp5.getDueDate());
+		DateParser dp6 = new DateParser("add eat 3 octo");
+		assertEquals(null, dp6.getDueDate());
 	}
 	
 	@Test

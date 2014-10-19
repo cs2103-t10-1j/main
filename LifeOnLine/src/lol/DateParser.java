@@ -250,6 +250,9 @@ public class DateParser {
 		// Date format 30/9/2014 or 30/9/14
 		// if the date has 3 parts
 		if (dateSlash.length == Constants.LENGTH_DAY_MONTH_YEAR) {
+			if (Integer.parseInt(dateSlash[Constants.INDEX_DAY]) < 0 || Integer.parseInt(dateSlash[Constants.INDEX_MONTH]) < 0 || Integer.parseInt(dateSlash[Constants.INDEX_YEAR]) < 0) {
+				return null;
+			}
 			return new Date(Integer.parseInt(dateSlash[Constants.INDEX_DAY]),
 					Integer.parseInt(dateSlash[Constants.INDEX_MONTH]),
 					Integer.parseInt(dateSlash[Constants.INDEX_YEAR]));
@@ -261,6 +264,9 @@ public class DateParser {
 		if (dateSpace.length == Constants.LENGTH_DAY_MONTH_YEAR) {
 			// get number of month e.g 1 for jan
 			int monthNum = getMonthNum(dateSpace[Constants.INDEX_MONTH]);
+			if (Integer.parseInt(dateSpace[Constants.INDEX_DAY]) < 0 || monthNum < 0 || Integer.parseInt(dateSpace[Constants.INDEX_YEAR]) < 0) {
+				return null;
+			}
 			return new Date(Integer.parseInt(dateSpace[Constants.INDEX_DAY]),
 					monthNum, Integer.parseInt(dateSpace[Constants.INDEX_YEAR]));
 		}
@@ -268,6 +274,9 @@ public class DateParser {
 		// Date format 30/9
 		// if the date has 2 parts
 		if (dateSlash.length == Constants.LENGTH_DAY_MONTH) {
+			if (Integer.parseInt(dateSlash[Constants.INDEX_DAY]) < 0 || Integer.parseInt(dateSlash[Constants.INDEX_MONTH]) < 0) {
+				return null;
+			}
 			return new Date(Integer.parseInt(dateSlash[Constants.INDEX_DAY]),
 					Integer.parseInt(dateSlash[Constants.INDEX_MONTH]));
 		}
@@ -277,6 +286,9 @@ public class DateParser {
 		if (dateSpace.length == Constants.LENGTH_DAY_MONTH) {
 			// get number of month e.g 1 for jan
 			int monthNum = getMonthNum(dateSpace[Constants.INDEX_MONTH]);
+			if (Integer.parseInt(dateSpace[Constants.INDEX_DAY]) < 0 || monthNum < 0) {
+				return null;
+			}
 			return new Date(Integer.parseInt(dateSpace[Constants.INDEX_DAY]),
 					monthNum);
 		}
