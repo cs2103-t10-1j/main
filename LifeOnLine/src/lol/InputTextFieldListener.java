@@ -22,6 +22,10 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	Integer i;
 
 	final boolean isHeader = true;
+	
+	// custom colors
+	final Color DARK_ORANGE = new Color(253, 101, 0);
+	final Color PURPLE = new Color(204, 0, 204);
 
 	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextArea feedbackDisplayTA, JTextField inputTF, Integer i){
 		this.inputTF = inputTF;
@@ -57,24 +61,24 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		style = doc.addStyle(Constants.FORMAT_DESCRIPTION, null);
 
 		style = doc.addStyle(Constants.FORMAT_TIME, null);
-		StyleConstants.setForeground(style, Color.ORANGE);
+		StyleConstants.setForeground(style, DARK_ORANGE);
 
 		style = doc.addStyle(Constants.FORMAT_LOCATION, null);
-		StyleConstants.setForeground(style, Color.YELLOW);
+		StyleConstants.setForeground(style, PURPLE);
 
 		style = doc.addStyle(Constants.FORMAT_HEADER_OVERDUE, null);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, Color.RED);
 
 		style = doc.addStyle(Constants.FORMAT_TIME_STRIKE, null);
-		StyleConstants.setForeground(style, Color.ORANGE);
+		StyleConstants.setForeground(style, DARK_ORANGE);
 		StyleConstants.setStrikeThrough(style, true);
 
 		style = doc.addStyle(Constants.FORMAT_DESCRIPTION_STRIKE, null);
 		StyleConstants.setStrikeThrough(style, true);
 
 		style = doc.addStyle(Constants.FORMAT_LOCATION_STRIKE, null);
-		StyleConstants.setForeground(style, Color.YELLOW);
+		StyleConstants.setForeground(style, PURPLE);
 		StyleConstants.setStrikeThrough(style, true);
 
 		style = doc.addStyle(Constants.FORMAT_OVERDUE_STRIKE, null);
