@@ -68,7 +68,8 @@ public class TimeParser {
 	 */
 	public Time getStartTime() {
 		cleanUp();
-
+		DateParser dtp = new DateParser();
+		
 		// at
 		Pattern pAt = Pattern.compile("\\bat\\b");
 		Matcher mAt = pAt.matcher(getUserInput());
@@ -136,6 +137,13 @@ public class TimeParser {
 				if (isTimeRange(word)) {
 					return createStartTimeFromRange(word);
 				} else if (is24hrTime(word)) {
+					// check if the word is both a year and 24hr time
+					if (dtp.isBoth24hrTimeAndYear(word)) {
+						// if it is meant to be a year, it should be preceded by day and month
+						if (i - 2 > 0 && dtp.isValidDateFormat(words[i-2] + " " + words[i-1])) {
+							continue;
+						}
+					}
 					return new Time(word.trim());
 				} else {
 					assert is12hrTime(word);

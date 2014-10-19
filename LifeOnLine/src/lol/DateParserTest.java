@@ -110,6 +110,12 @@ public class DateParserTest {
 		assertEquals("31 oct 2015", dp.removeDescriptionFromDueDateIfAny("31 oct 2015 do that"));
 	}
 
+	@Test
+	public void testIsBoth24hrTimeAndYear() {
+		DateParser dp = new DateParser();
+		assertTrue(dp.isBoth24hrTimeAndYear("2016"));
+		assertFalse(dp.isBoth24hrTimeAndYear("1300"));
+	}
 
 	// The following methods depend on the current date.
 	

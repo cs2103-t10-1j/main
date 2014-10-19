@@ -632,7 +632,7 @@ public class DateParser {
 			String word = words[i];
 			String[] nextWords = getNext4Words(words, i);
 
-			if (isKeyword(word) || hasTime(word, nextWords)) {
+			if (isKeyword(word) || (hasTime(word, nextWords) && !isBoth24hrTimeAndYear(word))) {
 				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
 						+ nextWords[0] + "\\b");
 				Matcher m = p.matcher(temp);
@@ -647,6 +647,16 @@ public class DateParser {
 			}
 		}
 		return minIndex;
+	}
+	
+	/**
+	 * Checks if a string is both a year and a 24hr time format
+	 * @param string  string to be checked
+	 * @return true if string is both a year and a 24hr time format, else false
+	 */
+	public boolean isBoth24hrTimeAndYear(String string) {
+		TimeParser tp = new TimeParser();
+		return isYear(string) && tp.is24hrTime(string);
 	}
 
 	/**
