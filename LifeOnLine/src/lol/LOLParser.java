@@ -59,6 +59,9 @@ public class LOLParser {
 	 * @return Task added
 	 */
 	public static Task getTask(String input) {
+		if (countWords(input) <= 1) {
+			return null;
+		}
 		DescriptionParser dp = new DescriptionParser(input);
 		LocationParser lp = new LocationParser(input);
 		DateParser dtp = new DateParser(input);
@@ -94,6 +97,9 @@ public class LOLParser {
 	 */
 	public static Task getEditTask(String input, Task task) {
 		try {
+			if (countWords(input) <= 2) {
+				return null;
+			}
 			String inputWithoutCommandAndIndex = removeFirst2Words(input);
 			DescriptionParser dp = new DescriptionParser(
 					inputWithoutCommandAndIndex);
@@ -166,6 +172,9 @@ public class LOLParser {
 	 */
 	public static Date getDateForShowCommand(String input) {
 		try {
+			if (countWords(input) <= 1) {
+				return null;
+			}
 			input = cleanUp(input);
 			String date = removeFirstWord(input);
 			DateParser dp = new DateParser();
