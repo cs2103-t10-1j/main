@@ -1,14 +1,15 @@
 package lol;
 
 import java.util.logging.*;
-
+import io.StorageFacade;
 public class LOLControl {
 
 	private static Logger logger = Logger.getLogger("LOLControl");
 
 	/********** Load Storage ***********/
+	private static StorageFacade LOLStorage = StorageFacade.getInstance("LOL.txt");
 
-	private static TaskList<Task> storageList = LOLStorage.load();
+	private static TaskList<Task> storageList = LOLStorage.loadTasks();
 
 	/********** Initialize Temporary Storage ***********/
 
@@ -89,7 +90,7 @@ public class LOLControl {
 			if (storageList.add(newTask)) {
 				History.undoAdd(newTask);
 				ControlDisplay.refreshDisplay(storageList);
-				LOLStorage.save();
+				LOLStorage.saveTasks(storageList);
 				return showFeedback(newTask, Constants.COMMAND_ADD);
 			} else
 				return executeInvalid(userInput);
@@ -103,7 +104,7 @@ public class LOLControl {
 		if (storageList.delete(delTask)) {
 			History.undoDelete(delTask);
 			ControlDisplay.refreshDisplay(storageList);
-			LOLStorage.save();
+			LOLStorage.saveTasks(storageList);
 			return showFeedback(delTask, Constants.COMMAND_DELETE);
 		} else
 			logger.log(Level.WARNING,
@@ -122,7 +123,7 @@ public class LOLControl {
 		if ((storageList.delete(taskAtIndex)) && (storageList.add(editTask))) {
 			History.undoEdit(editTask, taskAtIndex);
 			ControlDisplay.refreshDisplay(storageList);
-			LOLStorage.save();
+			LOLStorage.saveTasks(storageList);
 			return showFeedback(oldTask, Constants.COMMAND_EDIT);
 		} else
 			return executeInvalid(userInput);
@@ -227,7 +228,7 @@ public class LOLControl {
 			if (storageList.set(undoneTaskStorageIndex, doneTask)) {
 				History.undoEdit(doneTask, undoneTask);
 				ControlDisplay.refreshDisplay(storageList);
-				LOLStorage.save();
+				LOLStorage.saveTasks(storageList);
 				return showFeedback(doneTask, Constants.COMMAND_DONE);
 			}
 		} catch (Exception ex) {
@@ -256,7 +257,7 @@ public class LOLControl {
 			if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
 				History.undoEdit(notDoneTask, doneTask);
 				ControlDisplay.refreshDisplay(storageList);
-				LOLStorage.save();
+				LOLStorage.saveTasks(storageList);
 				return showFeedback(notDoneTask, Constants.COMMAND_NOT_DONE);
 			}
 		} catch (Exception ex) {
@@ -281,14 +282,14 @@ public class LOLControl {
 				storageList.add(undoCmdTask);
 				History.redoAdd(undoCmd);
 				ControlDisplay.refreshDisplay(storageList);
-				LOLStorage.save();
+				LOLStorage.saveTasks(storageList);
 			}
 
 			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
 				storageList.delete(undoCmdTask);
 				History.redoAdd(undoCmd);
 				ControlDisplay.refreshDisplay(storageList);
-				LOLStorage.save();
+				LOLStorage.saveTasks(storageList);
 			}
 			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
 
@@ -303,7 +304,7 @@ public class LOLControl {
 				History.redoAdd(undoCmdOld);
 				History.redoAdd(undoCmdNew);
 				ControlDisplay.refreshDisplay(storageList);
-				LOLStorage.save();
+				LOLStorage.saveTasks(storageList);
 
 			}
 
@@ -327,14 +328,14 @@ public class LOLControl {
 				storageList.delete(undoCmdTask);
 				History.undoDelete(undoCmdTask);
 				ControlDisplay.refreshDisplay(storageList);
-				LOLStorage.save();
+				LOLStorage.saveTasks(storageList);
 			}
 
 			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
 				storageList.add(undoCmdTask);
 				History.undoAdd(undoCmdTask);
 				ControlDisplay.refreshDisplay(storageList);
-				LOLStorage.save();
+				LOLStorage.saveTasks(storageList);
 			}
 			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
 
@@ -347,7 +348,7 @@ public class LOLControl {
 				storageList.delete(undoCmdTaskOld);
 				History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
 				ControlDisplay.refreshDisplay(storageList);
-				LOLStorage.save();
+				LOLStorage.saveTasks(storageList);
 			}
 
 			return showFeedback(null, Constants.COMMAND_REDO);
