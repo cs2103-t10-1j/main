@@ -79,15 +79,21 @@ public class LOLControl {
 	}
 
 	private static String executeAdd(String userInput) {
-		Task newTask = LOLParser.getTask(userInput);
-
-		if (storageList.add(newTask)) {
-			History.undoAdd(newTask);
-			ControlDisplay.refreshDisplay(storageList);
-			LOLStorage.save();
-			return showFeedback(newTask, Constants.COMMAND_ADD);
-		} else
+		if (LOLParser.getTask(userInput) == null) {
 			return executeInvalid(userInput);
+		}
+
+		else {
+			Task newTask = LOLParser.getTask(userInput);
+
+			if (storageList.add(newTask)) {
+				History.undoAdd(newTask);
+				ControlDisplay.refreshDisplay(storageList);
+				LOLStorage.save();
+				return showFeedback(newTask, Constants.COMMAND_ADD);
+			} else
+				return executeInvalid(userInput);
+		}
 	}
 
 	private static String executeDel(String userInput) {
@@ -193,7 +199,7 @@ public class LOLControl {
 				return (Constants.FEEDBACK_SEARCH_FAILURE + Constants.QUOTE
 						+ searchKey + Constants.QUOTE);
 			}
-			
+
 			else {
 				ControlDisplay.refreshDisplay(searchList);
 				return showFeedback(searchTask, Constants.COMMAND_SEARCH);
@@ -377,8 +383,9 @@ public class LOLControl {
 					+ Constants.LINEBREAK + searchList.size() + Constants.FEEDBACK_SHOW_HITS);
 		}
 		if (commandType.equals(Constants.COMMAND_SEARCH)) {
-			return (Constants.FEEDBACK_SEARCH_SUCCESS + task.getTaskDescription()
-					+ Constants.LINEBREAK + searchList.size() + Constants.FEEDBACK_SHOW_HITS);
+			return (Constants.FEEDBACK_SEARCH_SUCCESS
+					+ task.getTaskDescription() + Constants.LINEBREAK
+					+ searchList.size() + Constants.FEEDBACK_SHOW_HITS);
 		}
 		if (commandType.equals(Constants.COMMAND_DONE)) {
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_DONE_SUCCESS);
