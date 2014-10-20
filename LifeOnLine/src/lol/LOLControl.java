@@ -3,24 +3,35 @@ package lol;
 import java.util.logging.*;
 
 import io.StorageFacade;
+
 public class LOLControl {
 
 	private static Logger logger = Logger.getLogger("LOLControl");
 
 	/********** Load Storage ***********/
-	private static StorageFacade LOLStorage = StorageFacade.getInstance("LOL.txt");
+	private static StorageFacade LOLStorage = StorageFacade
+			.getInstance("LOL.txt");
 
 	private static TaskList<Task> storageList = LOLStorage.loadTasks();
 
 	/********** Initialize Temporary Storage ***********/
 
-	private static TaskList<Task> searchList = new TaskList<Task>();
 	private static TaskList<Task> displayList = new TaskList<Task>();
+	private static TaskList<Task> searchList = new TaskList<Task>();
+	private static TaskList<Task> toDoList = new TaskList<Task>();
+	private static TaskList<Task> archiveList = new TaskList<Task>();
 
 	/********** Controller methods ***********/
-
 	public static TaskList<Task> getTaskList() {
 		return displayList;
+	}
+
+	public static TaskList<Task> getToDoList() {
+		return toDoList;
+	}
+
+	public static TaskList<Task> getArchiveList() {
+		return archiveList;
 	}
 
 	public static String executeUserInput(String userInput) throws Exception {
@@ -90,7 +101,7 @@ public class LOLControl {
 
 			if (storageList.add(newTask)) {
 				History.undoAdd(newTask);
-				ControlDisplay.refreshDisplay(storageList);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 				return showFeedback(newTask, Constants.COMMAND_ADD);
 			} else
@@ -104,7 +115,7 @@ public class LOLControl {
 
 		if (storageList.delete(delTask)) {
 			History.undoDelete(delTask);
-			ControlDisplay.refreshDisplay(storageList);
+			ControlDisplay.refreshDisplay(toDoList, storageList);
 			LOLStorage.saveTasks(storageList);
 			return showFeedback(delTask, Constants.COMMAND_DELETE);
 		} else
@@ -123,7 +134,7 @@ public class LOLControl {
 
 		if ((storageList.delete(taskAtIndex)) && (storageList.add(editTask))) {
 			History.undoEdit(editTask, taskAtIndex);
-			ControlDisplay.refreshDisplay(storageList);
+			ControlDisplay.refreshDisplay(toDoList, storageList);
 			LOLStorage.saveTasks(storageList);
 			return showFeedback(oldTask, Constants.COMMAND_EDIT);
 		} else
@@ -131,42 +142,104 @@ public class LOLControl {
 	}
 
 	private static String executeShow(String userInput) {
+		DateParser dp = new DateParser();
 		Date searchDate = LOLParser.getDateForShowCommand(userInput);
+		String searchKey = LOLParser.getKeywordsForSearchCommand(userInput);
 
-		if (searchDate == null) {
-			return executeInvalid(userInput);
+		if (!dp.isValidDate(userInput) && searchKey.equalsIgnoreCase("overdue")) {
+			return showOverdue(userInput);
 		}
-		Task searchTask = new Task(null, null, searchDate);
 
-		if (storageList.size() == 0) {
-			return Constants.FEEDBACK_SHOW_FAILURE;
+		else if (!dp.isValidDate(userInput)
+				&& searchKey.equalsIgnoreCase("archive")) {
+			return showArchive(userInput);
+		}
+
+		else if (!dp.isValidDate(userInput)
+				&& searchKey.equalsIgnoreCase("all")) {
+			return showAll(userInput);
 		}
 
 		else {
-			int count = 0;
-			searchList.clear();
 
-			for (int i = 0; i < storageList.size(); i++) {
-
-				if (storageList.get(i).getTaskDueDate() == null) {
-					continue;
-				}
-
-				if (storageList.get(i).getTaskDueDate().equals(searchDate)) {
-					searchList.add(storageList.get(i));
-					count++;
-				}
+			if (searchDate == null) {
+				return executeInvalid(userInput);
 			}
 
-			if (count == 0) {
-				ControlDisplay.refreshDisplay(searchList);
+			Task searchTask = new Task(null, null, searchDate);
+
+			if (storageList.size() == 0) {
 				return Constants.FEEDBACK_SHOW_FAILURE;
 			}
 
 			else {
-				ControlDisplay.refreshDisplay(searchList);
-				return showFeedback(searchTask, Constants.COMMAND_SHOW);
+				int count = 0;
+				searchList.clear();
+
+				for (int i = 0; i < storageList.size(); i++) {
+
+					if (storageList.get(i).getTaskDueDate() == null) {
+						continue;
+					}
+
+					if (storageList.get(i).getTaskDueDate().equals(searchDate)) {
+						searchList.add(storageList.get(i));
+						count++;
+					}
+				}
+
+				if (count == 0) {
+					ControlDisplay.refreshDisplay(searchList, storageList);
+					return Constants.FEEDBACK_SHOW_FAILURE;
+				}
+
+				else {
+					ControlDisplay.refreshDisplay(searchList, storageList);
+					return showFeedback(searchTask, Constants.COMMAND_SHOW);
+				}
 			}
+		}
+	}
+
+	private static String showOverdue(String userInput) {
+		searchList.clear();
+
+		for (int i = 0; i < storageList.size(); i++) {
+			if ((storageList.get(i).getIsOverdue() == true)
+					&& (storageList.get(i).getIsDone() == false)) {
+				searchList.add(storageList.get(i));
+			}
+		}
+
+		ControlDisplay.refreshDisplay(searchList, storageList);
+
+		if (displayList.size() == 0) {
+			return Constants.FEEDBACK_SHOW_OVERDUE_FAILURE;
+		} else {
+			return (Constants.FEEDBACK_SHOW_OVERDUE_SUCCESS
+					+ Constants.LINEBREAK + displayList.size() + Constants.FEEDBACK_SHOW_HITS);
+		}
+	}
+
+	private static String showArchive(String userInput) {
+
+		ControlDisplay.refreshDisplay(archiveList, storageList);
+
+		if (displayList.size() == 0) {
+			return Constants.FEEDBACK_SHOW_ARCHIVE_FAILURE;
+		} else {
+			return Constants.FEEDBACK_SHOW_ARCHIVE_SUCCESS;
+		}
+	}
+
+	private static String showAll(String userInput) {
+
+		ControlDisplay.refreshDisplay(storageList, storageList);
+
+		if (displayList.size() == 0) {
+			return Constants.FEEDBACK_SHOW_ALL_FAILURE;
+		} else {
+			return Constants.FEEDBACK_SHOW_ALL_SUCCESS;
 		}
 	}
 
@@ -190,20 +263,22 @@ public class LOLControl {
 
 			for (int i = 0; i < storageList.size(); i++) {
 
-				if (storageList.get(i).getTaskDescription().contains(searchKey)) {
+				if (storageList.get(i).getTaskDescription().toLowerCase()
+						.contains(searchKey.toLowerCase())) {
+
 					searchList.add(storageList.get(i));
 					count++;
 				}
 			}
 
 			if (count == 0) {
-				ControlDisplay.refreshDisplay(searchList);
+				ControlDisplay.refreshDisplay(searchList, storageList);
 				return (Constants.FEEDBACK_SEARCH_FAILURE + Constants.QUOTE
 						+ searchKey + Constants.QUOTE);
 			}
 
 			else {
-				ControlDisplay.refreshDisplay(searchList);
+				ControlDisplay.refreshDisplay(searchList, storageList);
 				return showFeedback(searchTask, Constants.COMMAND_SEARCH);
 			}
 		}
@@ -228,7 +303,7 @@ public class LOLControl {
 
 			if (storageList.set(undoneTaskStorageIndex, doneTask)) {
 				History.undoEdit(doneTask, undoneTask);
-				ControlDisplay.refreshDisplay(storageList);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 				return showFeedback(doneTask, Constants.COMMAND_DONE);
 			}
@@ -257,7 +332,7 @@ public class LOLControl {
 
 			if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
 				History.undoEdit(notDoneTask, doneTask);
-				ControlDisplay.refreshDisplay(storageList);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 				return showFeedback(notDoneTask, Constants.COMMAND_NOT_DONE);
 			}
@@ -282,14 +357,14 @@ public class LOLControl {
 			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
 				storageList.add(undoCmdTask);
 				History.redoAdd(undoCmd);
-				ControlDisplay.refreshDisplay(storageList);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 			}
 
 			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
 				storageList.delete(undoCmdTask);
 				History.redoAdd(undoCmd);
-				ControlDisplay.refreshDisplay(storageList);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 			}
 			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
@@ -304,7 +379,7 @@ public class LOLControl {
 				History.redoAdd(undoCmd);
 				History.redoAdd(undoCmdOld);
 				History.redoAdd(undoCmdNew);
-				ControlDisplay.refreshDisplay(storageList);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 
 			}
@@ -328,14 +403,14 @@ public class LOLControl {
 			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
 				storageList.delete(undoCmdTask);
 				History.undoDelete(undoCmdTask);
-				ControlDisplay.refreshDisplay(storageList);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 			}
 
 			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
 				storageList.add(undoCmdTask);
 				History.undoAdd(undoCmdTask);
-				ControlDisplay.refreshDisplay(storageList);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 			}
 			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
@@ -348,7 +423,7 @@ public class LOLControl {
 				storageList.add(undoCmdTaskNew);
 				storageList.delete(undoCmdTaskOld);
 				History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
-				ControlDisplay.refreshDisplay(storageList);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 			}
 
@@ -357,7 +432,7 @@ public class LOLControl {
 	}
 
 	private static String executeHomeScreen(String userInput) {
-		ControlDisplay.refreshDisplay(storageList);
+		ControlDisplay.refreshDisplay(toDoList, storageList);
 		return showFeedback(null, Constants.COMMAND_VIEW_HOMESCREEN);
 	}
 
@@ -409,4 +484,5 @@ public class LOLControl {
 		} else
 			return (Constants.FEEDBACK_INVALID);
 	}
+
 }
