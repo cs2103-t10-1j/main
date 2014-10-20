@@ -2,13 +2,24 @@ package lol;
 
 public class ControlDisplay {
 	
-	/********** Load Display List ***********/	
+	/********** Load Temporary Lists ***********/	
 	private static TaskList<Task> displayList = LOLControl.getTaskList();
+	private static TaskList<Task> toDoList = LOLControl.getToDoList();
+	private static TaskList<Task> archiveList = LOLControl.getArchiveList();
 	
 	/********** ControlDisplay Methods ***********/	
 
-	public static void refreshDisplay(TaskList<Task> listToDisplay) {
+	public static void refreshDisplay(TaskList<Task> listToDisplay, TaskList<Task> storageList) {
+		//sort the storage (chronological & mark overdue tasks)
+		sortList(storageList);
+		
+		//tasks that are completed/done get saved to archive & wont be displayed by default  
+		addToArchive(storageList);
+		
+		//sort the tasks that are yet to be completed/done (chronological & mark overdue tasks)
 		sortList(listToDisplay);
+		
+		//display the tasks that are yet to be completed/done
 		updateDisplay(listToDisplay);
 	}
 
@@ -95,6 +106,22 @@ public class ControlDisplay {
 				else {
 					continue;
 				}
+			}
+		}
+	}
+	
+	private static void addToArchive(TaskList<Task> listFromStorage) {
+
+		toDoList.clear();
+		archiveList.clear();
+		
+		// if a task is overdue & done, it gets added to the archive
+		for (int i = 0; i < listFromStorage.size(); i++) {
+			if ((listFromStorage.get(i).getIsOverdue() == true) &&
+					listFromStorage.get(i).getIsDone() == true) {
+				archiveList.add(listFromStorage.get(i));
+			} else {
+				toDoList.add(listFromStorage.get(i));
 			}
 		}
 	}
