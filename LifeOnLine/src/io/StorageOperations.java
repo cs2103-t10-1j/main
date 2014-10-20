@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 import lol.Task;
+import lol.Date;
+import lol.Time;
 import lol.TaskList;
 
 /**
@@ -63,9 +65,18 @@ public class StorageOperations {
 		try{
         String description = task.getTaskDescription();
 		String location = task.getTaskLocation();
-		String date = task.getTaskDueDate().toString();
-		String endTime = task.getEndTime().getFormat24hr();
-		String startTime = task.getStartTime().getFormat24hr();
+		Date dateOb = task.getTaskDueDate();
+		String date = "";
+		if(dateOb!=null)
+			date = dateOb.toString();
+		String endTime = "";
+		String startTime = "";
+		Time endTimeOb = task.getEndTime();
+		Time startTimeOb = task.getStartTime();
+		if(endTimeOb!=null)
+			endTime=endTimeOb.getFormat24hr();
+		if(startTimeOb!=null)
+			startTime=startTimeOb.getFormat24hr();
 		String isDone = task.getIsDone()?"true":"false";
 		String isOverdue = task.getIsOverdue()?"true":"false";
 		
