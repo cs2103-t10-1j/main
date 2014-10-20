@@ -16,6 +16,18 @@ public class DescriptionParserTest {
 		assertEquals("write 9 pages homework", dp2.getDescription());
 		DescriptionParser dp3 = new DescriptionParser("add sleep at 12.20am");
 		assertEquals("sleep", dp3.getDescription());
+		DescriptionParser dp4 = new DescriptionParser("add at \"home\" \"sleep\"  at 12.20am");
+		assertEquals("sleep", dp4.getDescription());
+		DescriptionParser dp5 = new DescriptionParser("add hello at \"mon\"");
+		assertEquals("hello", dp5.getDescription());
+	}
+	
+	@Test
+	public void testRemoveWordsWithinQuotes() {
+		DescriptionParser dp = new DescriptionParser("add hello at \"mon\"");
+		assertEquals("add hello", dp.removeWordsWithinQuotes("add hello at \"mon\""));
+		DescriptionParser dp1 = new DescriptionParser("add on tue \"hello world\" at \"mon\"");
+		assertEquals("add on tue", dp1.removeWordsWithinQuotes("add on tue \"hello world\" at \"mon\""));
 	}
 
 	@Test

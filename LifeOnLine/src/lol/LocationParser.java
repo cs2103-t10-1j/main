@@ -28,15 +28,82 @@ public class LocationParser {
 	 */
 	public String getLocation() {
 		try {
+			cleanUp();
+			String input = getUserInput();
+
+			// check for double quotes
+			Pattern p = Pattern.compile("\"");
+			Matcher m = p.matcher(input);
+
+			int countDoubleQuotes = countNumberOfDoubleQuotes();
+
+			// only location and description can be enclosed in double quotes
+			// more than 4 quotes and odd number of quotes are invalid
+			if (countDoubleQuotes % 2 == 1 || countDoubleQuotes > 4) {
+				throw new Exception("Invaild number of quotes");
+			}
+
+			if (countDoubleQuotes == 2) { // one parameter within quotes
+				int startQuoteIndex = 0, endQuoteIndex = 0, count = 0;
+				while (m.find()) {
+					count++;
+					if (count == 1) {
+						startQuoteIndex = m.start();
+					} else {
+						assert count == 2;
+						endQuoteIndex = m.start();
+					}
+				}
+
+				// if word preceding the quote is "at", the quote encloses a
+				// location, else it contains a description
+				if (getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase("at")) {
+					return cleanUp(input.substring(startQuoteIndex + 1,
+							endQuoteIndex));
+				}
+
+			} else if (countDoubleQuotes == 4) { // two parameters within quotes
+
+				int firstQuoteStart = 0, firstQuoteEnd = 0, secondQuoteStart = 0, secondQuoteEnd = 0, count = 0;
+				while (m.find()) {
+					count++;
+					if (count == 1) {
+						firstQuoteStart = m.start();
+					} else if (count == 2) {
+						firstQuoteEnd = m.start();
+					} else if (count == 3) {
+						secondQuoteStart = m.start();
+					} else {
+						assert count == 4;
+						secondQuoteEnd = m.start();
+					}
+				}
+
+				// if word preceding the quote is "at", the quote encloses a
+				// location, else it contains a description
+				if (getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase("at")) {
+					return cleanUp(input.substring(firstQuoteStart + 1,
+							firstQuoteEnd));
+				}
+
+				if (getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase("at")) {
+					return cleanUp(input.substring(secondQuoteStart + 1,
+							secondQuoteEnd));
+				}
+			}
+
+			// either no double quotes in input or no location found within
+			// double quotes
+			input = removeWordsWithinQuotes(input);
+
 			TimeParser tp = new TimeParser();
 			DateParser dp = new DateParser();
-			cleanUp();
 
 			if (countNumberOfAt() == 1) {
 				String parameter = getParameterStartingAtIndex(getIndexOfAt()
 						+ Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT]
 								.length() + 1);
-				
+
 				if (!tp.isValidTimeFormat(parameter)
 						&& !dp.isValidDateFormat(parameter)) {
 					return parameter;
@@ -44,12 +111,12 @@ public class LocationParser {
 					return null;
 				}
 			} else {
-				Pattern p = Pattern
+				Pattern pAt = Pattern
 						.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_AT]);
-				Matcher m = p.matcher(getUserInput());
+				Matcher mAt = pAt.matcher(getUserInput());
 
-				while (m.find()) {
-					String parameter = getParameterStartingAtIndex(m.end() + 1);
+				while (mAt.find()) {
+					String parameter = getParameterStartingAtIndex(mAt.end() + 1);
 					if (!tp.isValidTimeFormat(parameter)
 							&& !dp.isValidDateFormat(parameter)) {
 						return parameter;
@@ -61,19 +128,24 @@ public class LocationParser {
 			return null;
 		}
 	}
-	
+
 	/**
-	 * Returns user input excluding the location and the keyword "at" preceding it
-	 * @return   user input excluding the location and the keyword "at" preceding it
+	 * Returns user input excluding the location and the keyword "at" preceding
+	 * it
+	 * 
+	 * @return user input excluding the location and the keyword "at" preceding
+	 *         it
 	 */
 	public String getUserInputWithoutLocation() {
 		cleanUp();
-		String output = userInput.replaceAll("\\bat\\b\\s\\b" + getLocation() + "\\b", Constants.EMPTY_STRING);
+		String output = userInput.replaceAll("\\bat\\b\\s\\b" + getLocation()
+				+ "\\b", Constants.EMPTY_STRING);
 		return cleanUp(output);
 	}
 
 	/**
-	 * Removes multiple spaces between words, leading and trailing spaces in the userInput
+	 * Removes multiple spaces between words, leading and trailing spaces in the
+	 * userInput
 	 * 
 	 * @return string without extra spaces
 	 */
@@ -85,7 +157,7 @@ public class LocationParser {
 		setUserInput(input);
 		return input;
 	}
-	
+
 	/**
 	 * Removes multiple spaces between words, leading and trailing spaces
 	 * 
@@ -319,5 +391,143 @@ public class LocationParser {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the number of double quotes(") in the userInput
+	 * 
+	 * @return number of double quotes(") in the userInput
+	 */
+	public int countNumberOfDoubleQuotes() {
+		Pattern p = Pattern.compile("\"");
+		Matcher m = p.matcher(getUserInput());
+
+		int count = 0;
+		while (m.find()) {
+			count++;
+		}
+		return count;
+	}
+
+	/**
+	 * Returns the word immediately before the quotation mark whose index is
+	 * specified
+	 * 
+	 * @param indexQuote
+	 *            index of quotation mark
+	 * @return word immediately before the quotation mark. If there are no words
+	 *         before the quotation mark, an empty string is returned.
+	 */
+	public String getWordBeforeQuote(int indexQuote) {
+		String inputUntilQuote = cleanUp(getUserInput()
+				.substring(0, indexQuote));
+		return getLastWord(inputUntilQuote);
+	}
+
+	/**
+	 * Returns the last word of a string
+	 * 
+	 * @param str
+	 *            string whose last word is to be returned
+	 * @return last word of the string
+	 */
+	public String getLastWord(String str) {
+		try {
+			str = cleanUp(str);
+			int indexOfLastSpace = str.lastIndexOf(' ');
+
+			if (indexOfLastSpace >= 0) {
+				return str.substring(indexOfLastSpace).trim();
+			} else {
+				assert indexOfLastSpace == -1;
+				return str;
+			}
+		} catch (Exception e) {
+			return "";
+		}
+	}
+
+	/**
+	 * Removes double quotes, words within double quotes and the preceding
+	 * keyword "at" if any
+	 * 
+	 * @param input
+	 *            String from which words within quotes are to be removed
+	 * @return input without double quotes, words within double quotes and the
+	 *         preceding keyword "at" if any
+	 */
+	public String removeWordsWithinQuotes(String input) {
+		cleanUp();
+		input = cleanUp(input);
+
+		int countDoubleQuotes = countNumberOfDoubleQuotes();
+		Pattern p = Pattern.compile("\"");
+		Matcher m = p.matcher(input);
+
+		if (countDoubleQuotes == 0) {
+			return input;
+		} else if (countDoubleQuotes == 2) {
+			int startQuoteIndex = 0, endQuoteIndex = 0, count = 0;
+			while (m.find()) {
+				count++;
+				if (count == 1) {
+					startQuoteIndex = m.start();
+				} else {
+					assert count == 2;
+					endQuoteIndex = m.start();
+				}
+			}
+			String wordsWithinQuotes = input.substring(startQuoteIndex + 1,
+					endQuoteIndex);
+			String stringToRemove = "\"" + wordsWithinQuotes + "\"";
+
+			if (getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase("at")) {
+				stringToRemove = "\\bat\\b\\s*" + stringToRemove;
+			}
+			return cleanUp(input.replaceAll(stringToRemove, ""));
+		} else {
+			assert countDoubleQuotes == 4;
+			int firstQuoteStart = 0, firstQuoteEnd = 0, secondQuoteStart = 0, secondQuoteEnd = 0, count = 0;
+			while (m.find()) {
+				count++;
+				if (count == 1) {
+					firstQuoteStart = m.start();
+				} else if (count == 2) {
+					firstQuoteEnd = m.start();
+				} else if (count == 3) {
+					secondQuoteStart = m.start();
+				} else {
+					assert count == 4;
+					secondQuoteEnd = m.start();
+				}
+			}
+
+			// first 2 double quotes
+			String wordsWithinFirstQuotes = input.substring(
+					firstQuoteStart + 1, firstQuoteEnd);
+			String stringToRemoveFromFirstQuotes = "\""
+					+ wordsWithinFirstQuotes + "\"";
+
+			if (getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase("at")) {
+				stringToRemoveFromFirstQuotes = "\\bat\\b\\s*"
+						+ stringToRemoveFromFirstQuotes;
+			}
+
+			// next 2 double quotes
+			String wordsWithinSecondQuotes = input.substring(
+					secondQuoteStart + 1, secondQuoteEnd);
+			String stringToRemoveFromSecondQuotes = "\""
+					+ wordsWithinSecondQuotes + "\"";
+
+			if (getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase("at")) {
+				stringToRemoveFromSecondQuotes = "\\bat\\b\\s*"
+						+ stringToRemoveFromSecondQuotes;
+			}
+
+			String temp = cleanUp(input.replaceAll(
+					stringToRemoveFromFirstQuotes, ""));
+			temp = cleanUp(temp.replaceAll(stringToRemoveFromSecondQuotes, ""));
+			return temp;
+		}
 	}
 }

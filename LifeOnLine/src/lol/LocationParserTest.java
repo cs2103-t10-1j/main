@@ -24,6 +24,8 @@ public class LocationParserTest {
 		assertEquals("westside", lp6.getLocation());
 		LocationParser lp7 = new LocationParser("add sleep at 12.20am");
 		assertEquals(null, lp7.getLocation());
+		LocationParser lp8 = new LocationParser("add sleep at 12.20am at \"sunday hotel\"");
+		assertEquals("sunday hotel", lp8.getLocation());
 	}
 
 	@Test
