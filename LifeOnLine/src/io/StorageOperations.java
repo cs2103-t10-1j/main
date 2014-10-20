@@ -105,7 +105,7 @@ public class StorageOperations {
 
 		startTimeOb = getTime(startTime);
 		endTimeOb = getTime(endTime);
-		dateOb = getDate(date, startTimeOb);
+		dateOb = getDate(date);
 		isDone = Boolean.parseBoolean(done);
 		isOverdue = Boolean.parseBoolean(overdue);
 		
@@ -121,14 +121,14 @@ public class StorageOperations {
 		
 	}
 
-	private Date getDate(String date, Time startTimeOb) {
+	private Date getDate(String date) {
 		if (!date.equals("null")){
 			String[] dateComponents = date.split("/");
 			int day = Integer.parseInt(dateComponents[0]);
 			int month = Integer.parseInt(dateComponents[1]);
 			int year = Integer.parseInt(dateComponents[2]);
 			
-			return new Date(day, month, year, startTimeOb);
+			return new Date(day, month, year);
 		}
 		return null;
 	}
