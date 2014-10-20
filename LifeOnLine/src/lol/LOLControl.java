@@ -135,7 +135,7 @@ public class LOLControl {
 		Task editTask = LOLParser.getEditTask(userInput, oldTask);
 
 		if ((storageList.delete(taskAtIndex)) && (storageList.add(editTask))) {
-				History.emptyRedoQueue();
+			History.emptyRedoQueue();
 			History.undoEdit(editTask, taskAtIndex);
 			ControlDisplay.refreshDisplay(toDoList, storageList);
 			LOLStorage.saveTasks(storageList);
@@ -274,8 +274,10 @@ public class LOLControl {
 
 			for (int i = 0; i < storageList.size(); i++) {
 
-				if (storageList.get(i).getTaskDescription().toLowerCase()
-						.contains(searchKey.toLowerCase())) {
+				if ((storageList.get(i).getTaskDescription().toLowerCase()
+						.contains(searchKey.toLowerCase()))
+						|| (storageList.get(i).getTaskLocation().toLowerCase()
+								.contains(searchKey.toLowerCase()))) {
 
 					searchList.add(storageList.get(i));
 					count++;

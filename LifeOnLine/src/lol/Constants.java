@@ -14,7 +14,7 @@ public class Constants {
 	public static final String[] DICTIONARY_ADD = { "add" };
 	public static final String[] DICTIONARY_DELETE = { "delete" };
 	public static final String[] DICTIONARY_SHOW = { "show" };
-	public static final String[] DICTIONARY_SEARCH = { "search" };
+	public static final String[] DICTIONARY_SEARCH = { "search", "find" };
 	public static final String[] DICTIONARY_EDIT = { "edit" };
 	public static final String[] DICTIONARY_DONE = { "done" };
 	public static final String[] DICTIONARY_NOT_DONE = { "undone" };
