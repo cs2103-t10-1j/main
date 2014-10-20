@@ -82,8 +82,8 @@ public class Constants {
 	public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully!";
 	public static final String FEEDBACK_EDIT_SUCCESS = " was editted succesfully!";
 	public static final String FEEDBACK_SHOW_SUCCESS = "Displaying search results for ";
-	public static final String FEEDBACK_SEARCH_SUCCESS = "Search results for tasks with the keyword(s): ";
-	public static final String FEEDBACK_SHOW_HITS = " task(s) found!";
+	public static final String FEEDBACK_SHOW_HITS_SINGLE = " task found!";
+	public static final String FEEDBACK_SHOW_HITS_MULTI = " tasks found!";
 	public static final String FEEDBACK_SHOW_FAILURE = "There are no tasks due on that day!";
 	public static final String FEEDBACK_SHOW_OVERDUE_SUCCESS = "Displaying overdue tasks!";
 	public static final String FEEDBACK_SHOW_OVERDUE_FAILURE = "No overdue tasks were found!";
@@ -91,7 +91,10 @@ public class Constants {
 	public static final String FEEDBACK_SHOW_ARCHIVE_FAILURE = "There are no tasks in your archive!";
 	public static final String FEEDBACK_SHOW_ALL_SUCCESS = "Displaying all tasks found in database!";
 	public static final String FEEDBACK_SHOW_ALL_FAILURE = "No tasks found in database!";
-	public static final String FEEDBACK_SEARCH_FAILURE = "No tasks were found with the keyword(s): ";
+	public static final String FEEDBACK_SEARCH_SUCCESS_SINGLE = "Search results for tasks with the keyword: ";
+	public static final String FEEDBACK_SEARCH_SUCCESS_MULTI = "Search results for tasks with the keywords: ";
+	public static final String FEEDBACK_SEARCH_FAILURE_SINGLE = "No tasks were found with the keyword: ";
+	public static final String FEEDBACK_SEARCH_FAILURE_MULTI = "No tasks were found with the keywords: ";
 	public static final String FEEDBACK_DONE_SUCCESS = " has been completed!";
 	public static final String FEEDBACK_DONE_FAILURE = "That task has already been completed!";
 	public static final String FEEDBACK_NOT_DONE_SUCCESS = " is now pending completion!";
@@ -102,7 +105,11 @@ public class Constants {
 	public static final String FEEDBACK_REDO_FAILURE = "Nothing to redo!";
 	public static final String FEEDBACK_VIEW_HOMESCREEN = "Displaying Home-Screen!";
 	public static final String FEEDBACK_INVALID = "That is an invalid action!";
-
+	
+	// show parameters
+	public static final String SHOW_OVERDUE = "overdue";
+	public static final String SHOW_ARCHIVE = "archive";
+	public static final String SHOW_ALL = "all";
 	// not found
 	public static int NOT_FOUND = -1;
 
