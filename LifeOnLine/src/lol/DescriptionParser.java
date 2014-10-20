@@ -94,7 +94,7 @@ public class DescriptionParser {
 			// either no double quotes in input or no description found within
 			// double quotes
 			input = removeWordsWithinQuotes(input);
-			System.out.println("Input without quotes: "+input);
+			
 			LocationParser lp = new LocationParser(input);
 			String inputWithoutLocation = lp.getUserInputWithoutLocation();
 
