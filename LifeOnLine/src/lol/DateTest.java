@@ -58,10 +58,14 @@ public class DateTest {
 		Date d2 = new Date(5, 6, 15, new Time(11, "am"));
 		Date d3 = new Date(18, 8, 2013, new Time(10, "am"));
 		Date d4 = new Date(18, 11, new Time(10, "am"));
-		assertEquals("18 Nov", d4.toString());
-		assertEquals("18 Aug 13", d3.toString());
-		assertEquals("5 Jun 15", d2.toString());
-		assertEquals("4 Feb 15", d1.toString());
+		/*Date d5 = new Date(19, 10);
+		Date d6 = new Date(11, 10);
+		assertEquals("11 Oct 2015", d6.toString());
+		assertEquals("19 Oct 2014", d5.toString());*/
+		assertEquals("18 Nov 2014", d4.toString());
+		assertEquals("18 Aug 2013", d3.toString());
+		assertEquals("5 Jun 2015", d2.toString());
+		assertEquals("4 Feb 2015", d1.toString());
 	}
 
 	@Test
@@ -97,4 +101,11 @@ public class DateTest {
 		assertFalse(d2.isAfter(d1));
 	}
 
+	@Test
+	public void testGetDateDifference() {
+		Date d1 = new Date(20, 10, 2014);
+		Date d2 = new Date(23, 10, 2014);
+		assertEquals(3, d1.getDateDifference(d1, d2));
+		assertEquals(-3, d1.getDateDifference(d2, d1));
+	}
 }

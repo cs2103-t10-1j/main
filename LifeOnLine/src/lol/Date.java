@@ -7,6 +7,7 @@
 package lol;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class Date {
 
@@ -42,19 +43,23 @@ public class Date {
 		setDay(day);
 		setMonth(month);
 		setMonthName(getMonthName(month));
-		
+
 		int currYear = getCurrentYear();
-		int currMonth = getCurrentMonth();
-		int currDay = getCurrentDay();
-		
-		if (month < currMonth || (month == currMonth && day < currDay)) {
+
+		// date with day and month in current year
+		Date newDate = new Date(day, month, currYear, time);
+
+		// if date is more than 7 days before today, assume the date is in the
+		// next year
+		if (newDate.isBefore(getTodaysDate())
+				&& newDate.getDateDifference(newDate, getTodaysDate()) > Constants.LIMIT_DAYS_BEFORE_TODAY_ASSUME_SAME_YEAR) {
 			setYear4Digit(currYear + 1);
 			setYear2Digit((currYear + 1) % 100);
 		} else {
 			setYear4Digit(currYear);
 			setYear2Digit(currYear % 100);
 		}
-		
+
 		setTime(time);
 	}
 
@@ -71,18 +76,23 @@ public class Date {
 		setDay(day);
 		setMonth(month);
 		setMonthName(getMonthName(month));
-		
+
 		int currYear = getCurrentYear();
-		int currMonth = getCurrentMonth();
-		int currDay = getCurrentDay();
-		
-		if (month < currMonth || (month == currMonth && day < currDay)) {
+
+		// date with day and month in current year
+		Date newDate = new Date(day, month, currYear);
+
+		// if date is more than 7 days before today, assume the date is in the
+		// next year
+		if (newDate.isBefore(getTodaysDate())
+				&& newDate.getDateDifference(newDate, getTodaysDate()) > Constants.LIMIT_DAYS_BEFORE_TODAY_ASSUME_SAME_YEAR) {
 			setYear4Digit(currYear + 1);
 			setYear2Digit((currYear + 1) % 100);
 		} else {
 			setYear4Digit(currYear);
 			setYear2Digit(currYear % 100);
 		}
+
 		setTime(new Time());
 	}
 
@@ -110,15 +120,15 @@ public class Date {
 	public Time getTime() {
 		return time;
 	}
-	
+
 	public int getCurrentYear() {
 		return getTodaysDate().getYear4Digit();
 	}
-	
+
 	public int getCurrentMonth() {
 		return getTodaysDate().getMonth();
 	}
-	
+
 	public int getCurrentDay() {
 		return getTodaysDate().getDay();
 	}
@@ -150,7 +160,7 @@ public class Date {
 
 	/********** Overriding methods ***********/
 	public String toString() { // e.g. 7 Dec 2015
-			return getDay() + " " + getMonthName() + " " + getYear4Digit();
+		return getDay() + " " + getMonthName() + " " + getYear4Digit();
 	}
 
 	public boolean equals(Object obj) {
@@ -261,7 +271,7 @@ public class Date {
 			return year - 2000;
 		}
 	}
-	
+
 	/**
 	 * Returns today's date
 	 * 
@@ -271,5 +281,28 @@ public class Date {
 		Calendar rightNow = Calendar.getInstance(); // Get the current date
 		return new Date(rightNow.get(Calendar.DATE),
 				rightNow.get(Calendar.MONTH) + 1, rightNow.get(Calendar.YEAR));
+	}
+
+	/**
+	 * Returns number of days between 2 dates
+	 * 
+	 * @param earlierDate
+	 *            earlier date
+	 * @param laterDate
+	 *            later date
+	 * @return number of days laterDate is ahead of earlierDate. If earlierDate
+	 *         is after laterDate, returns a negative number
+	 */
+	public int getDateDifference(Date earlierDate, Date laterDate) {
+		Calendar earlier = new GregorianCalendar();
+		Calendar later = new GregorianCalendar();
+
+		earlier.set(earlierDate.getYear4Digit(), earlierDate.getMonth() - 1,
+				earlierDate.getDay());
+		later.set(laterDate.getYear4Digit(), laterDate.getMonth() - 1,
+				laterDate.getDay());
+
+		return (int) (later.getTime().getTime() - earlier.getTime().getTime())
+				/ (1000 * 60 * 60 * 24);
 	}
 }
