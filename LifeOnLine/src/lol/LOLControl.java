@@ -12,7 +12,7 @@ public class LOLControl {
 	private static StorageFacade LOLStorage = StorageFacade
 			.getInstance("LOL.txt");
 
-	private static TaskList<Task> storageList = LOLStorage.loadTasks();
+	private static TaskList<Task> storageList;
 
 	/********** Initialize Temporary Storage ***********/
 
@@ -22,6 +22,12 @@ public class LOLControl {
 	private static TaskList<Task> archiveList = new TaskList<Task>();
 
 	/********** Controller methods ***********/
+	public static int getTaskListSize(){
+		return storageList.size();
+	}
+	public static void loadTaskList(){
+		 storageList= LOLStorage.loadTasks();
+	}
 	public static TaskList<Task> getTaskList() {
 		return displayList;
 	}
@@ -35,6 +41,7 @@ public class LOLControl {
 	}
 
 	public static String executeUserInput(String userInput) throws Exception {
+
 
 		if (getCommandType(userInput).equals(Constants.COMMAND_ADD)) {
 			return executeAdd(userInput);
@@ -464,6 +471,7 @@ public class LOLControl {
 	}
 
 	private static String showFeedback(Task task, String commandType) {
+		System.out.println("List size= " + getTaskListSize());
 		if (commandType.equals(Constants.COMMAND_ADD)) {
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_ADD_SUCCESS);
 		}

@@ -162,6 +162,9 @@ public class Date {
 	public String toString() { // e.g. 7 Dec 2015
 		return getDay() + " " + getMonthName() + " " + getYear4Digit();
 	}
+	public String toString2() { // e.g. 7 Dec 2015
+		return getDay() + "/" + getMonth() + "/" + getYear4Digit();
+	}
 
 	public boolean equals(Object obj) {
 		if (obj instanceof Date) {
