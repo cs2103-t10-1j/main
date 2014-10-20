@@ -1,6 +1,7 @@
 package lol;
 
 import java.util.logging.*;
+
 import io.StorageFacade;
 public class LOLControl {
 
@@ -22,7 +23,7 @@ public class LOLControl {
 		return displayList;
 	}
 
-	public static String executeUserInput(String userInput) {
+	public static String executeUserInput(String userInput) throws Exception {
 
 		if (getCommandType(userInput).equals(Constants.COMMAND_ADD)) {
 			return executeAdd(userInput);
@@ -79,7 +80,7 @@ public class LOLControl {
 		return command;
 	}
 
-	private static String executeAdd(String userInput) {
+	private static String executeAdd(String userInput) throws Exception {
 		if (LOLParser.getTask(userInput) == null) {
 			return executeInvalid(userInput);
 		}

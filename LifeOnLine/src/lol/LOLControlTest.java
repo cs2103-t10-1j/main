@@ -24,7 +24,7 @@ public class LOLControlTest {
 	}
 
 	@Test
-	public void testExecuteUserInput() {
+	public void testExecuteUserInput() throws Exception {
 		
 		//ADD
 		assertEquals(Constants.QUOTE + testTask + Constants.QUOTE

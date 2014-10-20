@@ -16,7 +16,7 @@ public class LOLParserTest {
 	}
 
 	@Test
-	public void testGetTask() {
+	public void testGetTask() throws Exception {
 		assertEquals(new Task("buy milk", null, new Date(14, 9)),
 				LOLParser.getTask("add buy milk 14 sep"));
 		assertEquals(new Task("buy milk", null, null),

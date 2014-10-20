@@ -7,7 +7,7 @@ import org.junit.Test;
 public class DescriptionParserTest {
 
 	@Test
-	public void testGetDescription() {
+	public void testGetDescription() throws Exception {
 		DescriptionParser dp = new DescriptionParser("add at home on mon do something 8-10pm");
 		assertEquals("do something", dp.getDescription());
 		DescriptionParser dp1 = new DescriptionParser("add eat 3 pizzas 3 nov at 3 new street 3 pm");

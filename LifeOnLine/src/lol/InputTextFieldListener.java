@@ -89,7 +89,11 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent event){ 
 		String inputStr = inputTF.getText();
-		refreshFeedbackDisplay(inputStr);
+		try {
+			refreshFeedbackDisplay(inputStr);
+		} catch (Exception e) {
+			// do nothing
+		}
 
 		TaskList<Task> taskList = LOLControl.getTaskList();
 		refreshMainDisplay(taskList);
@@ -98,12 +102,12 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		i = new Integer(0);
 	}
 
-	public void refreshFeedbackDisplay(String inputStr){
+	public void refreshFeedbackDisplay(String inputStr) throws Exception{
 		String feedback = passStringToControlAndGetFeedback(inputStr);
 		feedbackDisplayTA.setText(feedback);
 	}
 
-	public String passStringToControlAndGetFeedback(String inputStr){
+	public String passStringToControlAndGetFeedback(String inputStr) throws Exception{
 		return LOLControl.executeUserInput(inputStr);
 	}
 
