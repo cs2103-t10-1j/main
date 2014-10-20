@@ -1,8 +1,8 @@
 package lol;
 
-import java.util.LinkedList;
+
 import java.util.Stack;
-import java.util.Queue;
+
 
 public class History {
 
@@ -11,7 +11,7 @@ public class History {
 	private static final String undoEditCommandType = "edit";
 
 	private static Stack<CommandLine> undoStack = new Stack<CommandLine>();
-	private static Queue<CommandLine> redoQueue = new LinkedList<CommandLine>();
+	private static Stack<CommandLine> redoStack = new Stack<CommandLine>();
 
 	public static void undoAdd(Task newTask) {
 		undoStack.push(new CommandLine(undoAddCommandType, newTask));
@@ -37,25 +37,21 @@ public class History {
 	}
 
 	public static void redoAdd(CommandLine line) {
-		redoQueue.add(line);
+		redoStack.push(line);
 	}
 
-	public static boolean isEmptyRedoQueue() {
-		if (redoQueue.size() == 0) {
-			return true;
-		} else {
-			return false;
-		}
+	public static boolean isEmptyRedoStack() {
+		return redoStack.empty();
 	}
 
-	public static CommandLine peekRedoQueue() {
-		assert redoQueue.size() != 0 : "empty redo queue peeked";
-		return redoQueue.remove();
+	public static CommandLine popRedoStack() {
+		assert !redoStack.empty() : "empty redo stack popped";
+		return redoStack.pop();
 
 	}
 	
-	public static void emptyRedoQueue(){
-		redoQueue = new LinkedList<CommandLine>();
+	public static void emptyRedoStack(){
+		redoStack = new Stack<CommandLine>();
 	}
 
 }

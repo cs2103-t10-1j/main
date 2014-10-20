@@ -100,7 +100,7 @@ public class LOLControl {
 			Task newTask = LOLParser.getTask(userInput);
 
 			if (storageList.add(newTask)) {
-				History.emptyRedoQueue();
+				History.emptyRedoStack();
 				History.undoAdd(newTask);
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
@@ -115,7 +115,7 @@ public class LOLControl {
 		Task delTask = displayList.get(taskIndex - 1);
 
 		if (storageList.delete(delTask)) {
-			History.emptyRedoQueue();
+			History.emptyRedoStack();
 			History.undoDelete(delTask);
 			ControlDisplay.refreshDisplay(toDoList, storageList);
 			LOLStorage.saveTasks(storageList);
@@ -135,7 +135,7 @@ public class LOLControl {
 		Task editTask = LOLParser.getEditTask(userInput, oldTask);
 
 		if ((storageList.delete(taskAtIndex)) && (storageList.add(editTask))) {
-			History.emptyRedoQueue();
+			History.emptyRedoStack();
 			History.undoEdit(editTask, taskAtIndex);
 			ControlDisplay.refreshDisplay(toDoList, storageList);
 			LOLStorage.saveTasks(storageList);
@@ -318,7 +318,7 @@ public class LOLControl {
 			doneTask.setIsDone(true);
 
 			if (storageList.set(undoneTaskStorageIndex, doneTask)) {
-				History.emptyRedoQueue();
+				History.emptyRedoStack();
 				History.undoEdit(doneTask, undoneTask);
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
@@ -348,7 +348,7 @@ public class LOLControl {
 			notDoneTask.setIsDone(false);
 
 			if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
-				History.emptyRedoQueue();
+				History.emptyRedoStack();
 				History.undoEdit(notDoneTask, doneTask);
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
@@ -394,9 +394,9 @@ public class LOLControl {
 
 				storageList.delete(undoCmdTaskNew);
 				storageList.add(undoCmdTaskOld);
-				History.redoAdd(undoCmd);
 				History.redoAdd(undoCmdOld);
 				History.redoAdd(undoCmdNew);
+				History.redoAdd(undoCmd);
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 
@@ -407,13 +407,13 @@ public class LOLControl {
 	}
 
 	private static String executeRedo(String userInput) {
-		if (History.isEmptyRedoQueue()) {
+		if (History.isEmptyRedoStack()) {
 			return Constants.FEEDBACK_REDO_FAILURE;
 		}
 
 		else {
 
-			CommandLine undoCmd = History.peekRedoQueue();
+			CommandLine undoCmd = History.popRedoStack();
 
 			String undoCmdType = undoCmd.getCommandType();
 			Task undoCmdTask = undoCmd.getTask();
@@ -433,8 +433,8 @@ public class LOLControl {
 			}
 			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
 
-				CommandLine undoCmdOld = History.peekRedoQueue();
-				CommandLine undoCmdNew = History.peekRedoQueue();
+				CommandLine undoCmdNew = History.popRedoStack();
+				CommandLine undoCmdOld = History.popRedoStack();
 				Task undoCmdTaskNew = undoCmdNew.getTask();
 				Task undoCmdTaskOld = undoCmdOld.getTask();
 
