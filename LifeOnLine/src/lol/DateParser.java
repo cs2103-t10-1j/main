@@ -473,6 +473,21 @@ public class DateParser {
 	}
 
 	/**
+	 * Returns the first 3 letters of the day of the week for a given date
+	 * 
+	 * @param date
+	 *            date whose day of the week is to be found
+	 * @return first 3 letters of the day of the week, 1st letter uppercase
+	 */
+	public String getDayOfTheWeek(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(date.getYear4Digit(), date.getMonth() - 1, date.getDay());
+		int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // 1-sun to 7-sat
+		String day = Constants.DAYS_SHORT[dayOfWeek - 1];
+		return Character.toUpperCase(day.charAt(0)) + day.substring(1);
+	}
+
+	/**
 	 * Removes multiple spaces between words, leading and trailing spaces
 	 * 
 	 * @param input
@@ -632,7 +647,8 @@ public class DateParser {
 			String word = words[i];
 			String[] nextWords = getNext4Words(words, i);
 
-			if (isKeyword(word) || (hasTime(word, nextWords) && !isBoth24hrTimeAndYear(word))) {
+			if (isKeyword(word)
+					|| (hasTime(word, nextWords) && !isBoth24hrTimeAndYear(word))) {
 				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
 						+ nextWords[0] + "\\b");
 				Matcher m = p.matcher(temp);
@@ -648,10 +664,12 @@ public class DateParser {
 		}
 		return minIndex;
 	}
-	
+
 	/**
 	 * Checks if a string is both a year and a 24hr time format
-	 * @param string  string to be checked
+	 * 
+	 * @param string
+	 *            string to be checked
 	 * @return true if string is both a year and a 24hr time format, else false
 	 */
 	public boolean isBoth24hrTimeAndYear(String string) {

@@ -47,7 +47,7 @@ public class LOLGui {
 
 		feedbackPanel.add(new JLabel("Feedback: "));
 
-		final JTextArea feedbackDisplayTA = new JTextArea(2, 28);
+		final JTextArea feedbackDisplayTA = new JTextArea(2, 40);
 		feedbackDisplayTA.setEditable(false);
 		feedbackDisplayTA.setText("Feedback will be displayed here.");
 		feedbackDisplayTA.setLineWrap(true);
@@ -56,7 +56,7 @@ public class LOLGui {
 		feedbackPanel.add(feedbackDisplayTA);
 
 
-		final JTextField inputTF = new JTextField(35);
+		final JTextField inputTF = new JTextField(45);
 		inputPanel.add("South", inputTF);
 
 		feedbackAndInputPanel.add(feedbackPanel);
@@ -67,7 +67,7 @@ public class LOLGui {
 		contentPane.add(displayPanel, BorderLayout.CENTER);
 		contentPane.add(feedbackAndInputPanel, BorderLayout.SOUTH);
 
-		frame.setSize(new Dimension(500, 500));
+		frame.setSize(new Dimension(550, 550));
 		//frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);

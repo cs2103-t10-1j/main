@@ -2,7 +2,7 @@ package lol;
 
 public class Constants {
 	// Limit for number of days before current day for which task without year will be entered as overdue task
-	public static final int LIMIT_DAYS_BEFORE_TODAY_ASSUME_SAME_YEAR = 7;
+	public static final int DAYS_OFFSET = 7;
 
 	// Separators
 	public static final String SEPARATOR = "\\\\";

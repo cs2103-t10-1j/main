@@ -52,7 +52,7 @@ public class Date {
 		// if date is more than 7 days before today, assume the date is in the
 		// next year
 		if (newDate.isBefore(getTodaysDate())
-				&& newDate.getDateDifference(newDate, getTodaysDate()) > Constants.LIMIT_DAYS_BEFORE_TODAY_ASSUME_SAME_YEAR) {
+				&& newDate.getDateDifference(newDate, getTodaysDate()) > Constants.DAYS_OFFSET) {
 			setYear4Digit(currYear + 1);
 			setYear2Digit((currYear + 1) % 100);
 		} else {
@@ -85,7 +85,7 @@ public class Date {
 		// if date is more than 7 days before today, assume the date is in the
 		// next year
 		if (newDate.isBefore(getTodaysDate())
-				&& newDate.getDateDifference(newDate, getTodaysDate()) > Constants.LIMIT_DAYS_BEFORE_TODAY_ASSUME_SAME_YEAR) {
+				&& newDate.getDateDifference(newDate, getTodaysDate()) > Constants.DAYS_OFFSET) {
 			setYear4Digit(currYear + 1);
 			setYear2Digit((currYear + 1) % 100);
 		} else {

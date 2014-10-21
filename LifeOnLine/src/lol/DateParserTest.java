@@ -26,6 +26,16 @@ public class DateParserTest {
 	}
 	
 	@Test
+	public void testGetDayOfTheWeek() {
+		DateParser dp = new DateParser();
+		assertEquals("Wed", dp.getDayOfTheWeek(new Date(22, 10,2014)));
+		assertEquals("Thu", dp.getDayOfTheWeek(new Date(23, 10,2014)));
+		assertEquals("Fri", dp.getDayOfTheWeek(new Date(24, 10,2014)));
+		assertEquals("Sat", dp.getDayOfTheWeek(new Date(25, 10,2014)));
+		assertEquals("Sun", dp.getDayOfTheWeek(new Date(26, 10,2014)));
+	}
+	
+	@Test
 	public void testGetUserInputWithoutDueDate() {
 		DateParser dp1 = new DateParser("  add   buy   pizza  at clementi  on  29 oct at   10am ");
 		assertEquals("add buy pizza at clementi at 10am", dp1.getUserInputWithoutDueDate());
