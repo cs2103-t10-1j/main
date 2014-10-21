@@ -111,7 +111,7 @@ public class StorageOperations {
 		
 		Task task = new Task(description, location, dateOb, startTimeOb, endTimeOb);
 		task.setIsDone(isDone);
-		task.setIsDone(isOverdue);
+		task.setIsOverdue(isOverdue);
 		if(location.equals("null"))
 			task.setLocation(null);
 		return task;
