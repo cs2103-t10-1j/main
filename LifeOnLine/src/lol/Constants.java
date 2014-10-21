@@ -93,6 +93,7 @@ public class Constants {
 	public static final String FEEDBACK_SHOW_ALL_FAILURE = "No tasks found in database!";
 	public static final String FEEDBACK_SEARCH_SUCCESS_SINGLE = "Search results for tasks with the keyword: ";
 	public static final String FEEDBACK_SEARCH_SUCCESS_MULTI = "Search results for tasks with the keywords: ";
+	public static final String FEEDBACK_SEARCH_FAILURE = "SEARCH FAILED";
 	public static final String FEEDBACK_SEARCH_FAILURE_SINGLE = "No tasks were found with the keyword: ";
 	public static final String FEEDBACK_SEARCH_FAILURE_MULTI = "No tasks were found with the keywords: ";
 	public static final String FEEDBACK_DONE_SUCCESS = " has been completed!";

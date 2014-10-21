@@ -22,12 +22,14 @@ public class LOLControl {
 	private static TaskList<Task> archiveList = new TaskList<Task>();
 
 	/********** Controller methods ***********/
-	public static int getTaskListSize(){
+	public static int getTaskListSize() {
 		return storageList.size();
 	}
-	public static void loadTaskList(){
-		 storageList= LOLStorage.loadTasks();
+
+	public static void loadTaskList() {
+		storageList = LOLStorage.loadTasks();
 	}
+
 	public static TaskList<Task> getTaskList() {
 		return displayList;
 	}
@@ -41,7 +43,6 @@ public class LOLControl {
 	}
 
 	public static String executeUserInput(String userInput) throws Exception {
-
 
 		if (getCommandType(userInput).equals(Constants.COMMAND_ADD)) {
 			return executeAdd(userInput);
@@ -260,19 +261,10 @@ public class LOLControl {
 	private static String executeSearch(String userInput) {
 		DateParser dp = new DateParser();
 		String searchKey = LOLParser.getKeywordsForSearchCommand(userInput);
-		int numWordsInKey = LOLParser.countWords(searchKey);
 		Task searchTask = new Task(searchKey, null, null);
 
 		if (dp.isValidDateFormat(searchKey)) {
 			return executeShow(userInput);
-		}
-
-		if ((storageList.size() == 0) && (numWordsInKey == 1)) {
-			return (Constants.FEEDBACK_SEARCH_FAILURE_SINGLE + Constants.QUOTE
-					+ searchKey + Constants.QUOTE);
-		} else if ((storageList.size() == 0) && (numWordsInKey > 1)) {
-			return (Constants.FEEDBACK_SEARCH_FAILURE_MULTI + Constants.QUOTE
-					+ searchKey + Constants.QUOTE);
 		}
 
 		else {
@@ -281,26 +273,19 @@ public class LOLControl {
 
 			for (int i = 0; i < storageList.size(); i++) {
 
-				if ((storageList.get(i).getTaskDescription().toLowerCase()
-						.contains(searchKey.toLowerCase()))
-						|| (storageList.get(i).getTaskLocation().toLowerCase()
-								.contains(searchKey.toLowerCase()))) {
+				if (storageList.get(i).getTaskDescription().toLowerCase()
+						.contains(searchKey.toLowerCase())) {
 
 					searchList.add(storageList.get(i));
 					count++;
 				}
 			}
 
-			if ((count == 0) && (numWordsInKey == 1)) {
+			if (count == 0) {
 				ControlDisplay.refreshDisplay(searchList, storageList);
-				return (Constants.FEEDBACK_SEARCH_FAILURE_SINGLE
-						+ Constants.QUOTE + searchKey + Constants.QUOTE);
-			} else if ((storageList.size() == 0) && (numWordsInKey > 1)) {
-				return (Constants.FEEDBACK_SEARCH_FAILURE_MULTI
-						+ Constants.QUOTE + searchKey + Constants.QUOTE);
-			}
-
-			else {
+				return showFeedback(searchTask,
+						Constants.FEEDBACK_SEARCH_FAILURE);
+			} else {
 				ControlDisplay.refreshDisplay(searchList, storageList);
 				return showFeedback(searchTask, Constants.COMMAND_SEARCH);
 			}
@@ -471,7 +456,9 @@ public class LOLControl {
 	}
 
 	private static String showFeedback(Task task, String commandType) {
+
 		System.out.println("List size= " + getTaskListSize());
+
 		if (commandType.equals(Constants.COMMAND_ADD)) {
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_ADD_SUCCESS);
 		}
@@ -516,6 +503,16 @@ public class LOLControl {
 						+ Constants.QUOTE + task.getTaskDescription()
 						+ Constants.QUOTE + Constants.LINEBREAK
 						+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
+			}
+		}
+		if (commandType.equals(Constants.FEEDBACK_SEARCH_FAILURE)) {
+
+			if (LOLParser.countWords(task.getTaskDescription()) == 1) {
+				return (Constants.FEEDBACK_SEARCH_FAILURE_SINGLE
+						+ Constants.QUOTE + task.getTaskDescription() + Constants.QUOTE);
+			} else {
+				return (Constants.FEEDBACK_SEARCH_FAILURE_MULTI
+						+ Constants.QUOTE + task.getTaskDescription() + Constants.QUOTE);
 			}
 		}
 		if (commandType.equals(Constants.COMMAND_DONE)) {
