@@ -273,11 +273,34 @@ public class LOLControl {
 
 			for (int i = 0; i < storageList.size(); i++) {
 
-				if (storageList.get(i).getTaskDescription().toLowerCase()
-						.contains(searchKey.toLowerCase())) {
-
+				if ((storageList.get(i).getTaskDescription().toLowerCase()
+						.contains(searchKey.toLowerCase()))
+						&& storageList.get(i).getTaskLocation() == null) {
 					searchList.add(storageList.get(i));
 					count++;
+				} else if ((storageList.get(i).getTaskDescription()
+						.toLowerCase().contains(searchKey.toLowerCase()))
+						&& storageList.get(i).getTaskLocation() != null) {
+					if (storageList.get(i).getTaskLocation().toLowerCase()
+							.contains(searchKey.toLowerCase())) {
+						searchList.add(storageList.get(i));
+						count++;
+					} else {
+						searchList.add(storageList.get(i));
+						count++;
+					}
+				} else if (!(storageList.get(i).getTaskDescription()
+						.toLowerCase().contains(searchKey.toLowerCase()))
+						&& storageList.get(i).getTaskLocation() == null) {
+					continue;
+				} else if (!(storageList.get(i).getTaskDescription()
+						.toLowerCase().contains(searchKey.toLowerCase()))
+						&& storageList.get(i).getTaskLocation() != null) {
+					if (storageList.get(i).getTaskLocation().toLowerCase()
+							.contains(searchKey.toLowerCase())) {
+						searchList.add(storageList.get(i));
+						count++;
+					}
 				}
 			}
 
