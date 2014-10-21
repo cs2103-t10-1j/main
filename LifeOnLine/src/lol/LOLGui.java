@@ -11,17 +11,27 @@ import java.awt.event.FocusEvent;
 public class LOLGui {
 	final Integer i = new Integer(0);
 	int numTabPressed = 0;
-
+	
+	final static Color BG = new Color(255, 255, 255);
+	final static Color BG2 = new Color(217, 232, 245);
+	final static Color BG3 = new Color(145,190,212);
+	final static Color BG4 = new Color(48,66,105);
+	Border compound = BorderFactory.createCompoundBorder(BorderFactory.createRaisedBevelBorder(),  BorderFactory.createLoweredBevelBorder());
 	public LOLGui(){
 		//line 10 to 46 create LOL's GUI
 		JFrame frame = new JFrame("LOL - Life On Line");
+		frame.getRootPane().setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, BG4));
+        frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel displayPanel = new JPanel(); 
+		displayPanel.setBackground(BG4);
 		displayPanel.setLayout(new BorderLayout());
 		JPanel feedbackPanel = new JPanel();
 		feedbackPanel.setLayout(new FlowLayout());
+		feedbackPanel.setBackground(BG2);
 		JPanel inputPanel = new JPanel();
+		inputPanel.setBackground(BG3);
 		inputPanel.setLayout(new FlowLayout());
 
 		//a panel for mainDisplayTP and mainDisplayTP2
@@ -29,10 +39,13 @@ public class LOLGui {
 		mainDisplayPanel.setLayout(new GridLayout(1, 2));
 
 		JPanel feedbackAndInputPanel = new JPanel();
+		
 		feedbackAndInputPanel.setLayout(new GridLayout(2,1));
 
 		final JTextPane mainDisplayTP1 = new JTextPane();
+		mainDisplayTP1.setBackground(BG);
 		mainDisplayTP1.setEditable(false);
+		mainDisplayTP1.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		mainDisplayTP1.setText("**Upcoming Tasks List**");
 		JScrollPane scrollPane = new JScrollPane(mainDisplayTP1);
 		mainDisplayPanel.add(scrollPane);
@@ -40,20 +53,22 @@ public class LOLGui {
 		final JTextPane mainDisplayTP2 = new JTextPane();
 		mainDisplayTP2.setEditable(false);
 		mainDisplayTP2.setText("**To-Do Anytime List**");
+		mainDisplayTP2.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		JScrollPane scrollPane2 = new JScrollPane(mainDisplayTP2);
 		mainDisplayPanel.add(scrollPane2);
 
 		displayPanel.add(mainDisplayPanel, BorderLayout.CENTER);
 
-		feedbackPanel.add(new JLabel("Feedback: "));
+		JLabel label = new JLabel("Welcome to Life on Line");
+		feedbackPanel.add(label);
 
-		final JTextArea feedbackDisplayTA = new JTextArea(2, 40);
+		/*final JTextArea feedbackDisplayTA = new JTextArea(2, 40);
 		feedbackDisplayTA.setEditable(false);
 		feedbackDisplayTA.setText("Feedback will be displayed here.");
 		feedbackDisplayTA.setLineWrap(true);
 		feedbackDisplayTA.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		feedbackDisplayTA.setFocusable(false);
-		feedbackPanel.add(feedbackDisplayTA);
+		feedbackPanel.add(feedbackDisplayTA);*/
 
 
 		final JTextField inputTF = new JTextField(45);
@@ -76,7 +91,7 @@ public class LOLGui {
 		//show Tasks stored in storage on initial run
 		try {
 			LOLControl.executeUserInput("home");
-			new InputTextFieldListener(mainDisplayTP1,mainDisplayTP2, feedbackDisplayTA, inputTF, i);
+			new InputTextFieldListener(mainDisplayTP1,mainDisplayTP2, label, inputTF, i);
 		} catch (Exception e) {
 			// do nothing
 		}
@@ -124,7 +139,7 @@ public class LOLGui {
 		});
 		
 
-		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP1,mainDisplayTP2, feedbackDisplayTA, inputTF, i));	
+		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP1,mainDisplayTP2, label, inputTF, i));	
 
 	}
 }

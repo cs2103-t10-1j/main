@@ -18,7 +18,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	static StyledDocument doc1 = new DefaultStyledDocument();
 	JTextPane mainDisplayTP2;
 	static StyledDocument doc2 = new DefaultStyledDocument();
-	JTextArea feedbackDisplayTA;
+	JLabel label;
 	Integer i;
 
 	final static boolean isHeader = true;
@@ -27,7 +27,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final static Color DARK_ORANGE = new Color(253, 101, 0);
 	final static Color PURPLE = new Color(204, 0, 204);
 
-	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextArea feedbackDisplayTA, JTextField inputTF, Integer i){
+	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JLabel label, JTextField inputTF, Integer i){
 		this.inputTF = inputTF;
 
 		this.mainDisplayTP1 = mainDisplayTP;
@@ -37,7 +37,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		this.mainDisplayTP2.setDocument(doc2);
 		addStyleToDoc(doc2);
 
-		this.feedbackDisplayTA = feedbackDisplayTA;
+		this.label = label;
 		this.i = i;
 		inputTF.addKeyListener(this);
 	}
@@ -104,7 +104,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 	public void refreshFeedbackDisplay(String inputStr) throws Exception{
 		String feedback = passStringToControlAndGetFeedback(inputStr);
-		feedbackDisplayTA.setText(feedback);
+		label.setText(feedback);
 	}
 
 	public String passStringToControlAndGetFeedback(String inputStr) throws Exception{
