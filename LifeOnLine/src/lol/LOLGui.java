@@ -73,6 +73,17 @@ public class LOLGui {
 		frame.setVisible(true);
 		inputTF.requestFocus();
 
+		//show Task stored in storage on initial run
+		try {
+			LOLControl.executeUserInput("home");
+			new InputTextFieldListener(mainDisplayTP1,mainDisplayTP2, feedbackDisplayTA, inputTF, i);
+		} catch (Exception e) {
+			// do nothing
+		}
+		TaskList<Task> taskList = LOLControl.getTaskList();
+		InputTextFieldListener.showInMainDisplayTP(taskList);
+		
+		
 		//frame.addWindowListener( new WindowAdapter() {
 			//public void windowOpened( WindowEvent e ){
 			//	inputTF.requestFocus();

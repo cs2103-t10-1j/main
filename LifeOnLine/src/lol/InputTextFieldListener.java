@@ -15,17 +15,17 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final String[] commands = {"", "add ", "delete ", "edit ", "done ", "undo", "redo"};
 	JTextField inputTF;
 	JTextPane mainDisplayTP1;
-	StyledDocument doc1 = new DefaultStyledDocument();
+	static StyledDocument doc1 = new DefaultStyledDocument();
 	JTextPane mainDisplayTP2;
-	StyledDocument doc2 = new DefaultStyledDocument();
+	static StyledDocument doc2 = new DefaultStyledDocument();
 	JTextArea feedbackDisplayTA;
 	Integer i;
 
-	final boolean isHeader = true;
+	final static boolean isHeader = true;
 	
 	// custom colors
-	final Color DARK_ORANGE = new Color(253, 101, 0);
-	final Color PURPLE = new Color(204, 0, 204);
+	final static Color DARK_ORANGE = new Color(253, 101, 0);
+	final static Color PURPLE = new Color(204, 0, 204);
 
 	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextArea feedbackDisplayTA, JTextField inputTF, Integer i){
 		this.inputTF = inputTF;
@@ -45,7 +45,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	//this method add different styles to document which are needed to display task of
 	//different type and to display time, location and description of task in different 
 	//font type
-	private void addStyleToDoc(StyledDocument doc){
+	public static void addStyleToDoc(StyledDocument doc){
 		Style style = doc.addStyle(Constants.FORMAT_HEADER_FLOATING, null);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, Color.BLUE);
@@ -118,7 +118,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		showInMainDisplayTP(taskList);
 	}
 
-	public void showInMainDisplayTP(TaskList<Task> taskList){
+	public static void showInMainDisplayTP(TaskList<Task> taskList){
 		Date previousDueDate = new Date(-1, -1, -9999, null); //set as impossible date
 
 		FormatToString taskToFormat = new FormatToString();
@@ -166,7 +166,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		addToDisplay(doc1, doc2);
 	}
 
-	public void addToDisplay(StyledDocument doc, StyledDocument doc2){
+	public static void addToDisplay(StyledDocument doc, StyledDocument doc2){
 		try {
 			for(int j = 1; j <= FormatToString.getLinkedListNum(); j++){
 				LinkedList<StringWithFormat> strToShow = FormatToString.getLinkedList(j);
