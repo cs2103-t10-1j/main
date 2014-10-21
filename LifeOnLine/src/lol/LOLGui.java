@@ -73,7 +73,7 @@ public class LOLGui {
 		frame.setVisible(true);
 		inputTF.requestFocus();
 
-		//show Task stored in storage on initial run
+		//show Tasks stored in storage on initial run
 		try {
 			LOLControl.executeUserInput("home");
 			new InputTextFieldListener(mainDisplayTP1,mainDisplayTP2, feedbackDisplayTA, inputTF, i);
