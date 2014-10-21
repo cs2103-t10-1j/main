@@ -10,7 +10,7 @@ public class LOLControl {
 
 	/********** Load Storage ***********/
 	private static StorageFacade LOLStorage = StorageFacade
-			.getInstance("LOL.txt");
+			.getInstance(Constants.FILE_NAME);
 
 	private static TaskList<Task> storageList;
 

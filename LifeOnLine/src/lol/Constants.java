@@ -4,6 +4,8 @@ public class Constants {
 	// Limit for number of days before current day for which task without year will be entered as overdue task
 	public static final int DAYS_OFFSET = 7;
 
+	//File name
+	public static final String FILE_NAME = "LOLTaskList.txt";
 	// Separators
 	public static final String SEPARATOR = "\\\\";
 	public static final String SEPARATOR_DOT = "\\.";
