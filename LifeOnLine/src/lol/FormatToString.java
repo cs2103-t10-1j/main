@@ -151,7 +151,10 @@ public class FormatToString {
 	}
 
 	private static String dateFormatAsHeader(Date dueDate){
-		return dueDate.toString() + newLine();
+		//should somehow change to dueDate.toString() method to lower coupling
+		DateParser dp = new DateParser(); 
+		String dayOfTheWeek = dp.getDayOfTheWeek(dueDate);
+		return dayOfTheWeek + " " + dueDate.toString() + newLine();
 	}
 
 	public static LinkedList<StringWithFormat> getLinkedList(int num){
