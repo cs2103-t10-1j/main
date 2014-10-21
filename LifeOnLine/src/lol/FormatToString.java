@@ -14,6 +14,7 @@ public class FormatToString {
 
 	public static boolean hasOverdueHeader = false;
 	public static boolean hasFloatingHeader = false;
+	public static boolean isFirst = true;
 
 	public FormatToString(){
 	}
@@ -32,6 +33,7 @@ public class FormatToString {
 		
 		if(isHeader){
 			formatAsHeader(task);
+			isFirst = false;
 		}
 		else{
 			formatAsTask(i, task);
@@ -49,7 +51,11 @@ public class FormatToString {
 		String headerStr;
 		
 		if(task.getIsOverdue() && !hasOverdueHeader){
-				headerStr = Constants.HEADER_OVERDUE + newLine();
+			if(!isFirst){
+				strToShowTemp.add(new StringWithFormat(newLine(), Constants.FORMAT_NONE));
+			}
+			
+			headerStr = Constants.HEADER_OVERDUE + newLine();
 				strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_OVERDUE));
 				hasOverdueHeader = true;
 				
@@ -57,6 +63,10 @@ public class FormatToString {
 				strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_OVERDUE));
 		}
 		else if(task.getTaskDueDate() != null){
+			if(!isFirst){
+				strToShowTemp.add(new StringWithFormat(newLine(), Constants.FORMAT_NONE));
+			}
+			
 			Date dueDate = task.getTaskDueDate();
 
 			headerStr = dateFormatAsHeader(dueDate);
