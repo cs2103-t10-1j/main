@@ -106,12 +106,14 @@ public class Task implements Comparable<Task> {
 			boolean isLocationSame = false;
 
 			if ((other.getStartTime() == null && this.getStartTime() == null)
-					|| (other.getStartTime().equals(this.getStartTime()))) {
+					|| ((other.getStartTime() != null && this.getStartTime() != null) && (other
+							.getStartTime().equals(this.getStartTime())))) {
 				isStartTimeSame = true;
 			}
 
 			if ((other.getEndTime() == null && this.getEndTime() == null)
-					|| (other.getEndTime().equals(this.getEndTime()))) {
+					|| ((other.getEndTime() != null && this.getEndTime() != null) && (other
+							.getEndTime().equals(this.getEndTime())))) {
 				isEndTimeSame = true;
 			}
 
