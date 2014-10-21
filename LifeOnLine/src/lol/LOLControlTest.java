@@ -10,7 +10,7 @@ public class LOLControlTest {
 
 	Task testTask = new Task("this is a test task", "home", new Date(13, 7,
 			new Time(10, "am")));
-	String testAddInput = "add this is a test task\\home\\13 July\\10am";
+	String testAddInput = "add boom";
 	String testDelInput = "delete 1";
 
 	@Test
@@ -25,18 +25,6 @@ public class LOLControlTest {
 
 	@Test
 	public void testExecuteUserInput() throws Exception {
-		
-		//ADD
-		assertEquals(Constants.QUOTE + testTask + Constants.QUOTE
-				+ Constants.FEEDBACK_ADD_SUCCESS,
-				LOLControl.executeUserInput(testAddInput));
-		
-		//DELETE
-		assertEquals(Constants.QUOTE + testTask + Constants.QUOTE + Constants.FEEDBACK_DEL_SUCCESS,
-				LOLControl.executeUserInput(testDelInput));
-		
-		//EDIT
-	
 	}
 
 }

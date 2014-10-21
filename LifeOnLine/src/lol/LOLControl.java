@@ -44,50 +44,32 @@ public class LOLControl {
 
 	public static String executeUserInput(String userInput) throws Exception {
 
-		if (getCommandType(userInput).equals(Constants.COMMAND_ADD)) {
+		String commandType = getCommandType(userInput);
+
+		switch (commandType) {
+		case (Constants.COMMAND_ADD):
 			return executeAdd(userInput);
-		}
-
-		if (getCommandType(userInput).equals(Constants.COMMAND_DELETE)) {
+		case (Constants.COMMAND_DELETE):
 			return executeDel(userInput);
-		}
-
-		if (getCommandType(userInput).equals(Constants.COMMAND_EDIT)) {
+		case (Constants.COMMAND_EDIT):
 			return executeEdit(userInput);
-		}
-
-		if (getCommandType(userInput).equals(Constants.COMMAND_SHOW)) {
+		case (Constants.COMMAND_SHOW):
 			return executeShow(userInput);
-		}
-
-		if (getCommandType(userInput).equals(Constants.COMMAND_SEARCH)) {
+		case (Constants.COMMAND_SEARCH):
 			return executeSearch(userInput);
-		}
-
-		if (getCommandType(userInput).equals(Constants.COMMAND_DONE)) {
+		case (Constants.COMMAND_DONE):
 			return executeDone(userInput);
-		}
-
-		if (getCommandType(userInput).equals(Constants.COMMAND_NOT_DONE)) {
+		case (Constants.COMMAND_NOT_DONE):
 			return executeNotDone(userInput);
-		}
-
-		if (getCommandType(userInput).equals(Constants.COMMAND_UNDO)) {
+		case (Constants.COMMAND_UNDO):
 			return executeUndo(userInput);
-		}
-		if (getCommandType(userInput).equals(Constants.COMMAND_REDO)) {
+		case (Constants.COMMAND_REDO):
 			return executeRedo(userInput);
-		}
-
-		if (getCommandType(userInput).equals(Constants.COMMAND_VIEW_HOMESCREEN)) {
+		case (Constants.COMMAND_VIEW_HOMESCREEN):
 			return executeHomeScreen(userInput);
-		}
-
-		if (getCommandType(userInput).equals(Constants.COMMAND_EXIT)) {
+		case (Constants.COMMAND_EXIT):
 			return executeExit(userInput);
-		}
-
-		else {
+		default:
 			logger.log(Level.WARNING,
 					"Processing Error, unsupported CommandType entered");
 			return executeInvalid(userInput);
@@ -157,80 +139,64 @@ public class LOLControl {
 		Date searchDate = LOLParser.getDateForShowCommand(userInput);
 		String searchKey = LOLParser.getKeywordsForSearchCommand(userInput);
 
-		if (!dp.isValidDate(userInput)
-				&& searchKey.equalsIgnoreCase(Constants.SHOW_OVERDUE)) {
-			return showOverdue(userInput);
-		}
-
-		else if (!dp.isValidDate(userInput)
-				&& searchKey.equalsIgnoreCase(Constants.SHOW_ARCHIVE)) {
-			return showArchive(userInput);
-		}
-
-		else if (!dp.isValidDate(userInput)
-				&& searchKey.equalsIgnoreCase(Constants.SHOW_ALL)) {
-			return showAll(userInput);
-		}
-
-		else {
-
-			if (searchDate == null) {
-				return executeInvalid(userInput);
-			}
-
-			Task searchTask = new Task(null, null, searchDate);
-
-			if (storageList.size() == 0) {
-				return Constants.FEEDBACK_SHOW_FAILURE;
-			}
-
-			else {
-				int count = 0;
-				searchList.clear();
-
-				for (int i = 0; i < storageList.size(); i++) {
-
-					if (storageList.get(i).getTaskDueDate() == null) {
-						continue;
-					}
-
-					if (storageList.get(i).getTaskDueDate().equals(searchDate)) {
-						searchList.add(storageList.get(i));
-						count++;
-					}
-				}
-
-				if (count == 0) {
-					ControlDisplay.refreshDisplay(searchList, storageList);
-					return Constants.FEEDBACK_SHOW_FAILURE;
-				}
-
-				else {
-					ControlDisplay.refreshDisplay(searchList, storageList);
-					return showFeedback(searchTask, Constants.COMMAND_SHOW);
-				}
+		if (!dp.isValidDate(userInput)) {
+			switch (searchKey.toLowerCase()) {
+			case (Constants.SHOW_OVERDUE):
+				return showOverdue(userInput);
+			case (Constants.SHOW_ARCHIVE):
+				return showArchive(userInput);
+			case (Constants.SHOW_ALL):
+				return showAll(userInput);
+			default:
+				if (searchDate == null)
+					return executeInvalid(userInput);
+				break;
 			}
 		}
-	}
 
-	private static String showOverdue(String userInput) {
+		Task searchTask = new Task(null, null, searchDate);
+
 		searchList.clear();
 
 		for (int i = 0; i < storageList.size(); i++) {
-			if ((storageList.get(i).getIsOverdue() == true)
-					&& (storageList.get(i).getIsDone() == false)) {
+			if (storageList.get(i).getTaskDueDate() == null) {
+				continue;
+			}
+			if (storageList.get(i).getTaskDueDate().equals(searchDate)) {
 				searchList.add(storageList.get(i));
 			}
 		}
 
 		ControlDisplay.refreshDisplay(searchList, storageList);
 
-		if (displayList.size() == 0) {
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
+			return Constants.FEEDBACK_SHOW_FAILURE;
+		default:
+			return showFeedback(searchTask, Constants.COMMAND_SHOW);
+		}
+	}
+
+	private static String showOverdue(String userInput) {
+		searchList.clear();
+
+		// Before current date & time + Not marked as done
+		for (int i = 0; i < storageList.size(); i++) {
+			if ((storageList.get(i).getIsOverdue())
+					&& (!storageList.get(i).getIsDone())) {
+				searchList.add(storageList.get(i));
+			}
+		}
+
+		ControlDisplay.refreshDisplay(searchList, storageList);
+
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
 			return Constants.FEEDBACK_SHOW_OVERDUE_FAILURE;
-		} else if (displayList.size() == 1) {
+		case (Constants.LIST_SIZE_ONE):
 			return (Constants.FEEDBACK_SHOW_OVERDUE_SUCCESS
 					+ Constants.LINEBREAK + displayList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
-		} else {
+		default:
 			return (Constants.FEEDBACK_SHOW_OVERDUE_SUCCESS
 					+ Constants.LINEBREAK + displayList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
 		}
@@ -240,9 +206,10 @@ public class LOLControl {
 
 		ControlDisplay.refreshDisplay(archiveList, storageList);
 
-		if (displayList.size() == 0) {
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
 			return Constants.FEEDBACK_SHOW_ARCHIVE_FAILURE;
-		} else {
+		default:
 			return Constants.FEEDBACK_SHOW_ARCHIVE_SUCCESS;
 		}
 	}
@@ -251,9 +218,10 @@ public class LOLControl {
 
 		ControlDisplay.refreshDisplay(storageList, storageList);
 
-		if (displayList.size() == 0) {
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
 			return Constants.FEEDBACK_SHOW_ALL_FAILURE;
-		} else {
+		default:
 			return Constants.FEEDBACK_SHOW_ALL_SUCCESS;
 		}
 	}
@@ -268,26 +236,23 @@ public class LOLControl {
 		}
 
 		else {
-			int count = 0;
 			searchList.clear();
 
+			// searches both Description & Location
 			for (int i = 0; i < storageList.size(); i++) {
 
 				if ((storageList.get(i).getTaskDescription().toLowerCase()
 						.contains(searchKey.toLowerCase()))
 						&& storageList.get(i).getTaskLocation() == null) {
 					searchList.add(storageList.get(i));
-					count++;
 				} else if ((storageList.get(i).getTaskDescription()
 						.toLowerCase().contains(searchKey.toLowerCase()))
 						&& storageList.get(i).getTaskLocation() != null) {
 					if (storageList.get(i).getTaskLocation().toLowerCase()
 							.contains(searchKey.toLowerCase())) {
 						searchList.add(storageList.get(i));
-						count++;
 					} else {
 						searchList.add(storageList.get(i));
-						count++;
 					}
 				} else if (!(storageList.get(i).getTaskDescription()
 						.toLowerCase().contains(searchKey.toLowerCase()))
@@ -299,17 +264,17 @@ public class LOLControl {
 					if (storageList.get(i).getTaskLocation().toLowerCase()
 							.contains(searchKey.toLowerCase())) {
 						searchList.add(storageList.get(i));
-						count++;
 					}
 				}
 			}
 
-			if (count == 0) {
-				ControlDisplay.refreshDisplay(searchList, storageList);
+			ControlDisplay.refreshDisplay(searchList, storageList);
+
+			switch (displayList.size()) {
+			case (Constants.EMPTY_LIST):
 				return showFeedback(searchTask,
 						Constants.FEEDBACK_SEARCH_FAILURE);
-			} else {
-				ControlDisplay.refreshDisplay(searchList, storageList);
+			default:
 				return showFeedback(searchTask, Constants.COMMAND_SEARCH);
 			}
 		}
@@ -376,6 +341,7 @@ public class LOLControl {
 	}
 
 	private static String executeUndo(String userInput) {
+
 		if (History.isEmptyUndoStack()) {
 			return Constants.FEEDBACK_UNDO_FAILURE;
 		}
@@ -387,21 +353,20 @@ public class LOLControl {
 			String undoCmdType = undoCmd.getCommandType();
 			Task undoCmdTask = undoCmd.getTask();
 
-			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
+			switch (undoCmdType) {
+			case (Constants.COMMAND_DELETE):
 				storageList.add(undoCmdTask);
 				History.redoAdd(undoCmd);
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
-			}
-
-			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
+				break;
+			case (Constants.COMMAND_ADD):
 				storageList.delete(undoCmdTask);
 				History.redoAdd(undoCmd);
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
-			}
-			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
-
+				break;
+			case (Constants.COMMAND_EDIT):
 				CommandLine undoCmdNew = History.popUndoStack();
 				CommandLine undoCmdOld = History.popUndoStack();
 				Task undoCmdTaskNew = undoCmdNew.getTask();
@@ -414,9 +379,8 @@ public class LOLControl {
 				History.redoAdd(undoCmd);
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
-
+				break;
 			}
-
 			return showFeedback(null, Constants.COMMAND_UNDO);
 		}
 	}
@@ -433,21 +397,20 @@ public class LOLControl {
 			String undoCmdType = undoCmd.getCommandType();
 			Task undoCmdTask = undoCmd.getTask();
 
-			if (undoCmdType.equals(Constants.COMMAND_DELETE)) {
+			switch (undoCmdType) {
+			case (Constants.COMMAND_DELETE):
 				storageList.delete(undoCmdTask);
 				History.undoDelete(undoCmdTask);
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
-			}
-
-			if (undoCmdType.equals(Constants.COMMAND_ADD)) {
+				break;
+			case (Constants.COMMAND_ADD):
 				storageList.add(undoCmdTask);
 				History.undoAdd(undoCmdTask);
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
-			}
-			if (undoCmdType.equals(Constants.COMMAND_EDIT)) {
-
+				break;
+			case (Constants.COMMAND_EDIT):
 				CommandLine undoCmdNew = History.popRedoStack();
 				CommandLine undoCmdOld = History.popRedoStack();
 				Task undoCmdTaskNew = undoCmdNew.getTask();
@@ -458,8 +421,8 @@ public class LOLControl {
 				History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
+				break;
 			}
-
 			return showFeedback(null, Constants.COMMAND_REDO);
 		}
 	}
@@ -482,80 +445,74 @@ public class LOLControl {
 
 		System.out.println("List size= " + getTaskListSize());
 
-		if (commandType.equals(Constants.COMMAND_ADD)) {
+		switch (commandType) {
+		case (Constants.COMMAND_ADD):
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_ADD_SUCCESS);
-		}
-		if (commandType.equals(Constants.COMMAND_DELETE)) {
+		case (Constants.COMMAND_DELETE):
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_DEL_SUCCESS);
-		}
-		if (commandType.equals(Constants.COMMAND_EDIT)) {
+		case (Constants.COMMAND_EDIT):
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_EDIT_SUCCESS);
-		}
-		if (commandType.equals(Constants.COMMAND_SHOW)) {
-
-			if (searchList.size() == 1) {
+		case (Constants.COMMAND_SHOW):
+			switch (displayList.size()) {
+			case (Constants.LIST_SIZE_ONE): // 1 search result
 				return (Constants.FEEDBACK_SHOW_SUCCESS + task.getTaskDueDate()
 						+ Constants.LINEBREAK + searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
-			} else {
+			default: // more than 1 search result
 				return (Constants.FEEDBACK_SHOW_SUCCESS + task.getTaskDueDate()
 						+ Constants.LINEBREAK + searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
 			}
-		}
-		if (commandType.equals(Constants.COMMAND_SEARCH)) {
-
-			if ((searchList.size() == 1)
-					&& (LOLParser.countWords(task.getTaskDescription()) == 1)) {
-				return (Constants.FEEDBACK_SEARCH_SUCCESS_SINGLE
-						+ Constants.QUOTE + task.getTaskDescription()
-						+ Constants.QUOTE + Constants.LINEBREAK
-						+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
-			} else if ((searchList.size() == 1)
-					&& (LOLParser.countWords(task.getTaskDescription()) > 1)) {
-				return (Constants.FEEDBACK_SEARCH_SUCCESS_MULTI
-						+ Constants.QUOTE + task.getTaskDescription()
-						+ Constants.QUOTE + Constants.LINEBREAK
-						+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
-			} else if ((searchList.size() > 1)
-					&& (LOLParser.countWords(task.getTaskDescription()) == 1)) {
-				return (Constants.FEEDBACK_SEARCH_SUCCESS_SINGLE
-						+ Constants.QUOTE + task.getTaskDescription()
-						+ Constants.QUOTE + Constants.LINEBREAK
-						+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
-			} else {
-				return (Constants.FEEDBACK_SEARCH_SUCCESS_MULTI
-						+ Constants.QUOTE + task.getTaskDescription()
-						+ Constants.QUOTE + Constants.LINEBREAK
-						+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
+		case (Constants.COMMAND_SEARCH):
+			int numKeys = LOLParser.countWords(task.getTaskDescription());
+			switch (displayList.size()) {
+			case (Constants.LIST_SIZE_ONE): // 1 search result
+				switch (numKeys) {
+				case (Constants.WORD_COUNT_ONE): // 1 keyword
+					return (Constants.FEEDBACK_SEARCH_SUCCESS_SINGLE
+							+ Constants.QUOTE + task.getTaskDescription()
+							+ Constants.QUOTE + Constants.LINEBREAK
+							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
+				default: // more than 1 keyword
+					return (Constants.FEEDBACK_SEARCH_SUCCESS_MULTI
+							+ Constants.QUOTE + task.getTaskDescription()
+							+ Constants.QUOTE + Constants.LINEBREAK
+							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
+				}
+			default: // more than 1 search result
+				switch (numKeys) {
+				case (Constants.WORD_COUNT_ONE): // 1 keyword
+					return (Constants.FEEDBACK_SEARCH_SUCCESS_SINGLE
+							+ Constants.QUOTE + task.getTaskDescription()
+							+ Constants.QUOTE + Constants.LINEBREAK
+							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
+				default: // more than 1 keyword
+					return (Constants.FEEDBACK_SEARCH_SUCCESS_MULTI
+							+ Constants.QUOTE + task.getTaskDescription()
+							+ Constants.QUOTE + Constants.LINEBREAK
+							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
+				}
 			}
-		}
-		if (commandType.equals(Constants.FEEDBACK_SEARCH_FAILURE)) {
-
-			if (LOLParser.countWords(task.getTaskDescription()) == 1) {
+		case (Constants.FEEDBACK_SEARCH_FAILURE):
+			int numFailedKeys = LOLParser.countWords(task.getTaskDescription());
+			switch (numFailedKeys) {
+			case (Constants.WORD_COUNT_ONE): // 1 keyword
 				return (Constants.FEEDBACK_SEARCH_FAILURE_SINGLE
 						+ Constants.QUOTE + task.getTaskDescription() + Constants.QUOTE);
-			} else {
-				return (Constants.FEEDBACK_SEARCH_FAILURE_MULTI
+			default:
+				return (Constants.FEEDBACK_SEARCH_FAILURE_MULTI // keywords < 1
 						+ Constants.QUOTE + task.getTaskDescription() + Constants.QUOTE);
 			}
-		}
-		if (commandType.equals(Constants.COMMAND_DONE)) {
+		case (Constants.COMMAND_DONE):
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_DONE_SUCCESS);
-		}
-		if (commandType.equals(Constants.COMMAND_NOT_DONE)) {
+		case (Constants.COMMAND_NOT_DONE):
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_NOT_DONE_SUCCESS);
-		}
-		if (commandType.equals(Constants.COMMAND_UNDO)) {
+		case (Constants.COMMAND_UNDO):
 			return (Constants.FEEDBACK_UNDO_SUCCESS);
-		}
-		if (commandType.equals(Constants.COMMAND_REDO)) {
+		case (Constants.COMMAND_REDO):
 			return (Constants.FEEDBACK_REDO_SUCCESS);
-		}
-		if (commandType.equals(Constants.COMMAND_VIEW_HOMESCREEN)) {
+		case (Constants.COMMAND_VIEW_HOMESCREEN):
 			return (Constants.FEEDBACK_VIEW_HOMESCREEN);
-		}
-		if (commandType.equals(Constants.COMMAND_EXIT)) {
-			return (null);
-		} else
+		default:
 			return (Constants.FEEDBACK_INVALID);
+		}
 	}
 }

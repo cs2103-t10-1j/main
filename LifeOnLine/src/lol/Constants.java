@@ -1,10 +1,11 @@
 package lol;
 
 public class Constants {
-	// Limit for number of days before current day for which task without year will be entered as overdue task
+	// Limit for number of days before current day for which task without year
+	// will be entered as overdue task
 	public static final int DAYS_OFFSET = 7;
 
-	//File name
+	// File name
 	public static final String FILE_NAME = "LOLTaskList.txt";
 	// Separators
 	public static final String SEPARATOR = "\\\\";
@@ -109,11 +110,17 @@ public class Constants {
 	public static final String FEEDBACK_REDO_FAILURE = "Nothing to redo!";
 	public static final String FEEDBACK_VIEW_HOMESCREEN = "Displaying Home-Screen!";
 	public static final String FEEDBACK_INVALID = "That is an invalid action!";
-	
-	// show parameters
+
+	// Switch-case
+	public static final int EMPTY_LIST = 0;
+	public static final int LIST_SIZE_ONE = 1;
+	public static final int WORD_COUNT_ONE = 1;
+
+	// show parameters (LOWERCASE)
 	public static final String SHOW_OVERDUE = "overdue";
 	public static final String SHOW_ARCHIVE = "archive";
 	public static final String SHOW_ALL = "all";
+
 	// not found
 	public static int NOT_FOUND = -1;
 
