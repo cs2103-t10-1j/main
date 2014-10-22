@@ -14,7 +14,7 @@ public class Constants {
 
 	// Dictionaries
 	public static final String[] DICTIONARY_ADD = { "add" };
-	public static final String[] DICTIONARY_DELETE = { "delete" };
+	public static final String[] DICTIONARY_DELETE = { "delete", "rm" };
 	public static final String[] DICTIONARY_SHOW = { "show" };
 	public static final String[] DICTIONARY_SEARCH = { "search", "find" };
 	public static final String[] DICTIONARY_EDIT = { "edit" };
@@ -24,6 +24,7 @@ public class Constants {
 	public static final String[] DICTIONARY_REDO = { "redo" };
 	public static final String[] DICTIONARY_VIEW_HOMESCREEN = { "home" };
 	public static final String[] DICTIONARY_EXIT = { "exit" };
+	public static final String[] DICTIONARY_PARAMETERS = { "location", "loc", "date", "start", "end", "time" };
 
 	// Months
 	public static final String[] MONTHS_SHORT = { "jan", "feb", "mar", "apr",

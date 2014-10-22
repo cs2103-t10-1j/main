@@ -53,8 +53,11 @@ public class LOLParserTest {
 		assertEquals(new Task("eat food", null, new Date(19, 10), new Time(
 				"1800"), null), LOLParser.getEditTask("edit 2 6pm", new Task(
 				"eat food", null, new Date(19, 10), new Time("1700"), null)));
-		assertEquals(null, LOLParser.getEditTask("edit  1", new Task("buy milk",
-						"supermarket", null)));
+		assertEquals(null, LOLParser.getEditTask("edit  1", new Task(
+				"buy milk", "supermarket", null)));
+		assertEquals(new Task("do something", "home", null),
+				LOLParser.getEditTask("edit 2 at home rm date", new Task(
+						"do something", null, new Date(1, 1, 15))));
 	}
 
 	@Test

@@ -44,7 +44,8 @@ public class LOLParser {
 			return Constants.COMMAND_UNDO;
 		} else if (hasWordInDictionary(Constants.DICTIONARY_REDO, command)) {
 			return Constants.COMMAND_REDO;
-		} else if (hasWordInDictionary(Constants.DICTIONARY_VIEW_HOMESCREEN, command)) {
+		} else if (hasWordInDictionary(Constants.DICTIONARY_VIEW_HOMESCREEN,
+				command)) {
 			return Constants.COMMAND_VIEW_HOMESCREEN;
 		} else if (hasWordInDictionary(Constants.DICTIONARY_EXIT, command)) {
 			return Constants.COMMAND_EXIT;
@@ -59,7 +60,7 @@ public class LOLParser {
 	 * @param input
 	 *            user input
 	 * @return Task added
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static Task getTask(String input) throws Exception {
 		if (countWords(input) <= 1) {
@@ -100,10 +101,56 @@ public class LOLParser {
 	 */
 	public static Task getEditTask(String input, Task task) {
 		try {
+			input = cleanUp(input);
 			if (countWords(input) <= 2) {
 				return null;
 			}
-			String inputWithoutCommandAndIndex = removeFirst2Words(input);
+			String inputWithoutCommandAndIndex = cleanUp(removeFirst2Words(input));
+			Task newTask = task;
+
+			String[] words = inputWithoutCommandAndIndex.split(" ");
+			// if the user wants to delete parameters
+			if (containsCommand(words, Constants.DICTIONARY_DELETE)) {
+
+				for (int i = 0; i < words.length - 1; i++) {
+					// if delete command is found
+					if (hasWordInDictionary(Constants.DICTIONARY_DELETE,
+							words[i])) {
+						int index = i + 1;
+						// delete all parameters after 'delete' keyword
+						while (index < words.length
+								&& hasWordInDictionary(
+										Constants.DICTIONARY_PARAMETERS,
+										words[index])) {
+							switch (words[index]) {
+							case "location":
+							case "loc":
+								newTask.setLocation(null);
+								break;
+							case "date":
+								newTask.setDueDate(null);
+								newTask.setStartTime(null);
+								newTask.setEndTime(null);
+								break;
+							case "start":
+								newTask.setStartTime(null);
+								newTask.setEndTime(null);
+								break;
+							case "end":
+								newTask.setEndTime(null);
+								break;
+							case "time":
+								newTask.setStartTime(null);
+								newTask.setEndTime(null);
+								break;
+							}
+							index++;
+						}
+					}
+				}
+				inputWithoutCommandAndIndex = removeDeleteParameters(inputWithoutCommandAndIndex);
+			}
+
 			DescriptionParser dp = new DescriptionParser(
 					inputWithoutCommandAndIndex);
 			LocationParser lp = new LocationParser(inputWithoutCommandAndIndex);
@@ -116,7 +163,6 @@ public class LOLParser {
 			Time startTime = tp.getStartTime();
 			Time endTime = tp.getEndTime();
 
-			Task newTask = task;
 			if (description != null) {
 				newTask.setDescription(description);
 			}
@@ -131,6 +177,16 @@ public class LOLParser {
 
 			if (startTime != null) {
 				newTask.setStartTime(startTime);
+				
+				if (newTask.getTaskDueDate() == null) {
+					if (startTime.isAfter(tp.getCurrentTime())) {
+						// due date is today
+						newTask.setDueDate(dtp.getTodaysDate());
+					} else {
+						// due date is tomorrow
+						newTask.setDueDate(dtp.addDaysToToday(1));
+					}
+				}
 			}
 
 			if (endTime != null) {
@@ -300,5 +356,48 @@ public class LOLParser {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Checks whether an array of Strings contains a command in a dictionary
+	 * 
+	 * @param words
+	 *            array to be checked
+	 * @param commandDictionary
+	 *            all possible formats of the command to be checked
+	 * @return true if the array of words contains the command, else false
+	 */
+	public static boolean containsCommand(String[] words,
+			String[] commandDictionary) {
+		for (int i = 0; i < words.length; i++) {
+			if (hasWordInDictionary(commandDictionary, words[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Removes all delete keywords ('delete', 'd', etc.) and parameters
+	 * ('location', 'loc', 'date', etc.) from the input string
+	 * 
+	 * @param input
+	 *            String from which delete keywords and parameters are to be
+	 *            removed
+	 * @return input without delete keywords and parameters
+	 */
+	public static String removeDeleteParameters(String input) {
+		// Delete the 'delete' keywords
+		for (int i = 0; i < Constants.DICTIONARY_DELETE.length; i++) {
+			String word = Constants.DICTIONARY_DELETE[i];
+			input = cleanUp(input.replaceAll("\\b" + word + "\\b", ""));
+		}
+
+		// Delete parameters
+		for (int i = 0; i < Constants.DICTIONARY_PARAMETERS.length; i++) {
+			String word = Constants.DICTIONARY_PARAMETERS[i];
+			input = cleanUp(input.replaceAll("\\b" + word + "\\b", ""));
+		}
+		return input;
 	}
 }
