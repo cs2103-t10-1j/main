@@ -197,7 +197,7 @@ public class DescriptionParser {
 		try {
 			return input.split(" ", 2)[1];
 		} catch (Exception e) {
-			return input;
+			return null;
 		}
 	}
 
