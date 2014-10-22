@@ -81,22 +81,24 @@ public class Constants {
 
 	// Feedback Strings
 	public static final String QUOTE = "\"";
-	public static final String LINEBREAK = "\n";
+	// public static final String LINEBREAK =
+	// System.getProperty("line.separator");
+	public static final String LINEBREAK = "<br/>" + "<center>";
 	public static final String FEEDBACK_ADD_SUCCESS = " added successfully!";
 	public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully!";
 	public static final String FEEDBACK_EDIT_SUCCESS = " was editted succesfully!";
-	public static final String FEEDBACK_SHOW_SUCCESS = "Displaying search results for ";
-	public static final String FEEDBACK_SHOW_HITS_SINGLE = " task found!";
-	public static final String FEEDBACK_SHOW_HITS_MULTI = " tasks found!";
+	public static final String FEEDBACK_SHOW_SUCCESS = "<html>Displaying search results for ";
+	public static final String FEEDBACK_SHOW_HITS_SINGLE = " task found!</center></html>";
+	public static final String FEEDBACK_SHOW_HITS_MULTI = " tasks found!</center></html>";
 	public static final String FEEDBACK_SHOW_FAILURE = "There are no tasks due on that day!";
-	public static final String FEEDBACK_SHOW_OVERDUE_SUCCESS = "Displaying overdue tasks!";
+	public static final String FEEDBACK_SHOW_OVERDUE_SUCCESS = "<html>Displaying overdue tasks!";
 	public static final String FEEDBACK_SHOW_OVERDUE_FAILURE = "No overdue tasks were found!";
 	public static final String FEEDBACK_SHOW_ARCHIVE_SUCCESS = "Displaying tasks in archive!";
 	public static final String FEEDBACK_SHOW_ARCHIVE_FAILURE = "There are no tasks in your archive!";
 	public static final String FEEDBACK_SHOW_ALL_SUCCESS = "Displaying all tasks found in database!";
 	public static final String FEEDBACK_SHOW_ALL_FAILURE = "No tasks found in database!";
-	public static final String FEEDBACK_SEARCH_SUCCESS_SINGLE = "Search results for tasks with the keyword: ";
-	public static final String FEEDBACK_SEARCH_SUCCESS_MULTI = "Search results for tasks with the keywords: ";
+	public static final String FEEDBACK_SEARCH_SUCCESS_SINGLE = "<html>Search results for tasks with the keyword: ";
+	public static final String FEEDBACK_SEARCH_SUCCESS_MULTI = "<html>Search results for tasks with the keywords: ";
 	public static final String FEEDBACK_SEARCH_FAILURE = "SEARCH FAILED";
 	public static final String FEEDBACK_SEARCH_FAILURE_SINGLE = "No tasks were found with the keyword: ";
 	public static final String FEEDBACK_SEARCH_FAILURE_MULTI = "No tasks were found with the keywords: ";
