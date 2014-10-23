@@ -212,12 +212,18 @@ public class Task implements Comparable<Task> {
 	public boolean isBefore(Task other) {
 		return this.getTaskDueDate().isBefore(other.getTaskDueDate())
 				|| (this.getTaskDueDate().equals(other.getTaskDueDate()) && (this
-						.getStartTime().isBefore(other.getStartTime())));
+						.getStartTime().isBefore(other.getStartTime())))
+				|| (this.getTaskDueDate().equals(other.getTaskDueDate())
+						&& (this.getStartTime().equals(other.getStartTime())) && (this
+							.getEndTime().isBefore(other.getEndTime())));
 	}
 
 	public boolean isAfter(Task other) {
 		return this.getTaskDueDate().isAfter(other.getTaskDueDate())
 				|| (this.getTaskDueDate().equals(other.getTaskDueDate()) && (this
-						.getStartTime().isAfter(other.getStartTime())));
+						.getStartTime().isAfter(other.getStartTime())))
+				|| (this.getTaskDueDate().equals(other.getTaskDueDate())
+						&& (this.getStartTime().equals(other.getStartTime())) && (this
+							.getEndTime().isAfter(other.getEndTime())));
 	}
 }
