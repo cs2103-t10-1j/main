@@ -1,7 +1,15 @@
-package lol;
+package logic;
 
 import java.util.logging.*;
 
+import lol.CommandLine;
+import lol.Constants;
+import lol.Date;
+import lol.DateParser;
+import lol.History;
+import lol.LOLParser;
+import lol.Task;
+import lol.TaskList;
 import io.StorageFacade;
 
 public class LOLControl {
@@ -26,8 +34,9 @@ public class LOLControl {
 		return storageList.size();
 	}
 
-	public static void loadTaskList() {
+	public static TaskList<Task> loadTaskList() {
 		storageList = LOLStorage.loadTasks();
+		return storageList;
 	}
 
 	public static TaskList<Task> getTaskList() {
@@ -340,7 +349,7 @@ public class LOLControl {
 		return executeInvalid(userInput);
 	}
 
-	private static String executeUndo(String userInput) {
+	public static String executeUndo(String userInput) {
 
 		if (History.isEmptyUndoStack()) {
 			return Constants.FEEDBACK_UNDO_FAILURE;

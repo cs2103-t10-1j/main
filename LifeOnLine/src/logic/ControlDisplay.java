@@ -1,4 +1,11 @@
-package lol;
+package logic;
+
+import lol.Date;
+import lol.DateParser;
+import lol.Task;
+import lol.TaskList;
+import lol.Time;
+import lol.TimeParser;
 
 public class ControlDisplay {
 	

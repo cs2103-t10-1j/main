@@ -8,6 +8,8 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
+import logic.LOLControl;
+
 public class LOLGui {
 	final Integer i = new Integer(0);
 	int numTabPressed = 0;
