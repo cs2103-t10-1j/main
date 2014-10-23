@@ -11,6 +11,8 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import logic.LOLControl;
+
 public class InputTextFieldListener implements ActionListener, KeyListener {
 	final String[] commands = {"", "add ", "delete ", "edit ", "done ", "undo", "redo"};
 	JTextField inputTF;
