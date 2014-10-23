@@ -20,11 +20,14 @@
  * 4-6pm
  * 
  */
-package lol;
+package parser;
 
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import lol.Constants;
+import lol.Time;
 
 public class TimeParser {
 	/************* Attributes ***************/

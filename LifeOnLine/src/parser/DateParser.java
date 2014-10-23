@@ -18,7 +18,7 @@
  * Month names can have 3 or more letters.
  */
 
-package lol;
+package parser;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +27,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import lol.Constants;
+import lol.Date;
 
 public class DateParser {
 	/************* Attributes ***************/

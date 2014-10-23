@@ -2,12 +2,12 @@ package logic;
 
 import java.util.logging.*;
 
+import parser.DateParser;
+import parser.LOLParser;
 import lol.CommandLine;
 import lol.Constants;
 import lol.Date;
-import lol.DateParser;
 import lol.History;
-import lol.LOLParser;
 import lol.Task;
 import lol.TaskList;
 import io.StorageFacade;
