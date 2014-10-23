@@ -1,4 +1,4 @@
-package lol;
+package parser;
 
 import static org.junit.Assert.*;
 

@@ -1,7 +1,9 @@
-package lol;
+package parser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import lol.Constants;
 
 public class DescriptionParser {
 	private String userInput;

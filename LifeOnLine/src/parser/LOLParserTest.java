@@ -1,6 +1,9 @@
-package lol;
+package parser;
 
 import static org.junit.Assert.*;
+import lol.Date;
+import lol.Task;
+import lol.Time;
 
 import org.junit.Test;
 

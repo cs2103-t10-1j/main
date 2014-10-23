@@ -6,9 +6,14 @@
  * show - returns Date object of the date specified after 'show' command
  * search - returns keywords to be searched
  */
-package lol;
+package parser;
 
 import java.util.logging.*;
+
+import lol.Constants;
+import lol.Date;
+import lol.Task;
+import lol.Time;
 
 public class LOLParser {
 	private static Logger logger = Logger.getLogger("LOLParser");

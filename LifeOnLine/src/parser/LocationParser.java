@@ -1,10 +1,12 @@
 /**
  * This class parses the location of an input.
  */
-package lol;
+package parser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import lol.Constants;
 
 public class LocationParser {
 	private String userInput;
