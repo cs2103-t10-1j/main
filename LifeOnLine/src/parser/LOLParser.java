@@ -8,7 +8,7 @@
  */
 package parser;
 
-import java.util.logging.*;
+//import java.util.logging.*;
 
 import lol.Constants;
 import lol.Date;
@@ -16,8 +16,8 @@ import lol.Task;
 import lol.Time;
 
 public class LOLParser {
-	private static Logger logger = Logger.getLogger("LOLParser");
-	static FileHandler handler;
+	//private static Logger logger = Logger.getLogger("LOLParser");
+	//static FileHandler handler;
 
 	/*********** Methods to return task details ***************/
 
@@ -215,9 +215,9 @@ public class LOLParser {
 	 */
 	public static int getTaskIndex(String input) {
 		try {
-			handler = new FileHandler("logfile%g.txt", true);
-			logger.addHandler(handler);
-			handler.setFormatter(new SimpleFormatter());
+			//handler = new FileHandler("logfile%g.txt", true);
+			//logger.addHandler(handler);
+			//handler.setFormatter(new SimpleFormatter());
 			// logger.log(Level.INFO, "going to start processing");
 			return Integer.parseInt(input.split(" ")[1]);
 		} catch (Exception e) {

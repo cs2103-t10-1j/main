@@ -51,6 +51,7 @@ public class Date {
 
 		// if date is more than 7 days before today, assume the date is in the
 		// next year
+		
 		if (newDate.isBefore(getTodaysDate())
 				&& newDate.getDateDifference(newDate, getTodaysDate()) > Constants.DAYS_OFFSET) {
 			setYear4Digit(currYear + 1);
@@ -84,6 +85,7 @@ public class Date {
 
 		// if date is more than 7 days before today, assume the date is in the
 		// next year
+		
 		if (newDate.isBefore(getTodaysDate())
 				&& newDate.getDateDifference(newDate, getTodaysDate()) > Constants.DAYS_OFFSET) {
 			setYear4Digit(currYear + 1);
@@ -304,8 +306,8 @@ public class Date {
 				earlierDate.getDay());
 		later.set(laterDate.getYear4Digit(), laterDate.getMonth() - 1,
 				laterDate.getDay());
-
-		return (int) (later.getTime().getTime() - earlier.getTime().getTime())
-				/ (1000 * 60 * 60 * 24);
+		
+		return (int) ((later.getTime().getTime() - earlier.getTime().getTime())
+				/ (1000 * 60 * 60 * 24));
 	}
 }
