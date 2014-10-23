@@ -79,8 +79,7 @@ public class LOLControl {
 		case (Constants.COMMAND_EXIT):
 			return executeExit(userInput);
 		default:
-			logger.log(Level.WARNING,
-					"Processing Error, unsupported CommandType entered");
+			logger.log(Level.WARNING, "Unsupported CommandType entered");
 			return executeInvalid(userInput);
 		}
 	}
@@ -91,11 +90,21 @@ public class LOLControl {
 	}
 
 	private static String executeAdd(String userInput) throws Exception {
+
+		try {
+			LOLParser.getTask(userInput);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "No description entered!");
+			return executeInvalid(userInput);
+		}
+
 		if (LOLParser.getTask(userInput) == null) {
+			logger.log(Level.WARNING, "No description entered!");
 			return executeInvalid(userInput);
 		}
 
 		else {
+
 			Task newTask = LOLParser.getTask(userInput);
 
 			if (storageList.add(newTask)) {
