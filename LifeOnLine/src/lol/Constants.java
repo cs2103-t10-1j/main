@@ -25,7 +25,8 @@ public class Constants {
 	public static final String[] DICTIONARY_REDO = { "redo" };
 	public static final String[] DICTIONARY_VIEW_HOMESCREEN = { "home" };
 	public static final String[] DICTIONARY_EXIT = { "exit" };
-	public static final String[] DICTIONARY_PARAMETERS = { "location", "loc", "date", "start", "end", "time" };
+	public static final String[] DICTIONARY_PARAMETERS = { "location", "loc",
+			"date", "start", "end", "time" };
 
 	// Months
 	public static final String[] MONTHS_SHORT = { "jan", "feb", "mar", "apr",
@@ -95,6 +96,10 @@ public class Constants {
 	public static final String FEEDBACK_SHOW_OVERDUE_FAILURE = "No overdue tasks were found!";
 	public static final String FEEDBACK_SHOW_ARCHIVE_SUCCESS = "Displaying tasks in archive!";
 	public static final String FEEDBACK_SHOW_ARCHIVE_FAILURE = "There are no tasks in your archive!";
+	public static final String FEEDBACK_SHOW_WEEK_SUCCESS = "Displaying agenda for next 7 days!";
+	public static final String FEEDBACK_SHOW_WEEK_FAILURE = "No tasks due in the next 7 days!";
+	public static final String FEEDBACK_SHOW_MONTH_SUCCESS = "Displaying agenda for ";
+	public static final String FEEDBACK_SHOW_MONTH_FAILURE = "No tasks due in ";
 	public static final String FEEDBACK_SHOW_ALL_SUCCESS = "Displaying all tasks found in database!";
 	public static final String FEEDBACK_SHOW_ALL_FAILURE = "No tasks found in database!";
 	public static final String FEEDBACK_SEARCH_SUCCESS_SINGLE = "<html>Search results for tasks with the keyword: ";
@@ -121,7 +126,11 @@ public class Constants {
 	// show parameters (LOWERCASE)
 	public static final String SHOW_OVERDUE = "overdue";
 	public static final String SHOW_ARCHIVE = "archive";
+	public static final String SHOW_WEEK = "week";
+	public static final String SHOW_MONTH = "month";
 	public static final String SHOW_ALL = "all";
+
+	public static final int ONE_WEEK = 8;
 
 	// not found
 	public static int NOT_FOUND = -1;

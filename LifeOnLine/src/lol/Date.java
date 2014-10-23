@@ -164,6 +164,7 @@ public class Date {
 	public String toString() { // e.g. 7 Dec 2015
 		return getDay() + " " + getMonthName() + " " + getYear4Digit();
 	}
+
 	public String toString2() { // e.g. 7 Dec 2015
 		return getDay() + "/" + getMonth() + "/" + getYear4Digit();
 	}
@@ -240,6 +241,24 @@ public class Date {
 	public String getMonthName(int month) {
 		String[] months = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
 				"Aug", "Sep", "Oct", "Nov", "Dec" };
+		if (month >= 1 && month <= 12) {
+			return months[month - 1];
+		} else {
+			return months[0];
+		}
+	}
+
+	/**
+	 * Returns the entire name of the month
+	 * 
+	 * @param month
+	 *            number of the month
+	 * @return month name
+	 */
+	public String getMonthNameLong(int month) {
+		String[] months = { "January", "February", "March", "April", "May",
+				"June", "July", "August", "September", "October", "November",
+				"December" };
 		if (month >= 1 && month <= 12) {
 			return months[month - 1];
 		} else {

@@ -79,8 +79,7 @@ public class LOLControl {
 		case (Constants.COMMAND_EXIT):
 			return executeExit(userInput);
 		default:
-			logger.log(Level.WARNING,
-					"Processing Error, unsupported CommandType entered");
+			logger.log(Level.WARNING, "Unsupported CommandType entered");
 			return executeInvalid(userInput);
 		}
 	}
@@ -91,11 +90,21 @@ public class LOLControl {
 	}
 
 	private static String executeAdd(String userInput) throws Exception {
+
+		try {
+			LOLParser.getTask(userInput);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "No description entered!");
+			return executeInvalid(userInput);
+		}
+
 		if (LOLParser.getTask(userInput) == null) {
+			logger.log(Level.WARNING, "No description entered!");
 			return executeInvalid(userInput);
 		}
 
 		else {
+
 			Task newTask = LOLParser.getTask(userInput);
 
 			if (storageList.add(newTask)) {
@@ -144,6 +153,7 @@ public class LOLControl {
 	}
 
 	private static String executeShow(String userInput) {
+
 		DateParser dp = new DateParser();
 		Date searchDate = LOLParser.getDateForShowCommand(userInput);
 		String searchKey = LOLParser.getKeywordsForSearchCommand(userInput);
@@ -156,9 +166,18 @@ public class LOLControl {
 				return showArchive(userInput);
 			case (Constants.SHOW_ALL):
 				return showAll(userInput);
+			case (Constants.SHOW_WEEK):
+				return showWeek(userInput);
 			default:
-				if (searchDate == null)
+				if (searchDate == null) {
+					if ((LOLParser.hasWordInDictionary(Constants.MONTHS_SHORT,
+							searchKey))
+							|| (LOLParser.hasWordInDictionary(
+									Constants.MONTHS_LONG, searchKey))) {
+						return showMonth(searchKey);
+					}
 					return executeInvalid(userInput);
+				}
 				break;
 			}
 		}
@@ -220,6 +239,83 @@ public class LOLControl {
 			return Constants.FEEDBACK_SHOW_ARCHIVE_FAILURE;
 		default:
 			return Constants.FEEDBACK_SHOW_ARCHIVE_SUCCESS;
+		}
+	}
+
+	private static String showWeek(String userInput) {
+
+		searchList.clear();
+
+		DateParser dp = new DateParser();
+
+		Date currentDate = dp.getTodaysDate();
+		Date nextWeekDate = dp.addDaysToToday(Constants.ONE_WEEK);
+
+		for (int i = 0; i < storageList.size(); i++) {
+
+			if (storageList.get(i).getTaskDueDate() == null) {
+				continue;
+			}
+
+			else {
+				Date taskDate = storageList.get(i).getTaskDueDate();
+
+				if ((taskDate.equals(currentDate))
+						|| taskDate.isAfter(currentDate)
+						&& taskDate.isBefore(nextWeekDate)) {
+					searchList.add(storageList.get(i));
+				}
+			}
+		}
+
+		ControlDisplay.refreshDisplay(searchList, storageList);
+
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
+			return Constants.FEEDBACK_SHOW_WEEK_FAILURE;
+		default:
+			return Constants.FEEDBACK_SHOW_WEEK_SUCCESS;
+		}
+	}
+
+	private static String showMonth(String monthName) {
+
+		Date date = new Date();
+		int currentYear = date.getYear4Digit();
+
+		DateParser dp = new DateParser();
+		int searchMonth = dp.getMonthNum(monthName);
+
+		searchList.clear();
+
+		for (int i = 0; i < storageList.size(); i++) {
+
+			if (storageList.get(i).getTaskDueDate() == null) {
+				continue;
+			}
+
+			else {
+				Task iteratorTask = storageList.get(i);
+				int iteratorYear = iteratorTask.getTaskDueDate()
+						.getYear4Digit();
+				int iteratorMonth = iteratorTask.getTaskDueDate().getMonth();
+
+				if ((iteratorYear >= currentYear)
+						&& (searchMonth == iteratorMonth)) {
+					searchList.add(storageList.get(i));
+				}
+			}
+		}
+
+		ControlDisplay.refreshDisplay(searchList, storageList);
+
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
+			return Constants.FEEDBACK_SHOW_MONTH_FAILURE
+					+ date.getMonthNameLong(searchMonth);
+		default:
+			return Constants.FEEDBACK_SHOW_MONTH_SUCCESS
+					+ date.getMonthNameLong(searchMonth);
 		}
 	}
 
