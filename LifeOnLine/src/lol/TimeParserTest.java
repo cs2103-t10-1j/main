@@ -169,14 +169,30 @@ public class TimeParserTest {
 	@Test
 	public void testIsValidTimeFormat() {
 		TimeParser tp = new TimeParser();
+		
+		/* This is an equivalence partition for a 12-hour time format */
 		assertTrue(tp.isValidTimeFormat("2pm"));
 		assertTrue(tp.isValidTimeFormat("2.30 am"));
+		
+		/* This is a boundary case for a 12-hour time format */
+		assertTrue(tp.isValidTimeFormat("12.59 am"));
+		assertFalse(tp.isValidTimeFormat("12.60 am"));
+		
+		/* This is an equivalence partition for a time range separated by hyphen */
 		assertTrue(tp.isValidTimeFormat("4-6pm"));
 		assertTrue(tp.isValidTimeFormat("4pm-6pm"));
+		assertTrue(tp.isValidTimeFormat("6 am - 7 am"));
+		
+		/* This is an equivalence partition for a time range separated by "to" */
 		assertTrue(tp.isValidTimeFormat("11  to 1pm"));
 		assertTrue(tp.isValidTimeFormat("11am to 1pm"));
-		assertTrue(tp.isValidTimeFormat("0800"));
-		assertTrue(tp.isValidTimeFormat("6 am - 7 am"));
 		assertTrue(tp.isValidTimeFormat("6  am to  7 am"));
+		
+		/* This is an equivalence partition for a 24-hour time format */
+		assertTrue(tp.isValidTimeFormat("0800"));
+		
+		/* This is a boundary case for a 24-hour time format */
+		assertTrue(tp.isValidTimeFormat("0000"));
+		assertFalse(tp.isValidTimeFormat("2400"));
 	}
 }
