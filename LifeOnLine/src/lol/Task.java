@@ -131,7 +131,8 @@ public class Task implements Comparable<Task> {
 				isLocationSame = true;
 			}
 
-			if ((other.getTaskLocation() == null && this.getTaskLocation() == null)
+			if ((other.getTaskDescription() == null && this
+					.getTaskDescription() == null)
 					|| ((other.getTaskDescription() != null && this
 							.getTaskDescription() != null) && (other
 							.getTaskDescription().equals(this
