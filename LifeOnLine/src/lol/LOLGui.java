@@ -12,13 +12,17 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import com.melloware.jintellitype.HotkeyListener;
+import com.melloware.jintellitype.JIntellitype;
+
 import ui.TrayClass;
 import logic.LOLControl;
 
 @SuppressWarnings("serial")
-public class LOLGui extends JFrame {
+public class LOLGui extends JFrame implements HotkeyListener {
 
 	private boolean isNewRun = true;
+	private boolean isNewMini = true;
 
 	TrayClass displayTrayIcon = new TrayClass();
 
@@ -35,7 +39,25 @@ public class LOLGui extends JFrame {
 
 	public LOLGui() {
 
-		// line 10 to 46 create LOL's GUI
+		if (!JIntellitype.isJIntellitypeSupported()) {
+			JOptionPane.showMessageDialog(null, "Error occured");
+			System.exit(1);
+		}
+		// If instance already running, exit new instance
+		if (JIntellitype.checkInstanceAlreadyRunning("LOL - Life On Line")) {
+			TrayClass.trayIcon.displayMessage("LOL is Already Running!",
+					"CTRL + L to Restore", TrayIcon.MessageType.INFO);
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			JIntellitype.getInstance().cleanUp();
+			System.exit(1);
+		}
+
+		// ** SET-UP GUI ** //
+
 		final JFrame frame = new JFrame("LOL - Life On Line");
 		frame.getRootPane().setBorder(
 				BorderFactory.createMatteBorder(4, 4, 4, 4, BG4));
@@ -122,18 +144,48 @@ public class LOLGui extends JFrame {
 		TaskList<Task> taskList = LOLControl.getTaskList();
 		InputTextFieldListener.showInMainDisplayTP(taskList);
 
-		// frame.addWindowListener( new WindowAdapter() {
-		// public void windowOpened( WindowEvent e ){
-		// inputTF.requestFocus();
-		// }
-		// });
+		// **HOTKEY-INTERFACE** //
+
+		// Assigning global HotKeys to CTRL+L and CTRL+M
+		JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL,
+				(int) 'L');
+		JIntellitype.getInstance().registerHotKey(2, JIntellitype.MOD_CONTROL,
+				(int) 'M');
+
+		// Assign this class to be a HotKeyListener
+		JIntellitype.getInstance().addHotKeyListener(this);
+
+		// Listen for HotKey
+		JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
+			@Override
+			public void onHotKey(int aIdentifier) {
+
+				// Restore GUI
+				if (aIdentifier == 1) {
+					frame.setVisible(true);
+					frame.setExtendedState(getExtendedState());
+				}
+				// Minimize GUI
+				if (aIdentifier == 2) {
+					frame.setState(ICONIFIED);
+					frame.setVisible(false);
+					if (isNewMini) {
+						TrayClass.trayIcon.displayMessage("Minimized!",
+								"CTRL + L to Restore",
+								TrayIcon.MessageType.INFO);
+						isNewMini = false;
+					}
+				}
+
+			}
+		});
 
 		TrayClass.trayIcon.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() >= 2) {
-					frame.setExtendedState(getExtendedState());
 					frame.setVisible(true);
+					frame.setExtendedState(getExtendedState());
 				}
 			}
 		});
@@ -143,8 +195,8 @@ public class LOLGui extends JFrame {
 		restoreItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.setExtendedState(getExtendedState());
 				frame.setVisible(true);
+				frame.setExtendedState(getExtendedState());
 			}
 		});
 
@@ -153,7 +205,7 @@ public class LOLGui extends JFrame {
 			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 				if (isNewRun) {
 					TrayClass.trayIcon.displayMessage("Hey!",
-							"LoL is still running in the background!",
+							"LOL is still running in the background!",
 							TrayIcon.MessageType.INFO);
 					isNewRun = false;
 				}
@@ -205,6 +257,12 @@ public class LOLGui extends JFrame {
 
 		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP1,
 				mainDisplayTP2, label, inputTF, i));
+
+	}
+
+	@Override
+	public void onHotKey(int arg0) {
+		// TODO Auto-generated method stub
 
 	}
 }
