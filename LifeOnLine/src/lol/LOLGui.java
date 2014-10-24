@@ -18,6 +18,8 @@ import logic.LOLControl;
 @SuppressWarnings("serial")
 public class LOLGui extends JFrame {
 
+	private boolean isNewRun = true;
+
 	TrayClass displayTrayIcon = new TrayClass();
 
 	final Integer i = new Integer(0);
@@ -149,9 +151,12 @@ public class LOLGui extends JFrame {
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
 			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				TrayClass.trayIcon.displayMessage("Hey!",
-						"LoL is still running in the background!",
-						TrayIcon.MessageType.INFO);
+				if (isNewRun) {
+					TrayClass.trayIcon.displayMessage("Hey!",
+							"LoL is still running in the background!",
+							TrayIcon.MessageType.INFO);
+					isNewRun = false;
+				}
 			}
 		});
 
