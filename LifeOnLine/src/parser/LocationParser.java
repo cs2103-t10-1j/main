@@ -105,6 +105,7 @@ public class LocationParser {
 				String parameter = getParameterStartingAtIndex(getIndexOfAt()
 						+ Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT]
 								.length() + 1);
+				parameter = removeDescriptionAfterTimeIfAny(parameter);
 
 				if (!tp.isValidTimeFormat(parameter)
 						&& !dp.isValidDateFormat(parameter)) {
@@ -119,6 +120,7 @@ public class LocationParser {
 
 				while (mAt.find()) {
 					String parameter = getParameterStartingAtIndex(mAt.end() + 1);
+					parameter = removeDescriptionAfterTimeIfAny(parameter);
 					if (!tp.isValidTimeFormat(parameter)
 							&& !dp.isValidDateFormat(parameter)) {
 						return parameter;
@@ -196,7 +198,7 @@ public class LocationParser {
 	 * whichever is earlier
 	 * 
 	 * @param index
-	 *            index of userInput at which the paramter to be returned starts
+	 *            index of userInput at which the parameter to be returned starts
 	 * @return parameter starting from index
 	 */
 	public String getParameterStartingAtIndex(int index) {
@@ -532,4 +534,93 @@ public class LocationParser {
 			return temp;
 		}
 	}
+	
+	/**
+	 * Removes task description after a time, if any
+	 * 
+	 * @param date
+	 *            String containing a time which may or may not be followed
+	 *            by a task description
+	 * @return due date as a string
+	 */
+	public String removeDescriptionAfterTimeIfAny(String time) {
+		String[] words = time.split(" ");
+		String firstWord = words[0];
+		String[] nextWords = getNext4Words(words, 0);
+		TimeParser tp = new TimeParser();
+
+		if (tp.isValidTimeFormat(firstWord) && !(isPartOfTimeFormat(nextWords[0]))) {
+			return firstWord.trim();
+		} else if (tp.isValidTimeFormat(firstWord + " " + nextWords[0])
+				&& !(isPartOfTimeFormat(nextWords[1]))) {
+			return (firstWord + " " + nextWords[0]).trim();
+		} else if (tp.isValidTimeFormat(firstWord + " " + nextWords[0] + " "
+				+ nextWords[1])
+				&& !(isPartOfTimeFormat(nextWords[2]))) {
+			return (firstWord + " " + nextWords[0] + " " + nextWords[1]).trim();
+		} else if (tp.isValidTimeFormat(firstWord + " " + nextWords[0] + " "
+				+ nextWords[1] + " " + nextWords[2])
+				&& !(isPartOfTimeFormat(nextWords[3]))) {
+			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2])
+					.trim();
+		} else {
+			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2] + " " + nextWords[3])
+					.trim();
+		}
+	}
+	
+	/**
+	 * Returns true if a word is a part of a time format
+	 * @param word word to be checked
+	 * @return true if the word is a part of a time format, else false
+	 */
+	public boolean isPartOfTimeFormat(String word) {
+		word = word.trim();
+		return word.equalsIgnoreCase("am") || word.equalsIgnoreCase("pm") || word.equalsIgnoreCase("to") || word.equalsIgnoreCase("-");
+	}
+	
+	/**
+	 * Returns the next 4 words of userInput, starting from the index i + 1
+	 * 
+	 * @param words
+	 *            Array of words in userInput
+	 * @param i
+	 *            The index of the first word
+	 * @return The next 4 words after index i. If there are less than 4 words,
+	 *         the empty words are represented by empty strings
+	 */
+	public String[] getNext4Words(String[] words, int i) {
+		String[] nextWords = { Constants.EMPTY_STRING, Constants.EMPTY_STRING,
+				Constants.EMPTY_STRING, Constants.EMPTY_STRING };
+
+		if (i < words.length - 4) {
+			int index = 0;
+			while (index < 4) {
+				nextWords[index] = words[i + 1 + index];
+				index++;
+			}
+		} else if (i < words.length - 3) {
+			int index = 0;
+			while (index < 3) {
+				nextWords[index] = words[i + 1 + index];
+				index++;
+			}
+		} else if (i < words.length - 2) {
+			int index = 0;
+			while (index < 2) {
+				nextWords[index] = words[i + 1 + index];
+				index++;
+			}
+		} else if (i < words.length - 1) {
+			int index = 0;
+			while (index < 1) {
+				nextWords[index] = words[i + 1 + index];
+				index++;
+			}
+		} else {
+			assert i == words.length - 1;
+		}
+		return nextWords;
+	}
+
 }

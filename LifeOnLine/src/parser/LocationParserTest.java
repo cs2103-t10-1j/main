@@ -27,6 +27,17 @@ public class LocationParserTest {
 		assertEquals(null, lp7.getLocation());
 		LocationParser lp8 = new LocationParser("add sleep at 12.20am at \"sunday hotel\"");
 		assertEquals("sunday hotel", lp8.getLocation());
+		LocationParser lp9 = new LocationParser("add at 12.20am do");
+		assertEquals(null, lp9.getLocation());
+	}
+	
+	@Test
+	public void testRemoveDescriptionAfterTimeIfAny() {
+		LocationParser lp = new LocationParser("abc");
+		assertEquals("12.20am", lp.removeDescriptionAfterTimeIfAny("12.20am"));
+		assertEquals("12.20am", lp.removeDescriptionAfterTimeIfAny("12.20am do"));
+		assertEquals("12.20 am - 1 pm", lp.removeDescriptionAfterTimeIfAny("12.20 am - 1 pm do"));
+		assertEquals("12.20 - 1pm", lp.removeDescriptionAfterTimeIfAny("12.20 - 1pm do"));
 	}
 
 	@Test
