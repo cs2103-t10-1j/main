@@ -170,6 +170,33 @@ public class Task implements Comparable<Task> {
 			return AFTER;
 		}
 
+		else if ((that.getTaskDueDate() != null)
+				&& (this.getTaskDueDate() != null)
+				&& (this.getStartTime() != null)
+				&& (that.getStartTime() != null) && (this.getEndTime() == null)
+				&& (that.getEndTime() == null)
+				&& this.getStartTime().equals(that.getStartTime())) {
+			return EQUAL;
+		}
+
+		else if ((that.getTaskDueDate() != null)
+				&& (this.getTaskDueDate() != null)
+				&& (this.getStartTime() != null)
+				&& (that.getStartTime() != null) && (this.getEndTime() == null)
+				&& (that.getEndTime() != null)
+				&& this.getStartTime().equals(that.getStartTime())) {
+			return BEFORE;
+		}
+
+		else if ((that.getTaskDueDate() != null)
+				&& (this.getTaskDueDate() != null)
+				&& (this.getStartTime() != null)
+				&& (that.getStartTime() != null) && (this.getEndTime() != null)
+				&& (that.getEndTime() == null)
+				&& this.getStartTime().equals(that.getStartTime())) {
+			return AFTER;
+		}
+
 		// same date, null time -> equal priority
 		else if (((this.getTaskDueDate() != null) && (that.getTaskDueDate() != null))
 				&& (this.getTaskDueDate().equals(that.getTaskDueDate()))
@@ -204,8 +231,9 @@ public class Task implements Comparable<Task> {
 			return AFTER;
 		}
 
-		else
+		else {
 			return EQUAL;
+		}
 	}
 
 	/********** Comparison methods ***********/
