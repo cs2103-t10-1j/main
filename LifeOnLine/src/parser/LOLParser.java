@@ -16,8 +16,8 @@ import lol.Task;
 import lol.Time;
 
 public class LOLParser {
-	//private static Logger logger = Logger.getLogger("LOLParser");
-	//static FileHandler handler;
+	// private static Logger logger = Logger.getLogger("LOLParser");
+	// static FileHandler handler;
 
 	/*********** Methods to return task details ***************/
 
@@ -182,7 +182,7 @@ public class LOLParser {
 
 			if (startTime != null) {
 				newTask.setStartTime(startTime);
-				
+
 				if (newTask.getTaskDueDate() == null) {
 					if (startTime.isAfter(tp.getCurrentTime())) {
 						// due date is today
@@ -215,14 +215,39 @@ public class LOLParser {
 	 */
 	public static int getTaskIndex(String input) {
 		try {
-			//handler = new FileHandler("logfile%g.txt", true);
-			//logger.addHandler(handler);
-			//handler.setFormatter(new SimpleFormatter());
+			// handler = new FileHandler("logfile%g.txt", true);
+			// logger.addHandler(handler);
+			// handler.setFormatter(new SimpleFormatter());
 			// logger.log(Level.INFO, "going to start processing");
 			return Integer.parseInt(input.split(" ")[1]);
 		} catch (Exception e) {
 			// logger.log(Level.WARNING, "processing error", e);
 			return -1;
+		}
+	}
+
+	/**
+	 * Returns an array of task indices for delete/done commands, counting from
+	 * 1.
+	 * 
+	 * @param input
+	 *            user input
+	 * @return array of task indices. If any index is not an integer or no index
+	 *         is found, null is returned.
+	 */
+	public static int[] getTaskIndexArray(String input) {
+		try {
+			input = cleanUp(input);
+			String[] words = input.split(" ");
+			int[] index = new int[words.length - 1];
+
+			for (int i = 1; i < words.length; i++) {
+				index[i - 1] = Integer.parseInt(words[i]);
+			}
+			return index;
+
+		} catch (Exception e) {
+			return null;
 		}
 	}
 

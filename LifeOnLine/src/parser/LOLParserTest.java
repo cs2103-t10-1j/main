@@ -42,6 +42,16 @@ public class LOLParserTest {
 		assertEquals(6, LOLParser.getTaskIndex("edit 6 send letter sat"));
 		assertEquals(-1, LOLParser.getTaskIndex("delete tt"));
 	}
+	
+	@Test
+	public void testGetTaskIndexArray() {
+		int[] arr = { 1, 2, 3 };
+		int[] arr1 = { 2 };
+		assertArrayEquals(arr, LOLParser.getTaskIndexArray("delete 1 2 3"));
+		assertArrayEquals(arr, LOLParser.getTaskIndexArray(" done 1  2 3  "));
+		assertArrayEquals(arr1, LOLParser.getTaskIndexArray("  rm   2  "));
+		assertArrayEquals(null, LOLParser.getTaskIndexArray(" add task"));
+	}
 
 	@Test
 	public void testGetEditTask() {
