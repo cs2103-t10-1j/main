@@ -237,15 +237,8 @@ public class LOLParser {
 	 */
 	public static int[] getTaskIndexArray(String input) {
 		try {
-			input = cleanUp(input);
-			String[] words = input.split(" ");
-			int[] index = new int[words.length - 1];
-
-			for (int i = 1; i < words.length; i++) {
-				index[i - 1] = Integer.parseInt(words[i]);
-			}
-			return index;
-
+			IndexParser ip = new IndexParser(input);
+			return ip.getTaskIndexArray();
 		} catch (Exception e) {
 			return null;
 		}
