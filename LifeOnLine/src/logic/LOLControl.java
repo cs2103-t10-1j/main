@@ -119,7 +119,7 @@ public class LOLControl {
 	}
 
 	private static String executeDel(String userInput) {
-		// int taskIndex = LOLParser.getTaskIndex(userInput);
+
 		int[] taskIndices = LOLParser.getTaskIndexArray(userInput);
 		int numToDel = taskIndices.length;
 
@@ -421,61 +421,147 @@ public class LOLControl {
 	}
 
 	private static String executeDone(String userInput) {
-		int taskIndex = LOLParser.getTaskIndex(userInput);
 
-		try {
-			Task undoneTask = displayList.get(taskIndex - 1);
-			int undoneTaskStorageIndex = storageList.indexOf(undoneTask);
+		int[] taskIndices = LOLParser.getTaskIndexArray(userInput);
+		int numToDone = taskIndices.length;
 
-			if (undoneTask.getIsDone()) {
-				return Constants.FEEDBACK_DONE_FAILURE;
+		for (int i = 0; i < numToDone; i++) {
+			if ((taskIndices[i]) > displayList.size()) {
+				return Constants.FEEDBACK_MASS_DONE_FAILURE;
 			}
+		}
 
-			Task doneTask = new Task(undoneTask.getTaskDescription(),
-					undoneTask.getTaskLocation(), undoneTask.getTaskDueDate(),
-					undoneTask.getStartTime(), undoneTask.getEndTime());
+		for (int i = 0; i < numToDone; i++) {
 
-			doneTask.setIsDone(true);
+			if (numToDone == 1) {
+				Task undoneTask = displayList.get(taskIndices[i] - 1);
+				int undoneTaskStorageIndex = storageList.indexOf(undoneTask);
 
-			if (storageList.set(undoneTaskStorageIndex, doneTask)) {
-				History.emptyRedoStack();
-				History.undoEdit(doneTask, undoneTask);
-				ControlDisplay.refreshDisplay(toDoList, storageList);
-				LOLStorage.saveTasks(storageList);
-				return showFeedback(doneTask, Constants.COMMAND_DONE);
+				if (undoneTask.getIsDone()) {
+					return Constants.FEEDBACK_DONE_FAILURE;
+				}
+				Task doneTask = new Task(undoneTask.getTaskDescription(),
+						undoneTask.getTaskLocation(),
+						undoneTask.getTaskDueDate(), undoneTask.getStartTime(),
+						undoneTask.getEndTime());
+				doneTask.setIsDone(true);
+
+				if (storageList.set(undoneTaskStorageIndex, doneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(doneTask, undoneTask);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return showFeedback(doneTask, Constants.COMMAND_DONE);
+				}
 			}
-		} catch (Exception ex) {
-			logger.log(Level.WARNING, "Processing Error, task does not exist");
+			if (i != numToDone - 1) {
+				Task undoneTask = displayList.get(taskIndices[i] - 1);
+				int undoneTaskStorageIndex = storageList.indexOf(undoneTask);
+
+				Task doneTask = new Task(undoneTask.getTaskDescription(),
+						undoneTask.getTaskLocation(),
+						undoneTask.getTaskDueDate(), undoneTask.getStartTime(),
+						undoneTask.getEndTime());
+
+				doneTask.setIsDone(true);
+
+				if (storageList.set(undoneTaskStorageIndex, doneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(doneTask, undoneTask);
+					LOLStorage.saveTasks(storageList);
+				}
+			}
+			if (i == numToDone - 1) {
+				Task undoneTask = displayList.get(taskIndices[i] - 1);
+				int undoneTaskStorageIndex = storageList.indexOf(undoneTask);
+
+				Task doneTask = new Task(undoneTask.getTaskDescription(),
+						undoneTask.getTaskLocation(),
+						undoneTask.getTaskDueDate(), undoneTask.getStartTime(),
+						undoneTask.getEndTime());
+
+				doneTask.setIsDone(true);
+
+				if (storageList.set(undoneTaskStorageIndex, doneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(doneTask, undoneTask);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return Constants.FEEDBACK_MASS_DONE_SUCCESS;
+				}
+			}
 		}
 		return executeInvalid(userInput);
 	}
 
 	private static String executeNotDone(String userInput) {
-		int taskIndex = LOLParser.getTaskIndex(userInput);
+		int[] taskIndices = LOLParser.getTaskIndexArray(userInput);
+		int numToNotDone = taskIndices.length;
 
-		try {
-			Task doneTask = displayList.get(taskIndex - 1);
-			int doneTaskStorageIndex = storageList.indexOf(doneTask);
-
-			if (!doneTask.getIsDone()) {
-				return Constants.FEEDBACK_NOT_DONE_FAILURE;
+		for (int i = 0; i < numToNotDone; i++) {
+			if ((taskIndices[i]) > displayList.size()) {
+				return Constants.FEEDBACK_MASS_NOT_DONE_FAILURE;
 			}
+		}
 
-			Task notDoneTask = new Task(doneTask.getTaskDescription(),
-					doneTask.getTaskLocation(), doneTask.getTaskDueDate(),
-					doneTask.getStartTime(), doneTask.getEndTime());
+		for (int i = 0; i < numToNotDone; i++) {
 
-			notDoneTask.setIsDone(false);
+			if (numToNotDone == 1) {
+				Task doneTask = displayList.get(taskIndices[i] - 1);
+				int doneTaskStorageIndex = storageList.indexOf(doneTask);
 
-			if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
-				History.emptyRedoStack();
-				History.undoEdit(notDoneTask, doneTask);
-				ControlDisplay.refreshDisplay(toDoList, storageList);
-				LOLStorage.saveTasks(storageList);
-				return showFeedback(notDoneTask, Constants.COMMAND_NOT_DONE);
+				if (!doneTask.getIsDone()) {
+					return Constants.FEEDBACK_NOT_DONE_FAILURE;
+				}
+
+				Task notDoneTask = new Task(doneTask.getTaskDescription(),
+						doneTask.getTaskLocation(), doneTask.getTaskDueDate(),
+						doneTask.getStartTime(), doneTask.getEndTime());
+
+				notDoneTask.setIsDone(false);
+
+				if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(notDoneTask, doneTask);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return showFeedback(notDoneTask, Constants.COMMAND_NOT_DONE);
+				}
 			}
-		} catch (Exception ex) {
-			logger.log(Level.WARNING, "Processing Error, task does not exist");
+			if (i != numToNotDone - 1) {
+				Task doneTask = displayList.get(taskIndices[i] - 1);
+				int doneTaskStorageIndex = storageList.indexOf(doneTask);
+
+				Task notDoneTask = new Task(doneTask.getTaskDescription(),
+						doneTask.getTaskLocation(), doneTask.getTaskDueDate(),
+						doneTask.getStartTime(), doneTask.getEndTime());
+
+				notDoneTask.setIsDone(false);
+
+				if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(notDoneTask, doneTask);
+					LOLStorage.saveTasks(storageList);
+				}
+			}
+			if (i == numToNotDone - 1) {
+				Task doneTask = displayList.get(taskIndices[i] - 1);
+				int doneTaskStorageIndex = storageList.indexOf(doneTask);
+
+				Task notDoneTask = new Task(doneTask.getTaskDescription(),
+						doneTask.getTaskLocation(), doneTask.getTaskDueDate(),
+						doneTask.getStartTime(), doneTask.getEndTime());
+
+				notDoneTask.setIsDone(false);
+
+				if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(notDoneTask, doneTask);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return Constants.FEEDBACK_MASS_NOT_DONE_SUCCESS;
+				}
+			}
 		}
 		return executeInvalid(userInput);
 	}

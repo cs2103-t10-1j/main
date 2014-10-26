@@ -20,7 +20,7 @@ public class Constants {
 	public static final String[] DICTIONARY_SEARCH = { "search", "find" };
 	public static final String[] DICTIONARY_EDIT = { "edit" };
 	public static final String[] DICTIONARY_DONE = { "done" };
-	public static final String[] DICTIONARY_NOT_DONE = { "undone" };
+	public static final String[] DICTIONARY_NOT_DONE = { "undone", "pending" };
 	public static final String[] DICTIONARY_UNDO = { "undo" };
 	public static final String[] DICTIONARY_REDO = { "redo" };
 	public static final String[] DICTIONARY_VIEW_HOMESCREEN = { "home" };
@@ -111,8 +111,12 @@ public class Constants {
 	public static final String FEEDBACK_SEARCH_FAILURE_MULTI = "No tasks were found with the keywords: ";
 	public static final String FEEDBACK_DONE_SUCCESS = " has been completed!";
 	public static final String FEEDBACK_DONE_FAILURE = "That task has already been completed!";
+	public static final String FEEDBACK_MASS_DONE_SUCCESS = "Specified tasks have been marked as done!";
+	public static final String FEEDBACK_MASS_DONE_FAILURE = "Invalid task ID specified!";
 	public static final String FEEDBACK_NOT_DONE_SUCCESS = " is now pending completion!";
 	public static final String FEEDBACK_NOT_DONE_FAILURE = "That task is already pending completion!";
+	public static final String FEEDBACK_MASS_NOT_DONE_SUCCESS = "Specified tasks have been marked as pending!";
+	public static final String FEEDBACK_MASS_NOT_DONE_FAILURE = "Invalid task ID specified!";
 	public static final String FEEDBACK_UNDO_SUCCESS = "Last action has been undone!";
 	public static final String FEEDBACK_UNDO_FAILURE = "Nothing to undo!";
 	public static final String FEEDBACK_REDO_SUCCESS = "Redone!!";
