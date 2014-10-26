@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -23,6 +24,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 	private boolean isNewRun = true;
 	private boolean isNewMini = true;
+	private boolean isFocus;
 
 	TrayClass displayTrayIcon = new TrayClass();
 
@@ -149,8 +151,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		// Assigning global HotKeys to CTRL+L and CTRL+M
 		JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL,
 				(int) 'L');
-		JIntellitype.getInstance().registerHotKey(2, JIntellitype.MOD_CONTROL,
-				(int) 'M');
+		JIntellitype.getInstance().registerHotKey(2, 0, KeyEvent.VK_ESCAPE);
 
 		// Assign this class to be a HotKeyListener
 		JIntellitype.getInstance().addHotKeyListener(this);
@@ -167,16 +168,17 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				}
 				// Minimize GUI
 				if (aIdentifier == 2) {
-					frame.setState(ICONIFIED);
-					frame.setVisible(false);
-					if (isNewMini) {
-						TrayClass.trayIcon.displayMessage("Minimized!",
-								"CTRL + L to Restore",
-								TrayIcon.MessageType.INFO);
-						isNewMini = false;
+					if ((isFocus == true)) {
+						frame.setState(ICONIFIED);
+						frame.setVisible(false);
+						if (isNewMini) {
+							TrayClass.trayIcon.displayMessage("Minimized!",
+									"CTRL + L to Restore",
+									TrayIcon.MessageType.INFO);
+							isNewMini = false;
+						}
 					}
 				}
-
 			}
 		});
 
@@ -209,6 +211,18 @@ public class LOLGui extends JFrame implements HotkeyListener {
 							TrayIcon.MessageType.INFO);
 					isNewRun = false;
 				}
+			}
+		});
+
+		frame.addWindowFocusListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowGainedFocus(java.awt.event.WindowEvent windowEvent) {
+				isFocus = true;
+			}
+
+			@Override
+			public void windowLostFocus(java.awt.event.WindowEvent windowEvent) {
+				isFocus = false;
 			}
 		});
 
