@@ -119,18 +119,53 @@ public class LOLControl {
 	}
 
 	private static String executeDel(String userInput) {
-		int taskIndex = LOLParser.getTaskIndex(userInput);
-		Task delTask = displayList.get(taskIndex - 1);
+		// int taskIndex = LOLParser.getTaskIndex(userInput);
+		int[] taskIndices = LOLParser.getTaskIndexArray(userInput);
+		int numToDel = taskIndices.length;
 
-		if (storageList.delete(delTask)) {
-			History.emptyRedoStack();
-			History.undoDelete(delTask);
-			ControlDisplay.refreshDisplay(toDoList, storageList);
-			LOLStorage.saveTasks(storageList);
-			return showFeedback(delTask, Constants.COMMAND_DELETE);
-		} else
-			logger.log(Level.WARNING,
-					"Processing Error, deleting invalid index");
+		for (int i = 0; i < numToDel; i++) {
+			if ((taskIndices[i]) > displayList.size()) {
+				logger.log(Level.WARNING,
+						"Processing Error, deleting invalid index");
+				return Constants.FEEDBACK_MASS_DEL_FAILURE;
+			}
+		}
+
+		for (int i = 0; i < numToDel; i++) {
+			Task delTask = displayList.get(taskIndices[i] - 1);
+
+			if (numToDel == 1) {
+				if (storageList.delete(delTask)) {
+					History.emptyRedoStack();
+					History.undoDelete(delTask);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return showFeedback(delTask, Constants.COMMAND_DELETE);
+				}
+				return executeInvalid(userInput);
+			}
+
+			if (i != numToDel - 1) {
+				if (storageList.delete(delTask)) {
+					History.emptyRedoStack();
+					History.undoDelete(delTask);
+					LOLStorage.saveTasks(storageList);
+					continue;
+				}
+				return executeInvalid(userInput);
+
+			} // need to refresh screen after last index has been deleted
+			if (i == numToDel - 1) {
+				if (storageList.delete(delTask)) {
+					History.emptyRedoStack();
+					History.undoDelete(delTask);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return Constants.FEEDBACK_MASS_DEL_SUCCESS;
+				}
+				return executeInvalid(userInput);
+			}
+		}
 		return executeInvalid(userInput);
 	}
 

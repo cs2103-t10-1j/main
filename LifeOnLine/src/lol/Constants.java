@@ -15,7 +15,7 @@ public class Constants {
 
 	// Dictionaries
 	public static final String[] DICTIONARY_ADD = { "add" };
-	public static final String[] DICTIONARY_DELETE = { "delete", "rm" };
+	public static final String[] DICTIONARY_DELETE = { "delete", "rm", "del" };
 	public static final String[] DICTIONARY_SHOW = { "show" };
 	public static final String[] DICTIONARY_SEARCH = { "search", "find" };
 	public static final String[] DICTIONARY_EDIT = { "edit" };
@@ -87,6 +87,8 @@ public class Constants {
 	public static final String LINEBREAK = "<br/>" + "<center>";
 	public static final String FEEDBACK_ADD_SUCCESS = " added successfully!";
 	public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully!";
+	public static final String FEEDBACK_MASS_DEL_SUCCESS = "Mass delete performed successfully!";
+	public static final String FEEDBACK_MASS_DEL_FAILURE = "Invalid task ID specified!";
 	public static final String FEEDBACK_EDIT_SUCCESS = " was editted succesfully!";
 	public static final String FEEDBACK_SHOW_SUCCESS = "<html>Displaying search results for ";
 	public static final String FEEDBACK_SHOW_HITS_SINGLE = " task found!</center></html>";
