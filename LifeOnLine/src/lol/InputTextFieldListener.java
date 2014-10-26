@@ -20,6 +20,8 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	static StyledDocument doc1 = new DefaultStyledDocument();
 	JTextPane mainDisplayTP2;
 	static StyledDocument doc2 = new DefaultStyledDocument();
+	JTextPane mainDisplayTP3;
+	static StyledDocument doc3 = new DefaultStyledDocument();
 	JLabel label;
 	Integer i;
 
@@ -28,8 +30,9 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	// custom colors
 	final static Color DARK_ORANGE = new Color(253, 101, 0);
 	final static Color PURPLE = new Color(204, 0, 204);
+	final static Color BG = new Color(0, 129, 72);
 
-	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JLabel label, JTextField inputTF, Integer i){
+	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, Integer i){
 		this.inputTF = inputTF;
 
 		this.mainDisplayTP1 = mainDisplayTP;
@@ -38,6 +41,9 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		this.mainDisplayTP2 = mainDisplayTP2;
 		this.mainDisplayTP2.setDocument(doc2);
 		addStyleToDoc(doc2);
+		this.mainDisplayTP3 = mainDisplayTP3;
+		this.mainDisplayTP3.setDocument(doc3);
+		addStyleToDoc(doc3);
 
 		this.label = label;
 		this.i = i;
@@ -50,15 +56,31 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	public static void addStyleToDoc(StyledDocument doc){
 		Style style = doc.addStyle(Constants.FORMAT_HEADER_FLOATING, null);
 		StyleConstants.setBold(style, true);
-		StyleConstants.setForeground(style, Color.BLUE);
+		StyleConstants.setForeground(style, Color.GRAY);
+		StyleConstants.setUnderline(style, true);
+
 
 		style = doc.addStyle(Constants.FORMAT_HEADER_NORMAL, null);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, Color.BLUE);
+		StyleConstants.setUnderline(style, true);
 
-		style = doc.addStyle(Constants.FORMAT_HEADER_OVERDUE, null);
+		style = doc.addStyle(Constants.FORMAT_HEADER_UPCOMING, null);
 		StyleConstants.setBold(style, true);
-		StyleConstants.setForeground(style, Color.RED);
+		StyleConstants.setForeground(style, Color.BLUE);
+		StyleConstants.setUnderline(style, true);
+		
+		style = doc.addStyle(Constants.FORMAT_HEADER_DATE, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setItalic(style, true);
+		StyleConstants.setForeground(style, Color.BLACK);
+		
+		
+		
+		
+		style = doc.addStyle(Constants.FORMAT_TICK, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, BG);
 
 		style = doc.addStyle(Constants.FORMAT_DESCRIPTION, null);
 
@@ -71,7 +93,9 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		style = doc.addStyle(Constants.FORMAT_HEADER_OVERDUE, null);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, Color.RED);
+		StyleConstants.setUnderline(style, true);
 
+		
 		style = doc.addStyle(Constants.FORMAT_TIME_STRIKE, null);
 		StyleConstants.setForeground(style, DARK_ORANGE);
 		StyleConstants.setStrikeThrough(style, true);
@@ -116,6 +140,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	public void refreshMainDisplay(TaskList<Task> taskList){
 		clear(mainDisplayTP1);
 		clear(mainDisplayTP2);
+		clear(mainDisplayTP3);
 
 		showInMainDisplayTP(taskList);
 	}
@@ -128,6 +153,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		FormatToString.clearAllLinkedList();
 		FormatToString.hasOverdueHeader = false;
 		FormatToString.hasFloatingHeader = false;
+		FormatToString.hasUpcomingHeader = false;
 		FormatToString.isFirst = true;
 
 		for(int i = 0; i < taskList.size(); i++){
@@ -140,9 +166,11 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 			int toBeDisplayedIn = 0;
 			//add header
-			if(task.getIsOverdue()){
-				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP1);
-				toBeDisplayedIn = Constants.DISPLAY_IN_TP1;
+			if(task.getIsOverdue() && !currentDueDate.equals(previousDueDate)){
+				previousDueDate = currentDueDate;
+				
+				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP3);
+				toBeDisplayedIn = Constants.DISPLAY_IN_TP3;
 			}
 			else if(currentDueDate != null && !currentDueDate.equals(previousDueDate)){
 				previousDueDate = currentDueDate;
@@ -161,15 +189,15 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 			taskToFormat.format(!isHeader, task, i, toBeDisplayedIn);
 			
 			//add a line between overdue task and upcoming task
-			if(i+1 < taskList.size() && task.getIsOverdue() && !taskList.get(i+1).getIsOverdue() && taskList.get(i+1).getTaskDueDate() != null){
+			/*if(i+1 < taskList.size() && task.getIsOverdue() && !taskList.get(i+1).getIsOverdue() && taskList.get(i+1).getTaskDueDate() != null){
 				FormatToString.getLinkedList(1).add(new StringWithFormat("=================================" + "\n", Constants.FORMAT_HEADER_OVERDUE));
-			}
+			}*/
 		}
 
-		addToDisplay(doc1, doc2);
+		addToDisplay(doc1, doc2, doc3);
 	}
 
-	public static void addToDisplay(StyledDocument doc, StyledDocument doc2){
+	public static void addToDisplay(StyledDocument doc, StyledDocument doc2, StyledDocument doc3){
 		try {
 			for(int j = 1; j <= FormatToString.getLinkedListNum(); j++){
 				LinkedList<StringWithFormat> strToShow = FormatToString.getLinkedList(j);
@@ -180,6 +208,9 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 					}
 					else if(j==2){
 						doc2.insertString(doc2.getLength(), strToShow.get(i).getString(), doc2.getStyle(strToShow.get(i).getFormat()));
+					}
+					else if(j==3){
+						doc3.insertString(doc3.getLength(), strToShow.get(i).getString(), doc3.getStyle(strToShow.get(i).getFormat()));
 					}
 				}
 			}

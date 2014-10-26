@@ -92,7 +92,9 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				.createEtchedBorder(EtchedBorder.LOWERED));
 		mainDisplayTP1.setText("**Upcoming Tasks List**");
 		JScrollPane scrollPane = new JScrollPane(mainDisplayTP1);
-		mainDisplayPanel.add(scrollPane);
+		
+		JPanel mainDisplayPanelLeft = new JPanel();
+		mainDisplayPanelLeft.setLayout(new GridLayout(2,1));
 
 		final JTextPane mainDisplayTP2 = new JTextPane();
 		mainDisplayTP2.setEditable(false);
@@ -100,7 +102,21 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		mainDisplayTP2.setBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED));
 		JScrollPane scrollPane2 = new JScrollPane(mainDisplayTP2);
-		mainDisplayPanel.add(scrollPane2);
+		
+		
+		
+		final JTextPane mainDisplayTP3 = new JTextPane();
+		mainDisplayTP3.setEditable(false);
+		mainDisplayTP3.setText("**Overdue**");
+		mainDisplayTP3.setBorder(BorderFactory
+				.createEtchedBorder(EtchedBorder.LOWERED));
+		JScrollPane scrollPane3 = new JScrollPane(mainDisplayTP3);
+		mainDisplayPanelLeft.add(scrollPane3);
+		mainDisplayPanelLeft.add(scrollPane2);
+		
+		
+		mainDisplayPanel.add(mainDisplayPanelLeft);
+		mainDisplayPanel.add(scrollPane);
 
 		displayPanel.add(mainDisplayPanel, BorderLayout.CENTER);
 
@@ -138,7 +154,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		// show Tasks stored in storage on initial run
 		try {
 			LOLControl.executeUserInput("home");
-			new InputTextFieldListener(mainDisplayTP1, mainDisplayTP2, label,
+			new InputTextFieldListener(mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label,
 					inputTF, i);
 		} catch (Exception e) {
 			// do nothing
@@ -269,8 +285,23 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			}
 		});
 
+		mainDisplayTP3.addFocusListener(new FocusAdapter() {
+			Border original = mainDisplayTP3.getBorder();
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				mainDisplayTP3.setBorder(BorderFactory.createCompoundBorder(
+						BorderFactory.createLoweredBevelBorder(),
+						BorderFactory.createLineBorder(Color.BLACK)));
+			}
+
+			public void focusLost(FocusEvent e) {
+				mainDisplayTP3.setBorder(original);
+			}
+		});
+
 		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP1,
-				mainDisplayTP2, label, inputTF, i));
+				mainDisplayTP2, mainDisplayTP3, label, inputTF, i));
 
 	}
 

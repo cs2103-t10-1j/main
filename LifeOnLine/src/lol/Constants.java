@@ -161,22 +161,28 @@ public class Constants {
 	public static final String ERROR_MULTIPLE_LOCATION = "Error! More than one location.";
 
 	// constants used in GUI
-	final static String HEADER_OVERDUE = "Overdue Task";
-	final static String HEADER_FLOATING = "Task With No date";
+	final static String HEADER_OVERDUE = "Overdue Tasks";
+	final static String HEADER_FLOATING = "Tasks With No date";
+	final static String HEADER_UPCOMING = "Upcoming Tasks";
 
 	final static String FORMAT_HEADER_OVERDUE = "overdue header";
 	final static String FORMAT_HEADER_FLOATING = "floating header";
 	final static String FORMAT_HEADER_NORMAL = "normal header";
+	final static String FORMAT_HEADER_UPCOMING = "upcoming header";
 	final static String FORMAT_TIME = "time";
 	final static String FORMAT_DESCRIPTION = "description";
 	final static String FORMAT_LOCATION = "location";
 	final static String FORMAT_OVERDUE = "overdue";
 	final static String FORMAT_NONE = "null";
+	final static String FORMAT_TICK = "tick mark";
 	final static String FORMAT_TIME_STRIKE = "time strike";
 	final static String FORMAT_DESCRIPTION_STRIKE = "description strike";
 	final static String FORMAT_LOCATION_STRIKE = "location strike";
 	final static String FORMAT_OVERDUE_STRIKE = "overdue strike";
+	final static String FORMAT_HEADER_DATE = "date header";
+	
+	final static int DISPLAY_IN_TP1 = 1; //upcoming
+	final static int DISPLAY_IN_TP2 = 2; //no date
+	final static int DISPLAY_IN_TP3 = 3; //overdue
 
-	final static int DISPLAY_IN_TP1 = 1;
-	final static int DISPLAY_IN_TP2 = 2;
 }
