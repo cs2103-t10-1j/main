@@ -1,10 +1,14 @@
 package lol;
 
 public class Constants {
+	
+	public static final String WELCOME_MESSAGE = "Type in your task and hit enter to ADD. \n"
+			+ "For more information on other commands type HELP and hit enter.";
 	// Limit for number of days before current day for which task without year
 	// will be entered as overdue task
 	public static final int DAYS_OFFSET = 7;
 
+	public static final int REFRESH_TIME = 5000; //refers to the time in milliseconds
 	// File name
 	public static final String FILE_NAME = "LOLTaskList.txt";
 	// Separators

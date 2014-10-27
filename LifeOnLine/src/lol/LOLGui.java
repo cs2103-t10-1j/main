@@ -3,6 +3,7 @@ package lol;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
+import javax.swing.Timer;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -120,7 +121,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		displayPanel.add(mainDisplayPanel, BorderLayout.CENTER);
 
-		JLabel label = new JLabel("Welcome to Life on Line");
+		final JLabel label = new JLabel("Welcome to Life on Line");
 		feedbackPanel.add(label);
 
 		/*
@@ -150,17 +151,24 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		inputTF.requestFocus();
-
-		// show Tasks stored in storage on initial run
-		try {
-			LOLControl.executeUserInput("home");
-			new InputTextFieldListener(mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label,
-					inputTF, i);
-		} catch (Exception e) {
-			// do nothing
-		}
-		TaskList<Task> taskList = LOLControl.getTaskList();
-		InputTextFieldListener.showInMainDisplayTP(taskList);
+		
+		Timer timer = new Timer(Constants.REFRESH_TIME, new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent ae) {
+		    	try {
+					LOLControl.executeUserInput("home");
+				} catch (Exception e) {
+					// do nothing
+				}
+				TaskList<Task> taskList = LOLControl.getTaskList();
+				InputTextFieldListener textfield = new InputTextFieldListener(mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label,
+						inputTF, i);
+				textfield.refreshMainDisplay(taskList);
+				System.out.println("refreshed");
+		    }
+		});
+		timer.setInitialDelay(0); //to start first refresh after 0s when program opens
+		timer.start();
 
 		// **HOTKEY-INTERFACE** //
 
@@ -299,7 +307,8 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				mainDisplayTP3.setBorder(original);
 			}
 		});
-
+        
+		JOptionPane.showMessageDialog (null, Constants.WELCOME_MESSAGE, "Welcome to LOL", JOptionPane.INFORMATION_MESSAGE);
 		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP1,
 				mainDisplayTP2, mainDisplayTP3, label, inputTF, i));
 
