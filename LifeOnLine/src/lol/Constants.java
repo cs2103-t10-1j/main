@@ -8,7 +8,7 @@ public class Constants {
 	// will be entered as overdue task
 	public static final int DAYS_OFFSET = 7;
 
-	public static final int REFRESH_TIME = 5000; //refers to the time in milliseconds
+	public static final int REFRESH_TIME = 60 * 1000; //refers to the time in milliseconds
 	// File name
 	public static final String FILE_NAME = "LOLTaskList.txt";
 	// Separators

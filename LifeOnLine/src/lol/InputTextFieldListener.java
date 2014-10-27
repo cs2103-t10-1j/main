@@ -1,10 +1,16 @@
 package lol;
 
 import java.awt.Color;
-import java.awt.event.*;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
@@ -14,7 +20,7 @@ import javax.swing.text.StyledDocument;
 import logic.LOLControl;
 
 public class InputTextFieldListener implements ActionListener, KeyListener {
-	final String[] commands = {"", "add ", "delete ", "edit ", "done ", "undo", "redo"};
+	final String[] commands = {"", "add ", "delete ", "edit ", "done ", "undo", "redo", "search", "show", "exit"};
 	JTextField inputTF;
 	JTextPane mainDisplayTP1;
 	static StyledDocument doc1 = new DefaultStyledDocument();
@@ -31,10 +37,31 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final static Color DARK_ORANGE = new Color(253, 101, 0);
 	final static Color PURPLE = new Color(204, 0, 204);
 	final static Color BG = new Color(0, 129, 72);
+	final static Color DARK_BLUE = new Color(3, 97, 148);
+	final static Color MEDIUM_BLUE = new Color(82, 161, 204);
+	
+	// fonts
+	//final static Font TREBUCHET_12 = new Font("Verdana", Font.PLAIN, 12);
+	final static Font TREBUCHET_BOLD_14 = new Font("Trebuchet MS", Font.BOLD, 14);
+	final static Font TREBUCHET_14 = new Font("Trebuchet MS", Font.PLAIN, 14);
 
 	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, Integer i){
 		this.inputTF = inputTF;
 
+		// Welcome to LifeOnLine
+		label.setFont(TREBUCHET_BOLD_14);
+		
+		// Tasks with no date
+		mainDisplayTP2.setFont(TREBUCHET_14);
+		
+		// Upcoming tasks
+		mainDisplayTP.setFont(TREBUCHET_14);
+		
+		// Overdue tasks
+		mainDisplayTP3.setFont(TREBUCHET_14);
+		
+		inputTF.setFont(TREBUCHET_14);
+		
 		this.mainDisplayTP1 = mainDisplayTP;
 		this.mainDisplayTP1.setDocument(doc1);
 		addStyleToDoc(doc1);
@@ -44,7 +71,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		this.mainDisplayTP3 = mainDisplayTP3;
 		this.mainDisplayTP3.setDocument(doc3);
 		addStyleToDoc(doc3);
-
+		
 		this.label = label;
 		this.i = i;
 		inputTF.addKeyListener(this);
@@ -54,27 +81,33 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	//different type and to display time, location and description of task in different 
 	//font type
 	public static void addStyleToDoc(StyledDocument doc){
+		// header for floating tasks
 		Style style = doc.addStyle(Constants.FORMAT_HEADER_FLOATING, null);
+		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setBold(style, true);
-		StyleConstants.setForeground(style, Color.GRAY);
-		StyleConstants.setUnderline(style, true);
+		StyleConstants.setForeground(style, DARK_BLUE);
+		//StyleConstants.setUnderline(style, true);
 
 
 		style = doc.addStyle(Constants.FORMAT_HEADER_NORMAL, null);
+		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, Color.BLUE);
-		StyleConstants.setUnderline(style, true);
+		//StyleConstants.setUnderline(style, true);
 
+		// header for upcoming tasks
 		style = doc.addStyle(Constants.FORMAT_HEADER_UPCOMING, null);
+		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setBold(style, true);
-		StyleConstants.setForeground(style, Color.BLUE);
-		StyleConstants.setUnderline(style, true);
+		StyleConstants.setForeground(style, DARK_BLUE);
+		//StyleConstants.setUnderline(style, true);
 		
 		style = doc.addStyle(Constants.FORMAT_HEADER_DATE, null);
+		StyleConstants.setFontSize(style, 14);
 		StyleConstants.setBold(style, true);
-		StyleConstants.setItalic(style, true);
-		StyleConstants.setForeground(style, Color.BLACK);
-		StyleConstants.setUnderline(style, true);
+		//StyleConstants.setItalic(style, true);
+		StyleConstants.setForeground(style, MEDIUM_BLUE);
+		//StyleConstants.setUnderline(style, true);
 		
 		style = doc.addStyle(Constants.FORMAT_NUMBER, null);
 		StyleConstants.setBold(style, true);
@@ -87,31 +120,40 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		StyleConstants.setForeground(style, BG);
 
 		style = doc.addStyle(Constants.FORMAT_DESCRIPTION, null);
+		StyleConstants.setFontSize(style, 14);
 
 		style = doc.addStyle(Constants.FORMAT_TIME, null);
+		StyleConstants.setFontSize(style, 14);
 		StyleConstants.setForeground(style, DARK_ORANGE);
 
 		style = doc.addStyle(Constants.FORMAT_LOCATION, null);
+		StyleConstants.setFontSize(style, 14);
 		StyleConstants.setForeground(style, PURPLE);
 
+		// header for overdue tasks
 		style = doc.addStyle(Constants.FORMAT_HEADER_OVERDUE, null);
+		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, Color.RED);
-		StyleConstants.setUnderline(style, true);
+		//StyleConstants.setUnderline(style, true);
 
 		
 		style = doc.addStyle(Constants.FORMAT_TIME_STRIKE, null);
+		StyleConstants.setFontSize(style, 14);
 		StyleConstants.setForeground(style, DARK_ORANGE);
 		StyleConstants.setStrikeThrough(style, true);
 
 		style = doc.addStyle(Constants.FORMAT_DESCRIPTION_STRIKE, null);
+		StyleConstants.setFontSize(style, 14);
 		StyleConstants.setStrikeThrough(style, true);
 
 		style = doc.addStyle(Constants.FORMAT_LOCATION_STRIKE, null);
+		StyleConstants.setFontSize(style, 14);
 		StyleConstants.setForeground(style, PURPLE);
 		StyleConstants.setStrikeThrough(style, true);
 
 		style = doc.addStyle(Constants.FORMAT_OVERDUE_STRIKE, null);
+		StyleConstants.setFontSize(style, 14);
 		StyleConstants.setForeground(style, Color.RED);
 		StyleConstants.setStrikeThrough(style, true);
 	}
