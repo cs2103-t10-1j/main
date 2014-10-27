@@ -37,9 +37,11 @@ public class DescriptionParserTest {
 	}
 	
 	@Test
-	public void testGetDescriptionForEdit() {
+	public void testGetDescriptionForEdit() throws Exception {
 		DescriptionParser dp = new DescriptionParser("do something 8-10pm");
 		assertEquals("do something", dp.getDescriptionForEdit());
+		DescriptionParser dp3 = new DescriptionParser("\"must do something\" 8-10pm");
+		assertEquals("must do something", dp3.getDescriptionForEdit());
 		DescriptionParser dp1 = new DescriptionParser("at post office");
 		assertEquals(null, dp1.getDescriptionForEdit());
 		DescriptionParser dp2 = new DescriptionParser("11 dec 8-10pm");

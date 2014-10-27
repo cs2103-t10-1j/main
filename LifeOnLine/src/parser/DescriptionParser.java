@@ -135,14 +135,79 @@ public class DescriptionParser {
 	/**
 	 * This method is called with user input without the command name and index.
 	 * 
-	 * @return
+	 * @return description for edit command
 	 */
-	public String getDescriptionForEdit() {
+	public String getDescriptionForEdit() throws Exception {
 		cleanUp();
+		String input = getUserInput();
+
+		// check for double quotes
+		Pattern p = Pattern.compile("\"");
+		Matcher m = p.matcher(input);
+
+		int countDoubleQuotes = countNumberOfDoubleQuotes();
+
+		// only location and description can be enclosed in double quotes
+		// more than 4 quotes and odd number of quotes are invalid
+		if (countDoubleQuotes % 2 == 1 || countDoubleQuotes > 4) {
+			throw new Exception("Invaild number of quotes");
+		}
+
+		if (countDoubleQuotes == 2) { // one parameter within quotes
+			int startQuoteIndex = 0, endQuoteIndex = 0, count = 0;
+			while (m.find()) {
+				count++;
+				if (count == 1) {
+					startQuoteIndex = m.start();
+				} else {
+					assert count == 2;
+					endQuoteIndex = m.start();
+				}
+			}
+
+			// if word preceding the quote is not "at", the quote encloses a
+			// description, else it contains a location
+			if (!getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase("at")) {
+				return cleanUp(input.substring(startQuoteIndex + 1,
+						endQuoteIndex));
+			}
+
+		} else if (countDoubleQuotes == 4) { // two parameters within quotes
+
+			int firstQuoteStart = 0, firstQuoteEnd = 0, secondQuoteStart = 0, secondQuoteEnd = 0, count = 0;
+			while (m.find()) {
+				count++;
+				if (count == 1) {
+					firstQuoteStart = m.start();
+				} else if (count == 2) {
+					firstQuoteEnd = m.start();
+				} else if (count == 3) {
+					secondQuoteStart = m.start();
+				} else {
+					assert count == 4;
+					secondQuoteEnd = m.start();
+				}
+			}
+			
+			// if word preceding the quote is not "at", the quote encloses a
+			// description, else it contains a location
+			if (!getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase("at")) {
+				return cleanUp(input.substring(firstQuoteStart + 1,
+						firstQuoteEnd));
+			}
+
+			if (!getWordBeforeQuote(secondQuoteStart)
+					.equalsIgnoreCase("at")) {
+				return cleanUp(input.substring(secondQuoteStart + 1,
+						secondQuoteEnd));
+			}
+		}
+		
+		// either no double quotes in input or no description found within
+		// double quotes
+
 		// user input without command name and index
-		// for example, for input "edit 3 do something today",
-		// inputWithoutCommandAndIndex is "do something today"
-		String inputWithoutCommandAndIndex = getUserInput();
+		String inputWithoutCommandAndIndex = removeWordsWithinQuotes(input);
 
 		LocationParser lp = new LocationParser(inputWithoutCommandAndIndex);
 		String inputWithoutLocation = lp.getUserInputWithoutLocation();
