@@ -123,7 +123,7 @@ public class FormatToString {
 		strToShowTemp
 				.add(new StringWithFormat(newLine(), Constants.FORMAT_NONE));
 		strToShowTemp.add(new StringWithFormat(numbering(i),
-				Constants.FORMAT_HEADER_DATE));
+				Constants.FORMAT_NUMBER));
 
 		// desciption
 		if (isDone) {
@@ -199,19 +199,19 @@ public class FormatToString {
 		case 1:
 			if(strToShow1.isEmpty()){
 				strToShow1
-				.add(new StringWithFormat("YOU DO NOT HAVE ANY UPCOMING TASKS. ADD NOW!", Constants.FORMAT_HEADER_UPCOMING));
+				.add(new StringWithFormat("You do not have any upcoming tasks. ADD NOW!", Constants.FORMAT_NONE));
 			}
 			return strToShow1;
 		case 2:
 			if(strToShow2.isEmpty()){
 				strToShow2
-				.add(new StringWithFormat("NOT A SINGLE TASK WITHOUT A DATE..HAVE SOME TO ADD?", Constants.FORMAT_HEADER_FLOATING));
+				.add(new StringWithFormat("Not a single task without date..HAVE SOME TO ADD?", Constants.FORMAT_NONE));
 			}
 			return strToShow2;
 		case 3:
 			if(strToShow3.isEmpty()){
 				strToShow3
-				.add(new StringWithFormat("NO OVERDUE TASKS..YOU ARE ON LINE!", Constants.FORMAT_HEADER_OVERDUE));
+				.add(new StringWithFormat("No overdue tasks..THATS GREAT!", Constants.FORMAT_NONE));
 			}
 			return strToShow3;
 		default:

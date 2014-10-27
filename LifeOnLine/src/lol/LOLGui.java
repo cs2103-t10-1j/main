@@ -114,9 +114,9 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		mainDisplayPanelLeft.add(scrollPane3);
 		mainDisplayPanelLeft.add(scrollPane2);
 		
-		
-		mainDisplayPanel.add(mainDisplayPanelLeft);
 		mainDisplayPanel.add(scrollPane);
+		mainDisplayPanel.add(mainDisplayPanelLeft);
+		
 
 		displayPanel.add(mainDisplayPanel, BorderLayout.CENTER);
 

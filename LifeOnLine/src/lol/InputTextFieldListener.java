@@ -74,8 +74,12 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		StyleConstants.setBold(style, true);
 		StyleConstants.setItalic(style, true);
 		StyleConstants.setForeground(style, Color.BLACK);
+		StyleConstants.setUnderline(style, true);
 		
-		
+		style = doc.addStyle(Constants.FORMAT_NUMBER, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setItalic(style, true);
+		StyleConstants.setForeground(style, Color.BLACK);
 		
 		
 		style = doc.addStyle(Constants.FORMAT_TICK, null);
