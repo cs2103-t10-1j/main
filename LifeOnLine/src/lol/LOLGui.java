@@ -3,6 +3,7 @@ package lol;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
+import javax.swing.text.DefaultCaret;
 import javax.swing.Timer;
 
 import java.awt.*;
@@ -93,9 +94,11 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				.createEtchedBorder(EtchedBorder.LOWERED));
 		mainDisplayTP1.setText("**Upcoming Tasks List**");
 		JScrollPane scrollPane = new JScrollPane(mainDisplayTP1);
-		
+		DefaultCaret caret1 = (DefaultCaret) mainDisplayTP1.getCaret();
+		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+
 		JPanel mainDisplayPanelLeft = new JPanel();
-		mainDisplayPanelLeft.setLayout(new GridLayout(2,1));
+		mainDisplayPanelLeft.setLayout(new GridLayout(2, 1));
 
 		final JTextPane mainDisplayTP2 = new JTextPane();
 		mainDisplayTP2.setEditable(false);
@@ -103,21 +106,22 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		mainDisplayTP2.setBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED));
 		JScrollPane scrollPane2 = new JScrollPane(mainDisplayTP2);
-		
-		
-		
+		DefaultCaret caret2 = (DefaultCaret) mainDisplayTP2.getCaret();
+		caret2.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+
 		final JTextPane mainDisplayTP3 = new JTextPane();
 		mainDisplayTP3.setEditable(false);
 		mainDisplayTP3.setText("**Overdue**");
 		mainDisplayTP3.setBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED));
 		JScrollPane scrollPane3 = new JScrollPane(mainDisplayTP3);
+		DefaultCaret caret3 = (DefaultCaret) mainDisplayTP3.getCaret();
+		caret3.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		mainDisplayPanelLeft.add(scrollPane3);
 		mainDisplayPanelLeft.add(scrollPane2);
-		
+
 		mainDisplayPanel.add(scrollPane);
 		mainDisplayPanel.add(mainDisplayPanelLeft);
-		
 
 		displayPanel.add(mainDisplayPanel, BorderLayout.CENTER);
 
@@ -151,23 +155,25 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		inputTF.requestFocus();
-		
+
 		Timer timer = new Timer(Constants.REFRESH_TIME, new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent ae) {
-		    	try {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				try {
 					LOLControl.executeUserInput("home");
 				} catch (Exception e) {
 					// do nothing
 				}
 				TaskList<Task> taskList = LOLControl.getTaskList();
-				InputTextFieldListener textfield = new InputTextFieldListener(mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label,
+				InputTextFieldListener textfield = new InputTextFieldListener(
+						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label,
 						inputTF, i);
 				textfield.refreshMainDisplay(taskList);
 				System.out.println("refreshed");
-		    }
+			}
 		});
-		timer.setInitialDelay(0); //to start first refresh after 0s when program opens
+		timer.setInitialDelay(0); // to start first refresh after 0s when
+									// program opens
 		timer.start();
 
 		// **HOTKEY-INTERFACE** //
@@ -307,8 +313,9 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				mainDisplayTP3.setBorder(original);
 			}
 		});
-        
-		JOptionPane.showMessageDialog (null, Constants.WELCOME_MESSAGE, "Welcome to LOL", JOptionPane.INFORMATION_MESSAGE);
+
+		JOptionPane.showMessageDialog(null, Constants.WELCOME_MESSAGE,
+				"Welcome to LOL", JOptionPane.INFORMATION_MESSAGE);
 		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP1,
 				mainDisplayTP2, mainDisplayTP3, label, inputTF, i));
 
