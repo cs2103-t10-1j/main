@@ -13,6 +13,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import com.melloware.jintellitype.HotkeyListener;
 import com.melloware.jintellitype.JIntellitype;
@@ -22,6 +23,8 @@ import logic.LOLControl;
 
 @SuppressWarnings("serial")
 public class LOLGui extends JFrame implements HotkeyListener {
+	
+	public static ArrayList<String> commands = new ArrayList<String>();
 
 	private boolean isNewRun = true;
 	private boolean isNewMini = true;
@@ -162,7 +165,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				}
 				TaskList<Task> taskList = LOLControl.getTaskList();
 				InputTextFieldListener textfield = new InputTextFieldListener(mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label,
-						inputTF, i);
+						inputTF, commands.size());
 				textfield.refreshMainDisplay(taskList);
 				System.out.println("refreshed");
 		    }
@@ -310,7 +313,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
         
 		JOptionPane.showMessageDialog (null, Constants.WELCOME_MESSAGE, "Welcome to LOL", JOptionPane.INFORMATION_MESSAGE);
 		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP1,
-				mainDisplayTP2, mainDisplayTP3, label, inputTF, i));
+				mainDisplayTP2, mainDisplayTP3, label, inputTF, commands.size()));
 
 	}
 

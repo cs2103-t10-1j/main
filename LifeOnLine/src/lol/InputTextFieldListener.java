@@ -20,7 +20,6 @@ import javax.swing.text.StyledDocument;
 import logic.LOLControl;
 
 public class InputTextFieldListener implements ActionListener, KeyListener {
-	final String[] commands = {"", "add ", "delete ", "edit ", "done ", "undo", "redo", "search", "show", "exit"};
 	JTextField inputTF;
 	JTextPane mainDisplayTP1;
 	static StyledDocument doc1 = new DefaultStyledDocument();
@@ -29,7 +28,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	JTextPane mainDisplayTP3;
 	static StyledDocument doc3 = new DefaultStyledDocument();
 	JLabel label;
-	Integer i;
+	int size;
 
 	final static boolean isHeader = true;
 	
@@ -45,7 +44,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final static Font TREBUCHET_BOLD_14 = new Font("Trebuchet MS", Font.BOLD, 14);
 	final static Font TREBUCHET_14 = new Font("Trebuchet MS", Font.PLAIN, 14);
 
-	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, Integer i){
+	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, int size){
 		this.inputTF = inputTF;
 
 		// Welcome to LifeOnLine
@@ -73,7 +72,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		addStyleToDoc(doc3);
 		
 		this.label = label;
-		this.i = i;
+		this.size = size;
 		inputTF.addKeyListener(this);
 	}
 
@@ -161,6 +160,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent event){ 
 		String inputStr = inputTF.getText();
+		LOLGui.commands.add(inputStr);
 		try {
 			refreshFeedbackDisplay(inputStr);
 		} catch (Exception e) {
@@ -171,7 +171,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		refreshMainDisplay(taskList);
 
 		clear(inputTF);
-		i = new Integer(0);
+		size = LOLGui.commands.size();
 	}
 
 	public void refreshFeedbackDisplay(String inputStr) throws Exception{
@@ -193,6 +193,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 	public static void showInMainDisplayTP(TaskList<Task> taskList){
 		Date previousDueDate = new Date(-1, -1, -9999, null); //set as impossible date
+		Task previousTask = new Task("ŒŒŒŒŒŒŒŒ","",new Date(), new Time(),new Time()); //impossible task
 
 		FormatToString taskToFormat = new FormatToString();
 		//below should be removed and added to another class
@@ -214,17 +215,28 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 			//add header
 			if(task.getIsOverdue() && !currentDueDate.equals(previousDueDate)){
 				previousDueDate = currentDueDate;
+				previousTask = task;
 				
 				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP3);
 				toBeDisplayedIn = Constants.DISPLAY_IN_TP3;
 			}
-			else if(currentDueDate != null && !currentDueDate.equals(previousDueDate)){
+			else if(previousTask.getIsOverdue() && !task.getIsOverdue() && currentDueDate != null && currentDueDate.equals(previousDueDate)){
 				previousDueDate = currentDueDate;
+				previousTask=task;
 
 				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP1);
 				toBeDisplayedIn = Constants.DISPLAY_IN_TP1;
 			}
+			else if(currentDueDate != null && !currentDueDate.equals(previousDueDate)){
+				previousDueDate = currentDueDate;
+				previousTask=task;
+
+				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP1);
+				toBeDisplayedIn = Constants.DISPLAY_IN_TP1;
+			}
+			
 			else if(currentDueDate == null){
+				previousTask=task;
 				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP2);
 				toBeDisplayedIn = Constants.DISPLAY_IN_TP2;
 			}
@@ -286,18 +298,27 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 	/** Handle the key-released event from the text field. */
 	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			i = new Integer((i.intValue() + 1)%commands.length);
-			inputTF.setText(commands[i.intValue()]);
-			inputTF.grabFocus();
-		}
+		
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			if((i.intValue()-1)<0)
-				i = new Integer((i.intValue() - 1)+commands.length);
-			else
-				i = new Integer((i.intValue() - 1));
-			inputTF.setText(commands[i.intValue()]);
+			if(!LOLGui.commands.isEmpty()){
+			int index = size-1;
+			if(index>=0){
+			inputTF.setText(LOLGui.commands.get(index));
 			inputTF.grabFocus();
+			size--;
+			}
+		}
+		}
+		
+		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			if(!LOLGui.commands.isEmpty()){
+			int index =size+1;
+			if(index>=0&&index<LOLGui.commands.size()){
+			inputTF.setText(LOLGui.commands.get(index));
+			inputTF.grabFocus();
+			size++;
+			}
+		}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_HOME)
 			try{ refreshFeedbackDisplay("home");
