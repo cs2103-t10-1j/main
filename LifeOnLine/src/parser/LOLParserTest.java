@@ -54,7 +54,7 @@ public class LOLParserTest {
 	}
 
 	@Test
-	public void testGetEditTask() {
+	public void testGetEditTask() throws Exception {
 		assertEquals(new Task("buy milk", "supermarket", null),
 				LOLParser.getEditTask("edit 6 at supermarket", new Task(
 						"buy milk", null, null)));

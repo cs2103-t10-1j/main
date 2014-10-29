@@ -104,11 +104,11 @@ public class LOLParser {
 	 *            Task to be edited
 	 * @return Task with modified or newly added parameters
 	 */
-	public static Task getEditTask(String input, Task task) {
+	public static Task getEditTask(String input, Task task) throws Exception {
 		try {
 			input = cleanUp(input);
 			if (countWords(input) <= 2) {
-				return null;
+				throw new Exception("Invalid parameters for edit command");
 			}
 			String inputWithoutCommandAndIndex = cleanUp(removeFirst2Words(input));
 			Task newTask = task;
@@ -200,7 +200,7 @@ public class LOLParser {
 
 			return newTask;
 		} catch (Exception e) {
-			return task;
+			throw new Exception("Invalid parameters for edit command");
 		}
 	}
 

@@ -169,7 +169,7 @@ public class LOLControl {
 		return executeInvalid(userInput);
 	}
 
-	private static String executeEdit(String userInput) {
+	private static String executeEdit(String userInput) throws Exception {
 		int taskIndex = LOLParser.getTaskIndex(userInput);
 		Task taskAtIndex = displayList.get(taskIndex - 1);
 		Task oldTask = new Task(taskAtIndex.getTaskDescription(),
