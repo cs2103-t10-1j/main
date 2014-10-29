@@ -41,10 +41,11 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	
 	// fonts
 	final static Font TREBUCHET_14 = new Font("Trebuchet MS", Font.PLAIN, 14);
+	final static Font TREBUCHET_BOLD_14 = new Font("Trebuchet MS", Font.BOLD, 14);
 	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD, 16);
 	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
 
-	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, int size){
+	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, JLabel commandsLabel1, JLabel commandsLabel2, int size){
 		this.inputTF = inputTF;
 
 		// Welcome to LifeOnLine
@@ -59,7 +60,12 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		// Overdue tasks
 		mainDisplayTP3.setFont(TREBUCHET_16);
 		
-		inputTF.setFont(TREBUCHET_14);
+		inputTF.setFont(TREBUCHET_BOLD_16);
+		
+		commandsLabel1.setFont(TREBUCHET_14);
+		commandsLabel1.setForeground(Color.WHITE);
+		commandsLabel2.setFont(TREBUCHET_14);
+		commandsLabel2.setForeground(Color.WHITE);
 		
 		this.mainDisplayTP1 = mainDisplayTP;
 		this.mainDisplayTP1.setDocument(doc1);

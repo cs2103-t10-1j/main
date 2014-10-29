@@ -40,6 +40,8 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	final static Color BG2 = new Color(217, 232, 245);
 	final static Color BG3 = new Color(145, 190, 212);
 	final static Color BG4 = new Color(48, 66, 105);
+	final static Color DARK_BLUE = new Color(3, 97, 148);
+	
 	Border compound = BorderFactory.createCompoundBorder(
 			BorderFactory.createRaisedBevelBorder(),
 			BorderFactory.createLoweredBevelBorder());
@@ -75,20 +77,30 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		JPanel displayPanel = new JPanel();
 		displayPanel.setBackground(BG4);
 		displayPanel.setLayout(new BorderLayout());
+		
 		JPanel feedbackPanel = new JPanel();
 		feedbackPanel.setLayout(new FlowLayout());
 		feedbackPanel.setBackground(BG2);
+		
 		JPanel inputPanel = new JPanel();
 		inputPanel.setBackground(BG3);
 		inputPanel.setLayout(new FlowLayout());
+		
+		JPanel commandsPanel1 = new JPanel();
+		commandsPanel1.setLayout(new FlowLayout());
+		commandsPanel1.setBackground(DARK_BLUE);
+		
+		JPanel commandsPanel2 = new JPanel();
+		commandsPanel2.setLayout(new FlowLayout());
+		commandsPanel2.setBackground(DARK_BLUE);
 
 		// a panel for mainDisplayTP and mainDisplayTP2
 		JPanel mainDisplayPanel = new JPanel();
 		mainDisplayPanel.setLayout(new GridLayout(1, 2));
 
-		JPanel feedbackAndInputPanel = new JPanel();
+		JPanel feedbackInputAndCommandsPanel = new JPanel();
 
-		feedbackAndInputPanel.setLayout(new GridLayout(2, 1));
+		feedbackInputAndCommandsPanel.setLayout(new GridLayout(4, 2));
 
 		final JTextPane mainDisplayTP1 = new JTextPane();
 		mainDisplayTP1.setBackground(BG);
@@ -142,18 +154,29 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		 * feedbackPanel.add(feedbackDisplayTA);
 		 */
 
-		final JTextField inputTF = new JTextField(45);
+		final JTextField inputTF = new JTextField(39);
 		inputPanel.add("South", inputTF);
-
-		feedbackAndInputPanel.add(feedbackPanel);
-		feedbackAndInputPanel.add(inputPanel);
+		
+		final JLabel commandsLabel1 = new JLabel("add      delete      edit      show      search");
+		commandsPanel1.add(commandsLabel1);
+		Border paddingBorder = BorderFactory.createEmptyBorder(5, 0, 0, 0);
+		Border border = BorderFactory.createLineBorder(DARK_BLUE);
+		commandsPanel1.setBorder(BorderFactory.createCompoundBorder(border,paddingBorder));
+		
+		final JLabel commandsLabel2 = new JLabel("undo      redo      done      undone      exit      help");
+		commandsPanel2.add(commandsLabel2);
+		
+		feedbackInputAndCommandsPanel.add(feedbackPanel);
+		feedbackInputAndCommandsPanel.add(inputPanel);
+		feedbackInputAndCommandsPanel.add(commandsPanel1);
+		feedbackInputAndCommandsPanel.add(commandsPanel2);
 
 		Container contentPane = frame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		contentPane.add(displayPanel, BorderLayout.CENTER);
-		contentPane.add(feedbackAndInputPanel, BorderLayout.SOUTH);
+		contentPane.add(feedbackInputAndCommandsPanel, BorderLayout.SOUTH);
 
-		frame.setSize(new Dimension(550, 550));
+		frame.setSize(new Dimension(600, 600));
 		// frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
@@ -169,8 +192,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				}
 				TaskList<Task> taskList = LOLControl.getTaskList();
 				InputTextFieldListener textfield = new InputTextFieldListener(
-						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label,
-						inputTF, commands.size());
+						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label, inputTF, commandsLabel1, commandsLabel2, commands.size());
 				textfield.refreshMainDisplay(taskList);
 				System.out.println("refreshed");
 			}
@@ -321,7 +343,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				"Welcome to LOL", JOptionPane.INFORMATION_MESSAGE);
 
 		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP1,
-				mainDisplayTP2, mainDisplayTP3, label, inputTF, commands.size()));
+				mainDisplayTP2, mainDisplayTP3, label, inputTF, commandsLabel1, commandsLabel2, commands.size()));
 
 	}
 
