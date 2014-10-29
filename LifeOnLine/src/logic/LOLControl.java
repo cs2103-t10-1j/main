@@ -79,7 +79,7 @@ public class LOLControl {
 		case (Constants.COMMAND_EXIT):
 			return executeExit(userInput);
 		default:
-			//logger.log(Level.WARNING, "Unsupported CommandType entered");
+			// logger.log(Level.WARNING, "Unsupported CommandType entered");
 			return executeAdd(Constants.DICTIONARY_ADD[0] + " " + userInput);
 		}
 	}
@@ -170,6 +170,7 @@ public class LOLControl {
 	}
 
 	private static String executeEdit(String userInput) throws Exception {
+		boolean runOnce = true;
 		int taskIndex = LOLParser.getTaskIndex(userInput);
 		Task taskAtIndex = displayList.get(taskIndex - 1);
 		Task oldTask = new Task(taskAtIndex.getTaskDescription(),
@@ -177,12 +178,18 @@ public class LOLControl {
 				taskAtIndex.getStartTime(), taskAtIndex.getEndTime());
 		Task editTask = LOLParser.getEditTask(userInput, oldTask);
 
+		Task oldTaskDesc = new Task(null, null, null);
+		if (runOnce) {
+			oldTaskDesc.setDescription(taskAtIndex.getTaskDescription());
+			runOnce = false;
+		}
+
 		if ((storageList.delete(taskAtIndex)) && (storageList.add(editTask))) {
 			History.emptyRedoStack();
 			History.undoEdit(editTask, taskAtIndex);
 			ControlDisplay.refreshDisplay(toDoList, storageList);
 			LOLStorage.saveTasks(storageList);
-			return showFeedback(oldTask, Constants.COMMAND_EDIT);
+			return showFeedback(oldTaskDesc, Constants.COMMAND_EDIT);
 		} else
 			return executeInvalid(userInput);
 	}
