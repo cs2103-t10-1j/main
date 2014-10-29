@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
@@ -31,6 +32,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	int size;
 
 	final static boolean isHeader = true;
+	final Timer timer;
 	
 	// custom colors
 	final static Color DARK_ORANGE = new Color(253, 101, 0);
@@ -45,7 +47,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD, 16);
 	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
 
-	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, JLabel commandsLabel1, JLabel commandsLabel2, int size){
+	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, JLabel commandsLabel1, JLabel commandsLabel2, int size, Timer timer){
 		this.inputTF = inputTF;
 
 		// Welcome to LifeOnLine
@@ -77,9 +79,12 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		this.mainDisplayTP3.setDocument(doc3);
 		addStyleToDoc(doc3);
 		
+		this.timer = timer;
 		this.label = label;
 		this.size = size;
 		inputTF.addKeyListener(this);
+		
+		
 	}
 
 	//this method add different styles to document which are needed to display task of
@@ -175,6 +180,9 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 		TaskList<Task> taskList = LOLControl.getTaskList();
 		refreshMainDisplay(taskList);
+		
+		timer.setInitialDelay(60000);
+		timer.restart();
 
 		clear(inputTF);
 		size = LOLGui.commands.size();
