@@ -18,17 +18,17 @@ public class Constants {
 	public static final String SEPARATOR_DASH = "-";
 
 	// Dictionaries
-	public static final String[] DICTIONARY_ADD = { "add" };
+	public static final String[] DICTIONARY_ADD = { "add", "a" };
 	public static final String[] DICTIONARY_DELETE = { "delete", "rm", "del" };
-	public static final String[] DICTIONARY_SHOW = { "show" };
-	public static final String[] DICTIONARY_SEARCH = { "search", "find" };
-	public static final String[] DICTIONARY_EDIT = { "edit" };
-	public static final String[] DICTIONARY_DONE = { "done" };
+	public static final String[] DICTIONARY_SHOW = { "show", "display", "sh" };
+	public static final String[] DICTIONARY_SEARCH = { "search", "find", "sr" };
+	public static final String[] DICTIONARY_EDIT = { "edit", "change", "e" };
+	public static final String[] DICTIONARY_DONE = { "done", "dn" };
 	public static final String[] DICTIONARY_NOT_DONE = { "undone", "pending" };
 	public static final String[] DICTIONARY_UNDO = { "undo" };
 	public static final String[] DICTIONARY_REDO = { "redo" };
-	public static final String[] DICTIONARY_VIEW_HOMESCREEN = { "home" };
-	public static final String[] DICTIONARY_EXIT = { "exit" };
+	public static final String[] DICTIONARY_VIEW_HOMESCREEN = { "home", "h" };
+	public static final String[] DICTIONARY_EXIT = { "exit", "ex" };
 	public static final String[] DICTIONARY_PARAMETERS = { "location", "loc",
 			"date", "start", "end", "time" };
 

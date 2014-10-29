@@ -79,8 +79,8 @@ public class LOLControl {
 		case (Constants.COMMAND_EXIT):
 			return executeExit(userInput);
 		default:
-			logger.log(Level.WARNING, "Unsupported CommandType entered");
-			return executeInvalid(userInput);
+			//logger.log(Level.WARNING, "Unsupported CommandType entered");
+			return executeAdd(Constants.DICTIONARY_ADD[0] + " " + userInput);
 		}
 	}
 

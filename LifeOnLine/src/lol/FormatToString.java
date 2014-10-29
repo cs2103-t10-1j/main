@@ -125,7 +125,7 @@ public class FormatToString {
 		strToShowTemp.add(new StringWithFormat(numbering(i),
 				Constants.FORMAT_NUMBER));
 
-		// desciption
+		// description
 		if (isDone) {
 			strToShowTemp.add(new StringWithFormat(description,
 					Constants.FORMAT_DESCRIPTION));
