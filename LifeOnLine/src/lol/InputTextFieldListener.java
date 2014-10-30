@@ -217,7 +217,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		else{
 			progressBar.setMaximum(1);
 			progressBar.setValue(1);
-			progressLabel.setText("Nothing to do today");
+			progressLabel.setText("No deadlines today");
 		}
 			
 		
