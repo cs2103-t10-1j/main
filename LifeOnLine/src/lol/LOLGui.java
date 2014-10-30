@@ -182,7 +182,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.setVisible(true);
 		inputTF.requestFocus();
 
-		Timer timer = new Timer(Constants.REFRESH_TIME, new ActionListener() {
+		final Timer timer = new Timer(Constants.REFRESH_TIME, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				try {
@@ -192,7 +192,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				}
 				TaskList<Task> taskList = LOLControl.getTaskList();
 				InputTextFieldListener textfield = new InputTextFieldListener(
-						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label, inputTF, commandsLabel1, commandsLabel2, commands.size());
+						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label, inputTF, commandsLabel1, commandsLabel2, commands.size(), null);
 				textfield.refreshMainDisplay(taskList);
 				System.out.println("refreshed");
 			}
@@ -343,7 +343,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				"Welcome to LOL", JOptionPane.INFORMATION_MESSAGE);
 
 		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP1,
-				mainDisplayTP2, mainDisplayTP3, label, inputTF, commandsLabel1, commandsLabel2, commands.size()));
+				mainDisplayTP2, mainDisplayTP3, label, inputTF, commandsLabel1, commandsLabel2, commands.size(), timer));
 
 	}
 
