@@ -55,11 +55,11 @@ public class TimeParser {
 
 	/************* Mutators ***************/
 	public void setUserInput(String userInput) {
-		this.userInput = userInput;
+		this.userInput = userInput.toLowerCase();
 	}
 	
 	public void setTimeKeyword(String timeKeyword) {
-		this.timeKeyword = timeKeyword;
+		this.timeKeyword = timeKeyword.toLowerCase();
 	}
 
 	/************* Other methods ***************/

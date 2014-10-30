@@ -57,11 +57,11 @@ public class DateParser {
 
 	/************* Mutators ***************/
 	public void setUserInput(String userInput) {
-		this.userInput = userInput;
+		this.userInput = userInput.toLowerCase();
 	}
 
 	public void setDateKeyword(String dateKeyword) {
-		this.dateKeyword = dateKeyword;
+		this.dateKeyword = dateKeyword.toLowerCase();
 	}
 
 	/************* Other methods ***************/
