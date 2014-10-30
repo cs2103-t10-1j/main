@@ -44,7 +44,7 @@ public class Constants {
 			"thu", "fri", "sat" };
 	public static final String[] DAYS_LONG = { "sunday", "monday", "tuesday",
 			"wednesday", "thursday", "friday", "saturday" };
-	public static final String[] DAYS_IMMEDIATE = { "today", "tomorrow", "tmw" };
+	public static final String[] DAYS_IMMEDIATE = { "today", "tomorrow", "tmw", "tmrw", "tmr" };
 
 	// Commands
 	public static final String COMMAND_ADD = "add";

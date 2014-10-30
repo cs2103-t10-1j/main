@@ -20,6 +20,7 @@ import javax.swing.text.StyledDocument;
 
 import logic.LOLControl;
 
+
 public class InputTextFieldListener implements ActionListener, KeyListener {
 	JTextField inputTF;
 	JTextPane mainDisplayTP1;
@@ -47,7 +48,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD, 16);
 	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
 
-	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, JLabel commandsLabel1, JLabel commandsLabel2, int size, Timer timer){
+	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, int size, Timer timer){
 		this.inputTF = inputTF;
 
 		// Welcome to LifeOnLine
@@ -64,10 +65,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		
 		inputTF.setFont(TREBUCHET_BOLD_16);
 		
-		commandsLabel1.setFont(TREBUCHET_14);
-		commandsLabel1.setForeground(Color.WHITE);
-		commandsLabel2.setFont(TREBUCHET_14);
-		commandsLabel2.setForeground(Color.WHITE);
+
 		
 		this.mainDisplayTP1 = mainDisplayTP;
 		this.mainDisplayTP1.setDocument(doc1);

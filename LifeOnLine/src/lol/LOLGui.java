@@ -3,6 +3,8 @@ package lol;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
+//import javax.swing.plaf.LayerUI;
+//import javax.swing.plaf.LayerUI;
 import javax.swing.text.DefaultCaret;
 import javax.swing.Timer;
 
@@ -67,120 +69,173 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		// ** SET-UP GUI ** //
 
-		final JFrame frame = new JFrame("LOL - Life On Line");
-		frame.getRootPane().setBorder(
-				BorderFactory.createMatteBorder(4, 4, 4, 4, BG4));
-		frame.setVisible(true);
-		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		final JFrame frame = new JFrame();
+		frame.getContentPane().setForeground(new Color(47, 79, 79));
+		frame.getContentPane().setBackground(new Color(240, 248, 255));
+		frame.setBounds(100, 100, 682, 516);
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.ICONIFIED);
-
-		JPanel displayPanel = new JPanel();
-		displayPanel.setBackground(BG4);
-		displayPanel.setLayout(new BorderLayout());
 		
-		JPanel feedbackPanel = new JPanel();
-		feedbackPanel.setLayout(new FlowLayout());
-		feedbackPanel.setBackground(BG2);
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(100, 149, 237));
+		panel.setBounds(0, 391, 666, 87);
 		
-		JPanel inputPanel = new JPanel();
-		inputPanel.setBackground(BG3);
-		inputPanel.setLayout(new FlowLayout());
+		frame.getContentPane().add(panel);
+		panel.setLayout(null);
 		
-		JPanel commandsPanel1 = new JPanel();
-		commandsPanel1.setLayout(new FlowLayout());
-		commandsPanel1.setBackground(DARK_BLUE);
+		final JTextField inputTF = new JTextField();
+		inputTF.setBounds(20, 46, 634, 30);
+		panel.add(inputTF);
+		inputTF.setColumns(10);
 		
-		JPanel commandsPanel2 = new JPanel();
-		commandsPanel2.setLayout(new FlowLayout());
-		commandsPanel2.setBackground(DARK_BLUE);
-
-		// a panel for mainDisplayTP and mainDisplayTP2
-		JPanel mainDisplayPanel = new JPanel();
-		mainDisplayPanel.setLayout(new GridLayout(1, 2));
-
-		JPanel feedbackInputAndCommandsPanel = new JPanel();
-
-		feedbackInputAndCommandsPanel.setLayout(new GridLayout(4, 2));
-
+		
+		JPanel panel_10 = new JPanel();
+		panel_10.setBackground(new Color(144, 238, 144));
+		panel_10.setBounds(10, 46, 17, 30);
+		panel.add(panel_10);
+		
+		final JLabel label = new JLabel("Welcome to LOL");
+		label.setForeground(new Color(0, 0, 0));
+		label.setBounds(20, 11, 634, 30);
+		panel.add(label);
+		
+		Component horizontalGlue = Box.createHorizontalGlue();
+		horizontalGlue.setBounds(250, 302, 1, 1);
+		frame.getContentPane().add(horizontalGlue);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(new Color(255, 127, 80));
+		panel_1.setBounds(0, 0, 168, 46);
+		frame.getContentPane().add(panel_1);
+		panel_1.setLayout(null);
+		
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setBounds(10, 11, 146, 14);
+		panel_1.add(progressBar);
+		
+		JLabel progressLabel = new JLabel("Progress Bar");
+		progressLabel.setBounds(10, 21, 146, 25);
+		panel_1.add(progressLabel);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBackground(new Color(255, 127, 80));
+		panel_2.setBounds(473, 319, 193, 72);
+		frame.getContentPane().add(panel_2);
+		panel_2.setLayout(null);
+		
+	
+		
+		JButton blockButton = new JButton("Block Slots");
+		blockButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		blockButton.setBounds(10, 11, 109, 23);
+		panel_2.add(blockButton);
+		
+		JButton alertButton = new JButton("Alert");
+		alertButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		alertButton.setBounds(10, 45, 109, 23);
+		panel_2.add(alertButton);
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBackground(new Color(100, 149, 237));
+		panel_3.setBounds(0, 46, 178, 10);
+		frame.getContentPane().add(panel_3);
+		
+		JPanel panel_4 = new JPanel();
+		panel_4.setBackground(new Color(100, 149, 237));
+		panel_4.setBounds(168, 0, 10, 46);
+		frame.getContentPane().add(panel_4);
+		
+		JPanel panel_5 = new JPanel();
+		panel_5.setBackground(new Color(100, 149, 237));
+		panel_5.setBounds(463, 319, 10, 72);
+		frame.getContentPane().add(panel_5);
+		
+		JPanel panel_6 = new JPanel();
+		panel_6.setBackground(new Color(100, 149, 237));
+		panel_6.setBounds(463, 309, 203, 10);
+		frame.getContentPane().add(panel_6);
+		
+		JPanel panel_7 = new JPanel();
+		panel_7.setBackground(new Color(100, 149, 237));
+		panel_7.setBounds(0, 46, 10, 345);
+		frame.getContentPane().add(panel_7);
+		
+		JPanel panel_8 = new JPanel();
+		panel_8.setBackground(new Color(100, 149, 237));
+		panel_8.setBounds(178, 0, 478, 10);
+		frame.getContentPane().add(panel_8);
+		
+		JPanel panel_9 = new JPanel();
+		panel_9.setBackground(new Color(100, 149, 237));
+		panel_9.setBounds(656, 0, 10, 319);
+		frame.getContentPane().add(panel_9);
+		
 		final JTextPane mainDisplayTP1 = new JTextPane();
-		mainDisplayTP1.setBackground(BG);
+		mainDisplayTP1.setBounds(210, 27, 243, 354);
 		mainDisplayTP1.setEditable(false);
 		mainDisplayTP1.setBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED));
-		mainDisplayTP1.setText("**Upcoming Tasks List**");
-		JScrollPane scrollPane = new JScrollPane(mainDisplayTP1);
+		.createEtchedBorder(EtchedBorder.LOWERED));
+		JScrollPane scrollPane1 = new JScrollPane(mainDisplayTP1);
 		DefaultCaret caret1 = (DefaultCaret) mainDisplayTP1.getCaret();
 		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-
-		JPanel mainDisplayPanelLeft = new JPanel();
-		mainDisplayPanelLeft.setLayout(new GridLayout(2, 1));
-
-		final JTextPane mainDisplayTP2 = new JTextPane();
-		mainDisplayTP2.setEditable(false);
-		mainDisplayTP2.setText("**To-Do Anytime List**");
-		mainDisplayTP2.setBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED));
-		JScrollPane scrollPane2 = new JScrollPane(mainDisplayTP2);
-		DefaultCaret caret2 = (DefaultCaret) mainDisplayTP2.getCaret();
-		caret2.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-
+		scrollPane1.setBounds(210, 27, 243, 354);
+		frame.getContentPane().add(scrollPane1);
+		
 		final JTextPane mainDisplayTP3 = new JTextPane();
+		mainDisplayTP3.setBounds(23, 119, 168, 164);
 		mainDisplayTP3.setEditable(false);
-		mainDisplayTP3.setText("**Overdue**");
 		mainDisplayTP3.setBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED));
 		JScrollPane scrollPane3 = new JScrollPane(mainDisplayTP3);
 		DefaultCaret caret3 = (DefaultCaret) mainDisplayTP3.getCaret();
 		caret3.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-		mainDisplayPanelLeft.add(scrollPane3);
-		mainDisplayPanelLeft.add(scrollPane2);
-
-		mainDisplayPanel.add(scrollPane);
-		mainDisplayPanel.add(mainDisplayPanelLeft);
-
-		displayPanel.add(mainDisplayPanel, BorderLayout.CENTER);
-
-		final JLabel label = new JLabel("Welcome to Life on Line");
-		feedbackPanel.add(label);
-
-		/*
-		 * final JTextArea feedbackDisplayTA = new JTextArea(2, 40);
-		 * feedbackDisplayTA.setEditable(false);
-		 * feedbackDisplayTA.setText("Feedback will be displayed here.");
-		 * feedbackDisplayTA.setLineWrap(true);
-		 * feedbackDisplayTA.setBorder(BorderFactory
-		 * .createEtchedBorder(EtchedBorder.RAISED));
-		 * feedbackDisplayTA.setFocusable(false);
-		 * feedbackPanel.add(feedbackDisplayTA);
-		 */
-
-		final JTextField inputTF = new JTextField(39);
-		inputPanel.add("South", inputTF);
+		scrollPane3.setBounds(23, 119, 168, 164);
+		frame.getContentPane().add(scrollPane3);
 		
-		final JLabel commandsLabel1 = new JLabel("add      delete      edit      show      search");
-		commandsPanel1.add(commandsLabel1);
-		Border paddingBorder = BorderFactory.createEmptyBorder(5, 0, 0, 0);
-		Border border = BorderFactory.createLineBorder(DARK_BLUE);
-		commandsPanel1.setBorder(BorderFactory.createCompoundBorder(border,paddingBorder));
+		final JTextPane mainDisplayTP2 = new JTextPane();
+		mainDisplayTP2.setBounds(473, 119, 168, 164);
+		mainDisplayTP2.setEditable(false);
+		mainDisplayTP2.setBorder(BorderFactory
+				.createEtchedBorder(EtchedBorder.LOWERED));
+		JScrollPane scrollPane2 = new JScrollPane(mainDisplayTP2);
+		DefaultCaret caret2 = (DefaultCaret) mainDisplayTP2.getCaret();
+		caret2.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+		scrollPane2.setBounds(473, 119, 168, 164);
+		frame.getContentPane().add(scrollPane2);
 		
-		final JLabel commandsLabel2 = new JLabel("undo      redo      done      undone      exit      help");
-		commandsPanel2.add(commandsLabel2);
+		JPanel panel_11 = new JPanel();
+		panel_11.setBackground(new Color(47, 79, 79));
+		panel_11.setBounds(102, 46, 10, 74);
+		frame.getContentPane().add(panel_11);
 		
-		feedbackInputAndCommandsPanel.add(feedbackPanel);
-		feedbackInputAndCommandsPanel.add(inputPanel);
-		feedbackInputAndCommandsPanel.add(commandsPanel1);
-		feedbackInputAndCommandsPanel.add(commandsPanel2);
+		JPanel panel_12 = new JPanel();
+		panel_12.setBackground(new Color(47, 79, 79));
+		panel_12.setBounds(23, 110, 168, 10);
+		frame.getContentPane().add(panel_12);
+		
+		JPanel panel_13 = new JPanel();
+		panel_13.setBackground(new Color(47, 79, 79));
+		panel_13.setBounds(473, 110, 168, 10);
+		frame.getContentPane().add(panel_13);
+		
+		JPanel panel_14 = new JPanel();
+		panel_14.setBackground(new Color(47, 79, 79));
+		panel_14.setBounds(551, 0, 10, 120);
+		frame.getContentPane().add(panel_14);
 
-		Container contentPane = frame.getContentPane();
-		contentPane.setLayout(new BorderLayout());
-		contentPane.add(displayPanel, BorderLayout.CENTER);
-		contentPane.add(feedbackInputAndCommandsPanel, BorderLayout.SOUTH);
 
-		frame.setSize(new Dimension(600, 600));
-		// frame.pack();
+
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		inputTF.requestFocus();
+	
 
 		final Timer timer = new Timer(Constants.REFRESH_TIME, new ActionListener() {
 			@Override
@@ -192,7 +247,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				}
 				TaskList<Task> taskList = LOLControl.getTaskList();
 				InputTextFieldListener textfield = new InputTextFieldListener(
-						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label, inputTF, commandsLabel1, commandsLabel2, commands.size(), null);
+						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, label, inputTF, commands.size(), null);
 				textfield.refreshMainDisplay(taskList);
 				System.out.println("refreshed");
 			}
@@ -343,7 +398,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				"Welcome to LOL", JOptionPane.INFORMATION_MESSAGE);
 
 		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP1,
-				mainDisplayTP2, mainDisplayTP3, label, inputTF, commandsLabel1, commandsLabel2, commands.size(), timer));
+				mainDisplayTP2, mainDisplayTP3, label, inputTF,  commands.size(), timer));
 
 	}
 
@@ -352,4 +407,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		// TODO Auto-generated method stub
 
 	}
+	
+	
 }
+
