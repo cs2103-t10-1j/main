@@ -9,6 +9,7 @@ import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.Timer;
@@ -30,10 +31,12 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	JTextPane mainDisplayTP3;
 	static StyledDocument doc3 = new DefaultStyledDocument();
 	JLabel label;
+	JLabel progressLabel;
 	int size;
 
 	final static boolean isHeader = true;
 	final Timer timer;
+	final JProgressBar progressBar;
 	
 	// custom colors
 	final static Color DARK_ORANGE = new Color(253, 101, 0);
@@ -48,7 +51,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD, 16);
 	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
 
-	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, int size, Timer timer){
+	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, int size, Timer timer, JLabel progressLabel, JProgressBar progressBar){
 		this.inputTF = inputTF;
 
 		// Welcome to LifeOnLine
@@ -77,8 +80,10 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		this.mainDisplayTP3.setDocument(doc3);
 		addStyleToDoc(doc3);
 		
+		this.progressBar = progressBar;
 		this.timer = timer;
 		this.label = label;
+		this.progressLabel = progressLabel;
 		this.size = size;
 		inputTF.addKeyListener(this);
 		
@@ -182,6 +187,8 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		timer.setInitialDelay(60000);
 		timer.restart();
 
+		
+		
 		clear(inputTF);
 		size = LOLGui.commands.size();
 	}
@@ -200,6 +207,20 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		clear(mainDisplayTP2);
 		clear(mainDisplayTP3);
 
+		LOLControl.refreshProgress();
+		if(LOLControl.progressMaximum>0){
+			progressLabel.setText("Today's report: "+LOLControl.progress+"/"+LOLControl.progressMaximum);
+			progressBar.setMaximum(LOLControl.progressMaximum);
+			progressBar.setValue(LOLControl.progressMaximum);
+			progressBar.setValue(LOLControl.progress);
+		}
+		else{
+			progressBar.setMaximum(1);
+			progressBar.setValue(1);
+			progressLabel.setText("Nothing to do today");
+		}
+			
+		
 		showInMainDisplayTP(taskList);
 	}
 

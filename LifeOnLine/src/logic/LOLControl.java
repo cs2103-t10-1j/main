@@ -15,6 +15,9 @@ import io.StorageFacade;
 public class LOLControl {
 
 	private static Logger logger = Logger.getLogger("LOLControl");
+	
+	public static int progress = 0;
+	public static int progressMaximum = 0;
 
 	/********** Load Storage ***********/
 	private static StorageFacade LOLStorage = StorageFacade
@@ -747,5 +750,30 @@ public class LOLControl {
 		default:
 			return (Constants.FEEDBACK_INVALID);
 		}
+	}
+
+	public static void refreshProgress() {
+		
+		progress = 0;
+		progressMaximum = 0;
+		DateParser dp = new DateParser();
+		Date currentDate = dp.getTodaysDate();
+		
+		for(int i=0; i<storageList.size(); i++){
+			if(storageList.size()==0)
+				break;
+			if(storageList.get(i).getTaskDueDate()!=null)
+			{
+				if(storageList.get(i).getTaskDueDate().equals(currentDate)){
+					progressMaximum++;
+				}
+				if(storageList.get(i).getTaskDueDate().equals(currentDate) && storageList.get(i).getIsDone() ){
+					progress++;
+				}
+			}
+			
+			
+		}
+		
 	}
 }
