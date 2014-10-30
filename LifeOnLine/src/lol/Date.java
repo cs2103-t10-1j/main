@@ -165,7 +165,7 @@ public class Date {
 		return getDay() + " " + getMonthName() + " " + getYear4Digit();
 	}
 
-	public String toString2() { // e.g. 7 Dec 2015
+	public String toString2() { // e.g. 7/12/2015
 		return getDay() + "/" + getMonth() + "/" + getYear4Digit();
 	}
 

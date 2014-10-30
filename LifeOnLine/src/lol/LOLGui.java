@@ -8,6 +8,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.text.DefaultCaret;
 import javax.swing.Timer;
 
+import parser.DateParser;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -72,7 +74,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		final JFrame frame = new JFrame();
 		frame.setBackground(new Color(65, 105, 225));
 		frame.getContentPane().setForeground(new Color(47, 79, 79));
-		frame.getContentPane().setBackground(new Color(255, 255, 240));
+		frame.getContentPane().setBackground(new Color(255, 255, 255));
 		frame.setBounds(100, 100, 682, 516);
 		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -96,6 +98,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		panel.add(panel_10);
 
 		final JLabel label = new JLabel("Welcome to LOL");
+		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setForeground(new Color(0, 0, 0));
 		label.setBounds(20, 11, 634, 30);
 		panel.add(label);
@@ -105,7 +108,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().add(horizontalGlue);
 
 		JPanel panel_1 = new JPanel();
-		panel_1.setBackground(new Color(255, 127, 80));
+		panel_1.setBackground(new Color(248, 248, 255));
 		panel_1.setBounds(0, 0, 168, 46);
 		frame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
@@ -123,7 +126,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		panel_1.add(progressLabel);
 
 		JPanel panel_2 = new JPanel();
-		panel_2.setBackground(new Color(255, 127, 80));
+		panel_2.setBackground(new Color(248, 248, 255));
 		panel_2.setBounds(473, 319, 193, 72);
 		frame.getContentPane().add(panel_2);
 		panel_2.setLayout(null);
@@ -190,8 +193,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		final JTextPane mainDisplayTP1 = new JTextPane();
 		mainDisplayTP1.setBounds(210, 36, 243, 345);
 		mainDisplayTP1.setEditable(false);
-		mainDisplayTP1.setBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED));
+		mainDisplayTP1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(0, 100, 0), null));
 		JScrollPane scrollPane1 = new JScrollPane(mainDisplayTP1);
 		DefaultCaret caret1 = (DefaultCaret) mainDisplayTP1.getCaret();
 		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
@@ -201,8 +203,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		final JTextPane mainDisplayTP3 = new JTextPane();
 		mainDisplayTP3.setBounds(23, 119, 177, 175);
 		mainDisplayTP3.setEditable(false);
-		mainDisplayTP3.setBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED));
+		mainDisplayTP3.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(165, 42, 42), null));
 		JScrollPane scrollPane3 = new JScrollPane(mainDisplayTP3);
 		DefaultCaret caret3 = (DefaultCaret) mainDisplayTP3.getCaret();
 		caret3.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
@@ -212,8 +213,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		final JTextPane mainDisplayTP2 = new JTextPane();
 		mainDisplayTP2.setBounds(463, 119, 178, 164);
 		mainDisplayTP2.setEditable(false);
-		mainDisplayTP2.setBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED));
+		mainDisplayTP2.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(128, 128, 128), null));
 		JScrollPane scrollPane2 = new JScrollPane(mainDisplayTP2);
 		DefaultCaret caret2 = (DefaultCaret) mainDisplayTP2.getCaret();
 		caret2.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
@@ -222,13 +222,8 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		JPanel panel_11 = new JPanel();
 		panel_11.setBackground(new Color(47, 79, 79));
-		panel_11.setBounds(101, 46, 10, 74);
+		panel_11.setBounds(102, 282, 10, 109);
 		frame.getContentPane().add(panel_11);
-
-		JPanel panel_12 = new JPanel();
-		panel_12.setBackground(new Color(47, 79, 79));
-		panel_12.setBounds(23, 110, 168, 10);
-		frame.getContentPane().add(panel_12);
 
 		JPanel panel_13 = new JPanel();
 		panel_13.setBackground(new Color(47, 79, 79));
@@ -239,10 +234,29 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		panel_14.setBackground(new Color(47, 79, 79));
 		panel_14.setBounds(553, 0, 10, 120);
 		frame.getContentPane().add(panel_14);
-
-		JLabel labelClock = new JLabel("CLOCK");
-		labelClock.setBounds(81, 319, 65, 23);
-		frame.getContentPane().add(labelClock);
+		
+		DigitalClock digitalClock = new DigitalClock();
+		digitalClock.setBounds(79, 58, 89, 14);
+		frame.getContentPane().add(digitalClock);
+		digitalClock.setForeground(new Color(240, 128, 128));
+			
+		final JLabel lblToday = new JLabel("Today");
+		lblToday.setBounds(79, 83, 104, 14);
+		frame.getContentPane().add(lblToday);
+		lblToday.setForeground(new Color(240, 128, 128));
+		
+		JLabel lblTime = new JLabel("TIME: ");
+		lblTime.setBounds(31, 57, 38, 19);
+		frame.getContentPane().add(lblTime);
+		
+		JLabel lblDate = new JLabel("DATE:");
+		lblDate.setBounds(31, 83, 38, 14);
+		frame.getContentPane().add(lblDate);
+		
+		JPanel panel_12 = new JPanel();
+		panel_12.setBackground(new Color(47, 79, 79));
+		panel_12.setBounds(23, 282, 168, 10);
+		frame.getContentPane().add(panel_12);
 
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
@@ -263,6 +277,11 @@ public class LOLGui extends JFrame implements HotkeyListener {
 								label, inputTF, commands.size(), null,
 								progressLabel, progressBar);
 						textfield.refreshMainDisplay(taskList);
+						
+						DateParser dp = new DateParser();
+						Date currentDate = dp.getTodaysDate();
+						lblToday.setText(currentDate.toString());
+					
 						System.out.println("refreshed");
 					}
 				});
