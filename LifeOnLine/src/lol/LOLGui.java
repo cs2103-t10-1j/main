@@ -81,7 +81,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.setDefaultCloseOperation(JFrame.ICONIFIED);
 
 		JPanel panel = new JPanel();
-		panel.setBackground(new Color(65, 105, 225));
+		panel.setBackground(new Color(0, 0, 0));
 		panel.setBounds(0, 391, 666, 87);
 
 		frame.getContentPane().add(panel);
@@ -99,7 +99,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		final JLabel label = new JLabel("Welcome to LOL");
 		label.setHorizontalAlignment(SwingConstants.CENTER);
-		label.setForeground(new Color(0, 0, 0));
+		label.setForeground(new Color(255,255,255));
 		label.setBounds(20, 11, 634, 30);
 		panel.add(label);
 
@@ -174,37 +174,37 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		
 		JPanel panel_3 = new JPanel();
-		panel_3.setBackground(new Color(65, 105, 225));
+		panel_3.setBackground(new Color(0, 0, 0));
 		panel_3.setBounds(0, 46, 178, 10);
 		frame.getContentPane().add(panel_3);
 
 		JPanel panel_4 = new JPanel();
-		panel_4.setBackground(new Color(65, 105, 225));
+		panel_4.setBackground(new Color(0, 0, 0));
 		panel_4.setBounds(168, 0, 10, 46);
 		frame.getContentPane().add(panel_4);
 
 		JPanel panel_5 = new JPanel();
-		panel_5.setBackground(new Color(65, 105, 225));
+		panel_5.setBackground(new Color(0, 0, 0));
 		panel_5.setBounds(463, 319, 10, 72);
 		frame.getContentPane().add(panel_5);
 
 		JPanel panel_6 = new JPanel();
-		panel_6.setBackground(new Color(65, 105, 225));
+		panel_6.setBackground(new Color(0, 0, 0));
 		panel_6.setBounds(463, 309, 203, 10);
 		frame.getContentPane().add(panel_6);
 
 		JPanel panel_7 = new JPanel();
-		panel_7.setBackground(new Color(65, 105, 225));
+		panel_7.setBackground(new Color(0, 0, 0));
 		panel_7.setBounds(0, 46, 10, 345);
 		frame.getContentPane().add(panel_7);
 
 		JPanel panel_8 = new JPanel();
-		panel_8.setBackground(new Color(65, 105, 225));
+		panel_8.setBackground(new Color(0, 0, 0));
 		panel_8.setBounds(178, 0, 478, 10);
 		frame.getContentPane().add(panel_8);
 
 		JPanel panel_9 = new JPanel();
-		panel_9.setBackground(new Color(65, 105, 225));
+		panel_9.setBackground(new Color(0, 0, 0));
 		panel_9.setBounds(656, 0, 10, 319);
 		frame.getContentPane().add(panel_9);
 
