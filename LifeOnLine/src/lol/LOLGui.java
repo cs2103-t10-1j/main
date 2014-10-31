@@ -131,30 +131,48 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().add(panel_2);
 		panel_2.setLayout(null);
 
+		final JLabel blockLabel = new JLabel(LOLControl.isBlockMode?": On":": Off");
+		blockLabel.setBounds(129, 15, 46, 14);
+		panel_2.add(blockLabel);
+		
 		JButton blockButton = new JButton("Block Slots");
 		blockButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				LOLControl.isBlockMode = !LOLControl.isBlockMode;
+				if(LOLControl.isBlockMode){
+					blockLabel.setText(": On");
+				}
+				else
+					blockLabel.setText(": Off");
 			}
 		});
 		blockButton.setBounds(10, 11, 109, 23);
 		panel_2.add(blockButton);
+		
+		
+		
+		final JLabel labelAlert = new JLabel(LOLControl.isAlertMode?": On":": Off");
+		labelAlert.setBounds(129, 49, 46, 14);
+		panel_2.add(labelAlert);
+
 
 		JButton alertButton = new JButton("Alert");
 		alertButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				LOLControl.isAlertMode = !LOLControl.isAlertMode;
+				if(LOLControl.isAlertMode){
+					labelAlert.setText(": On");
+				}
+				else
+					labelAlert.setText(": Off");
 			}
 		});
 		alertButton.setBounds(10, 45, 109, 23);
 		panel_2.add(alertButton);
 
-		JLabel blockLabel = new JLabel(": Off");
-		blockLabel.setBounds(129, 15, 46, 14);
-		panel_2.add(blockLabel);
+		
 
-		JLabel labelAlert = new JLabel(": Off");
-		labelAlert.setBounds(129, 49, 46, 14);
-		panel_2.add(labelAlert);
-
+		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBackground(new Color(65, 105, 225));
 		panel_3.setBounds(0, 46, 178, 10);
@@ -441,5 +459,4 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		// TODO Auto-generated method stub
 
 	}
-
 }

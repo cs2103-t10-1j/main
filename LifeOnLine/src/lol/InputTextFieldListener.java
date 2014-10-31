@@ -9,6 +9,7 @@ import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -219,9 +220,28 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 			progressBar.setValue(1);
 			progressLabel.setText("No deadlines today");
 		}
-			
 		
 		showInMainDisplayTP(taskList);
+		
+		if(LOLControl.isAlertMode){
+			Task alertTask = LOLControl.refreshAlert();
+			if(alertTask!=null)
+				JOptionPane.showMessageDialog(null, alertMessage(alertTask),
+						"LOL Alert", JOptionPane.WARNING_MESSAGE);
+			}
+	}
+
+	private String alertMessage(Task alertTask) {
+		
+		String message="YOU HAVE AN UPCOMING TASK";
+		message+="\n"+alertTask.getTaskDescription();
+		message+="\n Time: "+alertTask.getStartTime();
+		if(alertTask.getEndTime()!=null)
+			message+="-"+alertTask.getEndTime();
+		if(alertTask.getTaskLocation()!=null)
+			message+="\n Location: "+ alertTask.getTaskLocation();
+		return message;
+		
 	}
 
 	public static void showInMainDisplayTP(TaskList<Task> taskList){

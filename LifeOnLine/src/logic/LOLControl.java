@@ -4,12 +4,14 @@ import java.util.logging.*;
 
 import parser.DateParser;
 import parser.LOLParser;
+import parser.TimeParser;
 import lol.CommandLine;
 import lol.Constants;
 import lol.Date;
 import lol.History;
 import lol.Task;
 import lol.TaskList;
+import lol.Time;
 import io.StorageFacade;
 
 public class LOLControl {
@@ -18,6 +20,9 @@ public class LOLControl {
 	
 	public static int progress = 0;
 	public static int progressMaximum = 0;
+	public static boolean isAlertMode = false;
+	public static boolean isBlockMode = false;
+	public static int alertTime = 200;
 
 	/********** Load Storage ***********/
 	private static StorageFacade LOLStorage = StorageFacade
@@ -770,10 +775,65 @@ public class LOLControl {
 				if(storageList.get(i).getTaskDueDate().equals(currentDate) && storageList.get(i).getIsDone() ){
 					progress++;
 				}
+				if(storageList.get(i).getTaskDueDate().isAfter(currentDate))
+					break;
 			}
 			
 			
 		}
 		
+	}
+	 //returns a task if it is upcoming withing specified alert time, if no task then null
+	public static Task refreshAlert(){
+		DateParser dp = new DateParser();
+		Date currentDate = dp.getTodaysDate();
+		Date tomorrowDate = dp.addDaysToToday(1);
+		
+		TimeParser tp = new TimeParser();
+		Time currentTime = tp.getCurrentTime();
+		
+		for(int i=0; i<storageList.size(); i++){
+			Task temp = storageList.get(i);
+			if(storageList.size()==0)
+				break;
+			if(temp.getIsDone())
+				continue;
+			if(temp.getTaskDueDate()!=null){
+				if(temp.getTaskDueDate().isAfter(tomorrowDate))
+					break;
+				if(!temp.getIsOverdue()){
+					if(temp.getTaskDueDate().equals(currentDate)&&temp.getStartTime()!=null){
+						if(!temp.getAlerted() && isAlertRangeToday(temp,currentTime)){
+							temp.setAlerted(true);
+							return temp;
+							
+						}
+					}
+					
+					
+				}else{
+					continue;
+				}
+				
+			}else{
+				break;
+			}
+		}
+		return null;
+		
+		
+		
+		
+	}
+
+	private static boolean isAlertRangeToday(Task temp, Time currentTime) {
+		
+		int tempTime = Integer.parseInt(temp.getStartTime().getFormat24hr());
+		int crrntTime = Integer.parseInt(currentTime.getFormat24hr());
+		
+		if((tempTime-crrntTime)<=alertTime)
+			return true;
+		
+		return false;
 	}
 }

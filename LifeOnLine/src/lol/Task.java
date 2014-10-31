@@ -10,7 +10,7 @@ public class Task implements Comparable<Task> {
 	private Time endTime;
 	private boolean isDone;
 	private boolean isOverdue;
-
+    private boolean alerted;
 	/************ Constructors *************/
 	public Task(String description, String location, Date dueDate) {
 		setDescription(description);
@@ -20,6 +20,7 @@ public class Task implements Comparable<Task> {
 		setEndTime(null);
 		setIsDone(false);
 		setIsOverdue(false);
+		setAlerted(false);
 	}
 
 	public Task(String description, String location, Date dueDate,
@@ -31,6 +32,7 @@ public class Task implements Comparable<Task> {
 		setEndTime(endTime);
 		setIsDone(false);
 		setIsOverdue(false);
+		setAlerted(false);
 	}
 
 	/************ Accessors *************/
@@ -61,6 +63,10 @@ public class Task implements Comparable<Task> {
 	public boolean getIsOverdue() {
 		return isOverdue;
 	}
+	
+	public boolean getAlerted() {
+		return alerted;
+	}
 
 	/************ Mutators *************/
 	public void setDescription(String description) {
@@ -89,6 +95,10 @@ public class Task implements Comparable<Task> {
 
 	public void setIsOverdue(boolean isOverdue) {
 		this.isOverdue = isOverdue;
+	}
+	
+	public void setAlerted(boolean alerted) {
+		this.alerted = alerted;
 	}
 
 	/********** Overriding methods ***********/
