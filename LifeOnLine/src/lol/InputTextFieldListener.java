@@ -373,12 +373,6 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 			}
 		}
 		}
-		if (e.getKeyCode() == KeyEvent.VK_HOME)
-			try{ refreshFeedbackDisplay("home");
-				TaskList<Task> taskList = LOLControl.getTaskList();
-			refreshMainDisplay(taskList);
-			}catch (Exception e1){
-				e1.printStackTrace();
-			}
+		
 	}
 }

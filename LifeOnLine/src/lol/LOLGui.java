@@ -18,8 +18,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import com.melloware.jintellitype.HotkeyListener;
@@ -298,6 +296,8 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.setVisible(true);
 		inputTF.requestFocus();
 
+		
+		
 		final Timer timer = new Timer(Constants.REFRESH_TIME,
 				new ActionListener() {
 					@Override
@@ -324,14 +324,30 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		timer.setInitialDelay(0); // to start first refresh after 0s when
 									// program opens
 		timer.start();
+		
+		//initialise listner
+		
+		final InputTextFieldListener listener = new InputTextFieldListener(
+				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
+				label, inputTF, commands.size(), timer,
+				progressLabel, progressBar);
 
 		// **HOTKEY-INTERFACE** //
 
-		// Assigning global HotKeys to CTRL+L and CTRL+M
-		JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL,
+		// Assigning global HotKeys GUI
+		JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL,     //ctrl + L to maximise
 				(int) 'L');
-		JIntellitype.getInstance().registerHotKey(2, 0, KeyEvent.VK_ESCAPE);
-
+		JIntellitype.getInstance().registerHotKey(2, 0, KeyEvent.VK_ESCAPE); //escape to minimise
+		JIntellitype.getInstance().registerHotKey(3, 0, KeyEvent.VK_HOME);//home to display main screen
+		JIntellitype.getInstance().registerHotKey(4, 0,46); //delete to execute delete
+		JIntellitype.getInstance().registerHotKey(5, JIntellitype.MOD_CONTROL, (int) 'Z'); //ctrl+z to undo
+		JIntellitype.getInstance().registerHotKey(6, JIntellitype.MOD_CONTROL, (int) 'Y'); //ctrl+y to redo
+		JIntellitype.getInstance().registerHotKey(7, JIntellitype.MOD_CONTROL, (int) 'F'); //ctrl+f to search
+		JIntellitype.getInstance().registerHotKey(8, JIntellitype.MOD_CONTROL, (int) 'D'); //ctrl+d to mark as done
+		JIntellitype.getInstance().registerHotKey(9, JIntellitype.MOD_CONTROL, (int) 'U'); //ctrl+u to mark as undone
+		JIntellitype.getInstance().registerHotKey(10, 0, 112);//F1 to get help
+		
+		
 		// Assign this class to be a HotKeyListener
 		JIntellitype.getInstance().addHotKeyListener(this);
 
@@ -346,7 +362,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 					frame.setExtendedState(getExtendedState());
 				}
 				// Minimize GUI
-				if (aIdentifier == 2) {
+				else if (aIdentifier == 2) {
 					if ((isFocus == true)) {
 						frame.setState(ICONIFIED);
 						frame.setVisible(false);
@@ -358,6 +374,65 @@ public class LOLGui extends JFrame implements HotkeyListener {
 						}
 					}
 				}
+				else if (aIdentifier == 3){
+					System.out.println("home");
+					try{ listener.refreshFeedbackDisplay("home");
+					TaskList<Task> taskList = LOLControl.getTaskList();
+				listener.refreshMainDisplay(taskList);
+				}catch (Exception e1){
+					e1.printStackTrace();
+				}
+					
+				}
+				
+				else if (aIdentifier == 4){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_DELETE + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 5){
+					String inputStr = Constants.COMMAND_UNDO;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 6){
+					String inputStr = Constants.COMMAND_REDO;
+					refreshGUI(listener, timer, inputStr);
+				}
+				
+				else if (aIdentifier == 7){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_SEARCH + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+				
+				else if (aIdentifier == 8){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_DONE + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 9){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_NOT_DONE + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+			}
+
+			private void refreshGUI(InputTextFieldListener listener,
+					Timer timer, String inputStr) {
+				try {
+					listener.refreshFeedbackDisplay(inputStr);
+				} catch (Exception e) {
+					// do nothing
+				}
+				TaskList<Task> taskList = LOLControl.getTaskList();
+				listener.refreshMainDisplay(taskList);
+				timer.setInitialDelay(60000);
+				timer.restart();
+				inputTF.setText("");
 			}
 		});
 
@@ -466,9 +541,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		JOptionPane.showMessageDialog(null, Constants.WELCOME_MESSAGE,
 				"Welcome to LOL", JOptionPane.INFORMATION_MESSAGE);
 
-		inputTF.addActionListener(new InputTextFieldListener(mainDisplayTP1,
-				mainDisplayTP2, mainDisplayTP3, label, inputTF,
-				commands.size(), timer, progressLabel, progressBar));
+		inputTF.addActionListener(listener);
 
 	}
 
