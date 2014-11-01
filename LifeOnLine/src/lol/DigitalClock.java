@@ -44,7 +44,7 @@ private String pattern;
   */
  
  public DigitalClock(){
-  pattern = "hh:mm:ss a";
+  pattern = "hh.mm a";
   this.delay = 1000;
   createTimer();
   timer.start();

@@ -72,16 +72,16 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		// ** SET-UP GUI ** //
 
 		final JFrame frame = new JFrame();
-		frame.setBackground(new Color(65, 105, 225));
+		frame.setBackground(new Color(3, 97, 148));
 		frame.getContentPane().setForeground(new Color(47, 79, 79));
-		frame.getContentPane().setBackground(new Color(255, 255, 255));
+		frame.getContentPane().setBackground(BG2);
 		frame.setBounds(100, 100, 682, 516);
 		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.ICONIFIED);
 
 		JPanel panel = new JPanel();
-		panel.setBackground(new Color(0, 0, 0));
+		panel.setBackground(new Color(3, 97, 148));
 		panel.setBounds(0, 391, 666, 87);
 
 		frame.getContentPane().add(panel);
@@ -174,37 +174,37 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		
 		JPanel panel_3 = new JPanel();
-		panel_3.setBackground(new Color(0, 0, 0));
+		panel_3.setBackground(new Color(3, 97, 148));
 		panel_3.setBounds(0, 46, 178, 10);
 		frame.getContentPane().add(panel_3);
 
 		JPanel panel_4 = new JPanel();
-		panel_4.setBackground(new Color(0, 0, 0));
+		panel_4.setBackground(new Color(3, 97, 148));
 		panel_4.setBounds(168, 0, 10, 46);
 		frame.getContentPane().add(panel_4);
 
 		JPanel panel_5 = new JPanel();
-		panel_5.setBackground(new Color(0, 0, 0));
+		panel_5.setBackground(new Color(3, 97, 148));
 		panel_5.setBounds(463, 319, 10, 72);
 		frame.getContentPane().add(panel_5);
 
 		JPanel panel_6 = new JPanel();
-		panel_6.setBackground(new Color(0, 0, 0));
+		panel_6.setBackground(new Color(3, 97, 148));
 		panel_6.setBounds(463, 309, 203, 10);
 		frame.getContentPane().add(panel_6);
 
 		JPanel panel_7 = new JPanel();
-		panel_7.setBackground(new Color(0, 0, 0));
+		panel_7.setBackground(new Color(3, 97, 148));
 		panel_7.setBounds(0, 46, 10, 345);
 		frame.getContentPane().add(panel_7);
 
 		JPanel panel_8 = new JPanel();
-		panel_8.setBackground(new Color(0, 0, 0));
+		panel_8.setBackground(new Color(3, 97, 148));
 		panel_8.setBounds(178, 0, 478, 10);
 		frame.getContentPane().add(panel_8);
 
 		JPanel panel_9 = new JPanel();
-		panel_9.setBackground(new Color(0, 0, 0));
+		panel_9.setBackground(new Color(3, 97, 148));
 		panel_9.setBounds(656, 0, 10, 319);
 		frame.getContentPane().add(panel_9);
 
@@ -256,12 +256,12 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		DigitalClock digitalClock = new DigitalClock();
 		digitalClock.setBounds(79, 58, 89, 14);
 		frame.getContentPane().add(digitalClock);
-		digitalClock.setForeground(new Color(240, 128, 128));
+		digitalClock.setForeground(new Color(220, 20 ,60));
 			
 		final JLabel lblToday = new JLabel("Today");
 		lblToday.setBounds(79, 83, 104, 14);
 		frame.getContentPane().add(lblToday);
-		lblToday.setForeground(new Color(240, 128, 128));
+		lblToday.setForeground(new Color(220, 20 ,60));
 		
 		JLabel lblTime = new JLabel("TIME: ");
 		lblTime.setBounds(31, 57, 38, 19);
