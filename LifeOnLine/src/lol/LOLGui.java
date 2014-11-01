@@ -18,6 +18,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.melloware.jintellitype.HotkeyListener;
@@ -70,25 +72,45 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		}
 
 		// ** SET-UP GUI ** //
-
 		final JFrame frame = new JFrame();
 		frame.setBackground(new Color(3, 97, 148));
 		frame.getContentPane().setForeground(new Color(47, 79, 79));
-		frame.getContentPane().setBackground(BG2);
-		frame.setBounds(100, 100, 682, 516);
+		frame.getContentPane().setBackground(new Color(217, 232, 245));
+		frame.setBounds(100, 100, 752, 517);
 		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.ICONIFIED);
+		
+		JPanel panel_5 = new JPanel();
+		panel_5.setBackground(new Color(217, 232, 245));
+		final Image backgroundImage;
+		try {
+			 ClassLoader cldr = this.getClass().getClassLoader();
+			 java.net.URL imageURL   = cldr.getResource("resources/background2.jpg");
+			backgroundImage = javax.imageio.ImageIO.read(imageURL);
+			panel_5 = new JPanel(new BorderLayout()) {
+		        @Override public void paintComponent(Graphics g) {
+		            g.drawImage(backgroundImage, 0, 0, null);
+		        }
+		    };
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+	
+
 
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(3, 97, 148));
-		panel.setBounds(0, 391, 666, 87);
+		panel.setBounds(0, 391, 736, 87);
 
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
 
 		final JTextField inputTF = new JTextField();
-		inputTF.setBounds(20, 46, 634, 30);
+		inputTF.setBounds(20, 46, 706, 30);
 		panel.add(inputTF);
 		inputTF.setColumns(10);
 
@@ -100,7 +122,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		final JLabel label = new JLabel("Welcome to LOL");
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setForeground(new Color(255,255,255));
-		label.setBounds(20, 11, 634, 30);
+		label.setBounds(20, 11, 706, 30);
 		panel.add(label);
 
 		Component horizontalGlue = Box.createHorizontalGlue();
@@ -125,13 +147,108 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		progressLabel.setBounds(10, 21, 146, 25);
 		panel_1.add(progressLabel);
 
-		JPanel panel_2 = new JPanel();
-		panel_2.setBackground(new Color(248, 248, 255));
-		panel_2.setBounds(473, 319, 193, 72);
-		frame.getContentPane().add(panel_2);
-		panel_2.setLayout(null);
+		JPanel panel_6 = new JPanel();
+		panel_6.setBackground(new Color(3, 97, 148));
+		panel_6.setBounds(0, 46, 168, 10);
+		frame.getContentPane().add(panel_6);
 
-		final JLabel blockLabel = new JLabel(LOLControl.isBlockMode?": On":": Off");
+		JPanel panel_7 = new JPanel();
+		panel_7.setBackground(new Color(3, 97, 148));
+		panel_7.setBounds(0, 46, 10, 345);
+		frame.getContentPane().add(panel_7);
+
+		final JTextPane mainDisplayTP1 = new JTextPane();
+		mainDisplayTP1.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		mainDisplayTP1.setBounds(250, 35, 243, 345);
+		mainDisplayTP1.setEditable(false);
+		mainDisplayTP1.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+		DefaultCaret caret1 = (DefaultCaret) mainDisplayTP1.getCaret();
+		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+		frame.getContentPane().add(mainDisplayTP1);
+		
+		
+		final JTextPane mainDisplayTP2 = new JTextPane();
+		mainDisplayTP2.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		mainDisplayTP2.setEditable(false);
+		mainDisplayTP2.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+		mainDisplayTP2.setBounds(513, 94, 203, 231);
+		DefaultCaret caret2 = (DefaultCaret) mainDisplayTP2.getCaret();
+		caret2.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+		frame.getContentPane().add(mainDisplayTP2);
+
+		final JTextPane mainDisplayTP3 = new JTextPane();
+		mainDisplayTP3.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		mainDisplayTP3.setBounds(20, 94, 209, 231);
+		mainDisplayTP3.setEditable(false);
+		mainDisplayTP3.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+		DefaultCaret caret3 = (DefaultCaret) mainDisplayTP3.getCaret();
+		caret3.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+		frame.getContentPane().add(mainDisplayTP3);
+		
+		JScrollPane scrollPane = new JScrollPane(mainDisplayTP3);
+		scrollPane.setBounds(20, 94, 209, 231);
+		frame.getContentPane().add(scrollPane);
+		
+		JScrollPane scrollPane_1 = new JScrollPane(mainDisplayTP1);
+		scrollPane_1.setBounds(250, 35, 243, 345);
+		frame.getContentPane().add(scrollPane_1);
+		
+		JScrollPane scrollPane_2 = new JScrollPane(mainDisplayTP2);
+		scrollPane_2.setBounds(513, 94, 203, 231);
+		frame.getContentPane().add(scrollPane_2);
+		
+		
+		
+		
+		
+		DigitalClock digitalClock = new DigitalClock();
+		digitalClock.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		digitalClock.setHorizontalAlignment(SwingConstants.RIGHT);
+		digitalClock.setText("3.18 PM");
+		digitalClock.setBounds(409, 10, 84, 23);
+		frame.getContentPane().add(digitalClock);
+		digitalClock.setForeground(new Color(220, 20, 60));
+			
+		final JLabel lblToday = new JLabel("Today");
+		lblToday.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblToday.setBounds(250, 10, 104, 23);
+		frame.getContentPane().add(lblToday);
+		lblToday.setForeground(new Color(220, 20, 60));
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setLayout(null);
+		panel_2.setBackground(new Color(248, 248, 255));
+		panel_2.setBounds(568, 0, 168, 46);
+		frame.getContentPane().add(panel_2);
+	
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBackground(new Color(3, 97, 148));
+		panel_3.setBounds(558, 46, 168, 10);
+		frame.getContentPane().add(panel_3);
+		
+		JPanel panel_4 = new JPanel();
+		panel_4.setBackground(new Color(3, 97, 148));
+		panel_4.setBounds(726, 46, 10, 345);
+		frame.getContentPane().add(panel_4);
+		
+		JPanel panel_8 = new JPanel();
+		panel_8.setBackground(new Color(3, 97, 148));
+		panel_8.setBounds(167, 0, 391, 10);
+		frame.getContentPane().add(panel_8);
+		
+		JPanel panel_9 = new JPanel();
+		panel_9.setBackground(new Color(3, 97, 148));
+		panel_9.setBounds(167, 0, 10, 56);
+		frame.getContentPane().add(panel_9);
+		
+		JPanel panel_14 = new JPanel();
+		panel_14.setBackground(new Color(3, 97, 148));
+		panel_14.setBounds(558, 0, 10, 56);
+		frame.getContentPane().add(panel_14);
+		
+
+		/*final JLabel blockLabel = new JLabel(LOLControl.isBlockMode?": On":": Off");
 		blockLabel.setBounds(129, 15, 46, 14);
 		panel_2.add(blockLabel);
 		
@@ -147,12 +264,12 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			}
 		});
 		blockButton.setBounds(10, 11, 109, 23);
-		panel_2.add(blockButton);
+		panel_2.add(blockButton);*/
 		
 		
 		
 		final JLabel labelAlert = new JLabel(LOLControl.isAlertMode?": On":": Off");
-		labelAlert.setBounds(129, 49, 46, 14);
+		labelAlert.setBounds(109, 12, 49, 20);
 		panel_2.add(labelAlert);
 
 
@@ -167,114 +284,15 @@ public class LOLGui extends JFrame implements HotkeyListener {
 					labelAlert.setText(": Off");
 			}
 		});
-		alertButton.setBounds(10, 45, 109, 23);
+		alertButton.setBounds(10, 11, 89, 23);
 		panel_2.add(alertButton);
 
 		
 
 		
-		JPanel panel_3 = new JPanel();
-		panel_3.setBackground(new Color(3, 97, 148));
-		panel_3.setBounds(0, 46, 178, 10);
-		frame.getContentPane().add(panel_3);
-
-		JPanel panel_4 = new JPanel();
-		panel_4.setBackground(new Color(3, 97, 148));
-		panel_4.setBounds(168, 0, 10, 46);
-		frame.getContentPane().add(panel_4);
-
-		JPanel panel_5 = new JPanel();
-		panel_5.setBackground(new Color(3, 97, 148));
-		panel_5.setBounds(463, 319, 10, 72);
+		panel_5.setBounds(0, 0, 736, 391);
 		frame.getContentPane().add(panel_5);
-
-		JPanel panel_6 = new JPanel();
-		panel_6.setBackground(new Color(3, 97, 148));
-		panel_6.setBounds(463, 309, 203, 10);
-		frame.getContentPane().add(panel_6);
-
-		JPanel panel_7 = new JPanel();
-		panel_7.setBackground(new Color(3, 97, 148));
-		panel_7.setBounds(0, 46, 10, 345);
-		frame.getContentPane().add(panel_7);
-
-		JPanel panel_8 = new JPanel();
-		panel_8.setBackground(new Color(3, 97, 148));
-		panel_8.setBounds(178, 0, 478, 10);
-		frame.getContentPane().add(panel_8);
-
-		JPanel panel_9 = new JPanel();
-		panel_9.setBackground(new Color(3, 97, 148));
-		panel_9.setBounds(656, 0, 10, 319);
-		frame.getContentPane().add(panel_9);
-
-		final JTextPane mainDisplayTP1 = new JTextPane();
-		mainDisplayTP1.setBounds(210, 36, 243, 345);
-		mainDisplayTP1.setEditable(false);
-		mainDisplayTP1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(0, 100, 0), null));
-		JScrollPane scrollPane1 = new JScrollPane(mainDisplayTP1);
-		DefaultCaret caret1 = (DefaultCaret) mainDisplayTP1.getCaret();
-		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-		scrollPane1.setBounds(210, 27, 243, 354);
-		frame.getContentPane().add(scrollPane1);
-
-		final JTextPane mainDisplayTP3 = new JTextPane();
-		mainDisplayTP3.setBounds(23, 119, 177, 175);
-		mainDisplayTP3.setEditable(false);
-		mainDisplayTP3.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(165, 42, 42), null));
-		JScrollPane scrollPane3 = new JScrollPane(mainDisplayTP3);
-		DefaultCaret caret3 = (DefaultCaret) mainDisplayTP3.getCaret();
-		caret3.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-		scrollPane3.setBounds(23, 119, 168, 164);
-		frame.getContentPane().add(scrollPane3);
-
-		final JTextPane mainDisplayTP2 = new JTextPane();
-		mainDisplayTP2.setBounds(463, 119, 178, 164);
-		mainDisplayTP2.setEditable(false);
-		mainDisplayTP2.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(128, 128, 128), null));
-		JScrollPane scrollPane2 = new JScrollPane(mainDisplayTP2);
-		DefaultCaret caret2 = (DefaultCaret) mainDisplayTP2.getCaret();
-		caret2.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-		scrollPane2.setBounds(473, 119, 168, 164);
-		frame.getContentPane().add(scrollPane2);
-
-		JPanel panel_11 = new JPanel();
-		panel_11.setBackground(new Color(47, 79, 79));
-		panel_11.setBounds(102, 282, 10, 109);
-		frame.getContentPane().add(panel_11);
-
-		JPanel panel_13 = new JPanel();
-		panel_13.setBackground(new Color(47, 79, 79));
-		panel_13.setBounds(473, 110, 168, 10);
-		frame.getContentPane().add(panel_13);
-
-		JPanel panel_14 = new JPanel();
-		panel_14.setBackground(new Color(47, 79, 79));
-		panel_14.setBounds(553, 0, 10, 120);
-		frame.getContentPane().add(panel_14);
 		
-		DigitalClock digitalClock = new DigitalClock();
-		digitalClock.setBounds(79, 58, 89, 14);
-		frame.getContentPane().add(digitalClock);
-		digitalClock.setForeground(new Color(220, 20 ,60));
-			
-		final JLabel lblToday = new JLabel("Today");
-		lblToday.setBounds(79, 83, 104, 14);
-		frame.getContentPane().add(lblToday);
-		lblToday.setForeground(new Color(220, 20 ,60));
-		
-		JLabel lblTime = new JLabel("TIME: ");
-		lblTime.setBounds(31, 57, 38, 19);
-		frame.getContentPane().add(lblTime);
-		
-		JLabel lblDate = new JLabel("DATE:");
-		lblDate.setBounds(31, 83, 38, 14);
-		frame.getContentPane().add(lblDate);
-		
-		JPanel panel_12 = new JPanel();
-		panel_12.setBackground(new Color(47, 79, 79));
-		panel_12.setBounds(23, 282, 168, 10);
-		frame.getContentPane().add(panel_12);
 
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
