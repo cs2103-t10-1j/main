@@ -88,14 +88,33 @@ public class FormatToString {
 			if (!isFirst) {
 				;
 			}
-
+			
 			headerStr = Constants.HEADER_UPCOMING;
 			strToShowTemp.add(new StringWithFormat(headerStr,
 					Constants.FORMAT_HEADER_UPCOMING));
 			hasUpcomingHeader = true;
 
 			Date dueDate = task.getTaskDueDate();
-			headerStr = newLine() + newLine() + dateFormatAsHeader(dueDate);
+			
+			
+			headerStr = newLine() + newLine();
+			
+			//should let Date class handle the below tasks of getting current day
+			//maybe change getCurrentDay etc to static?
+			Date toGetCurrentDate = new Date();
+			if(dueDate.getDay() == toGetCurrentDate.getCurrentDay() && dueDate.getMonth() ==
+					toGetCurrentDate.getCurrentMonth() && dueDate.getYear4Digit() == 
+					toGetCurrentDate.getCurrentYear()){
+				headerStr = headerStr + "Today, ";
+			}
+			else if(dueDate.getDay() == toGetCurrentDate.getCurrentDay()+1 && 
+					dueDate.getMonth() == toGetCurrentDate.getCurrentMonth() && 
+					dueDate.getYear4Digit() == toGetCurrentDate.getCurrentYear()){
+				headerStr = headerStr + "Tomorrow, ";
+			}
+			
+			headerStr = headerStr + dateFormatAsHeader(dueDate);
+			
 			strToShowTemp.add(new StringWithFormat(headerStr,
 					Constants.FORMAT_HEADER_DATE));
 
