@@ -228,6 +228,8 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 			if(alertTask!=null)
 				JOptionPane.showMessageDialog(null, alertMessage(alertTask),
 						"LOL Alert", JOptionPane.WARNING_MESSAGE);
+			if(LOLControl.userEmail!=null && LOLControl.userEmail.length()>=11)
+			LOLEmail.send(LOLControl.userEmail, alertMessage(alertTask));
 			}
 	}
 

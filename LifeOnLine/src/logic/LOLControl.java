@@ -16,6 +16,8 @@ import io.StorageFacade;
 
 public class LOLControl {
 
+	public static String userEmail = null;
+
 	private static Logger logger = Logger.getLogger("LOLControl");
 	
 	public static int progress = 0;

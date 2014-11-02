@@ -84,7 +84,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		final Image backgroundImage;
 		try {
 			 ClassLoader cldr = this.getClass().getClassLoader();
-			 java.net.URL imageURL   = cldr.getResource("resources/background2.jpg");
+			 java.net.URL imageURL   = cldr.getResource("resources/background5.jpg");
 			backgroundImage = javax.imageio.ImageIO.read(imageURL);
 			panel_5 = new JPanel(new BorderLayout()) {
 		        @Override public void paintComponent(Graphics g) {
@@ -538,8 +538,19 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			}
 		});
 
-		JOptionPane.showMessageDialog(null, Constants.WELCOME_MESSAGE,
-				"Welcome to LOL", JOptionPane.INFORMATION_MESSAGE);
+		String s = (String)JOptionPane.showInputDialog(
+                null,
+                "Please enter you GMAIL id to start receiving alerts",
+                "Welcome to LOL",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                "example@gmail.com");
+
+   //If a string was returned, say so.
+if ((s != null) && (s.length() > 0)) {
+ LOLControl.userEmail = s.trim();
+}
 
 		inputTF.addActionListener(listener);
 
