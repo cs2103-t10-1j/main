@@ -10,6 +10,9 @@ package parser;
 
 //import java.util.logging.*;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import lol.Constants;
 import lol.Date;
 import lol.Task;
@@ -422,5 +425,24 @@ public class LOLParser {
 			input = cleanUp(input.replaceAll("\\b" + word + "\\b", ""));
 		}
 		return input;
+	}
+	
+	/**
+	 * Returns a parameter such as description or location in the case in which the user entered it
+	 * @param originalInput user input
+	 * @param lowercaseParameter parameter in lowercase
+	 * @return parameter in the original case
+	 */
+	public static String getParameterInOriginalCase(String originalInput, String lowercaseParameter) {
+		Pattern p = Pattern.compile(lowercaseParameter, Pattern.CASE_INSENSITIVE);
+		Matcher m = p.matcher(originalInput);
+		
+		int start = 0, end = 0;
+		if (m.find()) {
+			start = m.start();
+			end = m.end();
+		}
+		
+		return originalInput.substring(start, end);
 	}
 }

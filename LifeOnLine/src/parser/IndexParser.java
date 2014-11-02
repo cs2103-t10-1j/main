@@ -144,7 +144,13 @@ public class IndexParser {
 					}
 				}
 			}
-			return removeDuplicates(buildIntArray(indexesToDelete));
+			
+			int[] outputArr = removeDuplicates(buildIntArray(indexesToDelete));
+			if (outputArr.length == 1 && outputArr[0] == -1) {
+				return null;
+			} else {
+				return outputArr;
+			}
 		} catch (Exception e) {
 			return null;
 		}
