@@ -120,7 +120,22 @@ public class FormatToString {
 
 		} else if (task.getTaskDueDate() != null && hasUpcomingHeader) {
 			Date dueDate = task.getTaskDueDate();
-			headerStr = newLine() + newLine() + dateFormatAsHeader(dueDate);
+			headerStr = newLine() + newLine();
+			
+			Date toGetCurrentDate = new Date();
+			if(dueDate.getDay() == toGetCurrentDate.getCurrentDay() && dueDate.getMonth() ==
+					toGetCurrentDate.getCurrentMonth() && dueDate.getYear4Digit() == 
+					toGetCurrentDate.getCurrentYear()){
+				headerStr = headerStr + "Today, ";
+			}
+			else if(dueDate.getDay() == toGetCurrentDate.getCurrentDay()+1 && 
+					dueDate.getMonth() == toGetCurrentDate.getCurrentMonth() && 
+					dueDate.getYear4Digit() == toGetCurrentDate.getCurrentYear()){
+				headerStr = headerStr + "Tomorrow, ";
+			}
+			
+			headerStr = headerStr + dateFormatAsHeader(dueDate);
+			
 			strToShowTemp.add(new StringWithFormat(headerStr,
 					Constants.FORMAT_HEADER_DATE));
 		} else {
