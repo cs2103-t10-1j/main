@@ -243,7 +243,6 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		if(alertTask.getTaskLocation()!=null)
 			message+="\n Location: "+ alertTask.getTaskLocation();
 		return message;
-		
 	}
 
 	public static void showInMainDisplayTP(TaskList<Task> taskList){

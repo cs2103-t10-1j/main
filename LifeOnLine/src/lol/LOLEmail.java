@@ -8,9 +8,7 @@ import javax.activation.*;
 public class LOLEmail {
 	
 	public static void send(String to, String task) {
-		// Recipient's email ID needs to be mentioned.
-		to = "aviralprakash@gmail.com";
-
+		
 		// Sender's email ID needs to be mentioned
 		String from = "alert.lifeonline@gmail.com";
 
