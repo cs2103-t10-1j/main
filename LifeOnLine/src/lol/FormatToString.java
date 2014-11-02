@@ -6,19 +6,19 @@ import parser.DateParser;
 
 public class FormatToString {
 	public static LinkedList<StringWithFormat> strToShow1 = new LinkedList<StringWithFormat>(); // this
-																								// is
-																								// for
-																								// TP1
+	// is
+	// for
+	// TP1
 
 	public static LinkedList<StringWithFormat> strToShow2 = new LinkedList<StringWithFormat>(); // this
-																								// is
-																								// for
-																								// TP2
+	// is
+	// for
+	// TP2
 
 	public static LinkedList<StringWithFormat> strToShow3 = new LinkedList<StringWithFormat>(); // this
-																								// is
-																								// for
-																								// TP3
+	// is
+	// for
+	// TP3
 
 	private static LinkedList<StringWithFormat> strToShowTemp = new LinkedList<StringWithFormat>();
 
@@ -88,17 +88,17 @@ public class FormatToString {
 			if (!isFirst) {
 				;
 			}
-			
+
 			headerStr = Constants.HEADER_UPCOMING;
 			strToShowTemp.add(new StringWithFormat(headerStr,
 					Constants.FORMAT_HEADER_UPCOMING));
 			hasUpcomingHeader = true;
 
 			Date dueDate = task.getTaskDueDate();
-			
-			
+
+
 			headerStr = newLine() + newLine();
-			
+
 			//should let Date class handle the below tasks of getting current day
 			//maybe change getCurrentDay etc to static?
 			Date toGetCurrentDate = new Date();
@@ -112,16 +112,16 @@ public class FormatToString {
 					dueDate.getYear4Digit() == toGetCurrentDate.getCurrentYear()){
 				headerStr = headerStr + "Tomorrow, ";
 			}
-			
+
 			headerStr = headerStr + dateFormatAsHeader(dueDate);
-			
+
 			strToShowTemp.add(new StringWithFormat(headerStr,
 					Constants.FORMAT_HEADER_DATE));
 
 		} else if (task.getTaskDueDate() != null && hasUpcomingHeader) {
 			Date dueDate = task.getTaskDueDate();
 			headerStr = newLine() + newLine();
-			
+
 			Date toGetCurrentDate = new Date();
 			if(dueDate.getDay() == toGetCurrentDate.getCurrentDay() && dueDate.getMonth() ==
 					toGetCurrentDate.getCurrentMonth() && dueDate.getYear4Digit() == 
@@ -133,9 +133,9 @@ public class FormatToString {
 					dueDate.getYear4Digit() == toGetCurrentDate.getCurrentYear()){
 				headerStr = headerStr + "Tomorrow, ";
 			}
-			
+
 			headerStr = headerStr + dateFormatAsHeader(dueDate);
-			
+
 			strToShowTemp.add(new StringWithFormat(headerStr,
 					Constants.FORMAT_HEADER_DATE));
 		} else {
@@ -155,14 +155,14 @@ public class FormatToString {
 		String location = task.getTaskLocation();
 		boolean isDone = task.getIsDone();
 		strToShowTemp
-				.add(new StringWithFormat(newLine(), Constants.FORMAT_NONE));
+		.add(new StringWithFormat(newLine(), Constants.FORMAT_NONE));
 		strToShowTemp.add(new StringWithFormat(numbering(i),
 				Constants.FORMAT_NUMBER));
 
 		// description
 		if (isDone) {
 			strToShowTemp.add(new StringWithFormat(description,
-					Constants.FORMAT_DESCRIPTION));
+					Constants.FORMAT_DONE));
 			strToShowTemp.add(new StringWithFormat("   \u2713",
 					Constants.FORMAT_TICK));
 		} else {
@@ -172,29 +172,57 @@ public class FormatToString {
 
 		// add time with format
 		if (dueStartTime != null && dueEndTime != null) {
-			String time = timeStr(dueStartTime, dueEndTime);
+			if(isDone){
+				String time = timeStr(dueStartTime, dueEndTime);
 
-			strToShowTemp.add(new StringWithFormat(newLine() + "      \u25D5",
-					Constants.FORMAT_TIME));
-			strToShowTemp
-					.add(new StringWithFormat(time, Constants.FORMAT_NONE));
+				strToShowTemp.add(new StringWithFormat(newLine() + "      \u25D5",
+						Constants.FORMAT_DONE));
+				strToShowTemp
+				.add(new StringWithFormat(time, Constants.FORMAT_DONE));
+			}
+			else{
+				String time = timeStr(dueStartTime, dueEndTime);
+
+				strToShowTemp.add(new StringWithFormat(newLine() + "      \u25D5",
+						Constants.FORMAT_TIME));
+				strToShowTemp
+				.add(new StringWithFormat(time, Constants.FORMAT_NONE));
+			}
 
 		} else if (dueStartTime != null) {
-			String time = timeStr(dueStartTime);
-			strToShowTemp.add(new StringWithFormat(newLine() + "      \u25D5",
-					Constants.FORMAT_TIME));
-			strToShowTemp
-					.add(new StringWithFormat(time, Constants.FORMAT_NONE));
+			if(isDone){
+				String time = timeStr(dueStartTime);
+				strToShowTemp.add(new StringWithFormat(newLine() + "      \u25D5",
+						Constants.FORMAT_DONE));
+				strToShowTemp
+				.add(new StringWithFormat(time, Constants.FORMAT_DONE));
+			}
+			else{
+				String time = timeStr(dueStartTime);
+				strToShowTemp.add(new StringWithFormat(newLine() + "      \u25D5",
+						Constants.FORMAT_TIME));
+				strToShowTemp
+				.add(new StringWithFormat(time, Constants.FORMAT_NONE));
+			}
 
 		}
 
 		// add location with format
 		if (location != null) {
-			location = locationStr(location);
-			strToShowTemp.add(new StringWithFormat(newLine() + "      @",
-					Constants.FORMAT_LOCATION));
-			strToShowTemp.add(new StringWithFormat(location,
-					Constants.FORMAT_NONE));
+			if(isDone){
+				location = locationStr(location);
+				strToShowTemp.add(new StringWithFormat(newLine() + "      @",
+						Constants.FORMAT_DONE));
+				strToShowTemp.add(new StringWithFormat(location,
+						Constants.FORMAT_DONE));	
+			}
+			else{
+				location = locationStr(location);
+				strToShowTemp.add(new StringWithFormat(newLine() + "      @",
+						Constants.FORMAT_LOCATION));
+				strToShowTemp.add(new StringWithFormat(location,
+						Constants.FORMAT_NONE));
+			}
 
 		}
 
@@ -233,27 +261,27 @@ public class FormatToString {
 		case 1:
 			if(strToShow1.isEmpty()){
 				strToShow1
-//				.add(new StringWithFormat("You do not have any upcoming tasks. ADD NOW!", Constants.FORMAT_NONE));
+				//				.add(new StringWithFormat("You do not have any upcoming tasks. ADD NOW!", Constants.FORMAT_NONE));
 				.add(new StringWithFormat("", Constants.FORMAT_NONE));
 			}
 			return strToShow1;
 		case 2:
 			if(strToShow2.isEmpty()){
 				strToShow2
-//				.add(new StringWithFormat("Not a single task without date..HAVE SOME TO ADD?", Constants.FORMAT_NONE));
+				//				.add(new StringWithFormat("Not a single task without date..HAVE SOME TO ADD?", Constants.FORMAT_NONE));
 				.add(new StringWithFormat("", Constants.FORMAT_NONE));
 			}
 			return strToShow2;
 		case 3:
 			if(strToShow3.isEmpty()){
 				strToShow3
-//				.add(new StringWithFormat("No overdue tasks..THATS GREAT!", Constants.FORMAT_NONE));
+				//				.add(new StringWithFormat("No overdue tasks..THATS GREAT!", Constants.FORMAT_NONE));
 				.add(new StringWithFormat("", Constants.FORMAT_NONE));
 			}
 			return strToShow3;
 		default:
 			assert false : "Parameter of FormatTostring.getLinkedList(num) is wrong";
-			return strToShow1;
+		return strToShow1;
 		}
 	}
 

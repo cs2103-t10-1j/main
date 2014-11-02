@@ -185,6 +185,7 @@ public class Constants {
 	final static String FORMAT_OVERDUE_STRIKE = "overdue strike";
 	final static String FORMAT_HEADER_DATE = "date header";
 	final static String FORMAT_NUMBER = "numbering";
+	final static String FORMAT_DONE = "done";
 	
 	final static int DISPLAY_IN_TP1 = 1; //upcoming
 	final static int DISPLAY_IN_TP2 = 2; //no date

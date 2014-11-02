@@ -170,6 +170,10 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setForeground(style, Color.RED);
 		StyleConstants.setStrikeThrough(style, true);
+		
+		style = doc.addStyle(Constants.FORMAT_DONE, null);
+		StyleConstants.setFontSize(style, 16);
+		StyleConstants.setForeground(style, Color.GRAY);
 	}
 
 	@Override
