@@ -199,19 +199,22 @@ public class FormatToString {
 		case 1:
 			if(strToShow1.isEmpty()){
 				strToShow1
-				.add(new StringWithFormat("You do not have any upcoming tasks. ADD NOW!", Constants.FORMAT_NONE));
+//				.add(new StringWithFormat("You do not have any upcoming tasks. ADD NOW!", Constants.FORMAT_NONE));
+				.add(new StringWithFormat("", Constants.FORMAT_NONE));
 			}
 			return strToShow1;
 		case 2:
 			if(strToShow2.isEmpty()){
 				strToShow2
-				.add(new StringWithFormat("Not a single task without date..HAVE SOME TO ADD?", Constants.FORMAT_NONE));
+//				.add(new StringWithFormat("Not a single task without date..HAVE SOME TO ADD?", Constants.FORMAT_NONE));
+				.add(new StringWithFormat("", Constants.FORMAT_NONE));
 			}
 			return strToShow2;
 		case 3:
 			if(strToShow3.isEmpty()){
 				strToShow3
-				.add(new StringWithFormat("No overdue tasks..THATS GREAT!", Constants.FORMAT_NONE));
+//				.add(new StringWithFormat("No overdue tasks..THATS GREAT!", Constants.FORMAT_NONE));
+				.add(new StringWithFormat("", Constants.FORMAT_NONE));
 			}
 			return strToShow3;
 		default:
