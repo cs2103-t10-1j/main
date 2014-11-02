@@ -96,4 +96,13 @@ public class LOLParserTest {
 						.getKeywordsForSearchCommand("search dinner with friends"));
 		assertEquals(null, LOLParser.getKeywordsForSearchCommand("search"));
 	}
+	
+	@Test
+	public void testGetParameterInOriginalCase() {
+		assertEquals("StuDy ProGRaMMiNg", LOLParser.getParameterInOriginalCase("StuDy ProGRaMMiNg AT HoMe", "study programming"));
+		assertEquals("HoMe", LOLParser.getParameterInOriginalCase("StuDy ProGRaMMiNg AT HoMe", "home"));
+		assertEquals("pIcNIc", LOLParser.getParameterInOriginalCase("pIcNIc AT PicNic SPoT", "picnic"));
+		assertEquals("PicNic SPoT", LOLParser.getParameterInOriginalCase("pIcNIc AT PicNic SPoT", "picnic spot"));
+		//assertEquals("pIcNIc", LOLParser.getParameterInOriginalCase("AT PicNic SPoT 12 NOv pIcNIc", "picnic"));
+	}
 }

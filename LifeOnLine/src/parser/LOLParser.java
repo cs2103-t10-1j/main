@@ -74,6 +74,9 @@ public class LOLParser {
 		if (countWords(input) <= 1) {
 			return null;
 		}
+		String originalInput = input;
+		input = input.toLowerCase();
+		
 		DescriptionParser dp = new DescriptionParser(input);
 		LocationParser lp = new LocationParser(input);
 		DateParser dtp = new DateParser(input);
@@ -92,6 +95,12 @@ public class LOLParser {
 			} else {
 				date = dtp.addDaysToToday(1);
 			}
+		}
+		if (description != null) {
+			description = getParameterInOriginalCase(originalInput, description);
+		}
+		if (location != null) {
+			location = getParameterInOriginalCase(originalInput, location);
 		}
 		return new Task(description, location, date, startTime, endTime);
 	}
@@ -113,13 +122,16 @@ public class LOLParser {
 			if (countWords(input) <= 2) {
 				throw new Exception("Invalid parameters for edit command");
 			}
+			
+			String originalInput = input;
+			input = input.toLowerCase();
+			
 			String inputWithoutCommandAndIndex = cleanUp(removeFirst2Words(input));
 			Task newTask = task;
 
 			String[] words = inputWithoutCommandAndIndex.split(" ");
 			// if the user wants to delete parameters
 			if (containsCommand(words, Constants.DICTIONARY_DELETE)) {
-
 				for (int i = 0; i < words.length - 1; i++) {
 					// if delete command is found
 					if (hasWordInDictionary(Constants.DICTIONARY_DELETE,
@@ -172,10 +184,12 @@ public class LOLParser {
 			Time endTime = tp.getEndTime();
 
 			if (description != null) {
+				description = getParameterInOriginalCase(originalInput, description);
 				newTask.setDescription(description);
 			}
 
 			if (location != null) {
+				location = getParameterInOriginalCase(originalInput, location);
 				newTask.setLocation(location);
 			}
 
