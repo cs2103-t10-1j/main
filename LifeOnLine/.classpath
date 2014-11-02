@@ -8,7 +8,7 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="LifeOnLine/src/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/owner/LOL/javamail-1.4.7/mail.jar"/>
-	<classpathentry kind="lib" path="C:/Users/owner/LOL/jaf-1.1.1/activation.jar"/>
+	<classpathentry kind="lib" path="src/lib/activation.jar"/>
+	<classpathentry kind="lib" path="src/lib/mail.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

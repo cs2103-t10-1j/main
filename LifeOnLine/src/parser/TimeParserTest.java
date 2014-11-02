@@ -32,6 +32,8 @@ public class TimeParserTest {
 		assertEquals("add watch at golden village today", tp10.getUserInputWithoutTime());
 		TimeParser tp11 = new TimeParser("add watch at golden village today 6 - 8 pm");
 		assertEquals("add watch at golden village today", tp11.getUserInputWithoutTime());
+		TimeParser tp12 = new TimeParser("add something at 9.09pm");
+		assertEquals("add something", tp12.getUserInputWithoutTime());
 	}
 	@Test
 	public void testGetStartTime() {

@@ -651,7 +651,7 @@ public class DateParser {
 			String[] nextWords = getNext4Words(words, i);
 
 			if (isKeyword(word)
-					|| (hasTime(word, nextWords) && !isBoth24hrTimeAndYear(word))) {
+					|| (hasTime(word, nextWords) && !(word.startsWith("0") && word.endsWith("m")) && !isBoth24hrTimeAndYear(word))) {
 				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
 						+ nextWords[0] + "\\b");
 				Matcher m = p.matcher(temp);
