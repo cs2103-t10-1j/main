@@ -70,7 +70,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		}
 
 		// ** SET-UP GUI ** //
-		final JFrame frame = new JFrame();
+		final JFrame frame = new JFrame("LOL - LifeOnLine");
 		frame.setBackground(new Color(3, 97, 148));
 		frame.getContentPane().setForeground(new Color(47, 79, 79));
 		frame.getContentPane().setBackground(new Color(217, 232, 245));
