@@ -130,7 +130,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		
 		
 		style = doc.addStyle(Constants.FORMAT_TICK, null);
-		StyleConstants.setBold(style, true);
+		//StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, BG);
 
 		style = doc.addStyle(Constants.FORMAT_DESCRIPTION, null);

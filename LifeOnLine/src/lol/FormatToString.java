@@ -163,7 +163,7 @@ public class FormatToString {
 		if (isDone) {
 			strToShowTemp.add(new StringWithFormat(description,
 					Constants.FORMAT_DESCRIPTION));
-			strToShowTemp.add(new StringWithFormat("   \u2714",
+			strToShowTemp.add(new StringWithFormat("   \u2713",
 					Constants.FORMAT_TICK));
 		} else {
 			strToShowTemp.add(new StringWithFormat(description,
