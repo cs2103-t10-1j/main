@@ -3,7 +3,6 @@
  */
 package parser;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,18 +96,15 @@ public class LocationParser {
 
 			// either no double quotes in input or no location found within
 			// double quotes
-			System.out.println("AAA");
 			input = removeWordsWithinQuotes(input);
 
 			TimeParser tp = new TimeParser();
 			DateParser dp = new DateParser();
 
 			if (countNumberOfAt() == 1) {
-				System.out.println("BBB");
 				String parameter = getParameterStartingAtIndex(getIndexOfAt()
 						+ Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT]
 								.length() + 1);
-				System.out.println(parameter);
 				parameter = removeDescriptionAfterTimeIfAny(parameter);
 
 				if (!tp.isValidTimeFormat(parameter)
@@ -210,7 +206,6 @@ public class LocationParser {
 			return null;
 		}
 		int nextKeywordIndex = getIndexOfNextReservedWord(index + 2);
-		System.out.println(nextKeywordIndex);
 		if (nextKeywordIndex == Constants.NOT_FOUND) {
 			return getUserInput().substring(index).trim();
 		} else {
@@ -228,7 +223,6 @@ public class LocationParser {
 	 */
 	public int getIndexOfNextReservedWord(int beginIndex) {
 		String temp = getUserInput().substring(beginIndex);
-		System.out.println(temp);
 		String[] words = temp.split(Constants.SPACE);
 		int minIndex = Constants.NOT_FOUND;
 
@@ -239,7 +233,6 @@ public class LocationParser {
 			String[] nextWords = { Constants.EMPTY_STRING,
 					Constants.EMPTY_STRING, Constants.EMPTY_STRING,
 					Constants.EMPTY_STRING };
-			System.out.println(word+Arrays.toString(nextWords));
 
 			if (i < words.length - 4) {
 				int index = 0;

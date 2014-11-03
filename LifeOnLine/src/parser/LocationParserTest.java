@@ -9,7 +9,7 @@ public class LocationParserTest {
 
 	@Test
 	public void testGetLocation() {
-	/*	LocationParser lp = new LocationParser("   add    buy pizza at  clementi on 23   oct at   10am   ");
+		LocationParser lp = new LocationParser("   add    buy pizza at  clementi on 23   oct at   10am   ");
 		assertEquals("clementi", lp.getLocation());
 		LocationParser lp1 = new LocationParser("   add   buy pizza at 3am  on sun   at  clementi ");
 		assertEquals("clementi", lp1.getLocation());
@@ -28,11 +28,11 @@ public class LocationParserTest {
 		LocationParser lp8 = new LocationParser("add sleep at 12.20am at \"sunday hotel\"");
 		assertEquals("sunday hotel", lp8.getLocation());
 		LocationParser lp9 = new LocationParser("add at 12.20am do");
-		assertEquals(null, lp9.getLocation());*/
+		assertEquals(null, lp9.getLocation());
 		LocationParser lp10 = new LocationParser("add something at 9.05pm");
 		assertEquals(null, lp10.getLocation());
 	}
-	/*
+	
 	@Test
 	public void testRemoveDescriptionAfterTimeIfAny() {
 		LocationParser lp = new LocationParser("abc");
@@ -125,5 +125,5 @@ public class LocationParserTest {
 		assertEquals("add buy pizza at 10am on 23 oct", lp2.getUserInputWithoutLocation());
 		LocationParser lp3 = new LocationParser("  add    buy pizza   at 10am  on   21 oct  at clementi");
 		assertEquals("add buy pizza at 10am on 21 oct", lp3.getUserInputWithoutLocation());
-	}*/
+	}
 }
