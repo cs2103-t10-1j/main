@@ -6,6 +6,9 @@ import javax.swing.border.EtchedBorder;
 //import javax.swing.plaf.LayerUI;
 //import javax.swing.plaf.LayerUI;
 import javax.swing.text.DefaultCaret;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import javax.swing.Timer;
 
 import parser.DateParser;
@@ -75,9 +78,9 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().setForeground(new Color(47, 79, 79));
 		frame.getContentPane().setBackground(new Color(217, 232, 245));
 		frame.setBounds(100, 100, 752, 517);
-		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.ICONIFIED);
+		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel panel_5 = new JPanel();
 		panel_5.setBackground(new Color(217, 232, 245));
@@ -96,10 +99,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			e1.printStackTrace();
 		}
 		
-		
-	
-
-
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(3, 97, 148));
 		panel.setBounds(0, 391, 736, 87);
@@ -117,12 +116,18 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		panel_10.setBounds(10, 46, 17, 30);
 		panel.add(panel_10);
 
-		final JLabel label = new JLabel("Welcome to LOL");
-		label.setHorizontalAlignment(SwingConstants.CENTER);
-		label.setForeground(new Color(255,255,255));
-		label.setBounds(20, 11, 706, 30);
-		panel.add(label);
-
+		final JTextPane feedbackLabel = new JTextPane();
+		StyledDocument doc = feedbackLabel.getStyledDocument();
+		SimpleAttributeSet center = new SimpleAttributeSet();
+		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+		doc.setParagraphAttributes(0, doc.getLength(), center, false);
+		feedbackLabel.setText("Welcome to LOL");
+		feedbackLabel.setEditable(false);
+		feedbackLabel.setBackground(new Color(3, 97, 148));
+		feedbackLabel.setForeground(new Color(255,255,255));
+		feedbackLabel.setBounds(20, 11, 706, 30);
+		panel.add(feedbackLabel);
+		
 		Component horizontalGlue = Box.createHorizontalGlue();
 		horizontalGlue.setBounds(250, 302, 1, 1);
 		frame.getContentPane().add(horizontalGlue);
@@ -164,7 +169,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		frame.getContentPane().add(mainDisplayTP1);
 		
-		
 		final JTextPane mainDisplayTP2 = new JTextPane();
 		mainDisplayTP2.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		mainDisplayTP2.setEditable(false);
@@ -195,10 +199,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		scrollPane_2.setBounds(513, 94, 203, 231);
 		frame.getContentPane().add(scrollPane_2);
 		
-		
-		
-		
-		
 		DigitalClock digitalClock = new DigitalClock();
 		digitalClock.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		digitalClock.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -219,7 +219,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		panel_2.setBounds(568, 0, 168, 46);
 		frame.getContentPane().add(panel_2);
 	
-		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBackground(new Color(3, 97, 148));
 		panel_3.setBounds(558, 46, 168, 10);
@@ -245,7 +244,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		panel_14.setBounds(558, 0, 10, 56);
 		frame.getContentPane().add(panel_14);
 		
-
 		/*final JLabel blockLabel = new JLabel(LOLControl.isBlockMode?": On":": Off");
 		blockLabel.setBounds(129, 15, 46, 14);
 		panel_2.add(blockLabel);
@@ -310,7 +308,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 						TaskList<Task> taskList = LOLControl.getTaskList();
 						InputTextFieldListener textfield = new InputTextFieldListener(
 								mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
-								label, inputTF, commands.size(), null,
+								feedbackLabel, inputTF, commands.size(), null,
 								progressLabel, progressBar);
 						textfield.refreshMainDisplay(taskList);
 						
@@ -329,7 +327,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		
 		final InputTextFieldListener listener = new InputTextFieldListener(
 				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
-				label, inputTF, commands.size(), timer,
+				feedbackLabel, inputTF, commands.size(), timer,
 				progressLabel, progressBar);
 
 		// **HOTKEY-INTERFACE** //

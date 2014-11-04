@@ -31,11 +31,11 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	static StyledDocument doc2 = new DefaultStyledDocument();
 	JTextPane mainDisplayTP3;
 	static StyledDocument doc3 = new DefaultStyledDocument();
-	JLabel label;
+	JTextPane label;
 	JLabel progressLabel;
 	int size;
 
-	final static boolean isHeader = true;
+	final static boolean IS_HEADER = true;
 	final Timer timer;
 	final JProgressBar progressBar;
 	
@@ -52,7 +52,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD, 16);
 	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
 
-	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, int size, Timer timer, JLabel progressLabel, JProgressBar progressBar){
+	public InputTextFieldListener(JTextPane mainDisplayTP, JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JTextPane label, JTextField inputTF, int size, Timer timer, JLabel progressLabel, JProgressBar progressBar){
 		this.inputTF = inputTF;
 
 		// Welcome to LifeOnLine
@@ -180,6 +180,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent event){ 
 		String inputStr = inputTF.getText();
 		LOLGui.commands.add(inputStr);
+		
 		try {
 			refreshFeedbackDisplay(inputStr);
 		} catch (Exception e) {
@@ -192,8 +193,6 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		timer.setInitialDelay(60000);
 		timer.restart();
 
-		
-		
 		clear(inputTF);
 		size = LOLGui.commands.size();
 	}
@@ -250,59 +249,54 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	}
 
 	public static void showInMainDisplayTP(TaskList<Task> taskList){
-		Date previousDueDate = new Date(-1, -1, -9999, null); //set as impossible date
+		Date previousDueDate = new Date(-1, -1, -9999, null); //impossible date
 		Task previousTask = new Task("ŒŒŒŒŒŒŒŒ","",new Date(), new Time(),new Time()); //impossible task
 
-		FormatToString taskToFormat = new FormatToString();
-		//below should be removed and added to another class
-		FormatToString.clearAllLinkedList();
-		FormatToString.hasOverdueHeader = false;
-		FormatToString.hasFloatingHeader = false;
-		FormatToString.hasUpcomingHeader = false;
-		FormatToString.isFirst = true;
+		FormatToString formatToString = new FormatToString();
 
 		for(int i = 0; i < taskList.size(); i++){
 			Task task = taskList.get(i);
-
 			Date currentDueDate = task.getTaskDueDate();
 
 			assert !(currentDueDate.getDay() == -1 && currentDueDate.getMonth() == -1 
 					&& currentDueDate.getYear4Digit() == -9999) : "impossible date entered";
 
 			int toBeDisplayedIn = 0;
-			//add header
+			
+			//determine whether header is needed and add it to an appropriate TP
+			//header include overdue, upcoming, floating headers and date header
 			if(task.getIsOverdue() && !currentDueDate.equals(previousDueDate)){
 				previousDueDate = currentDueDate;
 				previousTask = task;
 				
-				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP3);
+				formatToString.format(IS_HEADER, task, i, Constants.DISPLAY_IN_TP3);
 				toBeDisplayedIn = Constants.DISPLAY_IN_TP3;
 			}
 			else if(previousTask.getIsOverdue() && !task.getIsOverdue() && currentDueDate != null && currentDueDate.equals(previousDueDate)){
 				previousDueDate = currentDueDate;
-				previousTask=task;
+				previousTask = task;
 
-				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP1);
+				formatToString.format(IS_HEADER, task, i, Constants.DISPLAY_IN_TP1);
 				toBeDisplayedIn = Constants.DISPLAY_IN_TP1;
 			}
 			else if(currentDueDate != null && !currentDueDate.equals(previousDueDate)){
 				previousDueDate = currentDueDate;
-				previousTask=task;
+				previousTask = task;
 
-				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP1);
+				formatToString.format(IS_HEADER, task, i, Constants.DISPLAY_IN_TP1);
 				toBeDisplayedIn = Constants.DISPLAY_IN_TP1;
 			}
-			
 			else if(currentDueDate == null){
-				previousTask=task;
-				taskToFormat.format(isHeader, task, i, Constants.DISPLAY_IN_TP2);
+				previousTask = task;
+				
+				formatToString.format(IS_HEADER, task, i, Constants.DISPLAY_IN_TP2);
 				toBeDisplayedIn = Constants.DISPLAY_IN_TP2;
 			}
 
 			assert !(toBeDisplayedIn == 0) : "toBeDisplayed in is 0 which is invalid";
 
-			//add task below header
-			taskToFormat.format(!isHeader, task, i, toBeDisplayedIn);
+			//add tasks below header
+			formatToString.format(!IS_HEADER, task, i, toBeDisplayedIn);
 			
 			//add a line between overdue task and upcoming task
 			/*if(i+1 < taskList.size() && task.getIsOverdue() && !taskList.get(i+1).getIsOverdue() && taskList.get(i+1).getTaskDueDate() != null){

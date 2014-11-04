@@ -88,15 +88,15 @@ public class Constants {
 	public static final String QUOTE = "\"";
 	// public static final String LINEBREAK =
 	// System.getProperty("line.separator");
-	public static final String LINEBREAK = "<br/>" + "<center>";
+	public static final String LINEBREAK = "\n";
 	public static final String FEEDBACK_ADD_SUCCESS = " added successfully!";
 	public static final String FEEDBACK_DEL_SUCCESS = " deleted successfully!";
 	public static final String FEEDBACK_MASS_DEL_SUCCESS = "Mass delete performed successfully!";
 	public static final String FEEDBACK_MASS_DEL_FAILURE = "Invalid task ID specified!";
 	public static final String FEEDBACK_EDIT_SUCCESS = " was editted succesfully!";
 	public static final String FEEDBACK_SHOW_SUCCESS = "<html>Displaying search results for ";
-	public static final String FEEDBACK_SHOW_HITS_SINGLE = " task found!</center></html>";
-	public static final String FEEDBACK_SHOW_HITS_MULTI = " tasks found!</center></html>";
+	public static final String FEEDBACK_SHOW_HITS_SINGLE = " task found!";
+	public static final String FEEDBACK_SHOW_HITS_MULTI = " tasks found!";
 	public static final String FEEDBACK_SHOW_FAILURE = "There are no tasks due on that day!";
 	public static final String FEEDBACK_SHOW_OVERDUE_SUCCESS = "<html>Displaying overdue tasks!";
 	public static final String FEEDBACK_SHOW_OVERDUE_FAILURE = "No overdue tasks were found!";
@@ -108,8 +108,8 @@ public class Constants {
 	public static final String FEEDBACK_SHOW_MONTH_FAILURE = "No tasks due in ";
 	public static final String FEEDBACK_SHOW_ALL_SUCCESS = "Displaying all tasks found in database!";
 	public static final String FEEDBACK_SHOW_ALL_FAILURE = "No tasks found in database!";
-	public static final String FEEDBACK_SEARCH_SUCCESS_SINGLE = "<html>Search results for tasks with the keyword: ";
-	public static final String FEEDBACK_SEARCH_SUCCESS_MULTI = "<html>Search results for tasks with the keywords: ";
+	public static final String FEEDBACK_SEARCH_SUCCESS_SINGLE = "Search results for tasks with the keyword: ";
+	public static final String FEEDBACK_SEARCH_SUCCESS_MULTI = "Search results for tasks with the keywords: ";
 	public static final String FEEDBACK_SEARCH_FAILURE = "SEARCH FAILED";
 	public static final String FEEDBACK_SEARCH_FAILURE_SINGLE = "No tasks were found with the keyword: ";
 	public static final String FEEDBACK_SEARCH_FAILURE_MULTI = "No tasks were found with the keywords: ";
@@ -164,7 +164,7 @@ public class Constants {
 	// error messages
 	public static final String ERROR_MULTIPLE_LOCATION = "Error! More than one location.";
 
-	// constants used in GUI
+	// below are all constants used in GUI
 	final static String HEADER_OVERDUE = "Overdue Tasks";
 	final static String HEADER_FLOATING = "Tasks With No date";
 	final static String HEADER_UPCOMING = "Upcoming Tasks";
@@ -187,9 +187,10 @@ public class Constants {
 	final static String FORMAT_NUMBER = "numbering";
 	final static String FORMAT_DONE = "done";
 	
-	final static int DISPLAY_IN_TP1 = 1; //upcoming
-	final static int DISPLAY_IN_TP2 = 2; //no date
-	final static int DISPLAY_IN_TP3 = 3; //overdue
+	final static int DISPLAY_IN_TP1 = 1; //upcoming TP
+	final static int DISPLAY_IN_TP2 = 2; //no date TP
+	final static int DISPLAY_IN_TP3 = 3; //overdue TP
 	
-
+	//separator between today's tasks and upcoming tasks in gui
+	final static String GUI_SEPARATOR = "============================";
 }
