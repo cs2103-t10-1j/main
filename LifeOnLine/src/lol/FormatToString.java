@@ -105,6 +105,7 @@ public class FormatToString {
 			if(hasTodayTask && thisTaskIsNotTodayTask && !hasSeparator){
 				String separator = newLine() + Constants.GUI_SEPARATOR;
 				strToShowTemp.add(new StringWithFormat(separator, Constants.FORMAT_NONE));
+				hasSeparator = true;
 			}
 			
 			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_DATE));
