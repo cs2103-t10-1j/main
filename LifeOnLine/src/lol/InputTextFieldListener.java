@@ -31,7 +31,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	static StyledDocument doc2 = new DefaultStyledDocument();
 	JTextPane mainDisplayTP3;
 	static StyledDocument doc3 = new DefaultStyledDocument();
-	JLabel label;
+	JTextPane label;
 	JLabel progressLabel;
 	int size;
 
@@ -52,7 +52,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD, 16);
 	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
 
-	public InputTextFieldListener(JTextPane mainDisplayTP,JTextPane mainDisplayTP2, JTextPane mainDisplayTP3,JLabel label, JTextField inputTF, int size, Timer timer, JLabel progressLabel, JProgressBar progressBar){
+	public InputTextFieldListener(JTextPane mainDisplayTP, JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JTextPane label, JTextField inputTF, int size, Timer timer, JLabel progressLabel, JProgressBar progressBar){
 		this.inputTF = inputTF;
 
 		// Welcome to LifeOnLine
