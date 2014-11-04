@@ -164,7 +164,7 @@ public class Constants {
 	// error messages
 	public static final String ERROR_MULTIPLE_LOCATION = "Error! More than one location.";
 
-	// constants used in GUI
+	// below are all constants used in GUI
 	final static String HEADER_OVERDUE = "Overdue Tasks";
 	final static String HEADER_FLOATING = "Tasks With No date";
 	final static String HEADER_UPCOMING = "Upcoming Tasks";
@@ -187,9 +187,10 @@ public class Constants {
 	final static String FORMAT_NUMBER = "numbering";
 	final static String FORMAT_DONE = "done";
 	
-	final static int DISPLAY_IN_TP1 = 1; //upcoming
-	final static int DISPLAY_IN_TP2 = 2; //no date
-	final static int DISPLAY_IN_TP3 = 3; //overdue
+	final static int DISPLAY_IN_TP1 = 1; //upcoming TP
+	final static int DISPLAY_IN_TP2 = 2; //no date TP
+	final static int DISPLAY_IN_TP3 = 3; //overdue TP
 	
-
+	//separator between today's tasks and upcoming tasks in gui
+	final static String GUI_SEPARATOR = "============================";
 }
