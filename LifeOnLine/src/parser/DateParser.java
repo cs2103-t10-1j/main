@@ -34,7 +34,7 @@ import lol.Date;
 public class DateParser {
 	/************* Attributes ***************/
 	private String userInput;
-	private String dateKeyword; // keyword preceding date - on, by or no keyword
+	private String dateKeyword; // keyword preceding date - on, by, from or no keyword
 
 	/************* Constructors ***************/
 	public DateParser() {
@@ -73,6 +73,7 @@ public class DateParser {
 	 */
 	public Date getDueDate() {
 		cleanUp();
+		String userInput = getUserInput();
 
 		// on
 		Pattern pOn = Pattern.compile("\\bon\\b");
@@ -110,13 +111,13 @@ public class DateParser {
 
 		// from
 		Pattern pFrom = Pattern.compile("\\bfrom\\b");
-		Matcher mFrom = pFrom.matcher(getUserInput());
+		Matcher mFrom = pFrom.matcher(userInput);
 
 		while (mFrom.find()) {
 			String parameter = getParameterStartingAtIndex(mFrom.end());
+			
 			if (isDateRange(parameter)) {
 				setDateKeyword("from");
-				System.out.println("setting to from");
 				return createDatesFromRange(parameter)[0];
 			}
 		}
@@ -323,13 +324,13 @@ public class DateParser {
 		String keyword = getDateKeyword();
 		String date = "";
 
-		System.out.println("AAA" + getDateKeyword());
 		if (keyword.isEmpty()) {
 			String temp = getUserInput();
 			String[] words = temp.split(" ");
 
 			for (int i = 0; i < words.length; i++) {
 				String word = words[i];
+				
 				if (isValidDay(word) && getEndDate() == null) {
 					date = word.trim();
 					break;
@@ -339,7 +340,6 @@ public class DateParser {
 				// most
 				// 5 words
 				String[] nextWords = getNext4Words(words, i);
-				
 				/* check for date range */
 				// 1 word - 24-26/11
 				if (isDateRange(word)) {
@@ -374,16 +374,7 @@ public class DateParser {
 
 				if (i + 2 < words.length) {
 					String[] words4to7 = getNext4Words(words, i + 2);
-					// 6 words - 24 nov 14 to 26 nov
-					if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-							+ " " + nextWords[2] + " " + nextWords[3] + " "
-							+ words4to7[2])) {
-						date = word + " " + nextWords[0] + " "
-								+ nextWords[1] + " " + nextWords[2] + " "
-								+ nextWords[3] + " " + words4to7[2];
-						break;
-					}
-
+					
 					// 7 words - 30 dec 2014 to 2 jan 2015
 					if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
 							+ " " + nextWords[2] + " " + nextWords[3] + " "
@@ -394,6 +385,18 @@ public class DateParser {
 								+ words4to7[3];
 						break;
 					}
+					
+					// 6 words - 24 nov 14 to 26 nov
+					if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+							+ " " + nextWords[2] + " " + nextWords[3] + " "
+							+ words4to7[2])) {
+						date = word + " " + nextWords[0] + " "
+								+ nextWords[1] + " " + nextWords[2] + " "
+								+ nextWords[3] + " " + words4to7[2];
+						break;
+					}
+
+					
 				}
 
 				if (hasDate(word, nextWords)) {
@@ -412,10 +415,8 @@ public class DateParser {
 			Pattern p = Pattern.compile("\\b" + keyword + "\\b");
 			Matcher m = p.matcher(getUserInput());
 
-			System.out.println(keyword);
 			while (m.find()) {
 				String parameter = getParameterStartingAtIndex(m.end());
-				System.out.println(parameter);
 				if (isValidDateFormat(parameter)) {
 					date = parameter.trim();
 				}
@@ -823,8 +824,11 @@ public class DateParser {
 		}
 
 		// Check if the due date is followed by a description
-		return removeDescriptionFromDueDateIfAny(parameter);
-
+		if (isDateRange(parameter)) {
+			return removeDescriptionFromDateRangeIfAny(parameter);
+		} else {
+			return removeDescriptionFromDueDateIfAny(parameter);
+		}
 	}
 
 	/**
@@ -873,6 +877,22 @@ public class DateParser {
 					.trim();
 		} else {
 			return date;
+		}
+	}
+	
+	public String removeDescriptionFromDateRangeIfAny(String dateRange) {
+		while (!dateRange.isEmpty() && !isDateRange(dateRange)) {
+			dateRange = removeLastWord(dateRange);
+		}
+		return dateRange;
+	}
+	
+	public String removeLastWord(String string) {
+		int index = string.lastIndexOf(' ');
+		if (index == -1) {
+			return "";
+		} else {
+			return string.substring(0, index);
 		}
 	}
 
