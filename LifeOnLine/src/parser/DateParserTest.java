@@ -24,8 +24,25 @@ public class DateParserTest {
 		assertEquals(new Date(3, 11), dp5.getDueDate());
 		DateParser dp6 = new DateParser("add eat 3 octo");
 		assertEquals(null, dp6.getDueDate());
+		DateParser dp7 = new DateParser("add camp at island from 12-15 Dec");
+		assertEquals(new Date(12, 12, 14), dp7.getDueDate());
+		DateParser dp8 = new DateParser("add camp at island from 24/11 to 2 dec");
+		assertEquals(new Date(24, 11, 14), dp8.getDueDate());
+		DateParser dp9 = new DateParser("add camp at island from 24 Dec 2014 to 2 Jan 2015");
+		assertEquals(new Date(24, 12, 14), dp9.getDueDate());
 	}
 	
+	@Test
+	public void testGetEndDate() {
+		DateParser dp6 = new DateParser("add eat 3 octo");
+		assertEquals(null, dp6.getEndDate());
+		DateParser dp7 = new DateParser("add camp at island from 12-15 Dec");
+		assertEquals(new Date(15, 12, 14), dp7.getEndDate());
+		DateParser dp8 = new DateParser("add camp at island from 24/11 to 2 dec");
+		assertEquals(new Date(2, 12, 14), dp8.getEndDate());
+		DateParser dp9 = new DateParser("add camp at island from 24 Dec 2014 to 2 Jan 2015");
+		assertEquals(new Date(2, 1, 2015), dp9.getEndDate());
+	}
 	@Test
 	public void testGetDayOfTheWeek() {
 		DateParser dp = new DateParser();
@@ -38,7 +55,7 @@ public class DateParserTest {
 	
 	@Test
 	public void testGetUserInputWithoutDueDate() {
-		DateParser dp1 = new DateParser("  add   buy   pizza  at clementi  on  29 oct at   10am ");
+/*		DateParser dp1 = new DateParser("  add   buy   pizza  at clementi  on  29 oct at   10am ");
 		assertEquals("add buy pizza at clementi at 10am", dp1.getUserInputWithoutDueDate());
 		DateParser dp2 = new DateParser("  add   buy   pizza at   10am  at clementi  by  29 oct ");
 		assertEquals("add buy pizza at 10am at clementi", dp2.getUserInputWithoutDueDate());
@@ -54,8 +71,16 @@ public class DateParserTest {
 		assertEquals("add eat 3 pizzas at 3 pm", dp7.getUserInputWithoutDueDate());
 		DateParser dp8 = new DateParser("add mon do this");
 		assertEquals("add do this", dp8.getUserInputWithoutDueDate());
+		
+		DateParser dp10 = new DateParser("add camp at island from 12-15 Dec");
+		assertEquals("add camp at island", dp10.getUserInputWithoutDueDate());*/
+		DateParser dp11 = new DateParser("add camp at island from 24/11 to 2 dec");
+		dp11.getDueDate();
+		assertEquals("add camp at island", dp11.getUserInputWithoutDueDate());
+		//DateParser dp9 = new DateParser("add camp at island from 24 Dec 2014 to 2 Jan 2015");
+		//assertEquals("add camp at island", dp9.getUserInputWithoutDueDate());
 	}
-
+/*
 	@Test
 	public void testIsValidDate() {
 		DateParser dp = new DateParser();
@@ -127,6 +152,32 @@ public class DateParserTest {
 		assertTrue(dp.isBoth24hrTimeAndYear("2016"));
 		assertFalse(dp.isBoth24hrTimeAndYear("1300"));
 	}
+	
+	@Test
+	public void testIsDateRange() {
+		DateParser dp = new DateParser();
+		assertTrue(dp.isDateRange("24-26 Nov"));
+		assertTrue(dp.isDateRange("24 Nov - 26 Nov"));
+		assertTrue(dp.isDateRange("Sun to Tue"));
+		assertTrue(dp.isDateRange("24/11/14-2/12/14"));
+		
+	}
+	
+	@Test
+	public void testAddDaysToDate() {
+		DateParser dp = new DateParser();
+		assertEquals(new Date(4, 12, 2014), dp.addDaysToDate(new Date(1, 12, 2014), 3));
+		assertEquals(new Date(4, 11, 2014), dp.addDaysToDate(new Date(31, 10, 2014), 4));
+	}
+	
+	@Test
+	public void testCreateDatesFromRange() {
+		DateParser dp = new DateParser();
+		Date[] arr1 = { new Date(2, 12, 2014), new Date(5, 12, 2014) };
+		assertArrayEquals(arr1, dp.createDatesFromRange("2-5 Dec"));
+		Date[] arr2 = { new Date(29, 11, 2014), new Date(15, 12, 2014) };
+		assertArrayEquals(arr2, dp.createDatesFromRange("29/11 to 15/12"));
+	}*/
 
 	// The following methods depend on the current date.
 	

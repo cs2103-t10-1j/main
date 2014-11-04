@@ -6,6 +6,7 @@ public class Task implements Comparable<Task> {
 	private String description;
 	private String location;
 	private Date dueDate;
+	private Date endDate;
 	private Time startTime;
 	private Time endTime;
 	private boolean isDone;
@@ -16,6 +17,7 @@ public class Task implements Comparable<Task> {
 		setDescription(description);
 		setLocation(location);
 		setDueDate(dueDate);
+		setEndDate(null);
 		setStartTime(null);
 		setEndTime(null);
 		setIsDone(false);
@@ -28,6 +30,32 @@ public class Task implements Comparable<Task> {
 		setDescription(description);
 		setLocation(location);
 		setDueDate(dueDate);
+		setEndDate(null);
+		setStartTime(startTime);
+		setEndTime(endTime);
+		setIsDone(false);
+		setIsOverdue(false);
+		setAlerted(false);
+	}
+	
+	public Task(String description, String location, Date dueDate, Date endDate) {
+		setDescription(description);
+		setLocation(location);
+		setDueDate(dueDate);
+		setEndDate(endDate);
+		setStartTime(null);
+		setEndTime(null);
+		setIsDone(false);
+		setIsOverdue(false);
+		setAlerted(false);
+	}
+
+	public Task(String description, String location, Date dueDate, Date endDate, 
+			Time startTime, Time endTime) {
+		setDescription(description);
+		setLocation(location);
+		setDueDate(dueDate);
+		setEndDate(endDate);
 		setStartTime(startTime);
 		setEndTime(endTime);
 		setIsDone(false);
@@ -46,6 +74,10 @@ public class Task implements Comparable<Task> {
 
 	public Date getTaskDueDate() {
 		return dueDate;
+	}
+	
+	public Date getEndDate() {
+		return endDate;
 	}
 
 	public Time getStartTime() {
@@ -81,6 +113,10 @@ public class Task implements Comparable<Task> {
 		this.dueDate = date;
 	}
 
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	
 	public void setStartTime(Time startTime) {
 		this.startTime = startTime;
 	}
@@ -110,6 +146,7 @@ public class Task implements Comparable<Task> {
 		if (obj instanceof Task) {
 			Task other = (Task) obj;
 			boolean isDateSame = false;
+			boolean isEndDateSame = false;
 			boolean isStartTimeSame = false;
 			boolean isEndTimeSame = false;
 			boolean isDescSame = false;
@@ -133,6 +170,12 @@ public class Task implements Comparable<Task> {
 							.getTaskDueDate().equals(this.getTaskDueDate())))) {
 				isDateSame = true;
 			}
+			
+			if ((other.getEndDate() == null && this.getEndDate() == null)
+					|| ((other.getEndDate() != null && this.getEndDate() != null) && (other
+							.getEndDate().equals(this.getEndDate())))) {
+				isEndDateSame = true;
+			}
 
 			if ((other.getTaskLocation() == null && this.getTaskLocation() == null)
 					|| ((other.getTaskLocation() != null && this
@@ -150,7 +193,7 @@ public class Task implements Comparable<Task> {
 				isDescSame = true;
 			}
 
-			return isDateSame && isDescSame && isLocationSame
+			return isDateSame && isEndDateSame && isDescSame && isLocationSame
 					&& isStartTimeSame && isEndTimeSame;
 		} else {
 			return false;
@@ -240,7 +283,26 @@ public class Task implements Comparable<Task> {
 		else if (this.isAfter(that)) {
 			return AFTER;
 		}
+		
+		// if one date has a date range then it has lower priority
+		else if (this.getEndDate() == null && that.getEndDate() != null) {
+			return BEFORE;
+		}
+		
+		else if (this.getEndDate() != null && that.getEndDate() == null) {
+			return AFTER;
+		}
+		
+		// if both have end date then the one with earlier end date has higher priority
+		else if (this.getEndDate().isBefore(that.getEndDate())) {
+			return BEFORE;
+		}
+		
+		else if (this.getEndDate().isAfter(that.getEndDate())) {
+			return AFTER;
+		}
 
+		// both have same end date
 		else {
 			return EQUAL;
 		}
@@ -253,7 +315,12 @@ public class Task implements Comparable<Task> {
 						.getStartTime().isBefore(other.getStartTime())))
 				|| (this.getTaskDueDate().equals(other.getTaskDueDate())
 						&& (this.getStartTime().equals(other.getStartTime())) && (this
-							.getEndTime().isBefore(other.getEndTime())));
+							.getEndTime().isBefore(other.getEndTime()))
+							
+							|| (this.getTaskDueDate().equals(other.getTaskDueDate()) &&
+									this.getStartTime().equals(other.getStartTime()) &&
+									this.getEndTime().equals(other.getEndTime()) &&
+									this.getEndDate().isBefore(other.getEndDate())));
 	}
 
 	public boolean isAfter(Task other) {
@@ -262,6 +329,11 @@ public class Task implements Comparable<Task> {
 						.getStartTime().isAfter(other.getStartTime())))
 				|| (this.getTaskDueDate().equals(other.getTaskDueDate())
 						&& (this.getStartTime().equals(other.getStartTime())) && (this
-							.getEndTime().isAfter(other.getEndTime())));
+							.getEndTime().isAfter(other.getEndTime()))
+							
+							|| (this.getTaskDueDate().equals(other.getTaskDueDate()) &&
+									this.getStartTime().equals(other.getStartTime()) &&
+									this.getEndTime().equals(other.getEndTime()) &&
+									this.getEndDate().isAfter(other.getEndDate())));
 	}
 }
