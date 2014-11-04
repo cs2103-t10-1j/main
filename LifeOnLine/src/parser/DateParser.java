@@ -34,7 +34,7 @@ import lol.Date;
 public class DateParser {
 	/************* Attributes ***************/
 	private String userInput;
-	private String dateKeyword; // keyword preceding date - on, by or no keyword
+	private String dateKeyword; // keyword preceding date - on, by, from or no keyword
 
 	/************* Constructors ***************/
 	public DateParser() {
@@ -73,6 +73,7 @@ public class DateParser {
 	 */
 	public Date getDueDate() {
 		cleanUp();
+		String userInput = getUserInput();
 
 		// on
 		Pattern pOn = Pattern.compile("\\bon\\b");
@@ -82,7 +83,12 @@ public class DateParser {
 			String parameter = getParameterStartingAtIndex(mOn.end());
 			if (isValidDateFormat(parameter)) {
 				setDateKeyword("on");
-				return createDate(parameter);
+
+				if (isDateRange(parameter)) {
+					return createDatesFromRange(parameter)[0];
+				} else {
+					return createDate(parameter);
+				}
 			}
 		}
 
@@ -94,7 +100,25 @@ public class DateParser {
 			String parameter = getParameterStartingAtIndex(mBy.end());
 			if (isValidDateFormat(parameter)) {
 				setDateKeyword("by");
-				return createDate(parameter);
+
+				if (isDateRange(parameter)) {
+					return createDatesFromRange(parameter)[0];
+				} else {
+					return createDate(parameter);
+				}
+			}
+		}
+
+		// from
+		Pattern pFrom = Pattern.compile("\\bfrom\\b");
+		Matcher mFrom = pFrom.matcher(userInput);
+
+		while (mFrom.find()) {
+			String parameter = getParameterStartingAtIndex(mFrom.end());
+			
+			if (isDateRange(parameter)) {
+				setDateKeyword("from");
+				return createDatesFromRange(parameter)[0];
 			}
 		}
 
@@ -104,13 +128,65 @@ public class DateParser {
 
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
-			if (isValidDay(word)) {
-				return createDate(word);
-			}
-
 			// find next 4 words because date and time formats can have at most
 			// 5 words
 			String[] nextWords = getNext4Words(words, i);
+
+			if (isValidDay(word) && !nextWords[0].equalsIgnoreCase("to")
+					&& !nextWords[0].equals("-")) {
+				return createDate(word);
+			}
+
+			/* check for date range */
+			// 1 word - 24-26/11
+			if (isDateRange(word)) {
+				return createDatesFromRange(word)[0];
+			}
+			// 2 words - 24-26 nov
+			if (isDateRange(word + " " + nextWords[0])) {
+				return createDatesFromRange(word + " " + nextWords[0])[0];
+			}
+			// 3 words - sun - tue, 24/11 to 26/11
+			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1])) {
+				return createDatesFromRange(word + " " + nextWords[0] + " "
+						+ nextWords[1])[0];
+			}
+			// 4 words - 24 to 29 Nov
+			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+					+ " " + nextWords[2])) {
+				return createDatesFromRange(word + " " + nextWords[0] + " "
+						+ nextWords[1] + " " + nextWords[2])[0];
+			}
+			// 5 words - 24 Nov to 26 Nov
+			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+					+ " " + nextWords[2] + " " + nextWords[3])) {
+				return createDatesFromRange(word + " " + nextWords[0] + " "
+						+ nextWords[1] + " " + nextWords[2] + " "
+						+ nextWords[3])[0];
+			}
+
+			if (i + 2 < words.length) {
+				String[] words4to7 = getNext4Words(words, i + 2);
+				// 6 words - 24 nov 14 to 26 nov
+				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+						+ " " + nextWords[2] + " " + nextWords[3] + " "
+						+ words4to7[2])) {
+					return createDatesFromRange(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2] + " "
+							+ nextWords[3] + " " + words4to7[2])[0];
+				}
+
+				// 7 words - 30 dec 2014 to 2 jan 2015
+				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+						+ " " + nextWords[2] + " " + nextWords[3] + " "
+						+ words4to7[2] + " " + words4to7[3])) {
+					return createDatesFromRange(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2] + " "
+							+ nextWords[3] + " " + words4to7[2] + " "
+							+ words4to7[3])[0];
+				}
+			}
+			// no date range starting from this word
 
 			if (hasDate(word, nextWords)) {
 				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
@@ -122,6 +198,114 @@ public class DateParser {
 					return createDate(parameter);
 				}
 			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the end date of task in userInput
+	 * 
+	 * @return end date of a task in userInput if it exists, else returns null
+	 */
+	public Date getEndDate() {
+		cleanUp();
+
+		// on
+		Pattern pOn = Pattern.compile("\\bon\\b");
+		Matcher mOn = pOn.matcher(getUserInput());
+
+		while (mOn.find()) {
+			String parameter = getParameterStartingAtIndex(mOn.end());
+			if (isDateRange(parameter)) {
+				setDateKeyword("on");
+				return createDatesFromRange(parameter)[1];
+			}
+		}
+
+		// by
+		Pattern pBy = Pattern.compile("\\bby\\b");
+		Matcher mBy = pBy.matcher(getUserInput());
+
+		while (mBy.find()) {
+			String parameter = getParameterStartingAtIndex(mBy.end());
+			if (isDateRange(parameter)) {
+				setDateKeyword("by");
+				return createDatesFromRange(parameter)[1];
+			}
+		}
+
+		// from
+		Pattern pFrom = Pattern.compile("\\bfrom\\b");
+		Matcher mFrom = pFrom.matcher(getUserInput());
+
+		while (mFrom.find()) {
+			String parameter = getParameterStartingAtIndex(mFrom.end());
+			if (isDateRange(parameter)) {
+				setDateKeyword("from");
+				return createDatesFromRange(parameter)[1];
+			}
+		}
+
+		// no keyword
+		String temp = getUserInput();
+		String[] words = temp.split(" ");
+
+		for (int i = 0; i < words.length; i++) {
+			String word = words[i];
+			// find next 4 words because date and time formats can have at most
+			// 5 words
+			String[] nextWords = getNext4Words(words, i);
+
+			/* check for date range */
+			// 1 word - 24-26/11
+			if (isDateRange(word)) {
+				return createDatesFromRange(word)[1];
+			}
+			// 2 words - 24-26 nov
+			if (isDateRange(word + " " + nextWords[0])) {
+				return createDatesFromRange(word + " " + nextWords[0])[1];
+			}
+			// 3 words - sun - tue, 24/11 to 26/11
+			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1])) {
+				return createDatesFromRange(word + " " + nextWords[0] + " "
+						+ nextWords[1])[1];
+			}
+			// 4 words - 24 to 29 Nov
+			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+					+ " " + nextWords[2])) {
+				return createDatesFromRange(word + " " + nextWords[0] + " "
+						+ nextWords[1] + " " + nextWords[2])[1];
+			}
+			// 5 words - 24 Nov to 26 Nov
+			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+					+ " " + nextWords[2] + " " + nextWords[3])) {
+				return createDatesFromRange(word + " " + nextWords[0] + " "
+						+ nextWords[1] + " " + nextWords[2] + " "
+						+ nextWords[3])[1];
+			}
+
+			if (i + 2 < words.length) {
+				String[] words4to7 = getNext4Words(words, i + 2);
+				// 6 words - 24 nov 14 to 26 nov
+				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+						+ " " + nextWords[2] + " " + nextWords[3] + " "
+						+ words4to7[2])) {
+					return createDatesFromRange(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2] + " "
+							+ nextWords[3] + " " + words4to7[2])[1];
+				}
+
+				// 7 words - 30 dec 2014 to 2 jan 2015
+				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+						+ " " + nextWords[2] + " " + nextWords[3] + " "
+						+ words4to7[2] + " " + words4to7[3])) {
+					return createDatesFromRange(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2] + " "
+							+ nextWords[3] + " " + words4to7[2] + " "
+							+ words4to7[3])[1];
+				}
+			}
+			// no date range starting from this word
 		}
 		return null;
 	}
@@ -146,7 +330,8 @@ public class DateParser {
 
 			for (int i = 0; i < words.length; i++) {
 				String word = words[i];
-				if (isValidDay(word)) {
+				
+				if (isValidDay(word) && getEndDate() == null) {
 					date = word.trim();
 					break;
 				}
@@ -155,6 +340,64 @@ public class DateParser {
 				// most
 				// 5 words
 				String[] nextWords = getNext4Words(words, i);
+				/* check for date range */
+				// 1 word - 24-26/11
+				if (isDateRange(word)) {
+					date = word;
+					break;
+				}
+				// 2 words - 24-26 nov
+				if (isDateRange(word + " " + nextWords[0])) {
+					date = word + " " + nextWords[0];
+					break;
+				}
+				// 3 words - sun - tue, 24/11 to 26/11
+				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1])) {
+					date = word + " " + nextWords[0] + " " + nextWords[1];
+					break;
+				}
+				// 4 words - 24 to 29 Nov
+				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+						+ " " + nextWords[2])) {
+					date = word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2];
+					break;
+				}
+				// 5 words - 24 Nov to 26 Nov
+				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+						+ " " + nextWords[2] + " " + nextWords[3])) {
+					date = word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2] + " "
+							+ nextWords[3];
+					break;
+				}
+
+				if (i + 2 < words.length) {
+					String[] words4to7 = getNext4Words(words, i + 2);
+					
+					// 7 words - 30 dec 2014 to 2 jan 2015
+					if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+							+ " " + nextWords[2] + " " + nextWords[3] + " "
+							+ words4to7[2] + " " + words4to7[3])) {
+						date = word + " " + nextWords[0] + " "
+								+ nextWords[1] + " " + nextWords[2] + " "
+								+ nextWords[3] + " " + words4to7[2] + " "
+								+ words4to7[3];
+						break;
+					}
+					
+					// 6 words - 24 nov 14 to 26 nov
+					if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
+							+ " " + nextWords[2] + " " + nextWords[3] + " "
+							+ words4to7[2])) {
+						date = word + " " + nextWords[0] + " "
+								+ nextWords[1] + " " + nextWords[2] + " "
+								+ nextWords[3] + " " + words4to7[2];
+						break;
+					}
+
+					
+				}
 
 				if (hasDate(word, nextWords)) {
 					Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
@@ -168,12 +411,12 @@ public class DateParser {
 				}
 			}
 		} else {
+			// there is a keyword
 			Pattern p = Pattern.compile("\\b" + keyword + "\\b");
 			Matcher m = p.matcher(getUserInput());
 
 			while (m.find()) {
 				String parameter = getParameterStartingAtIndex(m.end());
-
 				if (isValidDateFormat(parameter)) {
 					date = parameter.trim();
 				}
@@ -196,7 +439,7 @@ public class DateParser {
 	 * @return true if inDate is a valid date format, else false
 	 */
 	public boolean isValidDateFormat(String inDate) {
-		return isValidDate(inDate) || isValidDay(inDate);
+		return isValidDate(inDate) || isValidDay(inDate) || isDateRange(inDate);
 	}
 
 	/**
@@ -207,7 +450,7 @@ public class DateParser {
 	 * @return true if it matches any of the above formats, else false
 	 */
 	public boolean isValidDate(String inDate) {
-		inDate = inDate.trim();
+		inDate = inDate.trim().toLowerCase();
 		List<SimpleDateFormat> dateFormats = new ArrayList<SimpleDateFormat>();
 
 		// Allowed date formats
@@ -581,8 +824,11 @@ public class DateParser {
 		}
 
 		// Check if the due date is followed by a description
-		return removeDescriptionFromDueDateIfAny(parameter);
-
+		if (isDateRange(parameter)) {
+			return removeDescriptionFromDateRangeIfAny(parameter);
+		} else {
+			return removeDescriptionFromDueDateIfAny(parameter);
+		}
 	}
 
 	/**
@@ -633,6 +879,22 @@ public class DateParser {
 			return date;
 		}
 	}
+	
+	public String removeDescriptionFromDateRangeIfAny(String dateRange) {
+		while (!dateRange.isEmpty() && !isDateRange(dateRange)) {
+			dateRange = removeLastWord(dateRange);
+		}
+		return dateRange;
+	}
+	
+	public String removeLastWord(String string) {
+		int index = string.lastIndexOf(' ');
+		if (index == -1) {
+			return "";
+		} else {
+			return string.substring(0, index);
+		}
+	}
 
 	/**
 	 * Returns the starting index of the next keyword
@@ -651,7 +913,8 @@ public class DateParser {
 			String[] nextWords = getNext4Words(words, i);
 
 			if (isKeyword(word)
-					|| (hasTime(word, nextWords) && !(word.startsWith("0") && word.endsWith("m")) && !isBoth24hrTimeAndYear(word))) {
+					|| (hasTime(word, nextWords)
+							&& !(word.startsWith("0") && word.endsWith("m")) && !isBoth24hrTimeAndYear(word))) {
 				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
 						+ nextWords[0] + "\\b");
 				Matcher m = p.matcher(temp);
@@ -821,4 +1084,136 @@ public class DateParser {
 		return nextWords;
 	}
 
+	/**
+	 * Checks whether a string is a date range in the following formats: (Space
+	 * before and after 'to') <date1> to <date2> e.g. 24 Nov to 26 Nov, 24 to 26
+	 * Nov 14 <date1>-<date2> e.g. 24/11-26/11, 24-26 Nov, 24-26 Nov 2014
+	 * 
+	 * @param string
+	 *            string to be checked
+	 * @return true if the string is a date range in any of the above formats,
+	 *         else false
+	 */
+	public boolean isDateRange(String string) {
+		boolean containsSeparator = false;
+		String[] dates = {};
+
+		try {
+			if (string.contains(Constants.SEPARATOR_TO)) {
+				dates = string.split(Constants.SEPARATOR_TO);
+				dates = cleanUp(dates);
+				containsSeparator = true;
+			} else if (string.contains(Constants.SEPARATOR_DASH)) {
+				dates = string.split(Constants.SEPARATOR_DASH);
+				dates = cleanUp(dates);
+				containsSeparator = true;
+			}
+
+			if (containsSeparator) {
+				// start and end date are both valid dates, e.g. 24 Nov to 26
+				// Nov, 24/11-26/11, sun-tue
+				if ((isValidDate(dates[0]) || isValidDay(dates[0]))
+						&& (isValidDate(dates[1]) || isValidDay(dates[1]))) {
+					// if both are days of the week e.g sun-tue
+					if (isDayOfTheWeek(dates[0]) && isDayOfTheWeek(dates[1])) {
+						return true;
+					}
+					Date start = createDate(dates[0]);
+					Date end = createDate(dates[1]);
+					return start.isBefore(end);
+				}
+				// start date is the day only, end date is a valid date, e.g.
+				// 24-26 Nov, 24 to 26 nov
+				if (isValidDate(dates[1])) {
+					Date end = createDate(dates[1]);
+					return Integer.parseInt(dates[0]) < end.getDay();
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean isDayOfTheWeek(String string) {
+		return hasWordInDictionary(Constants.DAYS_LONG, string)
+				|| hasWordInDictionary(Constants.DAYS_SHORT, string);
+	}
+
+	public boolean isEitherTodayOrTmr(String string) {
+		return hasWordInDictionary(Constants.DAYS_IMMEDIATE, string);
+	}
+
+	/**
+	 * Given a string that represents a date range, creates an array of Date
+	 * objects of start date and end date
+	 * 
+	 * @param string
+	 *            date range
+	 * @return array with start date and end date, null if invalid format
+	 */
+	public Date[] createDatesFromRange(String string) {
+		string = string.trim().toLowerCase();
+		String[] dates = {};
+
+		try {
+			if (!isDateRange(string)) {
+				return null;
+			}
+			if (string.contains(Constants.SEPARATOR_TO)) {
+				dates = cleanUp(string.split(Constants.SEPARATOR_TO));
+			} else if (string.contains(Constants.SEPARATOR_DASH)) {
+				dates = cleanUp(string.split(Constants.SEPARATOR_DASH));
+			} else {
+				return null;
+			}
+
+			// start and end date are both valid dates, e.g. 24 Nov to 26 Nov,
+			// 24/11-26/11, sun-tue
+			if ((isValidDate(dates[0]) || isValidDay(dates[0]))
+					&& (isValidDate(dates[1]) || isValidDay(dates[1]))) {
+
+				// if both are days of the week
+				if (isDayOfTheWeek(dates[0]) && isDayOfTheWeek(dates[1])) {
+					Date start = createDate(dates[0]);
+
+					int startDayIndex = getDayOfTheWeekIndex(dates[0]);
+					int endDayIndex = getDayOfTheWeekIndex(dates[1]);
+					int duration = endDayIndex - startDayIndex;
+
+					if (duration <= 0) {
+						duration += 7;
+					}
+					Date end = addDaysToDate(start, duration);
+
+					Date[] dateArr = { start, end };
+					return dateArr;
+				} else {
+					Date start = createDate(dates[0]);
+					Date end = createDate(dates[1]);
+					Date[] dateArr = { start, end };
+					return dateArr;
+				}
+			} else if (isValidDate(dates[1])) {
+				// start date is the day only, end date is a valid date, e.g.
+				// 24-26 Nov, 24 to 26 nov
+				Date end = createDate(dates[1]);
+				Date start = new Date(Integer.parseInt(dates[0]),
+						end.getMonth(), end.getYear4Digit());
+				Date[] dateArr = { start, end };
+				return dateArr;
+			}
+			return null;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public Date addDaysToDate(Date date, int amount) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(date.getYear4Digit(), date.getMonth() - 1, date.getDay());
+		cal.add(Calendar.DATE, amount);
+		return new Date(cal.get(Calendar.DATE), cal.get(Calendar.MONTH) + 1,
+				cal.get(Calendar.YEAR));
+	}
 }
