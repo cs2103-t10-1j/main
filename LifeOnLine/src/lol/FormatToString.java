@@ -74,7 +74,6 @@ public class FormatToString {
 		case OVERDUE_HEADER_AND_DATE:
 			headerStr = Constants.HEADER_OVERDUE;
 			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_OVERDUE));
-			hasOverdueHeader = true;
 
 			headerStr = newLine() + newLine() + dateFormatAsHeader(task.getTaskDueDate());
 			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_DATE));
@@ -88,7 +87,6 @@ public class FormatToString {
 		case UPCOMING_HEADER_AND_DATE:
 			headerStr = Constants.HEADER_UPCOMING;
 			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_UPCOMING));
-			hasUpcomingHeader = true;
 
 			headerStr = newLine() + newLine();
 			headerStr = headerStr + addTodayOrTomorrow(task);
@@ -112,12 +110,8 @@ public class FormatToString {
 			break;
 
 		case FLOATING_HEADER:
-			if (!hasFloatingHeader) {
 				headerStr = Constants.HEADER_FLOATING + newLine();
-
 				strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_FLOATING));
-				hasFloatingHeader = true;
-			}
 			break;
 
 		default:
