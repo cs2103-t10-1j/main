@@ -32,7 +32,8 @@ import lol.Time;
 public class TimeParser {
 	/************* Attributes ***************/
 	private String userInput;
-	private String timeKeyword; // keyword preceding time - at, by, from or no keyword
+	private String timeKeyword; // keyword preceding time - at, by, from or no
+								// keyword
 
 	/************* Constructors ***************/
 	public TimeParser() {
@@ -48,7 +49,7 @@ public class TimeParser {
 	public String getUserInput() {
 		return userInput;
 	}
-	
+
 	public String getTimeKeyword() {
 		return timeKeyword;
 	}
@@ -57,13 +58,13 @@ public class TimeParser {
 	public void setUserInput(String userInput) {
 		this.userInput = userInput.toLowerCase();
 	}
-	
+
 	public void setTimeKeyword(String timeKeyword) {
 		this.timeKeyword = timeKeyword.toLowerCase();
 	}
 
 	/************* Other methods ***************/
-	
+
 	/**
 	 * Returns the start time of task in userInput
 	 * 
@@ -72,7 +73,7 @@ public class TimeParser {
 	public Time getStartTime() {
 		cleanUp();
 		DateParser dtp = new DateParser();
-		
+
 		// at
 		Pattern pAt = Pattern.compile("\\bat\\b");
 		Matcher mAt = pAt.matcher(getUserInput());
@@ -110,7 +111,7 @@ public class TimeParser {
 				}
 			}
 		}
-		
+
 		// from
 		Pattern pFrom = Pattern.compile("\\bfrom\\b");
 		Matcher mFrom = pFrom.matcher(getUserInput());
@@ -142,8 +143,11 @@ public class TimeParser {
 				} else if (is24hrTime(word)) {
 					// check if the word is both a year and 24hr time
 					if (dtp.isBoth24hrTimeAndYear(word)) {
-						// if it is meant to be a year, it should be preceded by day and month
-						if (i - 2 > 0 && dtp.isValidDateFormat(words[i-2] + " " + words[i-1])) {
+						// if it is meant to be a year, it should be preceded by
+						// day and month
+						if (i - 2 > 0
+								&& dtp.isValidDateFormat(words[i - 2] + " "
+										+ words[i - 1])) {
 							continue;
 						}
 					}
@@ -153,7 +157,7 @@ public class TimeParser {
 					return create12hrTime(word);
 				}
 			}
-			
+
 			// find next 4 words because time formats can have at most
 			// 5 words
 			String[] nextWords = getNext4Words(words, i);
@@ -177,7 +181,7 @@ public class TimeParser {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the end time of task in userInput
 	 * 
@@ -209,7 +213,7 @@ public class TimeParser {
 				return createEndTimeFromRange(parameter);
 			}
 		}
-		
+
 		// from
 		Pattern pFrom = Pattern.compile("\\bfrom\\b");
 		Matcher mFrom = pFrom.matcher(getUserInput());
@@ -231,7 +235,7 @@ public class TimeParser {
 			if (isTimeRange(word)) {
 				return createEndTimeFromRange(word);
 			}
-			
+
 			// find next 4 words because time formats can have at most
 			// 5 words
 			String[] nextWords = getNext4Words(words, i);
@@ -244,16 +248,17 @@ public class TimeParser {
 					String parameter = getParameterStartingAtIndex(m.start());
 					if (isTimeRange(parameter)) {
 						return createEndTimeFromRange(parameter);
-					} 
+					}
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns the userInput without start time, end time, time range and keywords preceding that
-	 * time. Example: if userInput is "add task on 6 oct 6-9pm", returns "add task on 6 oct"
+	 * Returns the userInput without start time, end time, time range and
+	 * keywords preceding that time. Example: if userInput is
+	 * "add task on 6 oct 6-9pm", returns "add task on 6 oct"
 	 * 
 	 * @return userInput without time and keywords preceding that time
 	 */
@@ -266,7 +271,7 @@ public class TimeParser {
 
 		if (keyword.isEmpty()) {
 			String temp = getUserInput();
-			
+
 			String[] words = temp.split(" ");
 
 			for (int i = 0; i < words.length; i++) {
@@ -275,10 +280,11 @@ public class TimeParser {
 					time = word.trim();
 					break;
 				}
-				
-				// find next 4 words because time formats can have at most 5 words
+
+				// find next 4 words because time formats can have at most 5
+				// words
 				String[] nextWords = getNext4Words(words, i);
-				
+
 				if (hasTime(word, nextWords)) {
 					Pattern p = Pattern.compile(word + "\\s*" + nextWords[0]);
 					Matcher m = p.matcher(temp);
@@ -300,23 +306,26 @@ public class TimeParser {
 				}
 			}
 		}
-		
+
 		if (getTimeKeyword().isEmpty()) {
 			return cleanUp(getUserInput().replaceAll("\\b" + time + "\\b", " "));
 		} else {
-			return cleanUp(getUserInput().replaceAll("\\b" + keyword + "\\b\\s\\b" + time + "\\b", " "));
+			return cleanUp(getUserInput().replaceAll(
+					"\\b" + keyword + "\\b\\s\\b" + time + "\\b", " "));
 		}
 	}
-	
+
 	/**
 	 * Checks whether a string is a valid time format
-	 * @param string  String to be checked
+	 * 
+	 * @param string
+	 *            String to be checked
 	 * @return true if string is a valid time format, else false
 	 */
 	public boolean isValidTimeFormat(String string) {
 		return is12hrTime(string) || is24hrTime(string) || isTimeRange(string);
 	}
-	
+
 	/**
 	 * Checks whether a string represents time in 12-hour format, e.g. 2pm or
 	 * 1.20am
@@ -357,7 +366,7 @@ public class TimeParser {
 			if (string.length() != Constants.LENGTH_24HOUR_FORMAT) {
 				return false;
 			}
-			
+
 			int hour = Integer.parseInt(string.substring(Constants.INDEX_BEGIN,
 					Constants.LENGTH_AM_PM));
 			int min = Integer
@@ -491,7 +500,8 @@ public class TimeParser {
 			String hourMin = string.substring(Constants.INDEX_BEGIN,
 					string.length() - Constants.LENGTH_AM_PM).trim(); // 1.30 or
 																		// 1
-			String[] splitHourMin = cleanUp(hourMin.split(Constants.SEPARATOR_DOT));
+			String[] splitHourMin = cleanUp(hourMin
+					.split(Constants.SEPARATOR_DOT));
 
 			if (splitHourMin.length == Constants.LENGTH_HOUR) {
 				return new Time(
@@ -619,6 +629,7 @@ public class TimeParser {
 
 	/**
 	 * Returns current time as a Time object
+	 * 
 	 * @return current time
 	 */
 	public Time getCurrentTime() {
@@ -634,7 +645,7 @@ public class TimeParser {
 
 		return new Time(hour, minute, ampm);
 	}
-	
+
 	/**
 	 * Removes multiple spaces between words, leading and trailing spaces
 	 * 
@@ -647,11 +658,14 @@ public class TimeParser {
 		input = input.replaceAll("\\s+", " ");
 		return input;
 	}
-	
+
 	/**
-	 * Removes multiple spaces between words, leading and trailing spaces for all strings in an array
-	 * @param input  array containing strings to be formatted
-	 * @return  array with formatted strings
+	 * Removes multiple spaces between words, leading and trailing spaces for
+	 * all strings in an array
+	 * 
+	 * @param input
+	 *            array containing strings to be formatted
+	 * @return array with formatted strings
 	 */
 	public String[] cleanUp(String[] input) {
 		for (int i = 0; i < input.length; i++) {
@@ -699,16 +713,17 @@ public class TimeParser {
 	}
 
 	/**
-	 * Returns a time starting from 'index' till
-	 * the occurrence of another reserved word or the end of the string or another parameter,
-	 * whichever is earlier
+	 * Returns a time starting from 'index' till the occurrence of another
+	 * reserved word or the end of the string or another parameter, whichever is
+	 * earlier
 	 * 
 	 * @param index
-	 *            index of userInput at which the parameter to be returned starts
+	 *            index of userInput at which the parameter to be returned
+	 *            starts
 	 * @return parameter starting from index
 	 */
 	public String getParameterStartingAtIndex(int index) {
-		
+
 		if (isIndexOutOfBounds(index)) {
 			return null;
 		}
@@ -718,31 +733,37 @@ public class TimeParser {
 			parameter = getUserInput().substring(index).trim();
 		} else {
 			assert nextKeywordIndex > 0;
-			parameter = getUserInput().substring(index, nextKeywordIndex).trim();
+			parameter = getUserInput().substring(index, nextKeywordIndex)
+					.trim();
 		}
 		// Check if the due date is followed by a description
 		return removeDescriptionAfterTimeIfAny(parameter);
 
 	}
-	
+
 	/**
 	 * Removes task description after a time or time range, if any
 	 * 
 	 * @param time
-	 *            String containing a time or time range which may or may not be followed
-	 *            by a task description
+	 *            String containing a time or time range which may or may not be
+	 *            followed by a task description
 	 * @return time or time range as a string
 	 */
 	public String removeDescriptionAfterTimeIfAny(String time) {
 		String[] words = time.split(" ");
 		String firstWord = words[0];
 		String[] nextWords = getNext4Words(words, 0);
-		
-		if (isValidTimeFormat(firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2] + " " + nextWords[3])) {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2] + " " + nextWords[3]).trim();
-		} else if(isValidTimeFormat(firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2])) {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2]).trim();
-		} else if (isValidTimeFormat(firstWord + " " + nextWords[0] + " " + nextWords[1])) {
+
+		if (isValidTimeFormat(firstWord + " " + nextWords[0] + " "
+				+ nextWords[1] + " " + nextWords[2] + " " + nextWords[3])) {
+			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " "
+					+ nextWords[2] + " " + nextWords[3]).trim();
+		} else if (isValidTimeFormat(firstWord + " " + nextWords[0] + " "
+				+ nextWords[1] + " " + nextWords[2])) {
+			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2])
+					.trim();
+		} else if (isValidTimeFormat(firstWord + " " + nextWords[0] + " "
+				+ nextWords[1])) {
 			return (firstWord + " " + nextWords[0] + " " + nextWords[1]).trim();
 		} else if (isValidTimeFormat(firstWord + " " + nextWords[0])) {
 			return (firstWord + " " + nextWords[0]).trim();
@@ -750,7 +771,7 @@ public class TimeParser {
 			return firstWord.trim();
 		} else {
 			return time.trim();
-		} 
+		}
 	}
 
 	/**
@@ -769,8 +790,7 @@ public class TimeParser {
 			String word = words[i];
 			String[] nextWords = getNext4Words(words, i);
 
-			if (isReservedWord(word)
-					|| hasDate(word, nextWords)) {
+			if (isReservedWord(word) || hasDate(word, nextWords)) {
 				Pattern p = Pattern.compile(word + "\\s*" + nextWords[0]);
 				Matcher m = p.matcher(temp);
 
@@ -827,9 +847,14 @@ public class TimeParser {
 	 */
 	public boolean hasTime(String word, String[] nextWords) {
 		try {
-			return isValidTimeFormat(word + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2] + " " + nextWords[3]) || isValidTimeFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2]) || isValidTimeFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1]) || isValidTimeFormat(word + " " + nextWords[0]) || isValidTimeFormat(word);
+			return isValidTimeFormat(word + " " + nextWords[0] + " "
+					+ nextWords[1] + " " + nextWords[2] + " " + nextWords[3])
+					|| isValidTimeFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1] + " " + nextWords[2])
+					|| isValidTimeFormat(word + " " + nextWords[0] + " "
+							+ nextWords[1])
+					|| isValidTimeFormat(word + " " + nextWords[0])
+					|| isValidTimeFormat(word);
 		} catch (Exception e) {
 			return false;
 		}
@@ -879,17 +904,20 @@ public class TimeParser {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the next 4 words of userInput, starting from the index i + 1
-	 * @param words  Array of words in userInput
-	 * @param i  The index of the first word
-	 * @return   The next 4 words after index i. If there are less than 4 words, the empty words are represented by empty strings
+	 * 
+	 * @param words
+	 *            Array of words in userInput
+	 * @param i
+	 *            The index of the first word
+	 * @return The next 4 words after index i. If there are less than 4 words,
+	 *         the empty words are represented by empty strings
 	 */
 	public String[] getNext4Words(String[] words, int i) {
-		String[] nextWords = { Constants.EMPTY_STRING,
-				Constants.EMPTY_STRING, Constants.EMPTY_STRING,
-				Constants.EMPTY_STRING };
+		String[] nextWords = { Constants.EMPTY_STRING, Constants.EMPTY_STRING,
+				Constants.EMPTY_STRING, Constants.EMPTY_STRING };
 
 		if (i < words.length - 4) {
 			int index = 0;
