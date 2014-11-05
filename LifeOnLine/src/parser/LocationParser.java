@@ -9,20 +9,25 @@ import java.util.regex.Pattern;
 import lol.Constants;
 
 public class LocationParser {
+	/************* Attribute ***************/
 	private String userInput;
 
+	/************* Constructor ***************/
 	public LocationParser(String userInput) {
 		this.userInput = userInput;
 	}
 
+	/************* Accessor ***************/
 	public String getUserInput() {
 		return userInput;
 	}
 
+	/************* Mutator ***************/
 	public void setUserInput(String userInput) {
 		this.userInput = userInput;
 	}
 
+	/************* Other methods ***************/
 	/**
 	 * Returns the location from the user input
 	 * 
@@ -198,7 +203,8 @@ public class LocationParser {
 	 * whichever is earlier
 	 * 
 	 * @param index
-	 *            index of userInput at which the parameter to be returned starts
+	 *            index of userInput at which the parameter to be returned
+	 *            starts
 	 * @return parameter starting from index
 	 */
 	public String getParameterStartingAtIndex(int index) {
@@ -262,8 +268,10 @@ public class LocationParser {
 				assert i == words.length - 1;
 			}
 
-			if (isReservedWord(word) || hasDate(word, nextWords)
-					|| (hasTime(word, nextWords) && !(word.startsWith("0") && word.endsWith("m")))) {
+			if (isReservedWord(word)
+					|| hasDate(word, nextWords)
+					|| (hasTime(word, nextWords) && !(word.startsWith("0") && word
+							.endsWith("m")))) {
 				Pattern p = Pattern.compile("\\b" + word + "\\b");
 				Matcher m = p.matcher(temp);
 
@@ -534,13 +542,13 @@ public class LocationParser {
 			return temp;
 		}
 	}
-	
+
 	/**
 	 * Removes task description after a time, if any
 	 * 
 	 * @param date
-	 *            String containing a time which may or may not be followed
-	 *            by a task description
+	 *            String containing a time which may or may not be followed by a
+	 *            task description
 	 * @return due date as a string
 	 */
 	public String removeDescriptionAfterTimeIfAny(String time) {
@@ -549,7 +557,8 @@ public class LocationParser {
 		String[] nextWords = getNext4Words(words, 0);
 		TimeParser tp = new TimeParser();
 
-		if (tp.isValidTimeFormat(firstWord) && !(isPartOfTimeFormat(nextWords[0]))) {
+		if (tp.isValidTimeFormat(firstWord)
+				&& !(isPartOfTimeFormat(nextWords[0]))) {
 			return firstWord.trim();
 		} else if (tp.isValidTimeFormat(firstWord + " " + nextWords[0])
 				&& !(isPartOfTimeFormat(nextWords[1]))) {
@@ -564,21 +573,24 @@ public class LocationParser {
 			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2])
 					.trim();
 		} else {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2] + " " + nextWords[3])
-					.trim();
+			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " "
+					+ nextWords[2] + " " + nextWords[3]).trim();
 		}
 	}
-	
+
 	/**
 	 * Returns true if a word is a part of a time format
-	 * @param word word to be checked
+	 * 
+	 * @param word
+	 *            word to be checked
 	 * @return true if the word is a part of a time format, else false
 	 */
 	public boolean isPartOfTimeFormat(String word) {
 		word = word.trim();
-		return word.equalsIgnoreCase("am") || word.equalsIgnoreCase("pm") || word.equalsIgnoreCase("to") || word.equalsIgnoreCase("-");
+		return word.equalsIgnoreCase("am") || word.equalsIgnoreCase("pm")
+				|| word.equalsIgnoreCase("to") || word.equalsIgnoreCase("-");
 	}
-	
+
 	/**
 	 * Returns the next 4 words of userInput, starting from the index i + 1
 	 * 

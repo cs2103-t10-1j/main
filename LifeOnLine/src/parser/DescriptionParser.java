@@ -6,20 +6,25 @@ import java.util.regex.Pattern;
 import lol.Constants;
 
 public class DescriptionParser {
+	/************* Attribute ***************/
 	private String userInput;
 
+	/************* Constructor ***************/
 	public DescriptionParser(String userInput) {
 		this.userInput = userInput;
 	}
 
+	/************* Accessor ***************/
 	public String getUserInput() {
 		return userInput;
 	}
 
+	/************* Mutator ***************/
 	public void setUserInput(String userInput) {
 		this.userInput = userInput;
 	}
 
+	/************* Other methods ***************/
 	/**
 	 * Returns the description of a task
 	 * 
@@ -78,7 +83,7 @@ public class DescriptionParser {
 						secondQuoteEnd = m.start();
 					}
 				}
-				
+
 				// if word preceding the quote is not "at", the quote encloses a
 				// description, else it contains a location
 				if (!getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase("at")) {
@@ -92,11 +97,11 @@ public class DescriptionParser {
 							secondQuoteEnd));
 				}
 			}
-			
+
 			// either no double quotes in input or no description found within
 			// double quotes
 			input = removeWordsWithinQuotes(input);
-			
+
 			LocationParser lp = new LocationParser(input);
 			String inputWithoutLocation = lp.getUserInputWithoutLocation();
 
@@ -188,7 +193,7 @@ public class DescriptionParser {
 					secondQuoteEnd = m.start();
 				}
 			}
-			
+
 			// if word preceding the quote is not "at", the quote encloses a
 			// description, else it contains a location
 			if (!getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase("at")) {
@@ -196,13 +201,12 @@ public class DescriptionParser {
 						firstQuoteEnd));
 			}
 
-			if (!getWordBeforeQuote(secondQuoteStart)
-					.equalsIgnoreCase("at")) {
+			if (!getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase("at")) {
 				return cleanUp(input.substring(secondQuoteStart + 1,
 						secondQuoteEnd));
 			}
 		}
-		
+
 		// either no double quotes in input or no description found within
 		// double quotes
 
@@ -305,20 +309,24 @@ public class DescriptionParser {
 			return "";
 		}
 	}
-	
+
 	/**
-	 * Removes double quotes, words within double quotes and the preceding keyword "at" if any
-	 * @param input String from which words within quotes are to be removed
-	 * @return  input without double quotes, words within double quotes and the preceding keyword "at" if any
+	 * Removes double quotes, words within double quotes and the preceding
+	 * keyword "at" if any
+	 * 
+	 * @param input
+	 *            String from which words within quotes are to be removed
+	 * @return input without double quotes, words within double quotes and the
+	 *         preceding keyword "at" if any
 	 */
 	public String removeWordsWithinQuotes(String input) {
 		cleanUp();
 		input = cleanUp(input);
-		
+
 		int countDoubleQuotes = countNumberOfDoubleQuotes();
 		Pattern p = Pattern.compile("\"");
 		Matcher m = p.matcher(input);
-		
+
 		if (countDoubleQuotes == 0) {
 			return input;
 		} else if (countDoubleQuotes == 2) {
@@ -332,9 +340,10 @@ public class DescriptionParser {
 					endQuoteIndex = m.start();
 				}
 			}
-			String wordsWithinQuotes = input.substring(startQuoteIndex + 1, endQuoteIndex);
+			String wordsWithinQuotes = input.substring(startQuoteIndex + 1,
+					endQuoteIndex);
 			String stringToRemove = "\"" + wordsWithinQuotes + "\"";
-			
+
 			if (getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase("at")) {
 				stringToRemove = "\\bat\\b\\s*" + stringToRemove;
 			}
@@ -355,25 +364,31 @@ public class DescriptionParser {
 					secondQuoteEnd = m.start();
 				}
 			}
-			
+
 			// first 2 double quotes
-			String wordsWithinFirstQuotes = input.substring(firstQuoteStart + 1, firstQuoteEnd);
-			String stringToRemoveFromFirstQuotes = "\"" + wordsWithinFirstQuotes + "\"";
-			
+			String wordsWithinFirstQuotes = input.substring(
+					firstQuoteStart + 1, firstQuoteEnd);
+			String stringToRemoveFromFirstQuotes = "\""
+					+ wordsWithinFirstQuotes + "\"";
+
 			if (getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase("at")) {
-				stringToRemoveFromFirstQuotes = "\\bat\\b\\s*" + stringToRemoveFromFirstQuotes;
+				stringToRemoveFromFirstQuotes = "\\bat\\b\\s*"
+						+ stringToRemoveFromFirstQuotes;
 			}
 
-			
 			// next 2 double quotes
-			String wordsWithinSecondQuotes = input.substring(secondQuoteStart + 1, secondQuoteEnd);
-			String stringToRemoveFromSecondQuotes = "\"" + wordsWithinSecondQuotes + "\"";
-			
+			String wordsWithinSecondQuotes = input.substring(
+					secondQuoteStart + 1, secondQuoteEnd);
+			String stringToRemoveFromSecondQuotes = "\""
+					+ wordsWithinSecondQuotes + "\"";
+
 			if (getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase("at")) {
-				stringToRemoveFromSecondQuotes = "\\bat\\b\\s*" + stringToRemoveFromSecondQuotes;
+				stringToRemoveFromSecondQuotes = "\\bat\\b\\s*"
+						+ stringToRemoveFromSecondQuotes;
 			}
-			
-			String temp = cleanUp(input.replaceAll(stringToRemoveFromFirstQuotes, ""));
+
+			String temp = cleanUp(input.replaceAll(
+					stringToRemoveFromFirstQuotes, ""));
 			temp = cleanUp(temp.replaceAll(stringToRemoveFromSecondQuotes, ""));
 			return temp;
 		}

@@ -25,41 +25,41 @@ public class IndexParserTest {
 	@Test
 	public void testGetTaskIndexArray() {
 		IndexParser ip1 = new IndexParser("rm 1 2 3");
-		int[] arr1 = {1,2,3};
+		int[] arr1 = { 1, 2, 3 };
 		assertArrayEquals(arr1, ip1.getTaskIndexArray());
-		
+
 		IndexParser ip2 = new IndexParser("rm 7,1,9");
-		int[] arr2 = {1,7,9};
+		int[] arr2 = { 1, 7, 9 };
 		assertArrayEquals(arr2, ip2.getTaskIndexArray());
-		
+
 		IndexParser ip3 = new IndexParser("rm 5-8");
-		int[] arr3 = {5,6,7,8};
+		int[] arr3 = { 5, 6, 7, 8 };
 		assertArrayEquals(arr3, ip3.getTaskIndexArray());
-		
+
 		IndexParser ip4 = new IndexParser("delete 2-7, 10");
-		int[] arr4 = {2,3,4,5,6,7,10};
+		int[] arr4 = { 2, 3, 4, 5, 6, 7, 10 };
 		assertArrayEquals(arr4, ip4.getTaskIndexArray());
-		
+
 		IndexParser ip5 = new IndexParser("delete 1-3, 19, 20-23");
-		int[] arr5 = {1,2,3,19,20,21,22,23};
+		int[] arr5 = { 1, 2, 3, 19, 20, 21, 22, 23 };
 		assertArrayEquals(arr5, ip5.getTaskIndexArray());
-		
+
 		IndexParser ip6 = new IndexParser("delete 1-3, 19 to 22, 20-23");
-		int[] arr6 = {1,2,3,19,20,21,22,23};
+		int[] arr6 = { 1, 2, 3, 19, 20, 21, 22, 23 };
 		assertArrayEquals(arr6, ip6.getTaskIndexArray());
 	}
 
 	@Test
 	public void testGetIndexSeparatedBySpace() {
 		IndexParser ip = new IndexParser("abc");
-		int[] arr = {1, 7, 8};
+		int[] arr = { 1, 7, 8 };
 		assertArrayEquals(arr, ip.getIndexSeparatedBySpace("1 7 8"));
 	}
 
 	@Test
 	public void testGetIndexSeparatedByComma() {
 		IndexParser ip = new IndexParser("abc");
-		int[] arr = {12, 13, 18};
+		int[] arr = { 12, 13, 18 };
 		assertArrayEquals(arr, ip.getIndexSeparatedByComma("12,13,18"));
 		assertArrayEquals(arr, ip.getIndexSeparatedByComma("12, 13, 18"));
 	}
@@ -67,7 +67,7 @@ public class IndexParserTest {
 	@Test
 	public void testGetIndexRangesSeparatedByComma() {
 		IndexParser ip = new IndexParser("abc");
-		String[] arr = {"5-8", "10"};
+		String[] arr = { "5-8", "10" };
 		assertArrayEquals(arr, ip.getIndexRangesSeparatedByComma("5-8, 10"));
 	}
 
@@ -88,7 +88,7 @@ public class IndexParserTest {
 	@Test
 	public void testBuildIntArray() {
 		IndexParser ip = new IndexParser("abc");
-		int[] arr = {1, 2, 3};
+		int[] arr = { 1, 2, 3 };
 		ArrayList<Integer> al = new ArrayList<Integer>();
 		al.add(1);
 		al.add(2);
@@ -106,8 +106,8 @@ public class IndexParserTest {
 	@Test
 	public void testRemoveDuplicates() {
 		IndexParser ip = new IndexParser("abc");
-		int[] arr1 = {1, 5, 9};
-		int[] arr2 = {5, 1, 1, 1, 5, 5, 9};
+		int[] arr1 = { 1, 5, 9 };
+		int[] arr2 = { 5, 1, 1, 1, 5, 5, 9 };
 		assertArrayEquals(arr1, ip.removeDuplicates(arr2));
 	}
 }
