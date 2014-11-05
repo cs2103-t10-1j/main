@@ -62,7 +62,8 @@ public class LOLControl {
 	}
 
 	public static String executeUserInput(String userInput) throws Exception {
-
+		setAllTaskIsJustAddedAsFalse();
+		
 		String commandType = getCommandType(userInput);
 
 		switch (commandType) {
@@ -114,9 +115,9 @@ public class LOLControl {
 		}
 
 		else {
-
 			Task newTask = LOLParser.getTask(userInput);
-
+			newTask.setIsJustAdded(true);
+			
 			if (storageList.add(newTask)) {
 				History.emptyRedoStack();
 				History.undoAdd(newTask);
@@ -837,5 +838,11 @@ public class LOLControl {
 			return true;
 		
 		return false;
+	}
+	
+	private static void setAllTaskIsJustAddedAsFalse(){
+		for(int i = 0; i < storageList.size(); i++){
+			storageList.get(i).setIsJustAdded(false);
+		}
 	}
 }

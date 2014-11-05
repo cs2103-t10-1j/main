@@ -34,18 +34,19 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	JTextPane label;
 	JLabel progressLabel;
 	int size;
+	static int lengthToBeScrolledTo = 0;
 
 	final static boolean IS_HEADER = true;
 	final Timer timer;
 	final JProgressBar progressBar;
-	
+
 	// custom colors
 	final static Color DARK_ORANGE = new Color(253, 101, 0);
 	final static Color PURPLE = new Color(204, 0, 204);
 	final static Color BG = new Color(0, 129, 72);
 	final static Color DARK_BLUE = new Color(3, 97, 148);
 	final static Color MEDIUM_BLUE = new Color(82, 161, 204);
-	
+
 	// fonts
 	final static Font TREBUCHET_14 = new Font("Trebuchet MS", Font.PLAIN, 14);
 	final static Font TREBUCHET_BOLD_14 = new Font("Trebuchet MS", Font.BOLD, 14);
@@ -57,20 +58,18 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 		// Welcome to LifeOnLine
 		label.setFont(TREBUCHET_BOLD_16);
-		
+
 		// Tasks with no date
 		mainDisplayTP2.setFont(TREBUCHET_16);
-		
+
 		// Upcoming tasks
 		mainDisplayTP.setFont(TREBUCHET_16);
-		
+
 		// Overdue tasks
 		mainDisplayTP3.setFont(TREBUCHET_16);
-		
-		inputTF.setFont(TREBUCHET_BOLD_16);
-		
 
-		
+		inputTF.setFont(TREBUCHET_BOLD_16);
+
 		this.mainDisplayTP1 = mainDisplayTP;
 		this.mainDisplayTP1.setDocument(doc1);
 		addStyleToDoc(doc1);
@@ -80,15 +79,13 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		this.mainDisplayTP3 = mainDisplayTP3;
 		this.mainDisplayTP3.setDocument(doc3);
 		addStyleToDoc(doc3);
-		
+
 		this.progressBar = progressBar;
 		this.timer = timer;
 		this.label = label;
 		this.progressLabel = progressLabel;
 		this.size = size;
 		inputTF.addKeyListener(this);
-		
-		
 	}
 
 	//this method add different styles to document which are needed to display task of
@@ -115,20 +112,20 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, DARK_BLUE);
 		//StyleConstants.setUnderline(style, true);
-		
+
 		style = doc.addStyle(Constants.FORMAT_HEADER_DATE, null);
 		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setBold(style, true);
 		//StyleConstants.setItalic(style, true);
 		StyleConstants.setForeground(style, MEDIUM_BLUE);
 		//StyleConstants.setUnderline(style, true);
-		
+
 		style = doc.addStyle(Constants.FORMAT_NUMBER, null);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setItalic(style, true);
 		StyleConstants.setForeground(style, Color.BLACK);
-		
-		
+
+
 		style = doc.addStyle(Constants.FORMAT_TICK, null);
 		//StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, BG);
@@ -151,7 +148,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		StyleConstants.setForeground(style, Color.RED);
 		//StyleConstants.setUnderline(style, true);
 
-		
+
 		style = doc.addStyle(Constants.FORMAT_TIME_STRIKE, null);
 		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setForeground(style, DARK_ORANGE);
@@ -170,17 +167,21 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setForeground(style, Color.RED);
 		StyleConstants.setStrikeThrough(style, true);
-		
+
 		style = doc.addStyle(Constants.FORMAT_DONE, null);
 		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setForeground(style, Color.GRAY);
+
+		style = doc.addStyle("is just added", null);
+		StyleConstants.setFontSize(style, 16);
+		StyleConstants.setBackground(style, Color.YELLOW);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent event){ 
+	public void actionPerformed(ActionEvent event){
 		String inputStr = inputTF.getText();
 		LOLGui.commands.add(inputStr);
-		
+
 		try {
 			refreshFeedbackDisplay(inputStr);
 		} catch (Exception e) {
@@ -189,7 +190,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 		TaskList<Task> taskList = LOLControl.getTaskList();
 		refreshMainDisplay(taskList);
-		
+
 		timer.setInitialDelay(60000);
 		timer.restart();
 
@@ -207,6 +208,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	}
 
 	public void refreshMainDisplay(TaskList<Task> taskList){
+		resetScrollPanePosition();
 		clear(mainDisplayTP1);
 		clear(mainDisplayTP2);
 		clear(mainDisplayTP3);
@@ -223,21 +225,21 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 			progressBar.setValue(1);
 			progressLabel.setText("No deadlines today");
 		}
-		
+
 		showInMainDisplayTP(taskList);
-		
+
 		if(LOLControl.isAlertMode){
 			Task alertTask = LOLControl.refreshAlert();
 			if(alertTask!=null)
 				JOptionPane.showMessageDialog(null, alertMessage(alertTask),
 						"LOL Alert", JOptionPane.WARNING_MESSAGE);
 			if(LOLControl.userEmail!=null && LOLControl.userEmail.length()>=11)
-			LOLEmail.send(LOLControl.userEmail, alertMessage(alertTask));
-			}
+				LOLEmail.send(LOLControl.userEmail, alertMessage(alertTask));
+		}
 	}
 
 	private String alertMessage(Task alertTask) {
-		
+
 		String message="YOU HAVE AN UPCOMING TASK";
 		message+="\n"+alertTask.getTaskDescription();
 		message+="\n Time: "+alertTask.getStartTime();
@@ -248,77 +250,35 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		return message;
 	}
 
-	public static void showInMainDisplayTP(TaskList<Task> taskList){
-		//Date previousDueDate = new Date(-1, -1, -9999, null); //impossible date
-		//Task previousTask = new Task("ŒŒŒŒŒŒŒŒ","",new Date(), new Time(),new Time()); //impossible task
-
+	public void showInMainDisplayTP(TaskList<Task> taskList){
 		FormatToString formatToString = new FormatToString();
-		
 		formatToString.format(taskList);
 		
-		/*
-		for(int i = 0; i < taskList.size(); i++){
-			Task task = taskList.get(i);
-			Date currentDueDate = task.getTaskDueDate();
-
-			assert !(currentDueDate.getDay() == -1 && currentDueDate.getMonth() == -1 
-					&& currentDueDate.getYear4Digit() == -9999) : "impossible date entered";
-
-			int toBeDisplayedIn = 0;
-			
-			//determine whether header is needed and add it to an appropriate TP
-			//header include overdue, upcoming, floating headers and date header
-			if(task.getIsOverdue() && !currentDueDate.equals(previousDueDate)){
-				previousDueDate = currentDueDate;
-				previousTask = task;
-				
-				formatToString.format(IS_HEADER, task, i, Constants.DISPLAY_IN_TP3);
-				toBeDisplayedIn = Constants.DISPLAY_IN_TP3;
-			}
-			else if(previousTask.getIsOverdue() && !task.getIsOverdue() && currentDueDate != null && currentDueDate.equals(previousDueDate)){
-				previousDueDate = currentDueDate;
-				previousTask = task;
-
-				formatToString.format(IS_HEADER, task, i, Constants.DISPLAY_IN_TP1);
-				toBeDisplayedIn = Constants.DISPLAY_IN_TP1;
-			}
-			else if(currentDueDate != null && !currentDueDate.equals(previousDueDate)){
-				previousDueDate = currentDueDate;
-				previousTask = task;
-
-				formatToString.format(IS_HEADER, task, i, Constants.DISPLAY_IN_TP1);
-				toBeDisplayedIn = Constants.DISPLAY_IN_TP1;
-			}
-			else if(currentDueDate == null){
-				previousTask = task;
-				
-				formatToString.format(IS_HEADER, task, i, Constants.DISPLAY_IN_TP2);
-				toBeDisplayedIn = Constants.DISPLAY_IN_TP2;
-			}
-
-			assert !(toBeDisplayedIn == 0) : "toBeDisplayed in is 0 which is invalid";
-
-			//add tasks below header
-			formatToString.format(!IS_HEADER, task, i, toBeDisplayedIn);
-		}
-		*/
-
 		addToDisplay(doc1, doc2, doc3);
 	}
 
-	public static void addToDisplay(StyledDocument doc, StyledDocument doc2, StyledDocument doc3){
+	public void addToDisplay(StyledDocument doc1, StyledDocument doc2, StyledDocument doc3){
 		try {
 			for(int j = 1; j <= FormatToString.getLinkedListNum(); j++){
 				LinkedList<StringWithFormat> strToShow = FormatToString.getLinkedList(j);
 
 				for(int i = 0; i < strToShow.size(); i++){
 					if(j==1){
-						doc.insertString(doc.getLength(), strToShow.get(i).getString(), doc.getStyle(strToShow.get(i).getFormat()));
+						if(strToShow.get(i).getIsJustAdded()){
+							mainDisplayTP1.setCaretPosition(doc1.getLength());
+						}
+						doc1.insertString(doc1.getLength(), strToShow.get(i).getString(), doc1.getStyle(strToShow.get(i).getFormat()));
 					}
 					else if(j==2){
+						if(strToShow.get(i).getIsJustAdded()){
+							mainDisplayTP2.setCaretPosition(doc2.getLength());
+						}
 						doc2.insertString(doc2.getLength(), strToShow.get(i).getString(), doc2.getStyle(strToShow.get(i).getFormat()));
 					}
 					else if(j==3){
+						if(strToShow.get(i).getIsJustAdded()){
+							mainDisplayTP3.setCaretPosition(doc3.getLength());
+						}
 						doc3.insertString(doc3.getLength(), strToShow.get(i).getString(), doc3.getStyle(strToShow.get(i).getFormat()));
 					}
 				}
@@ -336,6 +296,12 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	private void clear(JTextPane TP){
 		TP.setText("");
 	}
+	
+	private void resetScrollPanePosition(){
+		mainDisplayTP1.setCaretPosition(0);
+		mainDisplayTP2.setCaretPosition(0);
+		mainDisplayTP3.setCaretPosition(0);
+	}
 
 	/** Handle the key typed event from the text field. */
 	public void keyTyped(KeyEvent e) {
@@ -349,28 +315,27 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 	/** Handle the key-released event from the text field. */
 	public void keyReleased(KeyEvent e) {
-		
+
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 			if(!LOLGui.commands.isEmpty()){
-			int index = size-1;
-			if(index>=0){
-			inputTF.setText(LOLGui.commands.get(index));
-			inputTF.grabFocus();
-			size--;
+				int index = size-1;
+				if(index>=0){
+					inputTF.setText(LOLGui.commands.get(index));
+					inputTF.grabFocus();
+					size--;
+				}
 			}
 		}
-		}
-		
+
 		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 			if(!LOLGui.commands.isEmpty()){
-			int index =size+1;
-			if(index>=0&&index<LOLGui.commands.size()){
-			inputTF.setText(LOLGui.commands.get(index));
-			inputTF.grabFocus();
-			size++;
+				int index =size+1;
+				if(index>=0&&index<LOLGui.commands.size()){
+					inputTF.setText(LOLGui.commands.get(index));
+					inputTF.grabFocus();
+					size++;
+				}
 			}
 		}
-		}
-		
 	}
 }

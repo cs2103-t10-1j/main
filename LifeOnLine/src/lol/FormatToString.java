@@ -43,6 +43,13 @@ public class FormatToString {
 			if(isNeedHeader(previousTask, currentTask)){
 				formatAsHeader(currentTask);
 			}
+			else{
+				//to display "today" date header in upcoming tasks display panel even when some 
+				//of the today's tasks are overdue and some of the today's tasks are not overdue
+				if(toBeDisplayedIn == Constants.DISPLAY_IN_TP1){
+					formatAsHeader(currentTask);
+				}
+			}
 			
 			formatAsTask(i, currentTask);
 			
@@ -184,6 +191,7 @@ public class FormatToString {
 		Time dueEndTime = task.getEndTime();
 		String location = task.getTaskLocation();
 		boolean isDone = task.getIsDone();
+		boolean isJustAdded = task.getIsJustAdded();
 
 		strToShowTemp.add(new StringWithFormat(newLine(), Constants.FORMAT_NONE));
 		strToShowTemp.add(new StringWithFormat(numbering(i), Constants.FORMAT_NUMBER));
@@ -193,6 +201,11 @@ public class FormatToString {
 			strToShowTemp.add(new StringWithFormat(description, Constants.FORMAT_DONE));
 			strToShowTemp.add(new StringWithFormat("   \u2713", Constants.FORMAT_TICK));
 		} 
+		else if(isJustAdded){
+			StringWithFormat strWithFormat = new StringWithFormat(description, "is just added");
+			strWithFormat.setIsJustAdded(true);
+			strToShowTemp.add(strWithFormat);
+		}
 		else {
 			strToShowTemp.add(new StringWithFormat(description, Constants.FORMAT_DESCRIPTION));
 		}
@@ -274,20 +287,16 @@ public class FormatToString {
 		case 1:
 			if(strToShow1.isEmpty()){
 				strToShow1.add(new StringWithFormat("", Constants.FORMAT_NONE));
-				//.add(new StringWithFormat("You do not have any upcoming tasks. ADD NOW!", Constants.FORMAT_NONE));
-
 			}
 			return strToShow1;
 		case 2:
 			if(strToShow2.isEmpty()){
 				strToShow2.add(new StringWithFormat("", Constants.FORMAT_NONE));
-				//.add(new StringWithFormat("Not a single task without date..HAVE SOME TO ADD?", Constants.FORMAT_NONE));
 			}
 			return strToShow2;
 		case 3:
 			if(strToShow3.isEmpty()){
 				strToShow3.add(new StringWithFormat("", Constants.FORMAT_NONE));
-				//.add(new StringWithFormat("No overdue tasks..THATS GREAT!", Constants.FORMAT_NONE));
 			}
 			return strToShow3;
 		default:

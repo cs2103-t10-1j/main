@@ -12,6 +12,7 @@ public class Task implements Comparable<Task> {
 	private boolean isDone;
 	private boolean isOverdue;
     private boolean alerted;
+    private boolean isJustAdded;
 	/************ Constructors *************/
 	public Task(String description, String location, Date dueDate) {
 		setDescription(description);
@@ -23,6 +24,7 @@ public class Task implements Comparable<Task> {
 		setIsDone(false);
 		setIsOverdue(false);
 		setAlerted(false);
+		setIsJustAdded(false);
 	}
 
 	public Task(String description, String location, Date dueDate,
@@ -36,6 +38,7 @@ public class Task implements Comparable<Task> {
 		setIsDone(false);
 		setIsOverdue(false);
 		setAlerted(false);
+		setIsJustAdded(false);
 	}
 	
 	public Task(String description, String location, Date dueDate, Date endDate) {
@@ -48,6 +51,7 @@ public class Task implements Comparable<Task> {
 		setIsDone(false);
 		setIsOverdue(false);
 		setAlerted(false);
+		setIsJustAdded(false);
 	}
 
 	public Task(String description, String location, Date dueDate, Date endDate, 
@@ -61,6 +65,7 @@ public class Task implements Comparable<Task> {
 		setIsDone(false);
 		setIsOverdue(false);
 		setAlerted(false);
+		setIsJustAdded(false);
 	}
 
 	/************ Accessors *************/
@@ -98,6 +103,10 @@ public class Task implements Comparable<Task> {
 	
 	public boolean getAlerted() {
 		return alerted;
+	}
+	
+	public boolean getIsJustAdded(){
+		return isJustAdded;
 	}
 
 	/************ Mutators *************/
@@ -137,6 +146,9 @@ public class Task implements Comparable<Task> {
 		this.alerted = alerted;
 	}
 
+	public void setIsJustAdded(boolean isJustAdded){
+		this.isJustAdded = isJustAdded;
+	}
 	/********** Overriding methods ***********/
 	public String toString() {
 		return getTaskDescription();
