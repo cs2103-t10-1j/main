@@ -25,6 +25,8 @@ public class FormatToString {
 	public FormatToString() {
 		clearAllLinkedList();
 		hasTodayTask = false;
+		thisTaskIsNotTodayTask = false;
+		hasSeparator = false;
 	}
 	
 	public void format(TaskList<Task> taskList){
@@ -122,19 +124,19 @@ public class FormatToString {
 			break;
 
 		case UPCOMING_DATE:
-			//add separator if have tasks today
-			if(hasTodayTask && thisTaskIsNotTodayTask && !hasSeparator){
-				String separator = newLine() + Constants.GUI_SEPARATOR;
-				strToShowTemp.add(new StringWithFormat(separator, Constants.FORMAT_NONE));
-				hasSeparator = true;
-			}
-			
 			headerStr = newLine() + newLine() + addTodayOrTomorrow(task.getTaskDueDate());
 			headerStr = headerStr + dateFormatAsHeader(task.getTaskDueDate());
 			if(task.getEndDate() != null){
 				headerStr = headerStr + " to ";
 				headerStr = headerStr + addTodayOrTomorrow(task.getEndDate());
 				headerStr = headerStr + dateFormatAsHeader(task.getEndDate());
+			}
+			
+			//add separator if have tasks today
+			if(hasTodayTask && thisTaskIsNotTodayTask && !hasSeparator){
+				String separator = newLine() + Constants.GUI_SEPARATOR;
+				strToShowTemp.add(new StringWithFormat(separator, Constants.FORMAT_NONE));
+				hasSeparator = true;
 			}
 			
 			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_DATE));

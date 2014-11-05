@@ -194,5 +194,5 @@ public class Constants {
 	final static boolean IS_NEED_HEADER = true;
 	
 	//separator between today's tasks and upcoming tasks in gui
-	final static String GUI_SEPARATOR = "============================";
+	final static String GUI_SEPARATOR = "===========================";
 }
