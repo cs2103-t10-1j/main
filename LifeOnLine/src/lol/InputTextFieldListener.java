@@ -249,11 +249,14 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	}
 
 	public static void showInMainDisplayTP(TaskList<Task> taskList){
-		Date previousDueDate = new Date(-1, -1, -9999, null); //impossible date
-		Task previousTask = new Task("ŒŒŒŒŒŒŒŒ","",new Date(), new Time(),new Time()); //impossible task
+		//Date previousDueDate = new Date(-1, -1, -9999, null); //impossible date
+		//Task previousTask = new Task("ŒŒŒŒŒŒŒŒ","",new Date(), new Time(),new Time()); //impossible task
 
 		FormatToString formatToString = new FormatToString();
-
+		
+		formatToString.format(taskList);
+		
+		/*
 		for(int i = 0; i < taskList.size(); i++){
 			Task task = taskList.get(i);
 			Date currentDueDate = task.getTaskDueDate();
@@ -297,12 +300,8 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 			//add tasks below header
 			formatToString.format(!IS_HEADER, task, i, toBeDisplayedIn);
-			
-			//add a line between overdue task and upcoming task
-			/*if(i+1 < taskList.size() && task.getIsOverdue() && !taskList.get(i+1).getIsOverdue() && taskList.get(i+1).getTaskDueDate() != null){
-				FormatToString.getLinkedList(1).add(new StringWithFormat("=================================" + "\n", Constants.FORMAT_HEADER_OVERDUE));
-			}*/
 		}
+		*/
 
 		addToDisplay(doc1, doc2, doc3);
 	}

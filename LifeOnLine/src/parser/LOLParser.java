@@ -85,6 +85,7 @@ public class LOLParser {
 		String description = dp.getDescription();
 		String location = lp.getLocation();
 		Date date = dtp.getDueDate();
+		Date endDate = dtp.getEndDate();
 		Time startTime = tp.getStartTime();
 		Time endTime = tp.getEndTime();
 
@@ -102,7 +103,7 @@ public class LOLParser {
 		if (location != null) {
 			location = getParameterInOriginalCase(originalInput, location);
 		}
-		return new Task(description, location, date, startTime, endTime);
+		return new Task(description, location, date, endDate, startTime, endTime);
 	}
 
 	/**

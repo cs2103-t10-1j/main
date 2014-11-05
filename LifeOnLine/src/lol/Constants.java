@@ -191,6 +191,8 @@ public class Constants {
 	final static int DISPLAY_IN_TP2 = 2; //no date TP
 	final static int DISPLAY_IN_TP3 = 3; //overdue TP
 	
+	final static boolean IS_NEED_HEADER = true;
+	
 	//separator between today's tasks and upcoming tasks in gui
 	final static String GUI_SEPARATOR = "============================";
 }

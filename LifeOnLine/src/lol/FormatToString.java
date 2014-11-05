@@ -12,10 +12,6 @@ public class FormatToString {
 	private static LinkedList<StringWithFormat> strToShow3 = new LinkedList<StringWithFormat>(); //for TP3
 
 	private static LinkedList<StringWithFormat> strToShowTemp = new LinkedList<StringWithFormat>();
-
-	private static boolean hasOverdueHeader = false;
-	private static boolean hasFloatingHeader = false;
-	private static boolean hasUpcomingHeader = false;
 	
 	private static boolean hasTodayTask = false;
 	private static boolean thisTaskIsNotTodayTask = false;
@@ -23,19 +19,52 @@ public class FormatToString {
 
 
 	private enum HEADER_TYPE{
-		OVERDUE_HEADER_AND_DATE, UPCOMING_HEADER_AND_DATE, OVERDUE_DATE,
-		UPCOMING_DATE, FLOATING_HEADER, INVALID;
+		OVERDUE_DATE, UPCOMING_DATE, INVALID;
 	}
 
 	public FormatToString() {
 		clearAllLinkedList();
-		hasOverdueHeader = false;
-		hasFloatingHeader = false;
-		hasUpcomingHeader = false;
 		hasTodayTask = false;
 	}
-
-	public void format(boolean isHeader, Task task, int i, int toBeDisplayedIn) {
+	
+	public void format(TaskList<Task> taskList){
+		Task currentTask, previousTask;
+		
+		//set previousTask as impossible task with impossible dates
+		previousTask = new Task("ŒŒŒŒŒŒŒŒ", "", new Date(-1, -1, -9999, null), new Date(-1, -1, -9999, null));
+		
+		for(int i = 0; i < taskList.size(); i++){
+			currentTask = taskList.get(i);
+			int toBeDisplayedIn = determineToBeDisplayedIn(currentTask);
+			setStrToShowTemp(toBeDisplayedIn);
+			
+			if(isNeedHeader(previousTask, currentTask)){
+				formatAsHeader(currentTask);
+			}
+			
+			formatAsTask(i, currentTask);
+			
+			previousTask = currentTask;
+		}	
+	}
+	
+	private int determineToBeDisplayedIn(Task task){
+		if(task.getIsOverdue()){
+			return Constants.DISPLAY_IN_TP3;
+		}
+		else if(task.getTaskDueDate() != null){
+			return Constants.DISPLAY_IN_TP1;
+		}
+		else if(task.getTaskDueDate() == null){
+			return Constants.DISPLAY_IN_TP2;
+		}
+		else{
+			assert false : "task is neither suitable to be displayed in TP1, TP2 and TP3";
+			return Constants.DISPLAY_IN_TP1;
+		}
+	}
+	
+	private void setStrToShowTemp(int toBeDisplayedIn){
 		switch (toBeDisplayedIn) {
 		case Constants.DISPLAY_IN_TP1:
 			strToShowTemp = strToShow1;
@@ -46,24 +75,37 @@ public class FormatToString {
 		case Constants.DISPLAY_IN_TP3:
 			strToShowTemp = strToShow3;
 			break;
-		default:
-			assert false : "variable toBeDisplayedIn is incorrect";
-		}
-
-		if (isHeader) {
-			formatAsHeader(task);
-		} else {
-			formatAsTask(i, task);
 		}
 	}
-
-	// private void copy(LinkedList<StringWithFormat> list1,
-	// LinkedList<StringWithFormat> list2){
-	// for(int j = 0; j < list1.size(); j++){
-	// StringWithFormat.copy(list1.get(j), list2.get(j));
-	// }
-	// list1.clear();
-	// }
+	
+	private boolean isNeedHeader(Task previousTask, Task currentTask){
+		Date previousDueDate, previousEndDate, currentDueDate, currentEndDate;
+		
+		previousDueDate = previousEndDate = currentDueDate = currentEndDate = null;
+		
+		if(previousTask.getTaskDueDate() != null){
+			previousDueDate = previousTask.getTaskDueDate();
+		}
+		if(previousTask.getEndDate() != null){
+			previousEndDate = previousTask.getEndDate();
+		}
+		if(currentTask.getTaskDueDate() != null){
+			currentDueDate = currentTask.getTaskDueDate();
+		}
+		if(currentTask.getEndDate() != null){
+			currentEndDate = currentTask.getEndDate();
+		}
+		
+		if(!Date.equalDate(currentDueDate, previousDueDate)){
+			return true;
+		}
+		else if(!Date.equalDate(currentEndDate, previousEndDate)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 
 	private void formatAsHeader(Task task) {
 		String headerStr;
@@ -71,94 +113,60 @@ public class FormatToString {
 		HEADER_TYPE headerType = getHeaderType(task);
 
 		switch(headerType){
-		case OVERDUE_HEADER_AND_DATE:
-			headerStr = Constants.HEADER_OVERDUE;
-			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_OVERDUE));
-
-			headerStr = newLine() + newLine() + dateFormatAsHeader(task.getTaskDueDate());
-			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_DATE));
-			break;
-
 		case OVERDUE_DATE:
 			headerStr = newLine() + newLine() + dateFormatAsHeader(task.getTaskDueDate());
-			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_DATE));
-			break;
-
-		case UPCOMING_HEADER_AND_DATE:
-			headerStr = Constants.HEADER_UPCOMING;
-			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_UPCOMING));
-
-			headerStr = newLine() + newLine();
-			headerStr = headerStr + addTodayOrTomorrow(task);
-			headerStr = headerStr + dateFormatAsHeader(task.getTaskDueDate());
-
+			if(task.getEndDate() != null){
+				headerStr = headerStr + " to " + dateFormatAsHeader(task.getEndDate());
+			}
 			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_DATE));
 			break;
 
 		case UPCOMING_DATE:
-			headerStr = newLine() + newLine();
-			headerStr = headerStr + addTodayOrTomorrow(task);
-			headerStr = headerStr + dateFormatAsHeader(task.getTaskDueDate());
-
+			//add separator if have tasks today
 			if(hasTodayTask && thisTaskIsNotTodayTask && !hasSeparator){
 				String separator = newLine() + Constants.GUI_SEPARATOR;
 				strToShowTemp.add(new StringWithFormat(separator, Constants.FORMAT_NONE));
 				hasSeparator = true;
 			}
 			
+			headerStr = newLine() + newLine() + addTodayOrTomorrow(task.getTaskDueDate());
+			headerStr = headerStr + dateFormatAsHeader(task.getTaskDueDate());
+			if(task.getEndDate() != null){
+				headerStr = headerStr + " to ";
+				headerStr = headerStr + addTodayOrTomorrow(task.getEndDate());
+				headerStr = headerStr + dateFormatAsHeader(task.getEndDate());
+			}
+			
 			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_DATE));
 			break;
-
-		case FLOATING_HEADER:
-				headerStr = Constants.HEADER_FLOATING + newLine();
-				strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_FLOATING));
-			break;
-
+			
 		default:
 			assert false : "invalid header format";	
 		}
 	}
 
 	private HEADER_TYPE getHeaderType(Task task){
-		//overdue tasks
-		if(task.getIsOverdue() && !hasOverdueHeader){
-			hasOverdueHeader = true;
-			return HEADER_TYPE.OVERDUE_HEADER_AND_DATE;
-		}
-		else if(task.getIsOverdue() && hasOverdueHeader){
+		if(task.getIsOverdue()){
 			return HEADER_TYPE.OVERDUE_DATE;
 		}
-		//upcoming tasks
-		else if(task.getTaskDueDate() != null && !hasUpcomingHeader){
-			hasUpcomingHeader = true;
-			return HEADER_TYPE.UPCOMING_HEADER_AND_DATE;
-		}
-		else if(task.getTaskDueDate() != null && hasUpcomingHeader){
+		else if(task.getTaskDueDate() != null){
 			return HEADER_TYPE.UPCOMING_DATE;
-		}
-		//floating tasks
-		else{
-			if(!hasFloatingHeader){
-				hasFloatingHeader = true;
-				return HEADER_TYPE.FLOATING_HEADER;
-			}
 		}
 		return HEADER_TYPE.INVALID;
 	}
 
-	private String addTodayOrTomorrow(Task task){
-		Date dueDate = task.getTaskDueDate();
+	private String addTodayOrTomorrow(Date date){
 
-		if(dueDate.getDay() == dueDate.getCurrentDay() 
-				&& dueDate.getMonth() == dueDate.getCurrentMonth() 
-				&& dueDate.getYear4Digit() == dueDate.getCurrentYear()){
+		if(date.getDay() == date.getCurrentDay() 
+				&& date.getMonth() == date.getCurrentMonth() 
+				&& date.getYear4Digit() == date.getCurrentYear()){
 			hasTodayTask = true;
 			thisTaskIsNotTodayTask = false;
 			return "Today, ";
 		}
-		else if(dueDate.getDay() == dueDate.getCurrentDay()+1 && 
-				dueDate.getMonth() == dueDate.getCurrentMonth() && 
-				dueDate.getYear4Digit() == dueDate.getCurrentYear()){
+		else if(date.getDay() == date.getCurrentDay()+1 && 
+				date.getMonth() == date.getCurrentMonth() && 
+				date.getYear4Digit() == date.getCurrentYear()){
 			thisTaskIsNotTodayTask = true;
 			return "Tomorrow, ";
 		}
@@ -178,15 +186,16 @@ public class FormatToString {
 		strToShowTemp.add(new StringWithFormat(newLine(), Constants.FORMAT_NONE));
 		strToShowTemp.add(new StringWithFormat(numbering(i), Constants.FORMAT_NUMBER));
 
-		// description
+		// add description
 		if (isDone) {
 			strToShowTemp.add(new StringWithFormat(description, Constants.FORMAT_DONE));
 			strToShowTemp.add(new StringWithFormat("   \u2713", Constants.FORMAT_TICK));
-		} else {
+		} 
+		else {
 			strToShowTemp.add(new StringWithFormat(description, Constants.FORMAT_DESCRIPTION));
 		}
 
-		// add time with format
+		// add time
 		if (dueStartTime != null && dueEndTime != null) {
 			if(isDone){
 				String time = timeStr(dueStartTime, dueEndTime);
@@ -200,8 +209,8 @@ public class FormatToString {
 				strToShowTemp.add(new StringWithFormat(newLine() + "      \u25D5", Constants.FORMAT_TIME));
 				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_NONE));
 			}
-
-		} else if (dueStartTime != null) {
+		} 
+		else if (dueStartTime != null) {
 			if(isDone){
 				String time = timeStr(dueStartTime);
 				strToShowTemp.add(new StringWithFormat(newLine() + "      \u25D5", Constants.FORMAT_DONE));
@@ -215,7 +224,7 @@ public class FormatToString {
 
 		}
 
-		// add location with format
+		// add location
 		if (location != null) {
 			if(isDone){
 				location = locationStr(location);
@@ -227,9 +236,7 @@ public class FormatToString {
 				strToShowTemp.add(new StringWithFormat(newLine() + "      @", Constants.FORMAT_LOCATION));
 				strToShowTemp.add(new StringWithFormat(location, Constants.FORMAT_NONE));
 			}
-
 		}
-
 	}
 
 	private static String newLine() { // should format to final string
@@ -291,6 +298,10 @@ public class FormatToString {
 		strToShow1.clear();
 		strToShow2.clear();
 		strToShow3.clear();
+
+		strToShow1.add(new StringWithFormat(Constants.HEADER_UPCOMING, Constants.FORMAT_HEADER_UPCOMING));
+		strToShow2.add(new StringWithFormat(Constants.HEADER_FLOATING + newLine(), Constants.FORMAT_HEADER_FLOATING));
+		strToShow3.add(new StringWithFormat(Constants.HEADER_OVERDUE, Constants.FORMAT_HEADER_OVERDUE));
 	}
 
 	public static int getLinkedListNum() {
