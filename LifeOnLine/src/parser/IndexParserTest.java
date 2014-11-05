@@ -2,28 +2,24 @@ package parser;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
 import org.junit.Test;
 
 public class IndexParserTest {
 
 	@Test
-	public void testCleanUpString() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testCleanUpStringArray() {
-		fail("Not yet implemented");
-	}
-
-	@Test
 	public void testRemoveFirstWord() {
-		fail("Not yet implemented");
+		IndexParser ip = new IndexParser("abc");
+		assertEquals("1,2, 4", ip.removeFirstWord("delete 1,2, 4"));
+		assertEquals("3 5 7", ip.removeFirstWord("delete 3 5 7"));
 	}
 
 	@Test
 	public void testRemoveCommandName() {
-		fail("Not yet implemented");
+		IndexParser ip = new IndexParser("abc");
+		assertEquals("1,2, 4", ip.removeFirstWord("rm 1,2, 4"));
+		assertEquals("3 5 7", ip.removeFirstWord("del 3 5 7"));
 	}
 
 	@Test
@@ -55,42 +51,63 @@ public class IndexParserTest {
 
 	@Test
 	public void testGetIndexSeparatedBySpace() {
-		fail("Not yet implemented");
+		IndexParser ip = new IndexParser("abc");
+		int[] arr = {1, 7, 8};
+		assertArrayEquals(arr, ip.getIndexSeparatedBySpace("1 7 8"));
 	}
 
 	@Test
 	public void testGetIndexSeparatedByComma() {
-		fail("Not yet implemented");
+		IndexParser ip = new IndexParser("abc");
+		int[] arr = {12, 13, 18};
+		assertArrayEquals(arr, ip.getIndexSeparatedByComma("12,13,18"));
+		assertArrayEquals(arr, ip.getIndexSeparatedByComma("12, 13, 18"));
 	}
 
 	@Test
 	public void testGetIndexRangesSeparatedByComma() {
-		fail("Not yet implemented");
+		IndexParser ip = new IndexParser("abc");
+		String[] arr = {"5-8", "10"};
+		assertArrayEquals(arr, ip.getIndexRangesSeparatedByComma("5-8, 10"));
 	}
 
 	@Test
 	public void testGetStartIndex() {
-		fail("Not yet implemented");
+		IndexParser ip = new IndexParser("abc");
+		assertEquals(6, ip.getStartIndex("6-9"));
+		assertEquals(11, ip.getStartIndex("11 to 18"));
 	}
 
 	@Test
 	public void testGetEndIndex() {
-		fail("Not yet implemented");
+		IndexParser ip = new IndexParser("abc");
+		assertEquals(9, ip.getEndIndex("6-9"));
+		assertEquals(18, ip.getEndIndex("11 to 18"));
 	}
 
 	@Test
 	public void testBuildIntArray() {
-		fail("Not yet implemented");
+		IndexParser ip = new IndexParser("abc");
+		int[] arr = {1, 2, 3};
+		ArrayList<Integer> al = new ArrayList<Integer>();
+		al.add(1);
+		al.add(2);
+		al.add(3);
+		assertArrayEquals(arr, ip.buildIntArray(al));
 	}
 
 	@Test
 	public void testIsInteger() {
-		fail("Not yet implemented");
+		IndexParser ip = new IndexParser("abc");
+		assertTrue(ip.isInteger("7"));
+		assertFalse(ip.isInteger("p"));
 	}
 
 	@Test
 	public void testRemoveDuplicates() {
-		fail("Not yet implemented");
+		IndexParser ip = new IndexParser("abc");
+		int[] arr1 = {1, 5, 9};
+		int[] arr2 = {5, 1, 1, 1, 5, 5, 9};
+		assertArrayEquals(arr1, ip.removeDuplicates(arr2));
 	}
-
 }
