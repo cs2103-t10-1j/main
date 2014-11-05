@@ -16,7 +16,7 @@ public class FormatToString {
 	private static boolean hasTodayTask = false;
 	private static boolean thisTaskIsNotTodayTask = false;
 	private static boolean hasSeparator = false; //separator here is the separator between today's tasks and other upcoming tasks
-
+	private static boolean hasHeader = false;
 
 	private enum HEADER_TYPE{
 		OVERDUE_DATE, UPCOMING_DATE, INVALID;
@@ -27,6 +27,7 @@ public class FormatToString {
 		hasTodayTask = false;
 		thisTaskIsNotTodayTask = false;
 		hasSeparator = false;
+		hasHeader = false;
 	}
 	
 	public void format(TaskList<Task> taskList){
@@ -46,7 +47,8 @@ public class FormatToString {
 			else{
 				//to display "today" date header in upcoming tasks display panel even when some 
 				//of the today's tasks are overdue and some of the today's tasks are not overdue
-				if(toBeDisplayedIn == Constants.DISPLAY_IN_TP1){
+				if(toBeDisplayedIn == Constants.DISPLAY_IN_TP1 && !hasHeader){
+					hasHeader = true;
 					formatAsHeader(currentTask);
 				}
 			}
