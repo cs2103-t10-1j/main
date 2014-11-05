@@ -76,7 +76,7 @@ public class LOLParser {
 		}
 		String originalInput = input;
 		input = input.toLowerCase();
-		
+
 		DescriptionParser dp = new DescriptionParser(input);
 		LocationParser lp = new LocationParser(input);
 		DateParser dtp = new DateParser(input);
@@ -123,10 +123,10 @@ public class LOLParser {
 			if (countWords(input) <= 2) {
 				throw new Exception("Invalid parameters for edit command");
 			}
-			
+
 			String originalInput = input;
 			input = input.toLowerCase();
-			
+
 			String inputWithoutCommandAndIndex = cleanUp(removeFirst2Words(input));
 			Task newTask = task;
 
@@ -185,7 +185,8 @@ public class LOLParser {
 			Time endTime = tp.getEndTime();
 
 			if (description != null) {
-				description = getParameterInOriginalCase(originalInput, description);
+				description = getParameterInOriginalCase(originalInput,
+						description);
 				newTask.setDescription(description);
 			}
 
@@ -441,23 +442,29 @@ public class LOLParser {
 		}
 		return input;
 	}
-	
+
 	/**
-	 * Returns a parameter such as description or location in the case in which the user entered it
-	 * @param originalInput user input
-	 * @param lowercaseParameter parameter in lowercase
+	 * Returns a parameter such as description or location in the case in which
+	 * the user entered it
+	 * 
+	 * @param originalInput
+	 *            user input
+	 * @param lowercaseParameter
+	 *            parameter in lowercase
 	 * @return parameter in the original case
 	 */
-	public static String getParameterInOriginalCase(String originalInput, String lowercaseParameter) {
-		Pattern p = Pattern.compile(lowercaseParameter, Pattern.CASE_INSENSITIVE);
+	public static String getParameterInOriginalCase(String originalInput,
+			String lowercaseParameter) {
+		Pattern p = Pattern.compile(lowercaseParameter,
+				Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(originalInput);
-		
+
 		int start = 0, end = 0;
 		if (m.find()) {
 			start = m.start();
 			end = m.end();
 		}
-		
+
 		return originalInput.substring(start, end);
 	}
 }

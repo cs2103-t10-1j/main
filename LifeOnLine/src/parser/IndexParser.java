@@ -9,20 +9,25 @@ import java.util.Set;
 import lol.Constants;
 
 public class IndexParser {
+	/************* Attribute ***************/
 	private String userInput;
 
+	/************* Constructor ***************/
 	public IndexParser(String userInput) {
 		setUserInput(userInput);
 	}
 
+	/************* Accessor ***************/
 	public String getUserInput() {
 		return userInput;
 	}
 
+	/************* Mutator ***************/
 	public void setUserInput(String userInput) {
 		this.userInput = userInput;
 	}
 
+	/************* Other methods ***************/
 	/**
 	 * Removes multiple spaces between words, leading and trailing spaces in the
 	 * userInput
@@ -45,7 +50,7 @@ public class IndexParser {
 	 *            string to be cleaned up
 	 * @return string without extra spaces
 	 */
-	public static String cleanUp(String input) {
+	public String cleanUp(String input) {
 		input = input.trim();
 		input = input.replaceAll("\\s+", " ");
 		return input;
@@ -144,7 +149,7 @@ public class IndexParser {
 					}
 				}
 			}
-			
+
 			int[] outputArr = removeDuplicates(buildIntArray(indexesToDelete));
 			if (outputArr.length == 1 && outputArr[0] == -1) {
 				return null;
@@ -259,6 +264,13 @@ public class IndexParser {
 		}
 	}
 
+	/**
+	 * Creates an integer array from an arraylist of integers
+	 * 
+	 * @param integersList
+	 *            arraylist of integers
+	 * @return array of integers
+	 */
 	public int[] buildIntArray(ArrayList<Integer> integersList) {
 		int[] integersArray = new int[integersList.size()];
 		int i = 0;
@@ -268,6 +280,13 @@ public class IndexParser {
 		return integersArray;
 	}
 
+	/**
+	 * Checks whether a string is an integer
+	 * 
+	 * @param s
+	 *            string to be checked
+	 * @return true if the string is an integer, else false
+	 */
 	public boolean isInteger(String s) {
 		try {
 			Integer.parseInt(s);
@@ -276,20 +295,27 @@ public class IndexParser {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Removes duplicate elements from an integer array
+	 * 
+	 * @param arr
+	 *            array in which duplicates are to be removed
+	 * @return array without duplicates sorted in ascending order
+	 */
 	public int[] removeDuplicates(int[] arr) {
 		ArrayList<Integer> integers = new ArrayList<Integer>();
 		int length = arr.length;
-		
+
 		Set<Integer> set = new HashSet<Integer>();
 
-		for(int i = 0; i < length; i++){
-		  set.add(arr[i]);
+		for (int i = 0; i < length; i++) {
+			set.add(arr[i]);
 		}
-		
+
 		Iterator<Integer> it = set.iterator();
-		while(it.hasNext()) {
-		  integers.add(it.next());
+		while (it.hasNext()) {
+			integers.add(it.next());
 		}
 		int[] intArray = buildIntArray(integers);
 		Arrays.sort(intArray);

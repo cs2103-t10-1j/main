@@ -25,6 +25,7 @@ public class LOLParserTest {
 		assertEquals(new Task("buy milk", null, null),
 				LOLParser.getTask("add buy milk"));
 		assertEquals(null, LOLParser.getTask("add "));
+<<<<<<< HEAD
 		
 		assertEquals(new Task("camp", "island", new Date(12, 12, 2014), new Date(15, 12, 2014)), LOLParser.getTask("add camp at island from 12-15 Dec"));
 		assertEquals(new Task("camp", "island", new Date(12, 12, 2014), new Date(15, 12, 2014)), LOLParser.getTask("add camp at island from 12-15/12"));
@@ -34,6 +35,13 @@ public class LOLParserTest {
 		/*assertEquals(new Task("sleep", null, new Date(25, 10),
 				new Time("0020"), null),
 				LOLParser.getTask("add sleep at 12.20am"));*/
+=======
+
+		/*
+		 * assertEquals(new Task("sleep", null, new Date(25, 10), new
+		 * Time("0020"), null), LOLParser.getTask("add sleep at 12.20am"));
+		 */
+>>>>>>> 78c0e7ffd7b2c0ef8cc111939dbf1e53a7d71578
 		/*
 		 * assertEquals(new Task("buy bread", null, new Date(8, 10), new
 		 * Time(11, 30, "pm"), null),
@@ -47,7 +55,7 @@ public class LOLParserTest {
 		assertEquals(6, LOLParser.getTaskIndex("edit 6 send letter sat"));
 		assertEquals(-1, LOLParser.getTaskIndex("delete tt"));
 	}
-	
+
 	@Test
 	public void testGetTaskIndexArray() {
 		int[] arr = { 1, 2, 3 };
@@ -101,13 +109,19 @@ public class LOLParserTest {
 						.getKeywordsForSearchCommand("search dinner with friends"));
 		assertEquals(null, LOLParser.getKeywordsForSearchCommand("search"));
 	}
-	
+
 	@Test
 	public void testGetParameterInOriginalCase() {
-		assertEquals("StuDy ProGRaMMiNg", LOLParser.getParameterInOriginalCase("StuDy ProGRaMMiNg AT HoMe", "study programming"));
-		assertEquals("HoMe", LOLParser.getParameterInOriginalCase("StuDy ProGRaMMiNg AT HoMe", "home"));
-		assertEquals("pIcNIc", LOLParser.getParameterInOriginalCase("pIcNIc AT PicNic SPoT", "picnic"));
-		assertEquals("PicNic SPoT", LOLParser.getParameterInOriginalCase("pIcNIc AT PicNic SPoT", "picnic spot"));
-		//assertEquals("pIcNIc", LOLParser.getParameterInOriginalCase("AT PicNic SPoT 12 NOv pIcNIc", "picnic"));
+		assertEquals("StuDy ProGRaMMiNg", LOLParser.getParameterInOriginalCase(
+				"StuDy ProGRaMMiNg AT HoMe", "study programming"));
+		assertEquals("HoMe", LOLParser.getParameterInOriginalCase(
+				"StuDy ProGRaMMiNg AT HoMe", "home"));
+		assertEquals("pIcNIc", LOLParser.getParameterInOriginalCase(
+				"pIcNIc AT PicNic SPoT", "picnic"));
+		assertEquals("PicNic SPoT", LOLParser.getParameterInOriginalCase(
+				"pIcNIc AT PicNic SPoT", "picnic spot"));
+		// assertEquals("pIcNIc",
+		// LOLParser.getParameterInOriginalCase("AT PicNic SPoT 12 NOv pIcNIc",
+		// "picnic"));
 	}
 }
