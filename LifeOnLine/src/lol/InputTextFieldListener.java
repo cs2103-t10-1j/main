@@ -1,7 +1,6 @@
 package lol;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -40,35 +39,22 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final Timer timer;
 	final JProgressBar progressBar;
 
-	// custom colors
-	final static Color DARK_ORANGE = new Color(253, 101, 0);
-	final static Color PURPLE = new Color(204, 0, 204);
-	final static Color BG = new Color(0, 129, 72);
-	final static Color DARK_BLUE = new Color(3, 97, 148);
-	final static Color MEDIUM_BLUE = new Color(82, 161, 204);
-
-	// fonts
-	final static Font TREBUCHET_14 = new Font("Trebuchet MS", Font.PLAIN, 14);
-	final static Font TREBUCHET_BOLD_14 = new Font("Trebuchet MS", Font.BOLD, 14);
-	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD, 16);
-	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
-
 	public InputTextFieldListener(JTextPane mainDisplayTP, JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JTextPane label, JTextField inputTF, int size, Timer timer, JLabel progressLabel, JProgressBar progressBar){
 		this.inputTF = inputTF;
 
 		// Welcome to LifeOnLine
-		label.setFont(TREBUCHET_BOLD_16);
+		label.setFont(Constants.TREBUCHET_BOLD_16);
 
 		// Tasks with no date
-		mainDisplayTP2.setFont(TREBUCHET_16);
+		mainDisplayTP2.setFont(Constants.TREBUCHET_16);
 
 		// Upcoming tasks
-		mainDisplayTP.setFont(TREBUCHET_16);
+		mainDisplayTP.setFont(Constants.TREBUCHET_16);
 
 		// Overdue tasks
-		mainDisplayTP3.setFont(TREBUCHET_16);
+		mainDisplayTP3.setFont(Constants.TREBUCHET_16);
 
-		inputTF.setFont(TREBUCHET_BOLD_16);
+		inputTF.setFont(Constants.TREBUCHET_BOLD_16);
 
 		this.mainDisplayTP1 = mainDisplayTP;
 		this.mainDisplayTP1.setDocument(doc1);
@@ -88,14 +74,16 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		inputTF.addKeyListener(this);
 	}
 
-	//this method add different styles to document which are needed to display task of
-	//different type and to display time, location and description of task in different 
-	//font type
+	/**
+	 * Add the required Style to doc
+	 * 
+	 * @param doc
+	 */
 	public static void addStyleToDoc(StyledDocument doc){
 		Style style = doc.addStyle(Constants.FORMAT_HEADER_FLOATING, null);
 		StyleConstants.setFontSize(style, 18);
 		StyleConstants.setBold(style, true);
-		StyleConstants.setForeground(style, DARK_BLUE);
+		StyleConstants.setForeground(style, Constants.DARK_BLUE);
 
 		style = doc.addStyle(Constants.FORMAT_HEADER_NORMAL, null);
 		StyleConstants.setFontSize(style, 18);
@@ -105,62 +93,42 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		style = doc.addStyle(Constants.FORMAT_HEADER_UPCOMING, null);
 		StyleConstants.setFontSize(style, 18);
 		StyleConstants.setBold(style, true);
-		StyleConstants.setForeground(style, DARK_BLUE);
+		StyleConstants.setForeground(style, Constants.DARK_BLUE);
 
 		style = doc.addStyle(Constants.FORMAT_HEADER_DATE, null);
 		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setBold(style, true);
-		StyleConstants.setForeground(style, MEDIUM_BLUE);
+		StyleConstants.setForeground(style, Constants.MEDIUM_BLUE);
 
 		style = doc.addStyle(Constants.FORMAT_NUMBER, null);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setItalic(style, true);
 		StyleConstants.setForeground(style, Color.BLACK);
 
-
 		style = doc.addStyle(Constants.FORMAT_TICK, null);
-		StyleConstants.setForeground(style, BG);
+		StyleConstants.setForeground(style, Constants.BG);
 
 		style = doc.addStyle(Constants.FORMAT_DESCRIPTION, null);
 		StyleConstants.setFontSize(style, 16);
 
 		style = doc.addStyle(Constants.FORMAT_TIME, null);
 		StyleConstants.setFontSize(style, 16);
-		StyleConstants.setForeground(style, DARK_ORANGE);
+		StyleConstants.setForeground(style, Constants.DARK_ORANGE);
 
 		style = doc.addStyle(Constants.FORMAT_LOCATION, null);
 		StyleConstants.setFontSize(style, 16);
-		StyleConstants.setForeground(style, PURPLE);
+		StyleConstants.setForeground(style, Constants.PURPLE);
 
 		style = doc.addStyle(Constants.FORMAT_HEADER_OVERDUE, null);
 		StyleConstants.setFontSize(style, 18);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, Color.RED);
 
-		style = doc.addStyle(Constants.FORMAT_TIME_STRIKE, null);
-		StyleConstants.setFontSize(style, 16);
-		StyleConstants.setForeground(style, DARK_ORANGE);
-		StyleConstants.setStrikeThrough(style, true);
-
-		style = doc.addStyle(Constants.FORMAT_DESCRIPTION_STRIKE, null);
-		StyleConstants.setFontSize(style, 16);
-		StyleConstants.setStrikeThrough(style, true);
-
-		style = doc.addStyle(Constants.FORMAT_LOCATION_STRIKE, null);
-		StyleConstants.setFontSize(style, 16);
-		StyleConstants.setForeground(style, PURPLE);
-		StyleConstants.setStrikeThrough(style, true);
-
-		style = doc.addStyle(Constants.FORMAT_OVERDUE_STRIKE, null);
-		StyleConstants.setFontSize(style, 16);
-		StyleConstants.setForeground(style, Color.RED);
-		StyleConstants.setStrikeThrough(style, true);
-
 		style = doc.addStyle(Constants.FORMAT_DONE, null);
 		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setForeground(style, Color.GRAY);
 
-		style = doc.addStyle("is just added", null);
+		style = doc.addStyle(Constants.FORMAT_IS_JUST_ADDED, null);
 		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setBackground(style, Color.YELLOW);
 	}

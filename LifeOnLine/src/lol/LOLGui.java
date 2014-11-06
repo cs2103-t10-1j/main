@@ -80,7 +80,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.setBounds(100, 100, 752, 517);
 		frame.getContentPane().setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.ICONIFIED);
-		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
 		
 		JPanel panel_5 = new JPanel();
 		panel_5.setBackground(new Color(217, 232, 245));

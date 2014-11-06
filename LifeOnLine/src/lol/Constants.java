@@ -1,5 +1,8 @@
 package lol;
 
+import java.awt.Color;
+import java.awt.Font;
+
 public class Constants {
 	
 	public static final String WELCOME_MESSAGE = "Type in your task and hit enter to ADD. \n"
@@ -165,6 +168,17 @@ public class Constants {
 	public static final String ERROR_MULTIPLE_LOCATION = "Error! More than one location.";
 
 	// below are all constants used in GUI
+	final static Color DARK_ORANGE = new Color(253, 101, 0);
+	final static Color PURPLE = new Color(204, 0, 204);
+	final static Color BG = new Color(0, 129, 72);
+	final static Color DARK_BLUE = new Color(3, 97, 148);
+	final static Color MEDIUM_BLUE = new Color(82, 161, 204);
+	
+	final static Font TREBUCHET_14 = new Font("Trebuchet MS", Font.PLAIN, 14);
+	final static Font TREBUCHET_BOLD_14 = new Font("Trebuchet MS", Font.BOLD, 14);
+	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD, 16);
+	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
+	
 	final static String HEADER_OVERDUE = "Overdue Tasks";
 	final static String HEADER_FLOATING = "Tasks With No date";
 	final static String HEADER_UPCOMING = "Upcoming Tasks";
@@ -179,13 +193,10 @@ public class Constants {
 	final static String FORMAT_OVERDUE = "overdue";
 	final static String FORMAT_NONE = "null";
 	final static String FORMAT_TICK = "tick mark";
-	final static String FORMAT_TIME_STRIKE = "time strike";
-	final static String FORMAT_DESCRIPTION_STRIKE = "description strike";
-	final static String FORMAT_LOCATION_STRIKE = "location strike";
-	final static String FORMAT_OVERDUE_STRIKE = "overdue strike";
 	final static String FORMAT_HEADER_DATE = "date header";
 	final static String FORMAT_NUMBER = "numbering";
 	final static String FORMAT_DONE = "done";
+	final static String FORMAT_IS_JUST_ADDED = "is just added";
 	
 	final static int DISPLAY_IN_TP1 = 1; //upcoming TP
 	final static int DISPLAY_IN_TP2 = 2; //no date TP

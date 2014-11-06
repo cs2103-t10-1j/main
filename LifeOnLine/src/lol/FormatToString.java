@@ -1,3 +1,18 @@
+/**
+ * This class formats the tasks in the given task list so that tasks can be displayed in GUI in
+ * a more meaningful and easily understandable way.
+ * 
+ * In this class, numbering will be added to the task and the time and location of the task will 
+ * be displayed below the description of the task with bullet points. The latest added tasks will
+ * also be highlighted.
+ * 
+ * Tasks will be formatted with a certain color coding principles which are stated below:
+ * 1. Overdue header : red
+ * 2. Upcoming and Floating header : blue
+ * 3. Done task: grey color with a green tick next to the task description
+ * 4. Date headers for all tasks : blue
+ */
+
 package lol;
 
 import java.util.LinkedList;
@@ -6,9 +21,7 @@ import parser.DateParser;
 
 public class FormatToString {
 	private static LinkedList<StringWithFormat> strToShow1 = new LinkedList<StringWithFormat>(); //for TP1
-
 	private static LinkedList<StringWithFormat> strToShow2 = new LinkedList<StringWithFormat>(); //for TP2
-
 	private static LinkedList<StringWithFormat> strToShow3 = new LinkedList<StringWithFormat>(); //for TP3
 
 	private static LinkedList<StringWithFormat> strToShowTemp = new LinkedList<StringWithFormat>();
@@ -315,7 +328,7 @@ public class FormatToString {
 		strToShow2.clear();
 		strToShow3.clear();
 		
-		//add main header to three displaying panels
+		//add main header to the three displaying panels
 		strToShow1.add(new StringWithFormat(Constants.HEADER_UPCOMING, Constants.FORMAT_HEADER_UPCOMING));
 		strToShow2.add(new StringWithFormat(Constants.HEADER_FLOATING + newLine(), Constants.FORMAT_HEADER_FLOATING));
 		strToShow3.add(new StringWithFormat(Constants.HEADER_OVERDUE, Constants.FORMAT_HEADER_OVERDUE));
