@@ -43,6 +43,9 @@ public class FormatToString {
 			
 			if(isNeedHeader(previousTask, currentTask)){
 				formatAsHeader(currentTask);
+				if(toBeDisplayedIn == Constants.DISPLAY_IN_TP1){
+					hasHeader = true;
+				}
 			}
 			else{
 				//to display "today" date header in upcoming tasks display panel even when some 
