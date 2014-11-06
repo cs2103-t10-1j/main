@@ -314,7 +314,8 @@ public class FormatToString {
 		strToShow1.clear();
 		strToShow2.clear();
 		strToShow3.clear();
-
+		
+		//add main header to three displaying panels
 		strToShow1.add(new StringWithFormat(Constants.HEADER_UPCOMING, Constants.FORMAT_HEADER_UPCOMING));
 		strToShow2.add(new StringWithFormat(Constants.HEADER_FLOATING + newLine(), Constants.FORMAT_HEADER_FLOATING));
 		strToShow3.add(new StringWithFormat(Constants.HEADER_OVERDUE, Constants.FORMAT_HEADER_OVERDUE));

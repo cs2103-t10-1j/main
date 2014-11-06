@@ -92,33 +92,25 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	//different type and to display time, location and description of task in different 
 	//font type
 	public static void addStyleToDoc(StyledDocument doc){
-		// header for floating tasks
 		Style style = doc.addStyle(Constants.FORMAT_HEADER_FLOATING, null);
 		StyleConstants.setFontSize(style, 18);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, DARK_BLUE);
-		//StyleConstants.setUnderline(style, true);
-
 
 		style = doc.addStyle(Constants.FORMAT_HEADER_NORMAL, null);
 		StyleConstants.setFontSize(style, 18);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, Color.BLUE);
-		//StyleConstants.setUnderline(style, true);
 
-		// header for upcoming tasks
 		style = doc.addStyle(Constants.FORMAT_HEADER_UPCOMING, null);
 		StyleConstants.setFontSize(style, 18);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, DARK_BLUE);
-		//StyleConstants.setUnderline(style, true);
 
 		style = doc.addStyle(Constants.FORMAT_HEADER_DATE, null);
 		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setBold(style, true);
-		//StyleConstants.setItalic(style, true);
 		StyleConstants.setForeground(style, MEDIUM_BLUE);
-		//StyleConstants.setUnderline(style, true);
 
 		style = doc.addStyle(Constants.FORMAT_NUMBER, null);
 		StyleConstants.setBold(style, true);
@@ -127,7 +119,6 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 
 		style = doc.addStyle(Constants.FORMAT_TICK, null);
-		//StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, BG);
 
 		style = doc.addStyle(Constants.FORMAT_DESCRIPTION, null);
@@ -141,13 +132,10 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		StyleConstants.setFontSize(style, 16);
 		StyleConstants.setForeground(style, PURPLE);
 
-		// header for overdue tasks
 		style = doc.addStyle(Constants.FORMAT_HEADER_OVERDUE, null);
 		StyleConstants.setFontSize(style, 18);
 		StyleConstants.setBold(style, true);
 		StyleConstants.setForeground(style, Color.RED);
-		//StyleConstants.setUnderline(style, true);
-
 
 		style = doc.addStyle(Constants.FORMAT_TIME_STRIKE, null);
 		StyleConstants.setFontSize(style, 16);
