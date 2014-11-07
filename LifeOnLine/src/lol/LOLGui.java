@@ -3,8 +3,6 @@ package lol;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
-//import javax.swing.plaf.LayerUI;
-//import javax.swing.plaf.LayerUI;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -81,6 +79,8 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.ICONIFIED);
 		frame.setResizable(false);
+		frame.getContentPane().setPreferredSize(new Dimension(736, 478));
+	    frame.pack();
 		
 		JPanel panel_5 = new JPanel();
 		panel_5.setBackground(new Color(217, 232, 245));
@@ -160,6 +160,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		panel_7.setBounds(0, 46, 10, 345);
 		frame.getContentPane().add(panel_7);
 
+		//upcoming panel
 		final JTextPane mainDisplayTP1 = new JTextPane();
 		mainDisplayTP1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		mainDisplayTP1.setBounds(250, 35, 243, 345);
@@ -169,6 +170,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		frame.getContentPane().add(mainDisplayTP1);
 		
+		//tasks with no date panel
 		final JTextPane mainDisplayTP2 = new JTextPane();
 		mainDisplayTP2.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		mainDisplayTP2.setEditable(false);
@@ -178,6 +180,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		caret2.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		frame.getContentPane().add(mainDisplayTP2);
 
+		//overdue tasks panel
 		final JTextPane mainDisplayTP3 = new JTextPane();
 		mainDisplayTP3.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		mainDisplayTP3.setBounds(20, 94, 209, 231);
@@ -354,6 +357,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			@Override
 			public void onHotKey(int aIdentifier) {
 
+				
 				// Restore GUI
 				if (aIdentifier == 1) {
 					frame.setVisible(true);
