@@ -204,6 +204,8 @@ public class Constants {
 	
 	final static boolean IS_NEED_HEADER = true;
 	
+	final static int IMPOSSIBLE_ARRAYLIST_INDEX = -1;
+	
 	//separator between today's tasks and upcoming tasks in gui
 	final static String GUI_SEPARATOR = "===========================";
 }

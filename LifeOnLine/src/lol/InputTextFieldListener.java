@@ -1,3 +1,8 @@
+/**
+ * This class is the listener to the input text field in LOL's GUI
+ * This class is responsible to listen to the changes in the input text field and refresh the GUI after every user input.
+ */
+
 package lol;
 
 import java.awt.Color;
@@ -5,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.swing.JLabel;
@@ -32,14 +38,15 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	static StyledDocument doc3 = new DefaultStyledDocument();
 	JTextPane label;
 	JLabel progressLabel;
-	int size;
-	static int lengthToBeScrolledTo = 0;
+
+	private static ArrayList<String> commands = new ArrayList<String>();
+	private static int indexOfCurrentShowingTask;
 
 	final static boolean IS_HEADER = true;
 	final Timer timer;
 	final JProgressBar progressBar;
 
-	public InputTextFieldListener(JTextPane mainDisplayTP, JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JTextPane label, JTextField inputTF, int size, Timer timer, JLabel progressLabel, JProgressBar progressBar){
+	public InputTextFieldListener(JTextPane mainDisplayTP, JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JTextPane label, JTextField inputTF, Timer timer, JLabel progressLabel, JProgressBar progressBar){
 		this.inputTF = inputTF;
 
 		// Welcome to LifeOnLine
@@ -70,12 +77,10 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		this.timer = timer;
 		this.label = label;
 		this.progressLabel = progressLabel;
-		this.size = size;
-		inputTF.addKeyListener(this);
 	}
 
 	/**
-	 * Add the required Style to doc
+	 * Add the required Styles that are used in the GUI to doc which is for JTextPane
 	 * 
 	 * @param doc
 	 */
@@ -133,16 +138,16 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		StyleConstants.setBackground(style, Color.YELLOW);
 	}
 
+	/** 
+	 * This function will be called whenever user key in some text into the input text field
+	 * and press enter.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent event){
 		String inputStr = inputTF.getText();
-		LOLGui.commands.add(inputStr);
+		addUserInputToCommands(inputStr);
 
-		try {
-			refreshFeedbackDisplay(inputStr);
-		} catch (Exception e) {
-			// do nothing
-		}
+		refreshFeedbackDisplay(inputStr);
 
 		TaskList<Task> taskList = LOLControl.getTaskList();
 		refreshMainDisplay(taskList);
@@ -151,18 +156,42 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		timer.restart();
 
 		clear(inputTF);
-		size = LOLGui.commands.size();
+	}
+	
+	/**
+	 * add userInput String to an array list call commands and automatically add
+	 * an empty String at the end of the array list
+	 * 
+	 * @param userInput
+	 */
+	private void addUserInputToCommands(String userInput){
+		if(commands.isEmpty()){
+			commands.add(userInput);
+			commands.add("");
+		}
+		else{
+			commands.set(commands.size() - 1, userInput);
+			commands.add("");
+		}
+		
+		indexOfCurrentShowingTask = Constants.IMPOSSIBLE_ARRAYLIST_INDEX;
 	}
 
-	public void refreshFeedbackDisplay(String inputStr) throws Exception{
-		String feedback = passStringToControlAndGetFeedback(inputStr);
+	/**
+	 * Refresh the feedback display panel in GUI
+	 * 
+	 * @param inputStr
+	 */
+	public void refreshFeedbackDisplay(String inputStr){
+		String feedback = LOLControl.executeUserInput(inputStr);
 		label.setText(feedback);
 	}
 
-	public String passStringToControlAndGetFeedback(String inputStr) throws Exception{
-		return LOLControl.executeUserInput(inputStr);
-	}
-
+	/**
+	 * refresh the three main display text panes
+	 * 
+	 * @param taskList
+	 */
 	public void refreshMainDisplay(TaskList<Task> taskList){
 		resetScrollPanePosition();
 		clear(mainDisplayTP1);
@@ -170,8 +199,8 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		clear(mainDisplayTP3);
 
 		LOLControl.refreshProgress();
-		if(LOLControl.progressMaximum>0){
-			progressLabel.setText("Today's report: "+LOLControl.progress+"/"+LOLControl.progressMaximum);
+		if(LOLControl.progressMaximum > 0){
+			progressLabel.setText("Today's report: " + LOLControl.progress + "/" + LOLControl.progressMaximum);
 			progressBar.setMaximum(LOLControl.progressMaximum);
 			progressBar.setValue(LOLControl.progressMaximum);
 			progressBar.setValue(LOLControl.progress);
@@ -209,7 +238,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	public void showInMainDisplayTP(TaskList<Task> taskList){
 		FormatToString formatToString = new FormatToString();
 		formatToString.format(taskList);
-		
+
 		addToDisplay(doc1, doc2, doc3);
 	}
 
@@ -252,7 +281,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	private void clear(JTextPane TP){
 		TP.setText("");
 	}
-	
+
 	private void resetScrollPanePosition(){
 		mainDisplayTP1.setCaretPosition(0);
 		mainDisplayTP2.setCaretPosition(0);
@@ -271,25 +300,23 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 	/** Handle the key-released event from the text field. */
 	public void keyReleased(KeyEvent e) {
-
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			if(!LOLGui.commands.isEmpty()){
-				int index = size-1;
-				if(index>=0){
-					inputTF.setText(LOLGui.commands.get(index));
+			if(!commands.isEmpty()){
+				if(indexOfCurrentShowingTask == Constants.IMPOSSIBLE_ARRAYLIST_INDEX && commands.size() - 2 >= 0 ){
+					indexOfCurrentShowingTask = commands.size() - 1;
+				}
+				
+				if(indexOfCurrentShowingTask - 1 >= 0){
+					inputTF.setText(commands.get(--indexOfCurrentShowingTask));
 					inputTF.grabFocus();
-					size--;
 				}
 			}
 		}
-
 		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			if(!LOLGui.commands.isEmpty()){
-				int index =size+1;
-				if(index>=0&&index<LOLGui.commands.size()){
-					inputTF.setText(LOLGui.commands.get(index));
+			if(!commands.isEmpty() && indexOfCurrentShowingTask != Constants.IMPOSSIBLE_ARRAYLIST_INDEX){
+				if(indexOfCurrentShowingTask + 1 < commands.size()){
+					inputTF.setText(commands.get(++indexOfCurrentShowingTask));
 					inputTF.grabFocus();
-					size++;
 				}
 			}
 		}

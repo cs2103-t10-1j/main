@@ -19,7 +19,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 import com.melloware.jintellitype.HotkeyListener;
 import com.melloware.jintellitype.JIntellitype;
@@ -29,9 +28,6 @@ import logic.LOLControl;
 
 @SuppressWarnings("serial")
 public class LOLGui extends JFrame implements HotkeyListener {
-
-	public static ArrayList<String> commands = new ArrayList<String>();
-
 	private boolean isNewRun = true;
 	private boolean isNewMini = true;
 	private boolean isFocus;
@@ -40,12 +36,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 	int i = 0;
 	int numTabPressed = 0;
-
-	final static Color BG = new Color(255, 255, 255);
-	final static Color BG2 = new Color(217, 232, 245);
-	final static Color BG3 = new Color(145, 190, 212);
-	final static Color BG4 = new Color(48, 66, 105);
-	final static Color DARK_BLUE = new Color(3, 97, 148);
 
 	Border compound = BorderFactory.createCompoundBorder(
 			BorderFactory.createRaisedBevelBorder(),
@@ -58,6 +48,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			System.exit(1);
 		}
 		// If instance already running, exit new instance
+		// Prevent multiple LOL to run at the same time
 		if (JIntellitype.checkInstanceAlreadyRunning("LOL - Life On Line")) {
 			TrayClass.trayIcon.displayMessage("LOL is Already Running!",
 					"CTRL + L to Restore", TrayIcon.MessageType.INFO);
@@ -70,7 +61,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			System.exit(1);
 		}
 
-		// ** SET-UP GUI ** //
+		//*************Setting up the GUI****************//
 		final JFrame frame = new JFrame("LOL - LifeOnLine");
 		frame.setBackground(new Color(3, 97, 148));
 		frame.getContentPane().setForeground(new Color(47, 79, 79));
@@ -80,25 +71,25 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.setDefaultCloseOperation(JFrame.ICONIFIED);
 		frame.setResizable(false);
 		frame.getContentPane().setPreferredSize(new Dimension(736, 478));
-	    frame.pack();
-		
+		frame.pack();
+
 		JPanel panel_5 = new JPanel();
 		panel_5.setBackground(new Color(217, 232, 245));
 		final Image backgroundImage;
 		try {
-			 ClassLoader cldr = this.getClass().getClassLoader();
-			 java.net.URL imageURL   = cldr.getResource("resources/background2.jpg");
+			ClassLoader cldr = this.getClass().getClassLoader();
+			java.net.URL imageURL   = cldr.getResource("resources/background2.jpg");
 			backgroundImage = javax.imageio.ImageIO.read(imageURL);
 			panel_5 = new JPanel(new BorderLayout()) {
-		        @Override public void paintComponent(Graphics g) {
-		            g.drawImage(backgroundImage, 0, 0, null);
-		        }
-		    };
+				@Override public void paintComponent(Graphics g) {
+					g.drawImage(backgroundImage, 0, 0, null);
+				}
+			};
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(3, 97, 148));
 		panel.setBounds(0, 391, 736, 87);
@@ -127,7 +118,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		feedbackLabel.setForeground(new Color(255,255,255));
 		feedbackLabel.setBounds(20, 11, 706, 30);
 		panel.add(feedbackLabel);
-		
+
 		Component horizontalGlue = Box.createHorizontalGlue();
 		horizontalGlue.setBounds(250, 302, 1, 1);
 		frame.getContentPane().add(horizontalGlue);
@@ -169,7 +160,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		DefaultCaret caret1 = (DefaultCaret) mainDisplayTP1.getCaret();
 		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		frame.getContentPane().add(mainDisplayTP1);
-		
+
 		//tasks with no date panel
 		final JTextPane mainDisplayTP2 = new JTextPane();
 		mainDisplayTP2.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -189,19 +180,19 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		DefaultCaret caret3 = (DefaultCaret) mainDisplayTP3.getCaret();
 		caret3.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		frame.getContentPane().add(mainDisplayTP3);
-		
+
 		JScrollPane scrollPane = new JScrollPane(mainDisplayTP3);
 		scrollPane.setBounds(20, 94, 209, 231);
 		frame.getContentPane().add(scrollPane);
-		
+
 		JScrollPane scrollPane_1 = new JScrollPane(mainDisplayTP1);
 		scrollPane_1.setBounds(250, 35, 243, 345);
 		frame.getContentPane().add(scrollPane_1);
-		
+
 		JScrollPane scrollPane_2 = new JScrollPane(mainDisplayTP2);
 		scrollPane_2.setBounds(513, 94, 203, 231);
 		frame.getContentPane().add(scrollPane_2);
-		
+
 		DigitalClock digitalClock = new DigitalClock();
 		digitalClock.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		digitalClock.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -209,48 +200,48 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		digitalClock.setBounds(409, 10, 84, 23);
 		frame.getContentPane().add(digitalClock);
 		digitalClock.setForeground(new Color(220, 20, 60));
-			
+
 		final JLabel lblToday = new JLabel("Today");
 		lblToday.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblToday.setBounds(250, 10, 104, 23);
 		frame.getContentPane().add(lblToday);
 		lblToday.setForeground(new Color(220, 20, 60));
-		
+
 		JPanel panel_2 = new JPanel();
 		panel_2.setLayout(null);
 		panel_2.setBackground(new Color(248, 248, 255));
 		panel_2.setBounds(568, 0, 168, 46);
 		frame.getContentPane().add(panel_2);
-	
+
 		JPanel panel_3 = new JPanel();
 		panel_3.setBackground(new Color(3, 97, 148));
 		panel_3.setBounds(558, 46, 168, 10);
 		frame.getContentPane().add(panel_3);
-		
+
 		JPanel panel_4 = new JPanel();
 		panel_4.setBackground(new Color(3, 97, 148));
 		panel_4.setBounds(726, 46, 10, 345);
 		frame.getContentPane().add(panel_4);
-		
+
 		JPanel panel_8 = new JPanel();
 		panel_8.setBackground(new Color(3, 97, 148));
 		panel_8.setBounds(167, 0, 391, 10);
 		frame.getContentPane().add(panel_8);
-		
+
 		JPanel panel_9 = new JPanel();
 		panel_9.setBackground(new Color(3, 97, 148));
 		panel_9.setBounds(167, 0, 10, 56);
 		frame.getContentPane().add(panel_9);
-		
+
 		JPanel panel_14 = new JPanel();
 		panel_14.setBackground(new Color(3, 97, 148));
 		panel_14.setBounds(558, 0, 10, 56);
 		frame.getContentPane().add(panel_14);
-		
+
 		/*final JLabel blockLabel = new JLabel(LOLControl.isBlockMode?": On":": Off");
 		blockLabel.setBounds(129, 15, 46, 14);
 		panel_2.add(blockLabel);
-		
+
 		JButton blockButton = new JButton("Block Slots");
 		blockButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -264,13 +255,10 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		});
 		blockButton.setBounds(10, 11, 109, 23);
 		panel_2.add(blockButton);*/
-		
-		
-		
+
 		final JLabel labelAlert = new JLabel(LOLControl.isAlertMode?": On":": Off");
 		labelAlert.setBounds(109, 12, 49, 20);
 		panel_2.add(labelAlert);
-
 
 		JButton alertButton = new JButton("Alert");
 		alertButton.addActionListener(new ActionListener() {
@@ -286,51 +274,44 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		alertButton.setBounds(10, 11, 89, 23);
 		panel_2.add(alertButton);
 
-		
-
-		
 		panel_5.setBounds(0, 0, 736, 391);
 		frame.getContentPane().add(panel_5);
-		
 
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		inputTF.requestFocus();
+		//*********End of setting up the GUI***********//
 
-		
-		
 		final Timer timer = new Timer(Constants.REFRESH_TIME,
 				new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent ae) {
-						try {
-							LOLControl.executeUserInput("home");
-						} catch (Exception e) {
-							// do nothing
-						}
-						TaskList<Task> taskList = LOLControl.getTaskList();
-						InputTextFieldListener textfield = new InputTextFieldListener(
-								mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
-								feedbackLabel, inputTF, commands.size(), null,
-								progressLabel, progressBar);
-						textfield.refreshMainDisplay(taskList);
-						
-						DateParser dp = new DateParser();
-						Date currentDate = dp.getTodaysDate();
-						lblToday.setText(currentDate.toString());
-					
-						System.out.println("refreshed");
-					}
-				});
-		timer.setInitialDelay(0); // to start first refresh after 0s when
-									// program opens
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				try {
+					LOLControl.executeUserInput("home");
+				} catch (Exception e) {
+					// do nothing
+				}
+				TaskList<Task> taskList = LOLControl.getTaskList();
+				InputTextFieldListener textfield = new InputTextFieldListener(
+						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
+						feedbackLabel, inputTF, null,
+						progressLabel, progressBar);
+				textfield.refreshMainDisplay(taskList);
+
+				DateParser dp = new DateParser();
+				Date currentDate = dp.getTodaysDate();
+				lblToday.setText(currentDate.toString());
+
+				System.out.println("refreshed");
+			}
+		});
+
+		timer.setInitialDelay(0); // to start first refresh after 0s when program opens
 		timer.start();
-		
-		//initialise listner
-		
+
 		final InputTextFieldListener listener = new InputTextFieldListener(
 				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
-				feedbackLabel, inputTF, commands.size(), timer,
+				feedbackLabel, inputTF, timer,
 				progressLabel, progressBar);
 
 		// **HOTKEY-INTERFACE** //
@@ -340,24 +321,20 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				(int) 'L');
 		JIntellitype.getInstance().registerHotKey(2, 0, KeyEvent.VK_ESCAPE); //escape to minimise
 		JIntellitype.getInstance().registerHotKey(3, 0, KeyEvent.VK_HOME);//home to display main screen
-		JIntellitype.getInstance().registerHotKey(4, 0,46); //delete to execute delete
+		JIntellitype.getInstance().registerHotKey(4, 0, 46); //delete to execute delete
 		JIntellitype.getInstance().registerHotKey(5, JIntellitype.MOD_CONTROL, (int) 'Z'); //ctrl+z to undo
 		JIntellitype.getInstance().registerHotKey(6, JIntellitype.MOD_CONTROL, (int) 'Y'); //ctrl+y to redo
 		JIntellitype.getInstance().registerHotKey(7, JIntellitype.MOD_CONTROL, (int) 'F'); //ctrl+f to search
 		JIntellitype.getInstance().registerHotKey(8, JIntellitype.MOD_CONTROL, (int) 'D'); //ctrl+d to mark as done
 		JIntellitype.getInstance().registerHotKey(9, JIntellitype.MOD_CONTROL, (int) 'U'); //ctrl+u to mark as undone
 		JIntellitype.getInstance().registerHotKey(10, 0, 112);//F1 to get help
-		
-		
-		// Assign this class to be a HotKeyListener
-		JIntellitype.getInstance().addHotKeyListener(this);
 
-		// Listen for HotKey
+		//JIntellitype.getInstance().addHotKeyListener(this);
+		//do not need this line?
+
 		JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
 			@Override
 			public void onHotKey(int aIdentifier) {
-
-				
 				// Restore GUI
 				if (aIdentifier == 1) {
 					frame.setVisible(true);
@@ -380,13 +357,11 @@ public class LOLGui extends JFrame implements HotkeyListener {
 					System.out.println("home");
 					try{ listener.refreshFeedbackDisplay("home");
 					TaskList<Task> taskList = LOLControl.getTaskList();
-				listener.refreshMainDisplay(taskList);
-				}catch (Exception e1){
-					e1.printStackTrace();
+					listener.refreshMainDisplay(taskList);
+					}catch (Exception e1){
+						e1.printStackTrace();
+					}
 				}
-					
-				}
-				
 				else if (aIdentifier == 4){
 					String inputStr = inputTF.getText();
 					inputStr.trim();
@@ -401,14 +376,12 @@ public class LOLGui extends JFrame implements HotkeyListener {
 					String inputStr = Constants.COMMAND_REDO;
 					refreshGUI(listener, timer, inputStr);
 				}
-				
 				else if (aIdentifier == 7){
 					String inputStr = inputTF.getText();
 					inputStr.trim();
 					inputStr = Constants.COMMAND_SEARCH + " "+ inputStr;
 					refreshGUI(listener, timer, inputStr);
 				}
-				
 				else if (aIdentifier == 8){
 					String inputStr = inputTF.getText();
 					inputStr.trim();
@@ -423,13 +396,8 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				}
 			}
 
-			private void refreshGUI(InputTextFieldListener listener,
-					Timer timer, String inputStr) {
-				try {
-					listener.refreshFeedbackDisplay(inputStr);
-				} catch (Exception e) {
-					// do nothing
-				}
+			private void refreshGUI(InputTextFieldListener listener, Timer timer, String inputStr) {
+				listener.refreshFeedbackDisplay(inputStr);
 				TaskList<Task> taskList = LOLControl.getTaskList();
 				listener.refreshMainDisplay(taskList);
 				timer.setInitialDelay(60000);
@@ -541,20 +509,20 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		});
 
 		String s = (String)JOptionPane.showInputDialog(
-                null,
-                "Please enter you email id to receive alerts in your inbox",
-                "Welcome to LOL",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                "example@example.com");
-   //If a string was returned, say so.
-if ((s != null) && (s.length() > 0)) {
- LOLControl.userEmail = s.trim();
-}
+				null,
+				"Please enter you email id to receive alerts in your inbox",
+				"Welcome to LOL",
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				null,
+				"example@example.com");
+		//If a string was returned, say so.
+		if ((s != null) && (s.length() > 0)) {
+			LOLControl.userEmail = s.trim();
+		}
 
 		inputTF.addActionListener(listener);
-
+		inputTF.addKeyListener(listener);
 	}
 
 	@Override

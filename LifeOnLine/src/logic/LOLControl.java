@@ -19,7 +19,7 @@ public class LOLControl {
 	public static String userEmail = null;
 
 	private static Logger logger = Logger.getLogger("LOLControl");
-	
+
 	public static int progress = 0;
 	public static int progressMaximum = 0;
 	public static boolean isAlertMode = false;
@@ -61,9 +61,9 @@ public class LOLControl {
 		return archiveList;
 	}
 
-	public static String executeUserInput(String userInput) throws Exception {
+	public static String executeUserInput(String userInput) {
 		setAllTaskIsJustAddedAsFalse();
-		
+
 		String commandType = getCommandType(userInput);
 
 		switch (commandType) {
@@ -100,7 +100,7 @@ public class LOLControl {
 		return command;
 	}
 
-	private static String executeAdd(String userInput) throws Exception {
+	private static String executeAdd(String userInput) {
 
 		try {
 			LOLParser.getTask(userInput);
@@ -109,23 +109,27 @@ public class LOLControl {
 			return executeInvalid(userInput);
 		}
 
-		if (LOLParser.getTask(userInput) == null) {
-			logger.log(Level.WARNING, "No description entered!");
-			return executeInvalid(userInput);
-		}
-
-		else {
-			Task newTask = LOLParser.getTask(userInput);
-			newTask.setIsJustAdded(true);
-			
-			if (storageList.add(newTask)) {
-				History.emptyRedoStack();
-				History.undoAdd(newTask);
-				ControlDisplay.refreshDisplay(toDoList, storageList);
-				LOLStorage.saveTasks(storageList);
-				return showFeedback(newTask, Constants.COMMAND_ADD);
-			} else
+		try {
+			if (LOLParser.getTask(userInput) == null) {
+				logger.log(Level.WARNING, "No description entered!");
 				return executeInvalid(userInput);
+			}
+			else {
+				Task newTask = LOLParser.getTask(userInput);
+				newTask.setIsJustAdded(true);
+
+				if (storageList.add(newTask)) {
+					History.emptyRedoStack();
+					History.undoAdd(newTask);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return showFeedback(newTask, Constants.COMMAND_ADD);
+				} else
+					return executeInvalid(userInput);
+			}
+		} catch (Exception e) {
+			//or do some other thing
+			return executeInvalid(userInput);
 		}
 	}
 
@@ -180,29 +184,35 @@ public class LOLControl {
 		return executeInvalid(userInput);
 	}
 
-	private static String executeEdit(String userInput) throws Exception {
+	private static String executeEdit(String userInput) {
 		boolean runOnce = true;
 		int taskIndex = LOLParser.getTaskIndex(userInput);
 		Task taskAtIndex = displayList.get(taskIndex - 1);
 		Task oldTask = new Task(taskAtIndex.getTaskDescription(),
 				taskAtIndex.getTaskLocation(), taskAtIndex.getTaskDueDate(),
 				taskAtIndex.getStartTime(), taskAtIndex.getEndTime());
-		Task editTask = LOLParser.getEditTask(userInput, oldTask);
 
-		Task oldTaskDesc = new Task(null, null, null);
-		if (runOnce) {
-			oldTaskDesc.setDescription(taskAtIndex.getTaskDescription());
-			runOnce = false;
-		}
+		try{
+			Task editTask = LOLParser.getEditTask(userInput, oldTask);
 
-		if ((storageList.delete(taskAtIndex)) && (storageList.add(editTask))) {
-			History.emptyRedoStack();
-			History.undoEdit(editTask, taskAtIndex);
-			ControlDisplay.refreshDisplay(toDoList, storageList);
-			LOLStorage.saveTasks(storageList);
-			return showFeedback(oldTaskDesc, Constants.COMMAND_EDIT);
-		} else
+			Task oldTaskDesc = new Task(null, null, null);
+			if (runOnce) {
+				oldTaskDesc.setDescription(taskAtIndex.getTaskDescription());
+				runOnce = false;
+			}
+
+			if ((storageList.delete(taskAtIndex)) && (storageList.add(editTask))) {
+				History.emptyRedoStack();
+				History.undoEdit(editTask, taskAtIndex);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
+				LOLStorage.saveTasks(storageList);
+				return showFeedback(oldTaskDesc, Constants.COMMAND_EDIT);
+			} else
+				return executeInvalid(userInput);
+		} catch (Exception e){
+			//do something 
 			return executeInvalid(userInput);
+		}
 	}
 
 	private static String executeShow(String userInput) {
@@ -600,30 +610,30 @@ public class LOLControl {
 			switch (undoCmdType) {
 			case (Constants.COMMAND_DELETE):
 				storageList.add(undoCmdTask);
-				History.redoAdd(undoCmd);
-				ControlDisplay.refreshDisplay(toDoList, storageList);
-				LOLStorage.saveTasks(storageList);
-				break;
+			History.redoAdd(undoCmd);
+			ControlDisplay.refreshDisplay(toDoList, storageList);
+			LOLStorage.saveTasks(storageList);
+			break;
 			case (Constants.COMMAND_ADD):
 				storageList.delete(undoCmdTask);
-				History.redoAdd(undoCmd);
-				ControlDisplay.refreshDisplay(toDoList, storageList);
-				LOLStorage.saveTasks(storageList);
-				break;
+			History.redoAdd(undoCmd);
+			ControlDisplay.refreshDisplay(toDoList, storageList);
+			LOLStorage.saveTasks(storageList);
+			break;
 			case (Constants.COMMAND_EDIT):
 				CommandLine undoCmdNew = History.popUndoStack();
-				CommandLine undoCmdOld = History.popUndoStack();
-				Task undoCmdTaskNew = undoCmdNew.getTask();
-				Task undoCmdTaskOld = undoCmdOld.getTask();
+			CommandLine undoCmdOld = History.popUndoStack();
+			Task undoCmdTaskNew = undoCmdNew.getTask();
+			Task undoCmdTaskOld = undoCmdOld.getTask();
 
-				storageList.delete(undoCmdTaskNew);
-				storageList.add(undoCmdTaskOld);
-				History.redoAdd(undoCmdOld);
-				History.redoAdd(undoCmdNew);
-				History.redoAdd(undoCmd);
-				ControlDisplay.refreshDisplay(toDoList, storageList);
-				LOLStorage.saveTasks(storageList);
-				break;
+			storageList.delete(undoCmdTaskNew);
+			storageList.add(undoCmdTaskOld);
+			History.redoAdd(undoCmdOld);
+			History.redoAdd(undoCmdNew);
+			History.redoAdd(undoCmd);
+			ControlDisplay.refreshDisplay(toDoList, storageList);
+			LOLStorage.saveTasks(storageList);
+			break;
 			}
 			return showFeedback(null, Constants.COMMAND_UNDO);
 		}
@@ -644,28 +654,28 @@ public class LOLControl {
 			switch (undoCmdType) {
 			case (Constants.COMMAND_DELETE):
 				storageList.delete(undoCmdTask);
-				History.undoDelete(undoCmdTask);
-				ControlDisplay.refreshDisplay(toDoList, storageList);
-				LOLStorage.saveTasks(storageList);
-				break;
+			History.undoDelete(undoCmdTask);
+			ControlDisplay.refreshDisplay(toDoList, storageList);
+			LOLStorage.saveTasks(storageList);
+			break;
 			case (Constants.COMMAND_ADD):
 				storageList.add(undoCmdTask);
-				History.undoAdd(undoCmdTask);
-				ControlDisplay.refreshDisplay(toDoList, storageList);
-				LOLStorage.saveTasks(storageList);
-				break;
+			History.undoAdd(undoCmdTask);
+			ControlDisplay.refreshDisplay(toDoList, storageList);
+			LOLStorage.saveTasks(storageList);
+			break;
 			case (Constants.COMMAND_EDIT):
 				CommandLine undoCmdNew = History.popRedoStack();
-				CommandLine undoCmdOld = History.popRedoStack();
-				Task undoCmdTaskNew = undoCmdNew.getTask();
-				Task undoCmdTaskOld = undoCmdOld.getTask();
+			CommandLine undoCmdOld = History.popRedoStack();
+			Task undoCmdTaskNew = undoCmdNew.getTask();
+			Task undoCmdTaskOld = undoCmdOld.getTask();
 
-				storageList.add(undoCmdTaskNew);
-				storageList.delete(undoCmdTaskOld);
-				History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
-				ControlDisplay.refreshDisplay(toDoList, storageList);
-				LOLStorage.saveTasks(storageList);
-				break;
+			storageList.add(undoCmdTaskNew);
+			storageList.delete(undoCmdTaskOld);
+			History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
+			ControlDisplay.refreshDisplay(toDoList, storageList);
+			LOLStorage.saveTasks(storageList);
+			break;
 			}
 			return showFeedback(null, Constants.COMMAND_REDO);
 		}
@@ -707,44 +717,44 @@ public class LOLControl {
 			}
 		case (Constants.COMMAND_SEARCH):
 			int numKeys = LOLParser.countWords(task.getTaskDescription());
-			switch (displayList.size()) {
-			case (Constants.LIST_SIZE_ONE): // 1 search result
-				switch (numKeys) {
-				case (Constants.WORD_COUNT_ONE): // 1 keyword
-					return (Constants.FEEDBACK_SEARCH_SUCCESS_SINGLE
-							+ Constants.QUOTE + task.getTaskDescription()
-							+ Constants.QUOTE + Constants.LINEBREAK
-							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
-				default: // more than 1 keyword
-					return (Constants.FEEDBACK_SEARCH_SUCCESS_MULTI
-							+ Constants.QUOTE + task.getTaskDescription()
-							+ Constants.QUOTE + Constants.LINEBREAK
-							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
-				}
-			default: // more than 1 search result
-				switch (numKeys) {
-				case (Constants.WORD_COUNT_ONE): // 1 keyword
-					return (Constants.FEEDBACK_SEARCH_SUCCESS_SINGLE
-							+ Constants.QUOTE + task.getTaskDescription()
-							+ Constants.QUOTE + Constants.LINEBREAK
-							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
-				default: // more than 1 keyword
-					return (Constants.FEEDBACK_SEARCH_SUCCESS_MULTI
-							+ Constants.QUOTE + task.getTaskDescription()
-							+ Constants.QUOTE + Constants.LINEBREAK
-							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
-				}
+		switch (displayList.size()) {
+		case (Constants.LIST_SIZE_ONE): // 1 search result
+			switch (numKeys) {
+			case (Constants.WORD_COUNT_ONE): // 1 keyword
+				return (Constants.FEEDBACK_SEARCH_SUCCESS_SINGLE
+						+ Constants.QUOTE + task.getTaskDescription()
+						+ Constants.QUOTE + Constants.LINEBREAK
+						+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
+			default: // more than 1 keyword
+				return (Constants.FEEDBACK_SEARCH_SUCCESS_MULTI
+						+ Constants.QUOTE + task.getTaskDescription()
+						+ Constants.QUOTE + Constants.LINEBREAK
+						+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
 			}
+		default: // more than 1 search result
+			switch (numKeys) {
+			case (Constants.WORD_COUNT_ONE): // 1 keyword
+				return (Constants.FEEDBACK_SEARCH_SUCCESS_SINGLE
+						+ Constants.QUOTE + task.getTaskDescription()
+						+ Constants.QUOTE + Constants.LINEBREAK
+						+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
+			default: // more than 1 keyword
+				return (Constants.FEEDBACK_SEARCH_SUCCESS_MULTI
+						+ Constants.QUOTE + task.getTaskDescription()
+						+ Constants.QUOTE + Constants.LINEBREAK
+						+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
+			}
+		}
 		case (Constants.FEEDBACK_SEARCH_FAILURE):
 			int numFailedKeys = LOLParser.countWords(task.getTaskDescription());
-			switch (numFailedKeys) {
-			case (Constants.WORD_COUNT_ONE): // 1 keyword
-				return (Constants.FEEDBACK_SEARCH_FAILURE_SINGLE
-						+ Constants.QUOTE + task.getTaskDescription() + Constants.QUOTE);
-			default:
-				return (Constants.FEEDBACK_SEARCH_FAILURE_MULTI // keywords < 1
-						+ Constants.QUOTE + task.getTaskDescription() + Constants.QUOTE);
-			}
+		switch (numFailedKeys) {
+		case (Constants.WORD_COUNT_ONE): // 1 keyword
+			return (Constants.FEEDBACK_SEARCH_FAILURE_SINGLE
+					+ Constants.QUOTE + task.getTaskDescription() + Constants.QUOTE);
+		default:
+			return (Constants.FEEDBACK_SEARCH_FAILURE_MULTI // keywords < 1
+					+ Constants.QUOTE + task.getTaskDescription() + Constants.QUOTE);
+		}
 		case (Constants.COMMAND_DONE):
 			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_DONE_SUCCESS);
 		case (Constants.COMMAND_NOT_DONE):
@@ -761,12 +771,12 @@ public class LOLControl {
 	}
 
 	public static void refreshProgress() {
-		
+
 		progress = 0;
 		progressMaximum = 0;
 		DateParser dp = new DateParser();
 		Date currentDate = dp.getTodaysDate();
-		
+
 		for(int i=0; i<storageList.size(); i++){
 			if(storageList.size()==0)
 				break;
@@ -781,20 +791,20 @@ public class LOLControl {
 				if(storageList.get(i).getTaskDueDate().isAfter(currentDate))
 					break;
 			}
-			
-			
+
+
 		}
-		
+
 	}
-	 //returns a task if it is upcoming withing specified alert time, if no task then null
+	//returns a task if it is upcoming withing specified alert time, if no task then null
 	public static Task refreshAlert(){
 		DateParser dp = new DateParser();
 		Date currentDate = dp.getTodaysDate();
 		Date tomorrowDate = dp.addDaysToToday(1);
-		
+
 		TimeParser tp = new TimeParser();
 		Time currentTime = tp.getCurrentTime();
-		
+
 		for(int i=0; i<storageList.size(); i++){
 			Task temp = storageList.get(i);
 			if(storageList.size()==0)
@@ -809,37 +819,37 @@ public class LOLControl {
 						if(!temp.getAlerted() && isAlertRangeToday(temp,currentTime)){
 							temp.setAlerted(true);
 							return temp;
-							
+
 						}
 					}
-					
-					
+
+
 				}else{
 					continue;
 				}
-				
+
 			}else{
 				break;
 			}
 		}
 		return null;
-		
-		
-		
-		
+
+
+
+
 	}
 
 	private static boolean isAlertRangeToday(Task temp, Time currentTime) {
-		
+
 		int tempTime = Integer.parseInt(temp.getStartTime().getFormat24hr());
 		int crrntTime = Integer.parseInt(currentTime.getFormat24hr());
-		
+
 		if((tempTime-crrntTime)<=alertTime)
 			return true;
-		
+
 		return false;
 	}
-	
+
 	private static void setAllTaskIsJustAddedAsFalse(){
 		for(int i = 0; i < storageList.size(); i++){
 			storageList.get(i).setIsJustAdded(false);
