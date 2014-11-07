@@ -4,10 +4,16 @@ public class CommandLine {
 
 	private String commandType;
 	private Task object;
+	private int precedingTasks;
 	
 	public CommandLine(String commandType, Task ob){
 	this.commandType = commandType;
 	this.object = ob;
+	this.precedingTasks = 0;
+	}
+	
+	public void setPrecedingTasks(int num){
+		this.precedingTasks = num;
 	}
 	
 	public String getCommandType (){
