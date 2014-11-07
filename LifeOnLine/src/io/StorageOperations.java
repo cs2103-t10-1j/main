@@ -82,38 +82,43 @@ public class StorageOperations {
 	}
 
 	private Task createTask(String command) {
- 		String description = "", location = "", date = "", startTime = "", endTime = "", done = "", overdue = "";
-		Date dateOb;
+ 		String description = "", location = "", startDate = "", startTime = "", endTime = "", done = "", overdue = "", endDate="";
+		Date startDateOb, endDateOb;
 		Time startTimeOb, endTimeOb;
 		boolean isDone, isOverdue;
 
 		
 		String[] commandComponents = command.split(CMD_SPLIT);
 		int i = commandComponents.length;
-		if(i==7){
+		try{
 		description = commandComponents[0];
 		location = commandComponents[1];
-		date = commandComponents[2];
+		startDate = commandComponents[2];
 		startTime = commandComponents[3];
 		endTime = commandComponents[4];
 		done = commandComponents[5];
 		overdue = commandComponents[6];
+		endDate = commandComponents[7];
+		} catch (Exception e){
+			System.out.println("file not in correct format");
 		}
 		
 		
-		System.out.println(i + " " + description +"l"+ location+"d"+ date+"strt"+ startTime +"end"+endTime+" "+done+" "+ overdue);
+		System.out.println(i + " " + description +"l"+ location+"d"+ startDate+"strt"+ startTime +"end"+endTime+" "+done+" "+ overdue + "enddate" + endDate);
 
 		startTimeOb = getTime(startTime);
 		endTimeOb = getTime(endTime);
-		dateOb = getDate(date);
+		startDateOb = getDate(startDate);
+		endDateOb = getDate(endDate);
 		isDone = Boolean.parseBoolean(done);
 		isOverdue = Boolean.parseBoolean(overdue);
 		
-		Task task = new Task(description, location, dateOb, startTimeOb, endTimeOb);
+		Task task = new Task(description, location, startDateOb, startTimeOb, endTimeOb);
 		task.setIsDone(isDone);
 		task.setIsOverdue(isOverdue);
 		if(location.equals("null"))
 			task.setLocation(null);
+		task.setEndDate(endDateOb);
 		return task;
 		/* catch (Exception e){
 			return null;
@@ -124,11 +129,18 @@ public class StorageOperations {
 	private Date getDate(String date) {
 		if (!date.equals("null")){
 			String[] dateComponents = date.split("/");
-			int day = Integer.parseInt(dateComponents[0]);
-			int month = Integer.parseInt(dateComponents[1]);
-			int year = Integer.parseInt(dateComponents[2]);
-			
-			return new Date(day, month, year);
+			int day, month, year;
+			day=month=year=0;
+			try{
+			day = Integer.parseInt(dateComponents[0]);
+			month = Integer.parseInt(dateComponents[1]);
+			year = Integer.parseInt(dateComponents[2]);
+			} catch (Exception e) {
+				System.out.println("date not in correct format");
+			}
+			if(day!=0 && month != 0 && year != 0){
+				return new Date(day, month, year);
+			}
 		}
 		return null;
 	}
@@ -165,10 +177,10 @@ public class StorageOperations {
 		try {
 			String description = task.getTaskDescription();
 			String location = task.getTaskLocation();
-			Date dateOb = task.getTaskDueDate();
-			String date = null;
-			if (dateOb != null)
-				date = dateOb.toString2();
+			Date startDateOb = task.getTaskDueDate();
+			String startDate = null;
+			if (startDateOb != null)
+				startDate = startDateOb.toString2();
 			String endTime = null;
 			String startTime = null;
 			Time endTimeOb = task.getEndTime();
@@ -179,6 +191,10 @@ public class StorageOperations {
 				startTime = startTimeOb.getFormat24hr();
 			String done = task.getIsDone() ? "true" : "false";
 			String overdue = task.getIsOverdue() ? "true" : "false";
+			Date endDateOb = task.getEndDate();
+			String endDate = null;
+			if (endDateOb != null)
+				endDate = endDateOb.toString2();
 
 			sb.append(description);
 			sb.append(CMD_END + WHITESPACE);
@@ -188,7 +204,7 @@ public class StorageOperations {
 			sb.append(CMD_END + WHITESPACE);
 
 			sb.append(CMD_START);
-			sb.append(date);
+			sb.append(startDate);
 			sb.append(CMD_END + WHITESPACE);
 
 			sb.append(CMD_START);
@@ -205,6 +221,10 @@ public class StorageOperations {
 
 			sb.append(CMD_START);
 			sb.append(overdue);
+			sb.append(CMD_END + WHITESPACE);
+
+			sb.append(CMD_START);
+			sb.append(endDate);
 
 		} catch (NullPointerException e) {
 			e.printStackTrace();
