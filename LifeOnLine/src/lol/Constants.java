@@ -3,6 +3,9 @@ package lol;
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+
 public class Constants {
 	
 	public static final String WELCOME_MESSAGE = "Type in your task and hit enter to ADD. \n"
@@ -197,6 +200,11 @@ public class Constants {
 	final static String FORMAT_NUMBER = "numbering";
 	final static String FORMAT_DONE = "done";
 	final static String FORMAT_IS_JUST_ADDED = "is just added";
+	
+	final static Border displayPanelFocusBorder = BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createLineBorder(Color.BLACK));
+	final static Border inputTFFocusBorder = BorderFactory.createLoweredBevelBorder();
+	final static Border alertButtonFocusBorder = BorderFactory.createRaisedBevelBorder();
+	
 	
 	final static int DISPLAY_IN_TP1 = 1; //upcoming TP
 	final static int DISPLAY_IN_TP2 = 2; //no date TP

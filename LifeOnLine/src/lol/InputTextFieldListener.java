@@ -36,7 +36,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	static StyledDocument doc2 = new DefaultStyledDocument();
 	JTextPane mainDisplayTP3;
 	static StyledDocument doc3 = new DefaultStyledDocument();
-	JTextPane label;
+	JLabel label;
 	JLabel progressLabel;
 
 	private static ArrayList<String> commands = new ArrayList<String>();
@@ -46,22 +46,8 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final Timer timer;
 	final JProgressBar progressBar;
 
-	public InputTextFieldListener(JTextPane mainDisplayTP, JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JTextPane label, JTextField inputTF, Timer timer, JLabel progressLabel, JProgressBar progressBar){
+	public InputTextFieldListener(JTextPane mainDisplayTP, JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JLabel label, JTextField inputTF, Timer timer, JLabel progressLabel, JProgressBar progressBar){
 		this.inputTF = inputTF;
-
-		// Welcome to LifeOnLine
-		label.setFont(Constants.TREBUCHET_BOLD_16);
-
-		// Tasks with no date
-		mainDisplayTP2.setFont(Constants.TREBUCHET_16);
-
-		// Upcoming tasks
-		mainDisplayTP.setFont(Constants.TREBUCHET_16);
-
-		// Overdue tasks
-		mainDisplayTP3.setFont(Constants.TREBUCHET_16);
-
-		inputTF.setFont(Constants.TREBUCHET_BOLD_16);
 
 		this.mainDisplayTP1 = mainDisplayTP;
 		this.mainDisplayTP1.setDocument(doc1);
@@ -80,7 +66,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	}
 
 	/**
-	 * Add the required Styles that are used in the GUI to doc which is for JTextPane
+	 * Add the required Styles that are used in the GUI to doc
 	 * 
 	 * @param doc
 	 */
@@ -157,7 +143,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 		clear(inputTF);
 	}
-	
+
 	/**
 	 * add userInput String to an array list call commands and automatically add
 	 * an empty String at the end of the array list
@@ -167,13 +153,13 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	private void addUserInputToCommands(String userInput){
 		if(commands.isEmpty()){
 			commands.add(userInput);
-			commands.add("");
+			commands.add(Constants.EMPTY_STRING);
 		}
 		else{
 			commands.set(commands.size() - 1, userInput);
-			commands.add("");
+			commands.add(Constants.EMPTY_STRING);
 		}
-		
+
 		indexOfCurrentShowingTask = Constants.IMPOSSIBLE_ARRAYLIST_INDEX;
 	}
 
@@ -188,16 +174,36 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	}
 
 	/**
-	 * refresh the three main display text panes
+	 * refresh all the main displaying panels
+	 * displaying panels include the three main display text panes for tasks,
+	 * progress bar, alerting display (on desktop and email)
 	 * 
 	 * @param taskList
 	 */
 	public void refreshMainDisplay(TaskList<Task> taskList){
+		refreshDisplayTextPanes(taskList);
+		refreshProgressBar();
+		refreshAlert();
+	}
+
+	/**
+	 * refresh the three main display panels for tasks with taskList
+	 * 
+	 * @param taskList
+	 */
+	private void refreshDisplayTextPanes(TaskList<Task> taskList){
 		resetScrollPanePosition();
 		clear(mainDisplayTP1);
 		clear(mainDisplayTP2);
 		clear(mainDisplayTP3);
 
+		showInMainDisplayTP(taskList);
+	}
+
+	/**
+	 * refresh the progress bar which show today's progress
+	 */
+	private void refreshProgressBar(){
 		LOLControl.refreshProgress();
 		if(LOLControl.progressMaximum > 0){
 			progressLabel.setText("Today's report: " + LOLControl.progress + "/" + LOLControl.progressMaximum);
@@ -210,38 +216,68 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 			progressBar.setValue(1);
 			progressLabel.setText("No deadlines today");
 		}
+	}
 
-		showInMainDisplayTP(taskList);
-
+	/**
+	 * refresh the alert time so that tasks that are about to be overdue will cause the
+	 * GUI to pop up an alert window
+	 */
+	private void refreshAlert(){
 		if(LOLControl.isAlertMode){
 			Task alertTask = LOLControl.refreshAlert();
-			if(alertTask!=null)
-				JOptionPane.showMessageDialog(null, alertMessage(alertTask),
-						"LOL Alert", JOptionPane.WARNING_MESSAGE);
-			if(LOLControl.userEmail!=null && LOLControl.userEmail.length()>=11)
+			if(alertTask != null){
+				JOptionPane.showMessageDialog(null, alertMessage(alertTask), "LOL Alert", JOptionPane.WARNING_MESSAGE);
+			}
+			if(LOLControl.userEmail != null && LOLControl.userEmail.length() >= 11){
 				LOLEmail.send(LOLControl.userEmail, alertMessage(alertTask));
+			}
 		}
 	}
-
+	
+	/**
+	 * Generate an alert message
+	 * 
+	 * @param alertTask
+	 * @return an alert message String associated with the alertTask
+	 */
 	private String alertMessage(Task alertTask) {
-
-		String message="YOU HAVE AN UPCOMING TASK";
-		message+="\n"+alertTask.getTaskDescription();
-		message+="\n Time: "+alertTask.getStartTime();
-		if(alertTask.getEndTime()!=null)
+		String message = "YOU HAVE AN UPCOMING TASK";
+		
+		message += "\n" + alertTask.getTaskDescription();
+		message += "\n Time: " + alertTask.getStartTime();
+		
+		if(alertTask.getEndTime() != null){
 			message+="-"+alertTask.getEndTime();
-		if(alertTask.getTaskLocation()!=null)
+		}
+		if(alertTask.getTaskLocation() != null){
 			message+="\n Location: "+ alertTask.getTaskLocation();
+		}
+		
 		return message;
 	}
-
+	
+	/** 
+	 * determine what will be shown in the display panels
+	 * 
+	 * @param taskList
+	 */
 	public void showInMainDisplayTP(TaskList<Task> taskList){
 		FormatToString formatToString = new FormatToString();
 		formatToString.format(taskList);
 
 		addToDisplay(doc1, doc2, doc3);
 	}
-
+	
+	/**
+	 * add task string with corresponding format to the corresponding display text panel
+	 * doc1 will be holding display details for upcoming task display panel
+	 * doc2 will be holding display details for floating task display panel
+	 * doc3 will be holding display details for overdue task display panel
+	 * 
+	 * @param doc1
+	 * @param doc2
+	 * @param doc3
+	 */
 	public void addToDisplay(StyledDocument doc1, StyledDocument doc2, StyledDocument doc3){
 		try {
 			for(int j = 1; j <= FormatToString.getLinkedListNum(); j++){
@@ -270,18 +306,32 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 			}
 		} 
 		catch (BadLocationException badLocationException) {
-			System.err.println("Oops");
+			System.err.println("Bad Location Exception in reading doc");
 		}
 	}
 
+	/**
+	 * will clear all the words in the text field
+	 * 
+	 * @param TF
+	 */
 	private void clear(JTextField TF){
-		TF.setText("");
+		TF.setText(Constants.EMPTY_STRING);
 	}
-
+	
+	/**
+	 * will clear all the words in the text pane
+	 * 
+	 * @param TP
+	 */
 	private void clear(JTextPane TP){
-		TP.setText("");
+		TP.setText(Constants.EMPTY_STRING);
 	}
-
+	
+	/**
+	 * reset the position of all the scroll pane currently present in GUI to their topmost
+	 * position 
+	 */
 	private void resetScrollPanePosition(){
 		mainDisplayTP1.setCaretPosition(0);
 		mainDisplayTP2.setCaretPosition(0);
@@ -305,7 +355,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 				if(indexOfCurrentShowingTask == Constants.IMPOSSIBLE_ARRAYLIST_INDEX && commands.size() - 2 >= 0 ){
 					indexOfCurrentShowingTask = commands.size() - 1;
 				}
-				
+
 				if(indexOfCurrentShowingTask - 1 >= 0){
 					inputTF.setText(commands.get(--indexOfCurrentShowingTask));
 					inputTF.grabFocus();

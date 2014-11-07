@@ -4,9 +4,6 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.text.DefaultCaret;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import javax.swing.Timer;
 
 import parser.DateParser;
@@ -62,6 +59,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		}
 
 		//*************Setting up the GUI****************//
+		
 		final JFrame frame = new JFrame("LOL - LifeOnLine");
 		frame.setBackground(new Color(3, 97, 148));
 		frame.getContentPane().setForeground(new Color(47, 79, 79));
@@ -99,6 +97,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		final JTextField inputTF = new JTextField();
 		inputTF.setBounds(20, 46, 706, 30);
+		inputTF.setFont(Constants.TREBUCHET_BOLD_16);
 		panel.add(inputTF);
 		inputTF.setColumns(10);
 
@@ -107,16 +106,13 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		panel_10.setBounds(10, 46, 17, 30);
 		panel.add(panel_10);
 
-		final JTextPane feedbackLabel = new JTextPane();
-		StyledDocument doc = feedbackLabel.getStyledDocument();
-		SimpleAttributeSet center = new SimpleAttributeSet();
-		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
-		doc.setParagraphAttributes(0, doc.getLength(), center, false);
+		final JLabel feedbackLabel = new JLabel();
 		feedbackLabel.setText("Welcome to LOL");
-		feedbackLabel.setEditable(false);
+		feedbackLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		feedbackLabel.setBackground(new Color(3, 97, 148));
 		feedbackLabel.setForeground(new Color(255,255,255));
 		feedbackLabel.setBounds(20, 11, 706, 30);
+		feedbackLabel.setFont(Constants.TREBUCHET_BOLD_16);
 		panel.add(feedbackLabel);
 
 		Component horizontalGlue = Box.createHorizontalGlue();
@@ -157,6 +153,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		mainDisplayTP1.setBounds(250, 35, 243, 345);
 		mainDisplayTP1.setEditable(false);
 		mainDisplayTP1.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+		mainDisplayTP1.setFont(Constants.TREBUCHET_16);
 		DefaultCaret caret1 = (DefaultCaret) mainDisplayTP1.getCaret();
 		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		frame.getContentPane().add(mainDisplayTP1);
@@ -167,6 +164,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		mainDisplayTP2.setEditable(false);
 		mainDisplayTP2.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		mainDisplayTP2.setBounds(513, 94, 203, 231);
+		mainDisplayTP2.setFont(Constants.TREBUCHET_16);
 		DefaultCaret caret2 = (DefaultCaret) mainDisplayTP2.getCaret();
 		caret2.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		frame.getContentPane().add(mainDisplayTP2);
@@ -177,6 +175,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		mainDisplayTP3.setBounds(20, 94, 209, 231);
 		mainDisplayTP3.setEditable(false);
 		mainDisplayTP3.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+		mainDisplayTP3.setFont(Constants.TREBUCHET_16);
 		DefaultCaret caret3 = (DefaultCaret) mainDisplayTP3.getCaret();
 		caret3.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		frame.getContentPane().add(mainDisplayTP3);
@@ -280,6 +279,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		inputTF.requestFocus();
+		
 		//*********End of setting up the GUI***********//
 
 		final Timer timer = new Timer(Constants.REFRESH_TIME,
@@ -450,63 +450,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			}
 		});
 
-		inputTF.addFocusListener(new FocusAdapter() {
-			Border original = inputTF.getBorder();
-
-			@Override
-			public void focusGained(FocusEvent e) {
-				inputTF.setBorder(BorderFactory.createLoweredBevelBorder());
-			}
-
-			public void focusLost(FocusEvent e) {
-				inputTF.setBorder(original);
-			}
-		});
-
-		mainDisplayTP1.addFocusListener(new FocusAdapter() {
-			Border original = mainDisplayTP1.getBorder();
-
-			@Override
-			public void focusGained(FocusEvent e) {
-				mainDisplayTP1.setBorder(BorderFactory.createCompoundBorder(
-						BorderFactory.createLoweredBevelBorder(),
-						BorderFactory.createLineBorder(Color.BLACK)));
-			}
-
-			public void focusLost(FocusEvent e) {
-				mainDisplayTP1.setBorder(original);
-			}
-		});
-
-		mainDisplayTP2.addFocusListener(new FocusAdapter() {
-			Border original = mainDisplayTP2.getBorder();
-
-			@Override
-			public void focusGained(FocusEvent e) {
-				mainDisplayTP2.setBorder(BorderFactory.createCompoundBorder(
-						BorderFactory.createLoweredBevelBorder(),
-						BorderFactory.createLineBorder(Color.BLACK)));
-			}
-
-			public void focusLost(FocusEvent e) {
-				mainDisplayTP2.setBorder(original);
-			}
-		});
-
-		mainDisplayTP3.addFocusListener(new FocusAdapter() {
-			Border original = mainDisplayTP3.getBorder();
-
-			@Override
-			public void focusGained(FocusEvent e) {
-				mainDisplayTP3.setBorder(BorderFactory.createCompoundBorder(
-						BorderFactory.createLoweredBevelBorder(),
-						BorderFactory.createLineBorder(Color.BLACK)));
-			}
-
-			public void focusLost(FocusEvent e) {
-				mainDisplayTP3.setBorder(original);
-			}
-		});
+		enableTabKeyToChoosePanels(inputTF, mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, alertButton);
 
 		String s = (String)JOptionPane.showInputDialog(
 				null,
@@ -529,5 +473,89 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	public void onHotKey(int arg0) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	/**
+	 * enable the user to choose the below panels (params) by pressing tab and showing
+	 * them in bolder border
+	 * 
+	 * @param inputTF
+	 * @param mainDisplayTP1
+	 * @param mainDisplayTP2
+	 * @param mainDisplayTP3
+	 */
+	private void enableTabKeyToChoosePanels(final JTextField inputTF, final JTextPane mainDisplayTP1, final JTextPane mainDisplayTP2, final JTextPane mainDisplayTP3, final JButton alertButton){
+		
+		
+		
+		inputTF.addFocusListener(new FocusAdapter() {
+			Border original = inputTF.getBorder();
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				inputTF.setBorder(Constants.inputTFFocusBorder);
+			}
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				inputTF.setBorder(original);
+			}
+		});
+
+		mainDisplayTP1.addFocusListener(new FocusAdapter() {
+			Border original = mainDisplayTP1.getBorder();
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				mainDisplayTP1.setBorder(Constants.displayPanelFocusBorder);
+			}
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				mainDisplayTP1.setBorder(original);
+			}
+		});
+
+		mainDisplayTP2.addFocusListener(new FocusAdapter() {
+			Border original = mainDisplayTP2.getBorder();
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				mainDisplayTP2.setBorder(Constants.displayPanelFocusBorder);
+			}
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				mainDisplayTP2.setBorder(original);
+			}
+		});
+
+		mainDisplayTP3.addFocusListener(new FocusAdapter() {
+			Border original = mainDisplayTP3.getBorder();
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				mainDisplayTP3.setBorder(Constants.displayPanelFocusBorder);
+			}
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				mainDisplayTP3.setBorder(original);
+			}
+		});
+		
+		alertButton.addFocusListener(new FocusAdapter() {
+			Border original = alertButton.getBorder();
+			
+			@Override
+			public void focusGained(FocusEvent e){
+				alertButton.setBorder(Constants.alertButtonFocusBorder);
+			}
+			
+			@Override
+			public void focusLost(FocusEvent e){
+				alertButton.setBorder(original);
+			}
+		});
 	}
 }
