@@ -1,7 +1,14 @@
-projectþþ ŒŒnullþþ ŒŒ3/11/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒtrue
-projesdlfþþ ŒŒnullþþ ŒŒ4/11/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒtrue
-projectþþ ŒŒnullþþ ŒŒ10/11/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒfalse
-kingþþ ŒŒnullþþ ŒŒ11/11/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒfalse
-campþþ ŒŒnullþþ ŒŒ20/11/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒfalse
-kingþþ ŒŒnullþþ ŒŒ10/12/2014þþ ŒŒ1500þþ ŒŒ1700þþ ŒŒfalseþþ ŒŒfalse
-PROJECTþþ ŒŒnullþþ ŒŒnullþþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒfalse
+eat more hamburgersþþ ŒŒnullþþ ŒŒ4/10/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒtrueþþ ŒŒtrue
+eat less hamburgersþþ ŒŒnullþþ ŒŒ6/10/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒtrueþþ ŒŒtrue
+complete tomorrow's tutorial's tasksþþ ŒŒnullþþ ŒŒ5/11/2014þþ ŒŒ2200þþ ŒŒnullþþ ŒŒtrueþþ ŒŒtrue
+complete auto-scrolling for GUIþþ ŒŒnullþþ ŒŒ6/11/2014þþ ŒŒ0900þþ ŒŒnullþþ ŒŒtrueþþ ŒŒtrue
+EE2020 lab quizþþ ŒŒDigiLabþþ ŒŒ7/11/2014þþ ŒŒ1830þþ ŒŒ1930þþ ŒŒtrueþþ ŒŒtrue
+take care of in-room storage feeþþ ŒŒPGPþþ ŒŒ7/11/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒtrueþþ ŒŒtrue
+give faith promise sgd120þþ ŒŒnullþþ ŒŒ9/11/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒfalse
+send email to ms janet regarding absenceþþ ŒŒnullþþ ŒŒ10/11/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒfalse
+project D1C presentationþþ ŒŒDigiLabþþ ŒŒ11/11/2014þþ ŒŒ1520þþ ŒŒ1620þþ ŒŒfalseþþ ŒŒfalse
+submit 5 pages report for EE2020þþ ŒŒnullþþ ŒŒ11/11/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒfalse
+campþþ ŒŒnullþþ ŒŒ11/11/2014þþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒfalse
+music practiceþþ ŒŒJoyden HQþþ ŒŒ15/11/2014þþ ŒŒ1700þþ ŒŒ2100þþ ŒŒfalseþþ ŒŒfalse
+read 'The Five People You Meet in Heaven'þþ ŒŒnullþþ ŒŒnullþþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒfalse
+buy a new portable battery charger for phoneþþ ŒŒnullþþ ŒŒnullþþ ŒŒnullþþ ŒŒnullþþ ŒŒfalseþþ ŒŒfalse
