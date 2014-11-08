@@ -34,14 +34,14 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	public LOLGui() {
 
 		if (!JIntellitype.isJIntellitypeSupported()) {
-			JOptionPane.showMessageDialog(null, "Error occured");
+			JOptionPane.showMessageDialog(null, Constants.MSG_ERROR);
 			System.exit(1);
 		}
 		// If instance already running, exit new instance
 		// Prevent multiple LOL to run at the same time
-		if (JIntellitype.checkInstanceAlreadyRunning("LOL - LifeOnLine")) {
-			TrayClass.trayIcon.displayMessage("LOL is Already Running!",
-					"CTRL + L to Restore", TrayIcon.MessageType.INFO);
+		if (JIntellitype.checkInstanceAlreadyRunning(Constants.LOL_NAME)) {
+			TrayClass.trayIcon.displayMessage(Constants.MSG_LOL_IS_RUNNING,
+					Constants.MSG_RESTORE, TrayIcon.MessageType.INFO);
 			try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
@@ -100,7 +100,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		panel.add(panel_10);
 
 		final JLabel feedbackLabel = new JLabel();
-		feedbackLabel.setText("Welcome to LOL");
+		feedbackLabel.setText(Constants.MSG_WELCOME);
 		feedbackLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		feedbackLabel.setBackground(new Color(3, 97, 148));
 		feedbackLabel.setForeground(new Color(255,255,255));
@@ -142,7 +142,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		//upcoming panel
 		final JTextPane mainDisplayTP1 = new JTextPane();
-		mainDisplayTP1.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		mainDisplayTP1.setFont(Constants.TAHOMA_14);
 		mainDisplayTP1.setBounds(250, 35, 243, 345);
 		mainDisplayTP1.setEditable(false);
 		mainDisplayTP1.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
@@ -153,7 +153,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		//tasks with no date panel
 		final JTextPane mainDisplayTP2 = new JTextPane();
-		mainDisplayTP2.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		mainDisplayTP2.setFont(Constants.TAHOMA_14);
 		mainDisplayTP2.setEditable(false);
 		mainDisplayTP2.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		mainDisplayTP2.setBounds(513, 94, 203, 231);
@@ -164,7 +164,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		//overdue tasks panel
 		final JTextPane mainDisplayTP3 = new JTextPane();
-		mainDisplayTP3.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		mainDisplayTP3.setFont(Constants.TAHOMA_14);
 		mainDisplayTP3.setBounds(20, 94, 209, 231);
 		mainDisplayTP3.setEditable(false);
 		mainDisplayTP3.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
@@ -186,7 +186,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().add(scrollPane_2);
 
 		DigitalClock digitalClock = new DigitalClock();
-		digitalClock.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		digitalClock.setFont(Constants.TAHOMA_14);
 		digitalClock.setHorizontalAlignment(SwingConstants.RIGHT);
 		digitalClock.setText("3.18 PM");
 		digitalClock.setBounds(409, 10, 84, 23);
@@ -194,7 +194,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		digitalClock.setForeground(new Color(220, 20, 60));
 
 		final JLabel lblToday = new JLabel("Today");
-		lblToday.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblToday.setFont(Constants.TAHOMA_14);
 		lblToday.setBounds(250, 10, 104, 23);
 		frame.getContentPane().add(lblToday);
 		lblToday.setForeground(new Color(220, 20, 60));
@@ -280,7 +280,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				LOLControl.executeUserInput("home");
-				
+
 				TaskList<Task> taskList = LOLControl.getTaskList();
 				InputTextFieldListener textfield = new InputTextFieldListener(
 						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
@@ -396,6 +396,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			}
 		});
 
+
 		TrayClass.trayIcon.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -440,23 +441,31 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			}
 		});
 
-		enableTabKeyToChoosePanels(inputTF, mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, alertButton);
+		popUpAnInputDialogForEmailFunctionality();
+		addFocusListenerToAllPanel(inputTF, mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, alertButton);
 
+		inputTF.addActionListener(listener);
+		inputTF.addKeyListener(listener);
+	}
+
+	/**
+	 * this pop up dialog window will ask the user for the user's email and will send an
+	 * email to the user when his task is near deadline if the user enables it
+	 */
+	private void popUpAnInputDialogForEmailFunctionality(){
 		String s = (String)JOptionPane.showInputDialog(
 				null,
-				"Please enter you email id to receive alerts in your inbox",
-				"Welcome to LOL",
+				Constants.MSG_PLEASE_ENTER_EMAIL,
+				Constants.MSG_WELCOME,
 				JOptionPane.PLAIN_MESSAGE,
 				null,
 				null,
-				"example@example.com");
+				Constants.MSG_EMAIL_EXAMPLE);
+
 		//If a string was returned, say so.
 		if ((s != null) && (s.length() > 0)) {
 			LOLControl.userEmail = s.trim();
 		}
-
-		inputTF.addActionListener(listener);
-		inputTF.addKeyListener(listener);
 	}
 
 	@Override
@@ -473,15 +482,14 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	 * @param mainDisplayTP2
 	 * @param mainDisplayTP3
 	 */
-	private void enableTabKeyToChoosePanels(final JTextField inputTF, final JTextPane mainDisplayTP1, final JTextPane mainDisplayTP2, final JTextPane mainDisplayTP3, final JButton alertButton){
+	private void addFocusListenerToAllPanel(final JTextField inputTF, final JTextPane mainDisplayTP1, final JTextPane mainDisplayTP2, final JTextPane mainDisplayTP3, final JButton alertButton){
 		inputTF.addFocusListener(new FocusAdapter() {
 			Border original = inputTF.getBorder();
 
 			@Override
 			public void focusGained(FocusEvent e) {
-				inputTF.setBorder(Constants.inputTFFocusBorder);
+				inputTF.setBorder(Constants.INPUT_TF_FOCUS_BORDER);
 			}
-
 			@Override
 			public void focusLost(FocusEvent e) {
 				inputTF.setBorder(original);
@@ -493,7 +501,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 			@Override
 			public void focusGained(FocusEvent e) {
-				mainDisplayTP1.setBorder(Constants.displayPanelFocusBorder);
+				mainDisplayTP1.setBorder(Constants.DISPLAY_PANEL_FOCUS_BORDER);
 			}
 
 			@Override
@@ -507,7 +515,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 			@Override
 			public void focusGained(FocusEvent e) {
-				mainDisplayTP2.setBorder(Constants.displayPanelFocusBorder);
+				mainDisplayTP2.setBorder(Constants.DISPLAY_PANEL_FOCUS_BORDER);
 			}
 
 			@Override
@@ -521,7 +529,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 			@Override
 			public void focusGained(FocusEvent e) {
-				mainDisplayTP3.setBorder(Constants.displayPanelFocusBorder);
+				mainDisplayTP3.setBorder(Constants.DISPLAY_PANEL_FOCUS_BORDER);
 			}
 
 			@Override
@@ -535,7 +543,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 			@Override
 			public void focusGained(FocusEvent e){
-				alertButton.setBorder(Constants.alertButtonFocusBorder);
+				alertButton.setBorder(Constants.ALERT_BUTTON_FOCUS_BORDER);
 			}
 
 			@Override

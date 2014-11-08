@@ -171,6 +171,8 @@ public class Constants {
 	public static final String ERROR_MULTIPLE_LOCATION = "Error! More than one location.";
 
 	// below are all constants used in GUI
+	final static String LOL_NAME = "LOL - LifeOnLine";
+	
 	final static Color DARK_ORANGE = new Color(253, 101, 0);
 	final static Color PURPLE = new Color(204, 0, 204);
 	final static Color BG = new Color(0, 129, 72);
@@ -181,6 +183,7 @@ public class Constants {
 	final static Font TREBUCHET_BOLD_14 = new Font("Trebuchet MS", Font.BOLD, 14);
 	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD, 16);
 	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
+	final static Font TAHOMA_14 = new Font("Tahoma", Font.PLAIN, 14);
 	
 	final static String HEADER_OVERDUE = "Overdue Tasks";
 	final static String HEADER_FLOATING = "Tasks With No date \n";
@@ -201,10 +204,9 @@ public class Constants {
 	final static String FORMAT_DONE = "done";
 	final static String FORMAT_IS_JUST_ADDED = "is just added";
 	
-	final static Border displayPanelFocusBorder = BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createLineBorder(Color.BLACK));
-	final static Border inputTFFocusBorder = BorderFactory.createLoweredBevelBorder();
-	final static Border alertButtonFocusBorder = BorderFactory.createRaisedBevelBorder();
-	
+	final static Border DISPLAY_PANEL_FOCUS_BORDER = BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createLineBorder(Color.BLACK));
+	final static Border INPUT_TF_FOCUS_BORDER = BorderFactory.createLoweredBevelBorder();
+	final static Border ALERT_BUTTON_FOCUS_BORDER = BorderFactory.createRaisedBevelBorder();
 	
 	final static int DISPLAY_IN_TP1 = 1; //upcoming TP
 	final static int DISPLAY_IN_TP2 = 2; //no date TP
@@ -214,6 +216,15 @@ public class Constants {
 	
 	final static int IMPOSSIBLE_ARRAYLIST_INDEX = -1;
 	
+	//message used in small pop up window for email functionality
+	final static String MSG_PLEASE_ENTER_EMAIL = "Please enter you email id to receive alerts in your inbox.";
+	final static String MSG_WELCOME = "Welcome to LOL!";
+	final static String MSG_EMAIL_EXAMPLE = "example@example.com";
+	
+	final static String MSG_LOL_IS_RUNNING = "LOL is Already Running!" ;
+	final static String MSG_RESTORE = "CTRL + L to Restore";
+	final static String MSG_ERROR = "Error occured";
+
 	//separator between today's tasks and upcoming tasks in gui
 	final static String GUI_SEPARATOR = "===========================";
 }
