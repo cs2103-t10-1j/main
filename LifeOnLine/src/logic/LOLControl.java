@@ -517,6 +517,7 @@ public class LOLControl {
 				if (storageList.set(undoneTaskStorageIndex, doneTask)) {
 					History.emptyRedoStack();
 					History.undoEdit(doneTask, undoneTask);
+					History.peekUndoStack().setPrecedingTasks(numToDone);
 					ControlDisplay.refreshDisplay(toDoList, storageList);
 					LOLStorage.saveTasks(storageList);
 					return Constants.FEEDBACK_MASS_DONE_SUCCESS;
@@ -590,6 +591,7 @@ public class LOLControl {
 				if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
 					History.emptyRedoStack();
 					History.undoEdit(notDoneTask, doneTask);
+					History.peekUndoStack().setPrecedingTasks(numToNotDone);
 					ControlDisplay.refreshDisplay(toDoList, storageList);
 					LOLStorage.saveTasks(storageList);
 					return Constants.FEEDBACK_MASS_NOT_DONE_SUCCESS;
@@ -619,8 +621,7 @@ public class LOLControl {
 				if (undoCmdNum == 0) {
 					storageList.add(undoCmdTask);
 					History.redoAdd(undoCmd);
-				}
-				else if (undoCmdNum > 0) {
+				} else if (undoCmdNum > 0) {
 					storageList.add(undoCmdTask);
 					History.redoAdd(undoCmd);
 					for (int i = 1; i < undoCmdNum; i++) {
@@ -646,11 +647,35 @@ public class LOLControl {
 				Task undoCmdTaskNew = undoCmdNew.getTask();
 				Task undoCmdTaskOld = undoCmdOld.getTask();
 
-				storageList.delete(undoCmdTaskNew);
-				storageList.add(undoCmdTaskOld);
-				History.redoAdd(undoCmdOld);
-				History.redoAdd(undoCmdNew);
-				History.redoAdd(undoCmd);
+				if (undoCmdNum == 0) {
+					storageList.delete(undoCmdTaskNew);
+					storageList.add(undoCmdTaskOld);
+					History.redoAdd(undoCmdOld);
+					History.redoAdd(undoCmdNew);
+					History.redoAdd(undoCmd);
+				}
+
+				else if (undoCmdNum > 0) {
+					storageList.delete(undoCmdTaskNew);
+					storageList.add(undoCmdTaskOld);
+					History.redoAdd(undoCmdOld);
+					History.redoAdd(undoCmdNew);
+					History.redoAdd(undoCmd);
+					for (int i = 1; i < undoCmdNum; i++) {
+						History.popUndoStack();
+						CommandLine iterateCmdNew = History.popUndoStack();
+						CommandLine iterateCmdOld = History.popUndoStack();
+						Task iterateCmdTaskNew = iterateCmdNew.getTask();
+						Task iterateCmdTaskOld = iterateCmdOld.getTask();
+
+						storageList.delete(iterateCmdTaskNew);
+						storageList.add(iterateCmdTaskOld);
+						History.redoAdd(iterateCmdOld);
+						History.redoAdd(iterateCmdNew);
+						History.redoAdd(undoCmd);
+					}
+					History.peekRedoStack().setPrecedingTasks(undoCmdNum);
+				}
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 				break;
@@ -703,9 +728,29 @@ public class LOLControl {
 				Task undoCmdTaskNew = undoCmdNew.getTask();
 				Task undoCmdTaskOld = undoCmdOld.getTask();
 
-				storageList.add(undoCmdTaskNew);
-				storageList.delete(undoCmdTaskOld);
-				History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
+				if (undoCmdNum == 0) {
+					storageList.add(undoCmdTaskNew);
+					storageList.delete(undoCmdTaskOld);
+					History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
+				}
+
+				else if (undoCmdNum > 0) {
+					storageList.add(undoCmdTaskNew);
+					storageList.delete(undoCmdTaskOld);
+					History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
+					for (int i = 1; i < undoCmdNum; i++) {
+						History.popRedoStack();
+						CommandLine iterateCmdNew = History.popRedoStack();
+						CommandLine iterateCmdOld = History.popRedoStack();
+						Task iterateCmdTaskNew = iterateCmdNew.getTask();
+						Task iterateCmdTaskOld = iterateCmdOld.getTask();
+
+						storageList.add(iterateCmdTaskNew);
+						storageList.delete(iterateCmdTaskOld);
+						History.undoEdit(iterateCmdTaskNew, iterateCmdTaskOld);
+					}
+					History.peekUndoStack().setPrecedingTasks(undoCmdNum);
+				}
 				ControlDisplay.refreshDisplay(toDoList, storageList);
 				LOLStorage.saveTasks(storageList);
 				break;
