@@ -7,14 +7,15 @@ import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
 public class Constants {
-	
+
 	public static final String WELCOME_MESSAGE = "Type in your task and hit enter to ADD. \n"
 			+ "For more information on other commands type HELP and hit enter.";
 	// Limit for number of days before current day for which task without year
 	// will be entered as overdue task
 	public static final int DAYS_OFFSET = 7;
 
-	public static final int REFRESH_TIME = 60 * 1000; //refers to the time in milliseconds
+	public static final int REFRESH_TIME = 60 * 1000; // refers to the time in
+														// milliseconds
 	// File name
 	public static final String FILE_NAME = "LOLTaskList.txt";
 	// Separators
@@ -36,7 +37,8 @@ public class Constants {
 	public static final String[] DICTIONARY_VIEW_HOMESCREEN = { "home", "h" };
 	public static final String[] DICTIONARY_EXIT = { "exit", "ex" };
 	public static final String[] DICTIONARY_PARAMETERS = { "location", "loc",
-			"date", "start", "end", "time" };
+			"date", "startdate", "enddate", "sd", "ed", "time", "starttime",
+			"endtime", "st", "et" };
 
 	// Months
 	public static final String[] MONTHS_SHORT = { "jan", "feb", "mar", "apr",
@@ -50,7 +52,8 @@ public class Constants {
 			"thu", "fri", "sat" };
 	public static final String[] DAYS_LONG = { "sunday", "monday", "tuesday",
 			"wednesday", "thursday", "friday", "saturday" };
-	public static final String[] DAYS_IMMEDIATE = { "today", "tomorrow", "tmw", "tmrw", "tmr" };
+	public static final String[] DAYS_IMMEDIATE = { "today", "tomorrow", "tmw",
+			"tmrw", "tmr" };
 
 	// Commands
 	public static final String COMMAND_ADD = "add";
@@ -178,13 +181,15 @@ public class Constants {
 	final static Color BG = new Color(0, 129, 72);
 	final static Color DARK_BLUE = new Color(3, 97, 148);
 	final static Color MEDIUM_BLUE = new Color(82, 161, 204);
-	
+
 	final static Font TREBUCHET_14 = new Font("Trebuchet MS", Font.PLAIN, 14);
-	final static Font TREBUCHET_BOLD_14 = new Font("Trebuchet MS", Font.BOLD, 14);
-	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD, 16);
+	final static Font TREBUCHET_BOLD_14 = new Font("Trebuchet MS", Font.BOLD,
+			14);
+	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD,
+			16);
 	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
 	final static Font TAHOMA_14 = new Font("Tahoma", Font.PLAIN, 14);
-	
+
 	final static String HEADER_OVERDUE = "Overdue Tasks";
 	final static String HEADER_FLOATING = "Tasks With No date \n";
 	final static String HEADER_UPCOMING = "Upcoming Tasks";
@@ -213,7 +218,7 @@ public class Constants {
 	final static int DISPLAY_IN_TP3 = 3; //overdue TP
 	
 	final static boolean IS_NEED_HEADER = true;
-	
+
 	final static int IMPOSSIBLE_ARRAYLIST_INDEX = -1;
 	
 	//message used in small pop up window for email functionality
@@ -225,6 +230,6 @@ public class Constants {
 	final static String MSG_RESTORE = "CTRL + L to Restore";
 	final static String MSG_ERROR = "Error occured";
 
-	//separator between today's tasks and upcoming tasks in gui
+	// separator between today's tasks and upcoming tasks in gui
 	final static String GUI_SEPARATOR = "===========================";
 }
