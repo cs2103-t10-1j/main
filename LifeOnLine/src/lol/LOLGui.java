@@ -46,7 +46,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		}
 		// If instance already running, exit new instance
 		// Prevent multiple LOL to run at the same time
-		if (JIntellitype.checkInstanceAlreadyRunning("LOL - Life On Line")) {
+		if (JIntellitype.checkInstanceAlreadyRunning("LOL - LifeOnLine")) {
 			TrayClass.trayIcon.displayMessage("LOL is Already Running!",
 					"CTRL + L to Restore", TrayIcon.MessageType.INFO);
 			try {
