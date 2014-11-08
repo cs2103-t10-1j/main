@@ -31,13 +31,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 	TrayClass displayTrayIcon = new TrayClass();
 
-	int i = 0;
-	int numTabPressed = 0;
-
-	Border compound = BorderFactory.createCompoundBorder(
-			BorderFactory.createRaisedBevelBorder(),
-			BorderFactory.createLoweredBevelBorder());
-
 	public LOLGui() {
 
 		if (!JIntellitype.isJIntellitypeSupported()) {
@@ -286,11 +279,8 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				try {
-					LOLControl.executeUserInput("home");
-				} catch (Exception e) {
-					// do nothing
-				}
+				LOLControl.executeUserInput("home");
+				
 				TaskList<Task> taskList = LOLControl.getTaskList();
 				InputTextFieldListener textfield = new InputTextFieldListener(
 						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
@@ -416,7 +406,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			}
 		});
 
-		MenuItem restoreItem = TrayClass.trayIcon.getPopupMenu().getItem(i);
+		MenuItem restoreItem = TrayClass.trayIcon.getPopupMenu().getItem(0);
 
 		restoreItem.addActionListener(new ActionListener() {
 			@Override
