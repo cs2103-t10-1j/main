@@ -1,62 +1,62 @@
+/**
+ * Email functionality of LOL
+ */
 package lol;
 
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
-import javax.activation.*;
 
+/**
+ * 
+ * @author aviral
+ *
+ */
 public class LOLEmail {
-	
-	public static void send(String to, String task) {
-		
-		// Sender's email ID needs to be mentioned
-		String from = "alert.lifeonline@gmail.com";
 
-		// Assuming you are sending email from localhost
-		String host = "smtp.gmail.com";
+	public static void send(String to, String task) {
+
+		// Sender's email ID needs to be mentioned
+		String from = Constants.LOLEmailId;
 
 		// Get system properties
 		Properties properties = System.getProperties();
 
 		// Setup mail server
-		properties.setProperty("mail.user", "alert.lifeonline@gmail.com");
-		properties.setProperty("mail.password", "lifeonline99");
+		properties.setProperty("mail.user", Constants.LOLEmailId);
+		properties.setProperty("mail.password", Constants.LOLEmailPasswd);
 		properties.setProperty("mail.smtp.auth", "true");
 		properties.setProperty("mail.smtp.starttls.enable", "true");
-		properties.setProperty("mail.smtp.host", "smtp.gmail.com");
-		properties.setProperty("mail.smtp.port", "587");
-		properties.setProperty("mail.smtp.user", "alert.lifeonline@gmail.com");
-		properties.setProperty("mail.smtp.password", "lifeonline99");
+		properties.setProperty("mail.smtp.host", Constants.LOLEmailHost);
+		properties.setProperty("mail.smtp.port", Constants.LOLEmailPort);
+		properties.setProperty("mail.smtp.user", Constants.LOLEmailId);
+		properties.setProperty("mail.smtp.password", Constants.LOLEmailPasswd);
 		// Get the default Session object.
 
 		Session session = Session.getDefaultInstance(properties,
 				new javax.mail.Authenticator() {
 					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(
-								"alert.lifeonline@gmail.com", "lifeonline99");// Specify
-																				// the
-																				// Username
-																				// and
-																				// the
-																				// PassWord
+						return new PasswordAuthentication(Constants.LOLEmailId,
+								Constants.LOLEmailPasswd); // user name and
+															// password
 					}
 				});
 		try {
 
-			// Create a default MimeMessage object.
+			// default MimeMessage object.
 			MimeMessage message = new MimeMessage(session);
 
-			// Set From: header field of the header.
+			// From: header field of the header.
 			message.setFrom(new InternetAddress(from));
 
-			// Set To: header field of the header.
+			// To: header field of the header.
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(
 					to));
 
-			// Set Subject: header field
+			// Subject: header field
 			message.setSubject("Alert: You have an upcoming task");
 
-			// Now set the actual message
+			// the actual message
 			message.setText(task);
 
 			// Send message

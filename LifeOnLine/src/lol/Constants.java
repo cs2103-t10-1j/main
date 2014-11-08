@@ -238,4 +238,11 @@ public class Constants {
 
 	// separator between today's tasks and upcoming tasks in gui
 	final static String GUI_SEPARATOR = "===========================";
+	
+	//LOLEmail configurations
+	final static String LOLEmailId = "alert.lifeonline@gmail.com";
+	final static String LOLEmailPasswd = "lifeonline99";
+	final static String LOLEmailHost = "smtp.gmail.com";
+	final static String LOLEmailPort = "587";
+	
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ * This class contains methods to load a task list from a text file and to save a task list into a text file.
  */
 package io;
 
@@ -18,40 +18,45 @@ import lol.TaskList;
 
 /**
  * @author aviral
- *
  */
 public class StorageOperations {
 
 	/************* Attributes ***************/
+	
+	/**Using special characters to split because a user is unlikely to enter them in description using keyboard*/
 	protected static final String NEW_LINE = "\r\n";
 	protected static final String WHITESPACE = " ";
-	protected static final String CMD_START = "ŒŒ";
+	protected static final String CMD_START = "ŒŒ"; 
 	protected static final String CMD_END = "þþ";
 	protected static final String CMD_SPLIT = CMD_END + WHITESPACE + CMD_START;
 
 	protected String _fileName;
-	
-	/** each index of _commandStrings stores a string converted task in specified format */
+
+	/**
+	 * each index of _commandStrings stores a string converted task in specified
+	 * format
+	 */
 	protected List<String> _commandStrings;
 	protected TaskList<Task> _taskList;
-	
-	/************* Constructors ***************/
+
+	/************* Constructor ***************/
 	protected StorageOperations(String fileName) {
 		this._fileName = fileName;
 		_commandStrings = new ArrayList<String>();
 	}
 
 	/************* Other methods ***************/
-	
+
 	/**
 	 * loads the task list from text file
+	 * 
 	 * @return TaskList object
 	 */
 	protected TaskList<Task> load() {
 		boolean isSuccessfulRead = this.readFromFile();
 		_taskList = new TaskList<Task>();
-		
-		//return loaded task list if no errors in reading else empty taskList
+
+		// return loaded task list if no errors in reading else empty taskList
 		if (isSuccessfulRead) {
 			this.generateTaskList();
 			return _taskList;
@@ -59,10 +64,12 @@ public class StorageOperations {
 			return _taskList;
 		}
 	}
-	
+
 	/**
 	 * saves the TaskList in text file
-	 * @param list TaskList object
+	 * 
+	 * @param list
+	 *            TaskList object
 	 */
 	protected void save(TaskList<Task> list) {
 		_taskList = list;
@@ -70,8 +77,12 @@ public class StorageOperations {
 		this.writeToFile();
 	}
 
+	/************ Start of methods used for loading **********/
+
 	/**
-	 * reads from the text file specified by the LOLControl and saves the tasks in commandString array
+	 * reads from the text file specified by the LOLControl and saves the tasks
+	 * in commandString array
+	 * 
 	 * @return boolean value
 	 */
 	private boolean readFromFile() {
@@ -83,8 +94,8 @@ public class StorageOperations {
 			BufferedReader br = new BufferedReader(fr);
 
 			_commandStrings.clear();
-			
-			//stores each line as string intro commandStrings array
+
+			// stores each line as string into commandStrings array
 			while ((command = br.readLine()) != null) {
 				_commandStrings.add(command);
 			}
@@ -100,7 +111,8 @@ public class StorageOperations {
 	}
 
 	/**
-	 * Converts all the tasks stored as string in commadString to task objects and stores them in taskList
+	 * Converts all the tasks stored as string in commadString to task objects
+	 * and stores them in taskList
 	 */
 	private void generateTaskList() {
 		int numberOfTasks = _commandStrings.size();
@@ -112,27 +124,26 @@ public class StorageOperations {
 		}
 
 	}
-	
+
 	/**
-	 * Converts one string of task to task object
-	 * @param command String form of task
+	 * Converts one string of task to task object by loading in the following
+	 * expected format of task string -
+	 * 
+	 * <description>þþ ŒŒ<location>þþ ŒŒ<startDate>þþ ŒŒ<startTime>þþ
+	 * ŒŒ<endTime>þþ ŒŒ<isDone>þþ ŒŒ<isOverdue>þþ ŒŒ<endDate>
+	 * 
+	 * @param command
+	 *            String form of task
 	 * @return Task object
 	 */
 	private Task createTask(String command) {
-		String description = "",
-				location = "", 
-				startDate = "", 
-				startTime = "", 
-				endTime = "", 
-				done = "", 
-				overdue = "", 
-				endDate = "";
+		String description = "", location = "", startDate = "", startTime = "", endTime = "", done = "", overdue = "", endDate = "";
 		Date startDateOb, endDateOb;
 		Time startTimeOb, endTimeOb;
 		boolean isDone, isOverdue;
 
 		String[] commandComponents = command.split(CMD_SPLIT);
-		
+
 		try {
 			description = commandComponents[0];
 			location = commandComponents[1];
@@ -167,7 +178,8 @@ public class StorageOperations {
 	 * This function converts the date written in the format of dd/mm/yy to a
 	 * Date class objects and return it.
 	 * 
-	 * @param String date
+	 * @param String
+	 *            date
 	 * @return Date object
 	 */
 	private Date getDate(String date) {
@@ -205,7 +217,14 @@ public class StorageOperations {
 			return null;
 	}
 
+	/************ End of methods used for loading **********/
 
+	/************ Start of methods used for saving **********/
+
+	/**
+	 * This function recreates the task object as string and stores in
+	 * commandsStrings array
+	 */
 	private void recreateCommands() {
 		int numberOfTasks = _taskList.size();
 		String command;
@@ -221,36 +240,46 @@ public class StorageOperations {
 
 	}
 
+	/**
+	 * this method transforms the task object to string type using particular
+	 * format to append different attributes of tasks format of saving-
+	 * 
+	 * <description>þþ ŒŒ<location>þþ ŒŒ<startDate>þþ ŒŒ<startTime>þþ
+	 * ŒŒ<endTime>þþ ŒŒ<isDone>þþ ŒŒ<isOverdue>þþ ŒŒ<endDate>
+	 * 
+	 * @param task
+	 *            object
+	 * @return String of task object
+	 */
 	private String generateCommand(Task task) {
 		StringBuilder sb = new StringBuilder();
 
 		try {
 			String description = task.getTaskDescription();
 			String location = task.getTaskLocation();
-			
+
 			Date startDateOb = task.getTaskDueDate();
 			String startDate = null;
-			if (startDateOb != null){
+			if (startDateOb != null) {
 				startDate = startDateOb.toString2();
 			}
-			
+
 			String endTime = null;
 			String startTime = null;
 			Time endTimeOb = task.getEndTime();
 			Time startTimeOb = task.getStartTime();
-			
-			if (endTimeOb != null){
+
+			if (endTimeOb != null) {
 				endTime = endTimeOb.getFormat24hr();
 			}
-				
-			if (startTimeOb != null){
+
+			if (startTimeOb != null) {
 				startTime = startTimeOb.getFormat24hr();
 			}
-			
+
 			String done = task.getIsDone() ? "true" : "false";
 			String overdue = task.getIsOverdue() ? "true" : "false";
-			
-			
+
 			Date endDateOb = task.getEndDate();
 			String endDate = null;
 			if (endDateOb != null)
@@ -294,6 +323,10 @@ public class StorageOperations {
 
 	}
 
+	/**
+	 * This method writes the tasks saved as String in commandStrings array in a
+	 * text file
+	 */
 	private void writeToFile() {
 		try {
 			FileWriter fw = new FileWriter(_fileName);
@@ -311,5 +344,6 @@ public class StorageOperations {
 		}
 
 	}
+	/************ End of methods used for saving **********/
 
 }

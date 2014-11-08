@@ -27,7 +27,11 @@ import javax.swing.text.StyledDocument;
 
 import logic.LOLControl;
 
-
+/**
+ * Author in the descending order of contributions
+ * @author Sevin, Aviral
+ *
+ */
 public class InputTextFieldListener implements ActionListener, KeyListener {
 	JTextField inputTF;
 	JTextPane mainDisplayTP1;
@@ -46,7 +50,10 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final Timer timer;
 	final JProgressBar progressBar;
 
-	public InputTextFieldListener(JTextPane mainDisplayTP, JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JLabel label, JTextField inputTF, Timer timer, JLabel progressLabel, JProgressBar progressBar){
+	public InputTextFieldListener(JTextPane mainDisplayTP,
+			JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JLabel label,
+			JTextField inputTF, Timer timer, JLabel progressLabel,
+			JProgressBar progressBar) {
 		this.inputTF = inputTF;
 
 		this.mainDisplayTP1 = mainDisplayTP;
@@ -66,11 +73,12 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	}
 
 	/**
-	 * Add the required Styles that are used in the GUI to doc so that it can be used in GUI
+	 * Add the required Styles that are used in the GUI to doc so that it can be
+	 * used in GUI
 	 * 
 	 * @param doc
 	 */
-	public static void addStyleToDoc(StyledDocument doc){
+	public static void addStyleToDoc(StyledDocument doc) {
 		Style style = doc.addStyle(Constants.FORMAT_HEADER_FLOATING, null);
 		StyleConstants.setFontSize(style, 18);
 		StyleConstants.setBold(style, true);
@@ -124,12 +132,12 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		StyleConstants.setBackground(style, Color.YELLOW);
 	}
 
-	/** 
-	 * This function will be called whenever user key in some text into the input text field
-	 * and press enter.
+	/**
+	 * This function will be called whenever user key in some text into the
+	 * input text field and press enter.
 	 */
 	@Override
-	public void actionPerformed(ActionEvent event){
+	public void actionPerformed(ActionEvent event) {
 		String inputStr = inputTF.getText();
 		addUserInputToCommands(inputStr);
 
@@ -150,12 +158,11 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * 
 	 * @param userInput
 	 */
-	private void addUserInputToCommands(String userInput){
-		if(commands.isEmpty()){
+	private void addUserInputToCommands(String userInput) {
+		if (commands.isEmpty()) {
 			commands.add(userInput);
 			commands.add(Constants.EMPTY_STRING);
-		}
-		else{
+		} else {
 			commands.set(commands.size() - 1, userInput);
 			commands.add(Constants.EMPTY_STRING);
 		}
@@ -168,19 +175,19 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * 
 	 * @param inputStr
 	 */
-	public void refreshFeedbackDisplay(String inputStr){
+	public void refreshFeedbackDisplay(String inputStr) {
 		String feedback = LOLControl.executeUserInput(inputStr);
 		label.setText(feedback);
 	}
 
 	/**
-	 * refresh all the main displaying panels
-	 * displaying panels include the three main display text panes for tasks,
-	 * progress bar, alerting display (on desktop and email)
+	 * refresh all the main displaying panels displaying panels include the
+	 * three main display text panes for tasks, progress bar, alerting display
+	 * (on desktop and email)
 	 * 
 	 * @param taskList
 	 */
-	public void refreshMainDisplay(TaskList<Task> taskList){
+	public void refreshMainDisplay(TaskList<Task> taskList) {
 		refreshDisplayTextPanes(taskList);
 		refreshProgressBar();
 		refreshAlert();
@@ -191,7 +198,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * 
 	 * @param taskList
 	 */
-	private void refreshDisplayTextPanes(TaskList<Task> taskList){
+	private void refreshDisplayTextPanes(TaskList<Task> taskList) {
 		resetScrollPanePosition();
 		clear(mainDisplayTP1);
 		clear(mainDisplayTP2);
@@ -203,15 +210,15 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	/**
 	 * refresh the progress bar which show today's progress
 	 */
-	private void refreshProgressBar(){
+	private void refreshProgressBar() {
 		LOLControl.refreshProgress();
-		if(LOLControl.progressMaximum > 0){
-			progressLabel.setText("Today's report: " + LOLControl.progress + "/" + LOLControl.progressMaximum);
+		if (LOLControl.progressMaximum > 0) {
+			progressLabel.setText("Today's report: " + LOLControl.progress
+					+ "/" + LOLControl.progressMaximum);
 			progressBar.setMaximum(LOLControl.progressMaximum);
 			progressBar.setValue(LOLControl.progressMaximum);
 			progressBar.setValue(LOLControl.progress);
-		}
-		else{
+		} else {
 			progressBar.setMaximum(1);
 			progressBar.setValue(1);
 			progressLabel.setText("No deadlines today");
@@ -219,21 +226,29 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	}
 
 	/**
-	 * refresh the alert time so that tasks that are about to be overdue will cause the
-	 * GUI to pop up an alert window
+	 * refresh the alert time so that tasks that are about to be overdue will
+	 * cause the GUI to pop up an alert window
 	 */
-	private void refreshAlert(){
-		if(LOLControl.isAlertMode){
+	private void refreshAlert() {
+
+		// checks if alert mode is on
+		if (LOLControl.isAlertMode) {
 			Task alertTask = LOLControl.refreshAlert();
-			if(alertTask != null){
-				JOptionPane.showMessageDialog(null, alertMessage(alertTask), "LOL Alert", JOptionPane.WARNING_MESSAGE);
-			}
-			if(LOLControl.userEmail != null && LOLControl.userEmail.length() >= 11){
-				LOLEmail.send(LOLControl.userEmail, alertMessage(alertTask));
+
+			// does not alert if there is no task to be alerted
+			if (alertTask != null) {
+				JOptionPane.showMessageDialog(null, alertMessage(alertTask),
+						"LOL Alert", JOptionPane.WARNING_MESSAGE);
+
+				//
+				if (LOLControl.userEmail != null
+						&& !LOLControl.userEmail.equals("example@example.com")) {
+					LOLEmail.send(LOLControl.userEmail, alertMessage(alertTask));
+				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Generate an alert message
 	 * 
@@ -242,74 +257,81 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 */
 	private String alertMessage(Task alertTask) {
 		String message = "YOU HAVE AN UPCOMING TASK";
-		
+
 		message += "\n" + alertTask.getTaskDescription();
 		message += "\n Time: " + alertTask.getStartTime();
-		
-		if(alertTask.getEndTime() != null){
-			message+="-"+alertTask.getEndTime();
+
+		if (alertTask.getEndTime() != null) {
+			message += "-" + alertTask.getEndTime();
 		}
-		if(alertTask.getTaskLocation() != null){
-			message+="\n Location: "+ alertTask.getTaskLocation();
+		if (alertTask.getTaskLocation() != null) {
+			message += "\n Location: " + alertTask.getTaskLocation();
 		}
-		
+
 		return message;
 	}
-	
-	/** 
+
+	/**
 	 * determine what will be shown in the display panels
 	 * 
 	 * @param taskList
 	 */
-	public void showInMainDisplayTP(TaskList<Task> taskList){
+	public void showInMainDisplayTP(TaskList<Task> taskList) {
 		FormatToString formatToString = new FormatToString();
 		formatToString.format(taskList);
 
 		addToDisplay(formatToString, doc1, doc2, doc3);
 	}
-	
+
 	/**
-	 * add task which is formatted to String in formatToString class to the corresponding doc
-	 * which belongs to its corresponding task display JTextPane
+	 * add task which is formatted to String in formatToString class to the
+	 * corresponding doc which belongs to its corresponding task display
+	 * JTextPane
 	 * 
-	 * doc1 will be holding display details for upcoming task display panel
-	 * doc2 will be holding display details for floating task display panel
-	 * doc3 will be holding display details for overdue task display panel
+	 * doc1 will be holding display details for upcoming task display panel doc2
+	 * will be holding display details for floating task display panel doc3 will
+	 * be holding display details for overdue task display panel
 	 * 
 	 * @param formatToString
 	 * @param doc1
 	 * @param doc2
 	 * @param doc3
 	 */
-	public void addToDisplay(FormatToString formatToString, StyledDocument doc1, StyledDocument doc2, StyledDocument doc3){
+	public void addToDisplay(FormatToString formatToString,
+			StyledDocument doc1, StyledDocument doc2, StyledDocument doc3) {
 		try {
-			for(int j = 1; j <= formatToString.getLinkedListNum(); j++){
-				LinkedList<StringWithFormat> strToShow = formatToString.getLinkedList(j);
+			for (int j = 1; j <= formatToString.getLinkedListNum(); j++) {
+				LinkedList<StringWithFormat> strToShow = formatToString
+						.getLinkedList(j);
 
-				for(int i = 0; i < strToShow.size(); i++){
-					if(j==1){
-						//if the task is just added, GUI will auto scroll to the newly added task
-						if(strToShow.get(i).getIsJustAdded()){
+				for (int i = 0; i < strToShow.size(); i++) {
+					if (j == 1) {
+						// if the task is just added, GUI will auto scroll to
+						// the newly added task
+						if (strToShow.get(i).getIsJustAdded()) {
 							mainDisplayTP1.setCaretPosition(doc1.getLength());
 						}
-						doc1.insertString(doc1.getLength(), strToShow.get(i).getString(), doc1.getStyle(strToShow.get(i).getFormat()));
-					}
-					else if(j==2){
-						if(strToShow.get(i).getIsJustAdded()){
+						doc1.insertString(doc1.getLength(), strToShow.get(i)
+								.getString(), doc1.getStyle(strToShow.get(i)
+								.getFormat()));
+					} else if (j == 2) {
+						if (strToShow.get(i).getIsJustAdded()) {
 							mainDisplayTP2.setCaretPosition(doc2.getLength());
 						}
-						doc2.insertString(doc2.getLength(), strToShow.get(i).getString(), doc2.getStyle(strToShow.get(i).getFormat()));
-					}
-					else if(j==3){
-						if(strToShow.get(i).getIsJustAdded()){
+						doc2.insertString(doc2.getLength(), strToShow.get(i)
+								.getString(), doc2.getStyle(strToShow.get(i)
+								.getFormat()));
+					} else if (j == 3) {
+						if (strToShow.get(i).getIsJustAdded()) {
 							mainDisplayTP3.setCaretPosition(doc3.getLength());
 						}
-						doc3.insertString(doc3.getLength(), strToShow.get(i).getString(), doc3.getStyle(strToShow.get(i).getFormat()));
+						doc3.insertString(doc3.getLength(), strToShow.get(i)
+								.getString(), doc3.getStyle(strToShow.get(i)
+								.getFormat()));
 					}
 				}
 			}
-		} 
-		catch (BadLocationException badLocationException) {
+		} catch (BadLocationException badLocationException) {
 			System.err.println("Bad Location Exception in reading doc");
 		}
 	}
@@ -319,66 +341,68 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * 
 	 * @param TF
 	 */
-	private void clear(JTextField TF){
+	private void clear(JTextField TF) {
 		TF.setText(Constants.EMPTY_STRING);
 	}
-	
+
 	/**
 	 * will clear all the words in the text pane
 	 * 
 	 * @param TP
 	 */
-	private void clear(JTextPane TP){
+	private void clear(JTextPane TP) {
 		TP.setText(Constants.EMPTY_STRING);
 	}
-	
+
 	/**
-	 * reset the position of all the scroll pane currently present in GUI to their topmost
-	 * position 
+	 * reset the position of all the scroll pane currently present in GUI to
+	 * their topmost position
 	 */
-	private void resetScrollPanePosition(){
+	private void resetScrollPanePosition() {
 		mainDisplayTP1.setCaretPosition(0);
 		mainDisplayTP2.setCaretPosition(0);
 		mainDisplayTP3.setCaretPosition(0);
 	}
 
-	/** 
-	 * Handle the key-released event from the text field.
-	 * Will display previously entered user input when press up arrow key
+	/**
+	 * Handle the key-released event from the text field. Will display
+	 * previously entered user input when press up arrow key
 	 * 
-	 * And can navigate through different previously entered user input using up and down
-	 * arrow keys. 
+	 * And can navigate through different previously entered user input using up
+	 * and down arrow keys.
 	 */
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			if(!commands.isEmpty()){
-				if(indexOfCurrentShowingTask == Constants.IMPOSSIBLE_ARRAYLIST_INDEX && commands.size() - 2 >= 0 ){
+			if (!commands.isEmpty()) {
+				if (indexOfCurrentShowingTask == Constants.IMPOSSIBLE_ARRAYLIST_INDEX
+						&& commands.size() - 2 >= 0) {
 					indexOfCurrentShowingTask = commands.size() - 1;
 				}
 
-				if(indexOfCurrentShowingTask - 1 >= 0){
+				if (indexOfCurrentShowingTask - 1 >= 0) {
 					inputTF.setText(commands.get(--indexOfCurrentShowingTask));
 					inputTF.grabFocus();
 				}
 			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			if(!commands.isEmpty() && indexOfCurrentShowingTask != Constants.IMPOSSIBLE_ARRAYLIST_INDEX){
-				if(indexOfCurrentShowingTask + 1 < commands.size()){
+			if (!commands.isEmpty()
+					&& indexOfCurrentShowingTask != Constants.IMPOSSIBLE_ARRAYLIST_INDEX) {
+				if (indexOfCurrentShowingTask + 1 < commands.size()) {
 					inputTF.setText(commands.get(++indexOfCurrentShowingTask));
 					inputTF.grabFocus();
 				}
 			}
 		}
 	}
-	
+
 	/** Handle the key typed event from the text field. */
 	public void keyTyped(KeyEvent e) {
-		//none
+		// none
 	}
 
 	/** Handle the key-pressed event from the text field. */
 	public void keyPressed(KeyEvent e) {
-		//none
+		// none
 	}
 }

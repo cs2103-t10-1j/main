@@ -24,13 +24,18 @@ import ui.TrayClass;
 import logic.LOLControl;
 
 @SuppressWarnings("serial")
+/**
+ * Author in the descending order of contributions
+ * @author Sevin, Aviral
+ *
+ */
 public class LOLGui extends JFrame implements HotkeyListener {
 	private boolean isNewRun = true;
 	private boolean isNewMini = true;
 	private boolean isFocus;
 
 	TrayClass displayTrayIcon = new TrayClass();
-
+	
 	public LOLGui() {
 
 		if (!JIntellitype.isJIntellitypeSupported()) {
