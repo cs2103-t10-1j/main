@@ -104,7 +104,8 @@ public class LOLParser {
 		if (location != null) {
 			location = getParameterInOriginalCase(originalInput, location);
 		}
-		return new Task(description, location, date, endDate, startTime, endTime);
+		return new Task(description, location, date, endDate, startTime,
+				endTime);
 	}
 
 	/**
@@ -145,26 +146,48 @@ public class LOLParser {
 										Constants.DICTIONARY_PARAMETERS,
 										words[index])) {
 							switch (words[index]) {
+
 							case "location":
 							case "loc":
 								newTask.setLocation(null);
 								break;
+
 							case "date":
 								newTask.setDueDate(null);
+								newTask.setEndDate(null);
 								newTask.setStartTime(null);
 								newTask.setEndTime(null);
 								break;
-							case "start":
+
+							case "startdate":
+							case "sd":
+								newTask.setDueDate(null);
+								newTask.setEndDate(null);
 								newTask.setStartTime(null);
 								newTask.setEndTime(null);
 								break;
-							case "end":
-								newTask.setEndTime(null);
+
+							case "enddate":
+							case "ed":
+								newTask.setEndDate(null);
 								break;
+
 							case "time":
 								newTask.setStartTime(null);
 								newTask.setEndTime(null);
 								break;
+
+							case "starttime":
+							case "st":
+								newTask.setStartTime(null);
+								newTask.setEndTime(null);
+								break;
+
+							case "endtime":
+							case "et":
+								newTask.setEndTime(null);
+								break;
+
 							}
 							index++;
 						}
@@ -181,7 +204,8 @@ public class LOLParser {
 
 			String description = dp.getDescriptionForEdit();
 			String location = lp.getLocation();
-			Date date = dtp.getDueDate();
+			Date startDate = dtp.getDueDate();
+			Date endDate = dtp.getEndDate();
 			Time startTime = tp.getStartTime();
 			Time endTime = tp.getEndTime();
 
@@ -196,8 +220,12 @@ public class LOLParser {
 				newTask.setLocation(location);
 			}
 
-			if (date != null) {
-				newTask.setDueDate(date);
+			if (startDate != null) {
+				newTask.setDueDate(startDate);
+			}
+			
+			if (endDate != null) {
+				newTask.setEndDate(endDate);
 			}
 
 			if (startTime != null) {
