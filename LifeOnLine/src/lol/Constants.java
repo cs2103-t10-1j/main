@@ -188,7 +188,7 @@ public class Constants {
 	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
 
 	final static String HEADER_OVERDUE = "Overdue Tasks";
-	final static String HEADER_FLOATING = "Tasks With No date";
+	final static String HEADER_FLOATING = "Tasks With No date \n";
 	final static String HEADER_UPCOMING = "Upcoming Tasks";
 
 	final static String FORMAT_HEADER_OVERDUE = "overdue header";

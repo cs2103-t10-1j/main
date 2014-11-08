@@ -465,7 +465,7 @@ public class FormatToString {
 
 		//add main header to the three displaying panels
 		strToShow1.add(new StringWithFormat(Constants.HEADER_UPCOMING, Constants.FORMAT_HEADER_UPCOMING));
-		strToShow2.add(new StringWithFormat(Constants.LINEBREAK , Constants.FORMAT_HEADER_FLOATING));
+		strToShow2.add(new StringWithFormat(Constants.HEADER_FLOATING, Constants.FORMAT_HEADER_FLOATING));
 		strToShow3.add(new StringWithFormat(Constants.HEADER_OVERDUE, Constants.FORMAT_HEADER_OVERDUE));
 	}
 

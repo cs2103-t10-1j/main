@@ -19,12 +19,14 @@ public class History {
 
 	public static void undoDelete(Task newTask) {
 		undoStack.push(new CommandLine(undoDeleteCommandType, newTask));
+		newTask.setIsJustAdded(true);
 	}
 
 	public static void undoEdit(Task newTask, Task oldTask) {
 		undoDelete(oldTask);
 		undoAdd(newTask);
 		undoStack.push(new CommandLine(undoEditCommandType, null));
+		newTask.setIsJustAdded(true);
 	}
 
 	public static CommandLine popUndoStack() {
@@ -47,7 +49,6 @@ public class History {
 	public static CommandLine popRedoStack() {
 		assert !redoStack.empty() : "empty redo stack popped";
 		return redoStack.pop();
-
 	}
 	
 	public static void emptyRedoStack(){

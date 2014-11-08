@@ -194,7 +194,8 @@ public class LOLControl {
 
 		try {
 			Task editTask = LOLParser.getEditTask(userInput, oldTask);
-
+			editTask.setIsJustAdded(true);
+			
 			Task oldTaskDesc = new Task(null, null, null);
 			if (runOnce) {
 				oldTaskDesc.setDescription(taskAtIndex.getTaskDescription());
@@ -474,6 +475,7 @@ public class LOLControl {
 						undoneTask.getTaskDueDate(), undoneTask.getStartTime(),
 						undoneTask.getEndTime());
 				doneTask.setIsDone(true);
+				doneTask.setIsJustAdded(true);
 
 				if (storageList.set(undoneTaskStorageIndex, doneTask)) {
 					History.emptyRedoStack();
@@ -510,7 +512,7 @@ public class LOLControl {
 						undoneTask.getEndTime());
 
 				doneTask.setIsDone(true);
-
+				
 				if (storageList.set(undoneTaskStorageIndex, doneTask)) {
 					History.emptyRedoStack();
 					History.undoEdit(doneTask, undoneTask);
@@ -548,6 +550,7 @@ public class LOLControl {
 						doneTask.getStartTime(), doneTask.getEndTime());
 
 				notDoneTask.setIsDone(false);
+				notDoneTask.setIsJustAdded(true);
 
 				if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
 					History.emptyRedoStack();
