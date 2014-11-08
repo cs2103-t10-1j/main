@@ -63,5 +63,12 @@ public class History {
 			return null;
 		}
 	}
+	public static CommandLine peekRedoStack(){
+		try{
+			return redoStack.peek();
+		} catch (EmptyStackException e){
+			return null;
+		}
+	}
 
 }
