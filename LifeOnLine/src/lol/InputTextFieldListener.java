@@ -42,6 +42,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	static StyledDocument doc3 = new DefaultStyledDocument();
 	JLabel label;
 	JLabel progressLabel;
+	JLabel alertLabel;
 
 	private static ArrayList<String> commands = new ArrayList<String>();
 	private static int indexOfCurrentShowingTask;
@@ -53,7 +54,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	public InputTextFieldListener(JTextPane mainDisplayTP,
 			JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JLabel label,
 			JTextField inputTF, Timer timer, JLabel progressLabel,
-			JProgressBar progressBar) {
+			JProgressBar progressBar, JLabel alertLabel) {
 		this.inputTF = inputTF;
 
 		this.mainDisplayTP1 = mainDisplayTP;
@@ -70,6 +71,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		this.timer = timer;
 		this.label = label;
 		this.progressLabel = progressLabel;
+		this.alertLabel = alertLabel;
 	}
 
 	/**
@@ -139,15 +141,21 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		String inputStr = inputTF.getText();
+		if(inputStr.equalsIgnoreCase("alert")){
+			LOLControl.isAlertMode = !LOLControl.isAlertMode;
+			alertLabel.setText(LOLControl.isAlertMode ? ": On" : ": Off");
+			label.setText("Alert is now " + (LOLControl.isAlertMode ? "On!" : "Off!"));
+		} else {
 		addUserInputToCommands(inputStr);
-
 		refreshFeedbackDisplay(inputStr);
 
 		TaskList<Task> taskList = LOLControl.getTaskList();
 		refreshMainDisplay(taskList);
 
+		//GUI already refreshes after each user action therefore we want to restart the refresh timer
 		timer.setInitialDelay(60000);
 		timer.restart();
+		}
 
 		clear(inputTF);
 	}

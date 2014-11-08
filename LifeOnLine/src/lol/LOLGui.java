@@ -1,5 +1,6 @@
 package lol;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -16,6 +17,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 
 import com.melloware.jintellitype.HotkeyListener;
 import com.melloware.jintellitype.JIntellitype;
@@ -69,14 +72,14 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().setPreferredSize(new Dimension(736, 478));
 		frame.pack();
 
-		JPanel panel_5 = new JPanel();
-		panel_5.setBackground(new Color(217, 232, 245));
+		/*JPanel backgroundLabel = new JPanel();
+		backgroundLabel.setBackground(new Color(217, 232, 245));
 		final Image backgroundImage;
 		try {
 			ClassLoader cldr = this.getClass().getClassLoader();
 			java.net.URL imageURL   = cldr.getResource("resources/background2.jpg");
 			backgroundImage = javax.imageio.ImageIO.read(imageURL);
-			panel_5 = new JPanel(new BorderLayout()) {
+			backgroundLabel = new JPanel(new BorderLayout()) {
 				@Override public void paintComponent(Graphics g) {
 					g.drawImage(backgroundImage, 0, 0, null);
 				}
@@ -84,7 +87,19 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}
+		}*/
+		
+		JLabel backgroundLabel = new JLabel();
+		backgroundLabel.setBackground(new Color(217, 232, 245));
+		BufferedImage img;
+		try {
+			URL url = this.getClass().getResource("/background2.jpg");
+			img = ImageIO.read(url);
+			backgroundLabel= new JLabel(new ImageIcon(img));
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+		
 
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(3, 97, 148));
@@ -271,8 +286,8 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		alertButton.setBounds(10, 11, 89, 23);
 		panel_2.add(alertButton);
 
-		panel_5.setBounds(0, 0, 736, 391);
-		frame.getContentPane().add(panel_5);
+		backgroundLabel.setBounds(0, 0, 736, 391);
+		frame.getContentPane().add(backgroundLabel);
 
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
@@ -290,7 +305,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				InputTextFieldListener textfield = new InputTextFieldListener(
 						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
 						feedbackLabel, inputTF, null,
-						progressLabel, progressBar);
+						progressLabel, progressBar, labelAlert);
 				textfield.refreshMainDisplay(taskList);
 
 				DateParser dp = new DateParser();
@@ -307,7 +322,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		final InputTextFieldListener listener = new InputTextFieldListener(
 				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
 				feedbackLabel, inputTF, timer,
-				progressLabel, progressBar);
+				progressLabel, progressBar, labelAlert);
 
 		// **HOTKEY-INTERFACE** //
 
