@@ -17,94 +17,134 @@ import lol.Time;
 import lol.TaskList;
 
 /**
- * @author owner
+ * @author aviral
  *
  */
 public class StorageOperations {
 
-	// special characters
+	/************* Attributes ***************/
 	protected static final String NEW_LINE = "\r\n";
 	protected static final String WHITESPACE = " ";
 	protected static final String CMD_START = "ŒŒ";
 	protected static final String CMD_END = "þþ";
 	protected static final String CMD_SPLIT = CMD_END + WHITESPACE + CMD_START;
 
-	protected String fileName;
-	protected List<String> commandStrings;
-	protected TaskList<Task> taskList;
-
+	protected String _fileName;
+	
+	/** each index of _commandStrings stores a string converted task in specified format */
+	protected List<String> _commandStrings;
+	protected TaskList<Task> _taskList;
+	
+	/************* Constructors ***************/
 	protected StorageOperations(String fileName) {
-		this.fileName = fileName;
-		commandStrings = new ArrayList<String>();
+		this._fileName = fileName;
+		_commandStrings = new ArrayList<String>();
 	}
 
+	/************* Other methods ***************/
+	
+	/**
+	 * loads the task list from text file
+	 * @return TaskList object
+	 */
 	protected TaskList<Task> load() {
-		boolean isSuccessfulRead =this.readFromFile();
-		taskList = new TaskList<Task>();
+		boolean isSuccessfulRead = this.readFromFile();
+		_taskList = new TaskList<Task>();
+		
+		//return loaded task list if no errors in reading else empty taskList
 		if (isSuccessfulRead) {
 			this.generateTaskList();
-			return taskList;
+			return _taskList;
 		} else {
-			return taskList;
+			return _taskList;
 		}
 	}
+	
+	/**
+	 * saves the TaskList in text file
+	 * @param list TaskList object
+	 */
+	protected void save(TaskList<Task> list) {
+		_taskList = list;
+		this.recreateCommands();
+		this.writeToFile();
+	}
 
+	/**
+	 * reads from the text file specified by the LOLControl and saves the tasks in commandString array
+	 * @return boolean value
+	 */
 	private boolean readFromFile() {
 		try {
 
 			String command;
-			File file = new File(fileName);
+			File file = new File(_fileName);
 			FileReader fr = new FileReader(file);
 			BufferedReader br = new BufferedReader(fr);
 
-			commandStrings.clear();
+			_commandStrings.clear();
+			
+			//stores each line as string intro commandStrings array
 			while ((command = br.readLine()) != null) {
-				commandStrings.add(command);
+				_commandStrings.add(command);
 			}
 
 			br.close();
 			fr.close();
+
 			return true;
+
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
+	/**
+	 * Converts all the tasks stored as string in commadString to task objects and stores them in taskList
+	 */
 	private void generateTaskList() {
-		int numberOfTasks = commandStrings.size();
+		int numberOfTasks = _commandStrings.size();
 		Task tempTask;
 
 		for (int i = 0; i < numberOfTasks; i++) {
-			tempTask = this.createTask(commandStrings.get(i));
-			taskList.add(tempTask);
+			tempTask = this.createTask(_commandStrings.get(i));
+			_taskList.add(tempTask);
 		}
 
 	}
-
+	
+	/**
+	 * Converts one string of task to task object
+	 * @param command String form of task
+	 * @return Task object
+	 */
 	private Task createTask(String command) {
- 		String description = "", location = "", startDate = "", startTime = "", endTime = "", done = "", overdue = "", endDate="";
+		String description = "",
+				location = "", 
+				startDate = "", 
+				startTime = "", 
+				endTime = "", 
+				done = "", 
+				overdue = "", 
+				endDate = "";
 		Date startDateOb, endDateOb;
 		Time startTimeOb, endTimeOb;
 		boolean isDone, isOverdue;
 
-		
 		String[] commandComponents = command.split(CMD_SPLIT);
-		int i = commandComponents.length;
-		try{
-		description = commandComponents[0];
-		location = commandComponents[1];
-		startDate = commandComponents[2];
-		startTime = commandComponents[3];
-		endTime = commandComponents[4];
-		done = commandComponents[5];
-		overdue = commandComponents[6];
-		endDate = commandComponents[7];
-		} catch (Exception e){
+		
+		try {
+			description = commandComponents[0];
+			location = commandComponents[1];
+			startDate = commandComponents[2];
+			startTime = commandComponents[3];
+			endTime = commandComponents[4];
+			done = commandComponents[5];
+			overdue = commandComponents[6];
+			endDate = commandComponents[7];
+		} catch (Exception e) {
 			System.out.println("file not in correct format");
 		}
-		
-		
-		System.out.println(i + " " + description +"l"+ location+"d"+ startDate+"strt"+ startTime +"end"+endTime+" "+done+" "+ overdue + "enddate" + endDate);
 
 		startTimeOb = getTime(startTime);
 		endTimeOb = getTime(endTime);
@@ -112,39 +152,52 @@ public class StorageOperations {
 		endDateOb = getDate(endDate);
 		isDone = Boolean.parseBoolean(done);
 		isOverdue = Boolean.parseBoolean(overdue);
-		
-		Task task = new Task(description, location, startDateOb, startTimeOb, endTimeOb);
+
+		Task task = new Task(description, location, startDateOb, startTimeOb,
+				endTimeOb);
 		task.setIsDone(isDone);
 		task.setIsOverdue(isOverdue);
-		if(location.equals("null"))
+		if (location.equals("null"))
 			task.setLocation(null);
 		task.setEndDate(endDateOb);
 		return task;
-		/* catch (Exception e){
-			return null;
-		} */
-		
 	}
 
+	/**
+	 * This function converts the date written in the format of dd/mm/yy to a
+	 * Date class objects and return it.
+	 * 
+	 * @param String date
+	 * @return Date object
+	 */
 	private Date getDate(String date) {
-		if (!date.equals("null")){
+		if (!date.equals("null")) {
 			String[] dateComponents = date.split("/");
 			int day, month, year;
-			day=month=year=0;
-			try{
-			day = Integer.parseInt(dateComponents[0]);
-			month = Integer.parseInt(dateComponents[1]);
-			year = Integer.parseInt(dateComponents[2]);
+			day = month = year = 0;
+
+			try {
+				day = Integer.parseInt(dateComponents[0]);
+				month = Integer.parseInt(dateComponents[1]);
+				year = Integer.parseInt(dateComponents[2]);
 			} catch (Exception e) {
 				System.out.println("date not in correct format");
 			}
-			if(day!=0 && month != 0 && year != 0){
+
+			if (day != 0 && month != 0 && year != 0) {
 				return new Date(day, month, year);
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * This function converts the time string to Time class object.
+	 * 
+	 * @param String
+	 *            time
+	 * @return Time object
+	 */
 	private Time getTime(String time) {
 		if (!time.equals("null")) {
 			return new Time(time);
@@ -152,20 +205,17 @@ public class StorageOperations {
 			return null;
 	}
 
-	protected void save(TaskList<Task> list) {
-		taskList = list;
-		this.recreateCommands();
-		this.writeToFile();
-	}
 
 	private void recreateCommands() {
-		int numberOfTasks = taskList.size();
+		int numberOfTasks = _taskList.size();
 		String command;
 
-		commandStrings.clear();
+		_commandStrings.clear();
+
+		// storing each task as a String line in commandStrings array
 		for (int i = 0; i < numberOfTasks; i++) {
-			command = generateCommand(taskList.get(i));
-			commandStrings.add(command);
+			command = generateCommand(_taskList.get(i));
+			_commandStrings.add(command);
 
 		}
 
@@ -177,20 +227,30 @@ public class StorageOperations {
 		try {
 			String description = task.getTaskDescription();
 			String location = task.getTaskLocation();
+			
 			Date startDateOb = task.getTaskDueDate();
 			String startDate = null;
-			if (startDateOb != null)
+			if (startDateOb != null){
 				startDate = startDateOb.toString2();
+			}
+			
 			String endTime = null;
 			String startTime = null;
 			Time endTimeOb = task.getEndTime();
 			Time startTimeOb = task.getStartTime();
-			if (endTimeOb != null)
+			
+			if (endTimeOb != null){
 				endTime = endTimeOb.getFormat24hr();
-			if (startTimeOb != null)
+			}
+				
+			if (startTimeOb != null){
 				startTime = startTimeOb.getFormat24hr();
+			}
+			
 			String done = task.getIsDone() ? "true" : "false";
 			String overdue = task.getIsOverdue() ? "true" : "false";
+			
+			
 			Date endDateOb = task.getEndDate();
 			String endDate = null;
 			if (endDateOb != null)
@@ -236,11 +296,11 @@ public class StorageOperations {
 
 	private void writeToFile() {
 		try {
-			FileWriter fw = new FileWriter(fileName);
+			FileWriter fw = new FileWriter(_fileName);
 			BufferedWriter bw = new BufferedWriter(fw);
 
-			while (commandStrings.size() != 0) {
-				bw.write(commandStrings.remove(0) + NEW_LINE);
+			while (_commandStrings.size() != 0) {
+				bw.write(_commandStrings.remove(0) + NEW_LINE);
 			}
 
 			bw.close();

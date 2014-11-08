@@ -6,7 +6,7 @@ package io;
 import lol.Task;
 import lol.TaskList;
 /**
- * @author owner
+ * @author aviral
  *
  */
 
@@ -19,6 +19,12 @@ public class StorageFacade implements Storage {
 		this.fileName = fileName;
 		operations = new StorageOperations(this.fileName);
 	}
+	
+	/**
+	 * Singleton object
+	 * @param fileName
+	 * @return StorageFacade Object
+	 */
     public static StorageFacade getInstance(String fileName){
     	if(instance==null){
     		instance = new StorageFacade(fileName);
@@ -26,10 +32,18 @@ public class StorageFacade implements Storage {
     	return instance;
 	}
     
+    /**
+     * Facade function to load task list
+     * @return TaskList
+     */
     public TaskList<Task> loadTasks(){
     	return operations.load();
     }
     
+    /**
+     * Facade function to save task list
+     * @param TaskList
+     */
     public void saveTasks(TaskList<Task> list){
     	operations.save(list);
     	

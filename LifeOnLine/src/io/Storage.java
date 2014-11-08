@@ -6,7 +6,7 @@ package io;
 import lol.TaskList;
 import lol.Task;
 /**
- * @author owner
+ * @author aviral
  *
  */
 public interface Storage {
