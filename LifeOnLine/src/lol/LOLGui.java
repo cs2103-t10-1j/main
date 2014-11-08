@@ -59,7 +59,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		}
 
 		//*************Setting up the GUI****************//
-		
+
 		final JFrame frame = new JFrame("LOL - LifeOnLine");
 		frame.setBackground(new Color(3, 97, 148));
 		frame.getContentPane().setForeground(new Color(47, 79, 79));
@@ -279,7 +279,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		inputTF.requestFocus();
-		
+
 		//*********End of setting up the GUI***********//
 
 		final Timer timer = new Timer(Constants.REFRESH_TIME,
@@ -472,9 +472,8 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	@Override
 	public void onHotKey(int arg0) {
 		// TODO Auto-generated method stub
-
 	}
-	
+
 	/**
 	 * enable the user to choose the below panels (params) by pressing tab and showing
 	 * them in bolder border
@@ -485,9 +484,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	 * @param mainDisplayTP3
 	 */
 	private void enableTabKeyToChoosePanels(final JTextField inputTF, final JTextPane mainDisplayTP1, final JTextPane mainDisplayTP2, final JTextPane mainDisplayTP3, final JButton alertButton){
-		
-		
-		
 		inputTF.addFocusListener(new FocusAdapter() {
 			Border original = inputTF.getBorder();
 
@@ -495,7 +491,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			public void focusGained(FocusEvent e) {
 				inputTF.setBorder(Constants.inputTFFocusBorder);
 			}
-			
+
 			@Override
 			public void focusLost(FocusEvent e) {
 				inputTF.setBorder(original);
@@ -509,7 +505,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			public void focusGained(FocusEvent e) {
 				mainDisplayTP1.setBorder(Constants.displayPanelFocusBorder);
 			}
-			
+
 			@Override
 			public void focusLost(FocusEvent e) {
 				mainDisplayTP1.setBorder(original);
@@ -523,7 +519,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			public void focusGained(FocusEvent e) {
 				mainDisplayTP2.setBorder(Constants.displayPanelFocusBorder);
 			}
-			
+
 			@Override
 			public void focusLost(FocusEvent e) {
 				mainDisplayTP2.setBorder(original);
@@ -537,21 +533,21 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			public void focusGained(FocusEvent e) {
 				mainDisplayTP3.setBorder(Constants.displayPanelFocusBorder);
 			}
-			
+
 			@Override
 			public void focusLost(FocusEvent e) {
 				mainDisplayTP3.setBorder(original);
 			}
 		});
-		
+
 		alertButton.addFocusListener(new FocusAdapter() {
 			Border original = alertButton.getBorder();
-			
+
 			@Override
 			public void focusGained(FocusEvent e){
 				alertButton.setBorder(Constants.alertButtonFocusBorder);
 			}
-			
+
 			@Override
 			public void focusLost(FocusEvent e){
 				alertButton.setBorder(original);

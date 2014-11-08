@@ -338,17 +338,13 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		mainDisplayTP3.setCaretPosition(0);
 	}
 
-	/** Handle the key typed event from the text field. */
-	public void keyTyped(KeyEvent e) {
-		;
-	}
-
-	/** Handle the key-pressed event from the text field. */
-	public void keyPressed(KeyEvent e) {
-		;
-	}
-
-	/** Handle the key-released event from the text field. */
+	/** 
+	 * Handle the key-released event from the text field.
+	 * Will display previously entered user input when press up arrow key
+	 * 
+	 * And can navigate through different previously entered user input using up and down
+	 * arrow keys. 
+	 */
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 			if(!commands.isEmpty()){
@@ -370,5 +366,15 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 				}
 			}
 		}
+	}
+	
+	/** Handle the key typed event from the text field. */
+	public void keyTyped(KeyEvent e) {
+		//none
+	}
+
+	/** Handle the key-pressed event from the text field. */
+	public void keyPressed(KeyEvent e) {
+		//none
 	}
 }
