@@ -146,7 +146,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		mainDisplayTP1.setBounds(250, 35, 243, 345);
 		mainDisplayTP1.setEditable(false);
 		mainDisplayTP1.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-		mainDisplayTP1.setFont(Constants.TREBUCHET_16);
+		mainDisplayTP1.setFont(Constants.CALIBRI_16);
 		DefaultCaret caret1 = (DefaultCaret) mainDisplayTP1.getCaret();
 		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		frame.getContentPane().add(mainDisplayTP1);
@@ -157,7 +157,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		mainDisplayTP2.setEditable(false);
 		mainDisplayTP2.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		mainDisplayTP2.setBounds(513, 94, 203, 231);
-		mainDisplayTP2.setFont(Constants.TREBUCHET_16);
+		mainDisplayTP2.setFont(Constants.CALIBRI_16);
 		DefaultCaret caret2 = (DefaultCaret) mainDisplayTP2.getCaret();
 		caret2.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		frame.getContentPane().add(mainDisplayTP2);
@@ -168,7 +168,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		mainDisplayTP3.setBounds(20, 94, 209, 231);
 		mainDisplayTP3.setEditable(false);
 		mainDisplayTP3.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-		mainDisplayTP3.setFont(Constants.TREBUCHET_16);
+		mainDisplayTP3.setFont(Constants.CALIBRI_16);
 		DefaultCaret caret3 = (DefaultCaret) mainDisplayTP3.getCaret();
 		caret3.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		frame.getContentPane().add(mainDisplayTP3);

@@ -188,6 +188,12 @@ public class Constants {
 	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD,
 			16);
 	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
+	final static Font CALIBRI_14 = new Font("Calibri", Font.PLAIN, 14);
+	final static Font CALIBRI_BOLD_14 = new Font("Calibri", Font.BOLD,
+			14);
+	final static Font CALIBRI_BOLD_16 = new Font("Calibri", Font.BOLD,
+			16);
+	final static Font CALIBRI_16 = new Font("Calibri", Font.PLAIN, 16);
 	final static Font TAHOMA_14 = new Font("Tahoma", Font.PLAIN, 14);
 
 	final static String HEADER_OVERDUE = "Overdue Tasks";
