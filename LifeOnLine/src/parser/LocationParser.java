@@ -211,7 +211,25 @@ public class LocationParser {
 		if (isIndexOutOfBounds(index)) {
 			return null;
 		}
-		int nextKeywordIndex = getIndexOfNextReservedWord(index + 2);
+		String stringToCheck = getUserInput().substring(index);
+		int nextSpaceIndex = stringToCheck.indexOf(' ');
+		
+		int nextSpaceIndexInOriginalString;
+		
+		if (nextSpaceIndex == Constants.NOT_FOUND) {
+			nextSpaceIndexInOriginalString = Constants.NOT_FOUND;
+		} else {
+			nextSpaceIndexInOriginalString = nextSpaceIndex + index;
+		}
+		
+		int nextKeywordIndex;
+		
+		if (nextSpaceIndexInOriginalString == Constants.NOT_FOUND) {
+			nextKeywordIndex = Constants.NOT_FOUND;
+		} else {
+			nextKeywordIndex = getIndexOfNextReservedWord(nextSpaceIndexInOriginalString);
+		}
+		
 		if (nextKeywordIndex == Constants.NOT_FOUND) {
 			return getUserInput().substring(index).trim();
 		} else {
