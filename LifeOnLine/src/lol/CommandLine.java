@@ -23,4 +23,8 @@ public class CommandLine {
 	public Task getTask(){
 		return object;
 	}
+
+	public int getPrecedingTasks(){
+		return precedingTasks;
+	}
 }
