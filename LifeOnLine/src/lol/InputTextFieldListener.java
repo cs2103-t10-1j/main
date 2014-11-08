@@ -66,7 +66,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	}
 
 	/**
-	 * Add the required Styles that are used in the GUI to doc
+	 * Add the required Styles that are used in the GUI to doc so that it can be used in GUI
 	 * 
 	 * @param doc
 	 */
@@ -265,26 +265,30 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		FormatToString formatToString = new FormatToString();
 		formatToString.format(taskList);
 
-		addToDisplay(doc1, doc2, doc3);
+		addToDisplay(formatToString, doc1, doc2, doc3);
 	}
 	
 	/**
-	 * add task string with corresponding format to the corresponding display text panel
+	 * add task which is formatted to String in formatToString class to the corresponding doc
+	 * which belongs to its corresponding task display JTextPane
+	 * 
 	 * doc1 will be holding display details for upcoming task display panel
 	 * doc2 will be holding display details for floating task display panel
 	 * doc3 will be holding display details for overdue task display panel
 	 * 
+	 * @param formatToString
 	 * @param doc1
 	 * @param doc2
 	 * @param doc3
 	 */
-	public void addToDisplay(StyledDocument doc1, StyledDocument doc2, StyledDocument doc3){
+	public void addToDisplay(FormatToString formatToString, StyledDocument doc1, StyledDocument doc2, StyledDocument doc3){
 		try {
-			for(int j = 1; j <= FormatToString.getLinkedListNum(); j++){
-				LinkedList<StringWithFormat> strToShow = FormatToString.getLinkedList(j);
+			for(int j = 1; j <= formatToString.getLinkedListNum(); j++){
+				LinkedList<StringWithFormat> strToShow = formatToString.getLinkedList(j);
 
 				for(int i = 0; i < strToShow.size(); i++){
 					if(j==1){
+						//if the task is just added, GUI will auto scroll to the newly added task
 						if(strToShow.get(i).getIsJustAdded()){
 							mainDisplayTP1.setCaretPosition(doc1.getLength());
 						}

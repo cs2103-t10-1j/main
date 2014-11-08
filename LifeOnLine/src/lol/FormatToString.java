@@ -432,7 +432,7 @@ public class FormatToString {
 	 * @param num
 	 * @return LinkedList of strToShowX
 	 */
-	public static LinkedList<StringWithFormat> getLinkedList(int num) {
+	public LinkedList<StringWithFormat> getLinkedList(int num) {
 		switch (num) {
 		case 1:
 			if(strToShow1.isEmpty()){
@@ -474,7 +474,7 @@ public class FormatToString {
 	 * 
 	 * @return int
 	 */
-	public static int getLinkedListNum() {
+	public int getLinkedListNum() {
 		return 3;
 	}
 }
