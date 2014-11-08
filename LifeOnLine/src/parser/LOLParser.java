@@ -71,6 +71,7 @@ public class LOLParser {
 	 * @throws Exception
 	 */
 	public static Task getTask(String input) throws Exception {
+		input = cleanUp(input);
 		if (countWords(input) <= 1) {
 			return null;
 		}
