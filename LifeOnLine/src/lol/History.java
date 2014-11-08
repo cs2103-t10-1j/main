@@ -1,6 +1,7 @@
 package lol;
 
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 
@@ -53,6 +54,14 @@ public class History {
 	
 	public static void emptyRedoStack(){
 		redoStack = new Stack<CommandLine>();
+	}
+	
+	public static CommandLine peekUndoStack(){
+		try{
+			return undoStack.peek();
+		} catch (EmptyStackException e){
+			return null;
+		}
 	}
 
 }
