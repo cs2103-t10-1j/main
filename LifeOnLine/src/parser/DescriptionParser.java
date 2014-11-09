@@ -68,7 +68,8 @@ public class DescriptionParser {
 
 				// if word preceding the quote is not "at", the quote encloses a
 				// description, else it contains a location
-				if (!getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase(Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+				if (!getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase(
+						Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
 					return cleanUp(input.substring(startQuoteIndex + 1,
 							endQuoteIndex));
 				}
@@ -92,13 +93,14 @@ public class DescriptionParser {
 
 				// if word preceding the quote is not "at", the quote encloses a
 				// description, else it contains a location
-				if (!getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase(Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+				if (!getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase(
+						Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
 					return cleanUp(input.substring(firstQuoteStart + 1,
 							firstQuoteEnd));
 				}
 
-				if (!getWordBeforeQuote(secondQuoteStart)
-						.equalsIgnoreCase(Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+				if (!getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase(
+						Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
 					return cleanUp(input.substring(secondQuoteStart + 1,
 							secondQuoteEnd));
 				}
@@ -178,7 +180,8 @@ public class DescriptionParser {
 
 			// if word preceding the quote is not "at", the quote encloses a
 			// description, else it contains a location
-			if (!getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase(Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+			if (!getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
 				return cleanUp(input.substring(startQuoteIndex + 1,
 						endQuoteIndex));
 			}
@@ -202,12 +205,14 @@ public class DescriptionParser {
 
 			// if word preceding the quote is not "at", the quote encloses a
 			// description, else it contains a location
-			if (!getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase(Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+			if (!getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
 				return cleanUp(input.substring(firstQuoteStart + 1,
 						firstQuoteEnd));
 			}
 
-			if (!getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase(Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+			if (!getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
 				return cleanUp(input.substring(secondQuoteStart + 1,
 						secondQuoteEnd));
 			}
@@ -259,7 +264,8 @@ public class DescriptionParser {
 	 */
 	public static String cleanUp(String input) {
 		input = input.trim();
-		input = input.replaceAll(Constants.REGEX_ONE_OR_MORE_SPACES, Constants.SPACE);
+		input = input.replaceAll(Constants.REGEX_ONE_OR_MORE_SPACES,
+				Constants.SPACE);
 		return input;
 	}
 
@@ -288,8 +294,8 @@ public class DescriptionParser {
 	 *         before the quotation mark, an empty string is returned.
 	 */
 	public String getWordBeforeQuote(int indexQuote) {
-		String inputUntilQuote = cleanUp(getUserInput()
-				.substring(Constants.INDEX_BEGIN, indexQuote));
+		String inputUntilQuote = cleanUp(getUserInput().substring(
+				Constants.INDEX_BEGIN, indexQuote));
 		return getLastWord(inputUntilQuote);
 	}
 
@@ -348,12 +354,16 @@ public class DescriptionParser {
 			}
 			String wordsWithinQuotes = input.substring(startQuoteIndex + 1,
 					endQuoteIndex);
-			String stringToRemove = Constants.DOUBLE_QUOTE + wordsWithinQuotes + Constants.DOUBLE_QUOTE;
+			String stringToRemove = Constants.DOUBLE_QUOTE + wordsWithinQuotes
+					+ Constants.DOUBLE_QUOTE;
 
-			if (getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase(Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
-				stringToRemove = Constants.REGEX_AT_WITH_SPACES + stringToRemove;
+			if (getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+				stringToRemove = Constants.REGEX_AT_WITH_SPACES
+						+ stringToRemove;
 			}
-			return cleanUp(input.replaceAll(stringToRemove, Constants.EMPTY_STRING));
+			return cleanUp(input.replaceAll(stringToRemove,
+					Constants.EMPTY_STRING));
 		} else {
 			assert countDoubleQuotes == 4;
 			int firstQuoteStart = 0, firstQuoteEnd = 0, secondQuoteStart = 0, secondQuoteEnd = 0, count = 0;
@@ -377,7 +387,8 @@ public class DescriptionParser {
 			String stringToRemoveFromFirstQuotes = Constants.DOUBLE_QUOTE
 					+ wordsWithinFirstQuotes + Constants.DOUBLE_QUOTE;
 
-			if (getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase(Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+			if (getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
 				stringToRemoveFromFirstQuotes = Constants.REGEX_AT_WITH_SPACES
 						+ stringToRemoveFromFirstQuotes;
 			}
@@ -388,14 +399,16 @@ public class DescriptionParser {
 			String stringToRemoveFromSecondQuotes = Constants.DOUBLE_QUOTE
 					+ wordsWithinSecondQuotes + Constants.DOUBLE_QUOTE;
 
-			if (getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase(Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+			if (getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
 				stringToRemoveFromSecondQuotes = Constants.REGEX_AT_WITH_SPACES
 						+ stringToRemoveFromSecondQuotes;
 			}
 
 			String temp = cleanUp(input.replaceAll(
 					stringToRemoveFromFirstQuotes, Constants.EMPTY_STRING));
-			temp = cleanUp(temp.replaceAll(stringToRemoveFromSecondQuotes, Constants.EMPTY_STRING));
+			temp = cleanUp(temp.replaceAll(stringToRemoveFromSecondQuotes,
+					Constants.EMPTY_STRING));
 			return temp;
 		}
 	}

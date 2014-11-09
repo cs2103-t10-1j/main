@@ -94,6 +94,8 @@ public class Constants {
 	public static final int INDEX_1ST_LETTER = 0;
 	public static final int INDEX_2ND_LETTER = 1;
 	public static final int INDEX_2ND_PART = 1;
+	public static final int INDEX_START = 0;
+	public static final int INDEX_END = 1;
 
 	// Array/String lengths
 	public static final int LENGTH_DAY_MONTH_YEAR = 3;
@@ -203,6 +205,7 @@ public class Constants {
 	// regex
 	public static final String REGEX_ONE_OR_MORE_SPACES = "\\s+";
 	public static final String REGEX_WORD_START = "\\b";
+	public static final String REGEX_NON_DIGIT = "\\D";
 	public static final String REGEX_WORD_END = "\\b";
 	public static final String REGEX_AT_WITH_SPACES = "\\bat\\b\\s*";
 	public static final String REGEX_WORD_END_1SPACE_WORD_START = "\\b\\s\\b";
@@ -212,6 +215,9 @@ public class Constants {
 	// space
 	public static final String SPACE = " ";
 	public static final char SPACE_CHAR = ' ';
+	
+	// comma
+	public static final String COMMA = ",";
 
 	// empty string
 	public static final String EMPTY_STRING = "";

@@ -1,3 +1,9 @@
+/**
+ * This class parses individual task indexes and index ranges.
+ * 
+ * @author Tania
+ */
+
 package parser;
 
 import java.util.ArrayList;
@@ -9,6 +15,7 @@ import java.util.Set;
 import lol.Constants;
 
 public class IndexParser {
+
 	/************* Attribute ***************/
 	private String userInput;
 
@@ -52,7 +59,8 @@ public class IndexParser {
 	 */
 	public String cleanUp(String input) {
 		input = input.trim();
-		input = input.replaceAll("\\s+", " ");
+		input = input.replaceAll(Constants.REGEX_ONE_OR_MORE_SPACES,
+				Constants.SPACE);
 		return input;
 	}
 
@@ -83,7 +91,7 @@ public class IndexParser {
 	 */
 	public String removeFirstWord(String input) {
 		try {
-			return input.split(" ", 2)[1];
+			return input.split(Constants.SPACE, 2)[Constants.INDEX_2ND_PART];
 		} catch (Exception e) {
 			return null;
 		}
@@ -151,7 +159,8 @@ public class IndexParser {
 			}
 
 			int[] outputArr = removeDuplicates(buildIntArray(indexesToDelete));
-			if (outputArr.length == 1 && outputArr[0] == -1) {
+			if (outputArr.length == 1
+					&& outputArr[Constants.INDEX_BEGIN] == Constants.NOT_FOUND) {
 				return null;
 			} else {
 				return outputArr;
@@ -172,7 +181,7 @@ public class IndexParser {
 	public int[] getIndexSeparatedBySpace(String userInputWithoutCommand) {
 		try {
 			String input = cleanUp(userInputWithoutCommand);
-			String[] words = input.split(" ");
+			String[] words = input.split(Constants.SPACE);
 			int[] index = new int[words.length];
 
 			for (int i = 0; i < words.length; i++) {
@@ -197,7 +206,7 @@ public class IndexParser {
 	public int[] getIndexSeparatedByComma(String userInputWithoutCommand) {
 		try {
 			String input = cleanUp(userInputWithoutCommand);
-			String[] words = input.split(",");
+			String[] words = input.split(Constants.COMMA);
 			int[] index = new int[words.length];
 
 			for (int i = 0; i < words.length; i++) {
@@ -224,7 +233,7 @@ public class IndexParser {
 			String userInputWithoutCommand) {
 		try {
 			String input = cleanUp(userInputWithoutCommand);
-			return cleanUp(input.split(","));
+			return cleanUp(input.split(Constants.COMMA));
 		} catch (Exception e) {
 			return null;
 		}
@@ -241,9 +250,10 @@ public class IndexParser {
 	public int getStartIndex(String range) {
 		try {
 			// replace all non-digits with space
-			return getIndexSeparatedBySpace(range.replaceAll("\\D", " "))[0];
+			return getIndexSeparatedBySpace(range.replaceAll(
+					Constants.REGEX_NON_DIGIT, Constants.SPACE))[Constants.INDEX_START];
 		} catch (Exception e) {
-			return -1;
+			return Constants.NOT_FOUND;
 		}
 	}
 
@@ -258,9 +268,10 @@ public class IndexParser {
 	public int getEndIndex(String range) {
 		try {
 			// replace all non-digits with space
-			return getIndexSeparatedBySpace(range.replaceAll("\\D", " "))[1];
+			return getIndexSeparatedBySpace(range.replaceAll(
+					Constants.REGEX_NON_DIGIT, Constants.SPACE))[Constants.INDEX_END];
 		} catch (Exception e) {
-			return -1;
+			return Constants.NOT_FOUND;
 		}
 	}
 
