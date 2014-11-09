@@ -39,6 +39,18 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 	TrayClass displayTrayIcon = new TrayClass();
 	
+	final JFrame frame = new JFrame("LOL - LifeOnLine");
+	final JLabel lblToday = new JLabel("Today");
+	final JTextField inputTF = new JTextField();
+	final JLabel feedbackLabel = new JLabel();
+	final JProgressBar progressBar = new JProgressBar();
+	final JLabel progressLabel = new JLabel("Progress Bar");
+	final JTextPane mainDisplayTP1 = new JTextPane();
+	final JTextPane mainDisplayTP2 = new JTextPane();
+	final JTextPane mainDisplayTP3 = new JTextPane();
+	final JLabel labelAlert = new JLabel(LOLControl.isAlertMode?": On":": Off");
+	JButton alertButton;
+	
 	public LOLGui() {
 
 		if (!JIntellitype.isJIntellitypeSupported()) {
@@ -61,7 +73,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		//*************Setting up the GUI****************//
 
-		final JFrame frame = new JFrame("LOL - LifeOnLine");
+
 		frame.setBackground(new Color(3, 97, 148));
 		frame.getContentPane().setForeground(new Color(47, 79, 79));
 		frame.getContentPane().setBackground(new Color(217, 232, 245));
@@ -108,7 +120,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
 
-		final JTextField inputTF = new JTextField();
 		inputTF.setBounds(20, 46, 706, 30);
 		inputTF.setFont(Constants.TREBUCHET_BOLD_16);
 		panel.add(inputTF);
@@ -119,7 +130,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		panel_10.setBounds(10, 46, 17, 30);
 		panel.add(panel_10);
 
-		final JLabel feedbackLabel = new JLabel();
 		feedbackLabel.setText(Constants.MSG_WELCOME);
 		feedbackLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		feedbackLabel.setBackground(new Color(3, 97, 148));
@@ -138,7 +148,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 
-		final JProgressBar progressBar = new JProgressBar();
 		progressBar.setBounds(10, 11, 146, 14);
 		progressBar.setForeground(new Color(34, 139, 34));
 		progressBar.setStringPainted(true);
@@ -146,7 +155,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		progressBar.setMaximum(0);
 		panel_1.add(progressBar);
 
-		final JLabel progressLabel = new JLabel("Progress Bar");
 		progressLabel.setBounds(10, 21, 146, 25);
 		panel_1.add(progressLabel);
 
@@ -161,7 +169,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().add(panel_7);
 
 		//upcoming panel
-		final JTextPane mainDisplayTP1 = new JTextPane();
 		mainDisplayTP1.setFont(Constants.TAHOMA_14);
 		mainDisplayTP1.setBounds(250, 35, 243, 345);
 		mainDisplayTP1.setEditable(false);
@@ -172,7 +179,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().add(mainDisplayTP1);
 
 		//tasks with no date panel
-		final JTextPane mainDisplayTP2 = new JTextPane();
 		mainDisplayTP2.setFont(Constants.TAHOMA_14);
 		mainDisplayTP2.setEditable(false);
 		mainDisplayTP2.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
@@ -183,7 +189,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().add(mainDisplayTP2);
 
 		//overdue tasks panel
-		final JTextPane mainDisplayTP3 = new JTextPane();
 		mainDisplayTP3.setFont(Constants.TAHOMA_14);
 		mainDisplayTP3.setBounds(20, 94, 209, 231);
 		mainDisplayTP3.setEditable(false);
@@ -213,7 +218,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().add(digitalClock);
 		digitalClock.setForeground(new Color(220, 20, 60));
 
-		final JLabel lblToday = new JLabel("Today");
 		lblToday.setFont(Constants.TAHOMA_14);
 		lblToday.setBounds(250, 10, 104, 23);
 		frame.getContentPane().add(lblToday);
@@ -268,11 +272,10 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		blockButton.setBounds(10, 11, 109, 23);
 		panel_2.add(blockButton);*/
 
-		final JLabel labelAlert = new JLabel(LOLControl.isAlertMode?": On":": Off");
 		labelAlert.setBounds(109, 12, 49, 20);
 		panel_2.add(labelAlert);
 
-		JButton alertButton = new JButton("Alert");
+		alertButton = new JButton("Alert");
 		alertButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				LOLControl.isAlertMode = !LOLControl.isAlertMode;
@@ -429,7 +432,22 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				}
 			}
 		});
-
+		
+		popUpAnInputDialogForEmailFunctionality();
+		enableLOLToRunInBackground();
+		addFocusListenerToAllPanel();
+		inputTF.addActionListener(listener);
+		inputTF.addKeyListener(listener);
+	}
+	
+	public static void showHelpWindow(){
+		JOptionPane.showMessageDialog(null, 
+				 Constants.MSG_HELP_INFO, 
+				 Constants.MSG_WELCOME_HELP, 
+				 JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	private void enableLOLToRunInBackground(){
 		MenuItem restoreItem = TrayClass.trayIcon.getPopupMenu().getItem(0);
 
 		restoreItem.addActionListener(new ActionListener() {
@@ -463,19 +481,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				isFocus = false;
 			}
 		});
-
-		popUpAnInputDialogForEmailFunctionality();
-		addFocusListenerToAllPanel(inputTF, mainDisplayTP1, mainDisplayTP2, mainDisplayTP3, alertButton);
-
-		inputTF.addActionListener(listener);
-		inputTF.addKeyListener(listener);
-	}
-	
-	public static void showHelpWindow(){
-		JOptionPane.showMessageDialog(null, 
-				 Constants.MSG_HELP_INFO, 
-				 Constants.MSG_WELCOME_HELP, 
-				 JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
@@ -504,15 +509,13 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	}
 
 	/**
-	 * enable the user to choose the below panels (params) by pressing tab and showing
-	 * them in bolder border
-	 * 
-	 * @param inputTF
-	 * @param mainDisplayTP1
-	 * @param mainDisplayTP2
-	 * @param mainDisplayTP3
+	 * enable the user to choose the below panels by pressing tab and showing
+	 * them in bolder border:
+	 * 1. Input Text Field
+	 * 2. Three main task display panels
+	 * 3. Alert Button
 	 */
-	private void addFocusListenerToAllPanel(final JTextField inputTF, final JTextPane mainDisplayTP1, final JTextPane mainDisplayTP2, final JTextPane mainDisplayTP3, final JButton alertButton){
+	private void addFocusListenerToAllPanel(){
 		inputTF.addFocusListener(new FocusAdapter() {
 			Border original = inputTF.getBorder();
 
