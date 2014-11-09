@@ -37,12 +37,12 @@ public class TimeParser {
 
 	/************* Constructors ***************/
 	public TimeParser() {
-		this("");
+		this(Constants.EMPTY_STRING);
 	}
 
 	public TimeParser(String userInput) {
 		setUserInput(userInput);
-		setTimeKeyword("");
+		setTimeKeyword(Constants.EMPTY_STRING);
 	}
 
 	/************* Accessors ***************/
@@ -75,13 +75,14 @@ public class TimeParser {
 		DateParser dtp = new DateParser();
 
 		// at
-		Pattern pAt = Pattern.compile("\\bat\\b");
+		Pattern pAt = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_AT]);
 		Matcher mAt = pAt.matcher(getUserInput());
 
 		while (mAt.find()) {
 			String parameter = getParameterStartingAtIndex(mAt.end());
 			if (isValidTimeFormat(parameter)) {
-				setTimeKeyword("at");
+				setTimeKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT]);
 				if (isTimeRange(parameter)) {
 					return createStartTimeFromRange(parameter);
 				} else if (is24hrTime(parameter)) {
@@ -94,13 +95,14 @@ public class TimeParser {
 		}
 
 		// by
-		Pattern pBy = Pattern.compile("\\bby\\b");
+		Pattern pBy = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_BY]);
 		Matcher mBy = pBy.matcher(getUserInput());
 
 		while (mBy.find()) {
 			String parameter = getParameterStartingAtIndex(mBy.end());
 			if (isValidTimeFormat(parameter)) {
-				setTimeKeyword("by");
+				setTimeKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_BY]);
 				if (isTimeRange(parameter)) {
 					return createStartTimeFromRange(parameter);
 				} else if (is24hrTime(parameter)) {
@@ -113,13 +115,14 @@ public class TimeParser {
 		}
 
 		// from
-		Pattern pFrom = Pattern.compile("\\bfrom\\b");
+		Pattern pFrom = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_FROM]);
 		Matcher mFrom = pFrom.matcher(getUserInput());
 
 		while (mFrom.find()) {
 			String parameter = getParameterStartingAtIndex(mFrom.end());
 			if (isValidTimeFormat(parameter)) {
-				setTimeKeyword("from");
+				setTimeKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_FROM]);
 				if (isTimeRange(parameter)) {
 					return createStartTimeFromRange(parameter);
 				} else if (is24hrTime(parameter)) {
@@ -133,7 +136,7 @@ public class TimeParser {
 
 		// no keyword
 		String temp = getUserInput();
-		String[] words = temp.split(" ");
+		String[] words = temp.split(Constants.SPACE);
 
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
@@ -146,8 +149,8 @@ public class TimeParser {
 						// if it is meant to be a year, it should be preceded by
 						// day and month
 						if (i - 2 > 0
-								&& dtp.isValidDateFormat(words[i - 2] + " "
-										+ words[i - 1])) {
+								&& dtp.isValidDateFormat(words[i - 2]
+										+ Constants.SPACE + words[i - 1])) {
 							continue;
 						}
 					}
@@ -163,7 +166,8 @@ public class TimeParser {
 			String[] nextWords = getNext4Words(words, i);
 
 			if (hasTime(word, nextWords)) {
-				Pattern p = Pattern.compile(word + "\\s*" + nextWords[0]);
+				Pattern p = Pattern.compile(word
+						+ Constants.REGEX_ZERO_OR_MORE_SPACES + nextWords[0]);
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
@@ -191,44 +195,47 @@ public class TimeParser {
 		cleanUp();
 
 		// at
-		Pattern pAt = Pattern.compile("\\bat\\b");
+		Pattern pAt = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_AT]);
 		Matcher mAt = pAt.matcher(getUserInput());
 
 		while (mAt.find()) {
 			String parameter = getParameterStartingAtIndex(mAt.end());
 			if (isTimeRange(parameter)) {
-				setTimeKeyword("at");
+				setTimeKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT]);
 				return createEndTimeFromRange(parameter);
 			}
 		}
 
 		// by
-		Pattern pBy = Pattern.compile("\\bby\\b");
+		Pattern pBy = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_BY]);
 		Matcher mBy = pBy.matcher(getUserInput());
 
 		while (mBy.find()) {
 			String parameter = getParameterStartingAtIndex(mBy.end());
 			if (isTimeRange(parameter)) {
-				setTimeKeyword("by");
+				setTimeKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_BY]);
 				return createEndTimeFromRange(parameter);
 			}
 		}
 
 		// from
-		Pattern pFrom = Pattern.compile("\\bfrom\\b");
+		Pattern pFrom = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_FROM]);
 		Matcher mFrom = pFrom.matcher(getUserInput());
 
 		while (mFrom.find()) {
 			String parameter = getParameterStartingAtIndex(mFrom.end());
 			if (isTimeRange(parameter)) {
-				setTimeKeyword("from");
+				setTimeKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_FROM]);
 				return createEndTimeFromRange(parameter);
 			}
 		}
 
 		// no keyword
 		String temp = getUserInput();
-		String[] words = temp.split(" ");
+		String[] words = temp.split(Constants.SPACE);
 
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
@@ -241,7 +248,8 @@ public class TimeParser {
 			String[] nextWords = getNext4Words(words, i);
 
 			if (hasTime(word, nextWords)) {
-				Pattern p = Pattern.compile("\\b" + word + "\\b");
+				Pattern p = Pattern.compile(Constants.REGEX_WORD_START + word
+						+ Constants.REGEX_WORD_END);
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
@@ -267,12 +275,12 @@ public class TimeParser {
 			return getUserInput();
 		}
 		String keyword = getTimeKeyword();
-		String time = "";
+		String time = Constants.EMPTY_STRING;
 
 		if (keyword.isEmpty()) {
 			String temp = getUserInput();
 
-			String[] words = temp.split(" ");
+			String[] words = temp.split(Constants.SPACE);
 
 			for (int i = 0; i < words.length; i++) {
 				String word = words[i];
@@ -286,7 +294,9 @@ public class TimeParser {
 				String[] nextWords = getNext4Words(words, i);
 
 				if (hasTime(word, nextWords)) {
-					Pattern p = Pattern.compile(word + "\\s*" + nextWords[0]);
+					Pattern p = Pattern.compile(word
+							+ Constants.REGEX_ZERO_OR_MORE_SPACES
+							+ nextWords[0]);
 					Matcher m = p.matcher(temp);
 
 					if (m.find()) {
@@ -296,7 +306,8 @@ public class TimeParser {
 				}
 			}
 		} else {
-			Pattern p = Pattern.compile("\\b" + keyword + "\\b");
+			Pattern p = Pattern.compile(Constants.REGEX_WORD_START + keyword
+					+ Constants.REGEX_WORD_END);
 			Matcher m = p.matcher(getUserInput());
 
 			while (m.find()) {
@@ -308,10 +319,14 @@ public class TimeParser {
 		}
 
 		if (getTimeKeyword().isEmpty()) {
-			return cleanUp(getUserInput().replaceAll("\\b" + time + "\\b", " "));
+			return cleanUp(getUserInput().replaceAll(
+					Constants.REGEX_WORD_START + time
+							+ Constants.REGEX_WORD_END, Constants.SPACE));
 		} else {
 			return cleanUp(getUserInput().replaceAll(
-					"\\b" + keyword + "\\b\\s\\b" + time + "\\b", " "));
+					Constants.REGEX_WORD_START + keyword
+							+ Constants.REGEX_WORD_END_1SPACE_WORD_START + time
+							+ Constants.REGEX_WORD_END, Constants.SPACE));
 		}
 	}
 
@@ -450,7 +465,8 @@ public class TimeParser {
 	 */
 	public boolean isHourInRange(String hourStr) {
 		int hour = Integer.parseInt(hourStr.trim());
-		return (hour > 0) && (hour <= 12);
+		return (hour >= Constants.LIMIT_MIN_HR)
+				&& (hour <= Constants.LIMIT_MAX_12HR);
 	}
 
 	/**
@@ -462,7 +478,8 @@ public class TimeParser {
 	 */
 	public boolean isMinuteInRange(String minuteStr) {
 		int minute = Integer.parseInt(minuteStr.trim());
-		return (minute >= 0) && (minute < 60);
+		return (minute >= Constants.LIMIT_MIN_MINUTE)
+				&& (minute <= Constants.LIMIT_MAX_MINUTE);
 	}
 
 	/**
@@ -477,7 +494,10 @@ public class TimeParser {
 	 *         between 0 and 59 (inclusive), else false
 	 */
 	public boolean is24hrFormatInRange(int hour, int min) {
-		return hour >= 0 && hour < 24 && min >= 0 && min < 60;
+		return hour >= Constants.LIMIT_MIN_HR - 1
+				&& hour <= Constants.LIMIT_MAX_24HR
+				&& min >= Constants.LIMIT_MIN_MINUTE
+				&& min <= Constants.LIMIT_MAX_MINUTE;
 	}
 
 	/**
@@ -569,11 +589,14 @@ public class TimeParser {
 						.substring(0, times[Constants.INDEX_END_TIME].length()
 								- Constants.LENGTH_AM_PM);
 
-				/* For 11-1pm, 10-2pm, the start-time ampm is the opposite of end-time ampm
-				 * However, for times after 12, e.g 12-2pm, do not toggle ampm
+				/*
+				 * For 11-1pm, 10-2pm, the start-time ampm is the opposite of
+				 * end-time ampm However, for times after 12, e.g 12-2pm, do not
+				 * toggle ampm
 				 */
 				if (Float.parseFloat(startTimeWithoutAmpm) >= Float
-						.parseFloat(endTimeWithoutAmpm) && Float.parseFloat(startTimeWithoutAmpm) < 12.00) {
+						.parseFloat(endTimeWithoutAmpm)
+						&& Float.parseFloat(startTimeWithoutAmpm) < 12.00) {
 					ampm = toggleAmPm(ampm);
 				}
 				return create12hrTime(startTimeWithoutAmpm + ampm);
@@ -658,7 +681,8 @@ public class TimeParser {
 	 */
 	public String cleanUp(String input) {
 		input = input.trim();
-		input = input.replaceAll("\\s+", " ");
+		input = input.replaceAll(Constants.REGEX_ONE_OR_MORE_SPACES,
+				Constants.SPACE);
 		return input;
 	}
 
@@ -709,7 +733,7 @@ public class TimeParser {
 		input = cleanUp(input);
 		String[] words = input.split(Constants.SPACE);
 		if (words.length < n) {
-			return "";
+			return Constants.EMPTY_STRING;
 		} else {
 			return words[n - 1];
 		}
@@ -753,23 +777,38 @@ public class TimeParser {
 	 * @return time or time range as a string
 	 */
 	public String removeDescriptionAfterTimeIfAny(String time) {
-		String[] words = time.split(" ");
-		String firstWord = words[0];
-		String[] nextWords = getNext4Words(words, 0);
+		String[] words = time.split(Constants.SPACE);
+		String firstWord = words[Constants.INDEX_BEGIN];
+		String[] nextWords = getNext4Words(words, Constants.INDEX_BEGIN);
 
-		if (isValidTimeFormat(firstWord + " " + nextWords[0] + " "
-				+ nextWords[1] + " " + nextWords[2] + " " + nextWords[3])) {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " "
-					+ nextWords[2] + " " + nextWords[3]).trim();
-		} else if (isValidTimeFormat(firstWord + " " + nextWords[0] + " "
-				+ nextWords[1] + " " + nextWords[2])) {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2])
+		if (isValidTimeFormat(firstWord + Constants.SPACE
+				+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_5TH_WORD])) {
+			return (firstWord + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE + nextWords[Constants.INDEX_5TH_WORD])
 					.trim();
-		} else if (isValidTimeFormat(firstWord + " " + nextWords[0] + " "
-				+ nextWords[1])) {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1]).trim();
-		} else if (isValidTimeFormat(firstWord + " " + nextWords[0])) {
-			return (firstWord + " " + nextWords[0]).trim();
+		} else if (isValidTimeFormat(firstWord + Constants.SPACE
+				+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_4TH_WORD])) {
+			return (firstWord + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE + nextWords[Constants.INDEX_4TH_WORD])
+					.trim();
+		} else if (isValidTimeFormat(firstWord + Constants.SPACE
+				+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_3RD_WORD])) {
+			return (firstWord + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE + nextWords[Constants.INDEX_3RD_WORD])
+					.trim();
+		} else if (isValidTimeFormat(firstWord + Constants.SPACE
+				+ nextWords[Constants.INDEX_2ND_WORD])) {
+			return (firstWord + Constants.SPACE + nextWords[Constants.INDEX_2ND_WORD])
+					.trim();
 		} else if (isValidTimeFormat(firstWord)) {
 			return firstWord.trim();
 		} else {
@@ -794,7 +833,9 @@ public class TimeParser {
 			String[] nextWords = getNext4Words(words, i);
 
 			if (isReservedWord(word) || hasDate(word, nextWords)) {
-				Pattern p = Pattern.compile(word + "\\s*" + nextWords[0]);
+				Pattern p = Pattern.compile(word
+						+ Constants.REGEX_ZERO_OR_MORE_SPACES
+						+ nextWords[Constants.INDEX_2ND_WORD]);
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
@@ -823,14 +864,26 @@ public class TimeParser {
 		DateParser dp = new DateParser();
 		try {
 			return dp.isValidDateFormat(word)
-					|| dp.isValidDateFormat(word + " " + nextWords[0])
-					|| dp.isValidDateFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1])
-					|| dp.isValidDateFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2])
-					|| dp.isValidDateFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2] + " "
-							+ nextWords[3]);
+					|| dp.isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD])
+					|| dp.isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD])
+					|| dp.isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD])
+					|| dp.isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD]);
 		} catch (Exception e) {
 			return false;
 		}
@@ -850,13 +903,23 @@ public class TimeParser {
 	 */
 	public boolean hasTime(String word, String[] nextWords) {
 		try {
-			return isValidTimeFormat(word + " " + nextWords[0] + " "
-					+ nextWords[1] + " " + nextWords[2] + " " + nextWords[3])
-					|| isValidTimeFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2])
-					|| isValidTimeFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1])
-					|| isValidTimeFormat(word + " " + nextWords[0])
+			return isValidTimeFormat(word + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_5TH_WORD])
+					|| isValidTimeFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD])
+					|| isValidTimeFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD])
+					|| isValidTimeFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD])
 					|| isValidTimeFormat(word);
 		} catch (Exception e) {
 			return false;
