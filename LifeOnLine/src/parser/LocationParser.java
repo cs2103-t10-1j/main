@@ -1,7 +1,6 @@
 /**
  * This class parses the location of a task.
  * 
- * @author Tania
  */
 package parser;
 

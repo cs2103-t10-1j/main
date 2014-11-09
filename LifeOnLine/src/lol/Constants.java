@@ -43,7 +43,7 @@ public class Constants {
 	public static final String[] DICTIONARY_PARAMETERS = { "location", "loc",
 			"date", "startdate", "enddate", "sd", "ed", "time", "starttime",
 			"endtime", "st", "et" };
-
+	
 	// Months
 	public static final String[] MONTHS_SHORT = { "jan", "feb", "mar", "apr",
 			"may", "jun", "jul", "aug", "sep", "oct", "nov", "dec" };
@@ -94,8 +94,24 @@ public class Constants {
 	public static final int INDEX_1ST_LETTER = 0;
 	public static final int INDEX_2ND_LETTER = 1;
 	public static final int INDEX_2ND_PART = 1;
+	public static final int INDEX_3RD_PART = 2;
 	public static final int INDEX_START = 0;
 	public static final int INDEX_END = 1;
+	
+	// parameters
+	public static final String PARAMETER_LOCATION = "location";
+	public static final String PARAMETER_LOC = "loc";
+	public static final String PARAMETER_DATE = "date";
+	public static final String PARAMETER_START_DATE = "startdate";
+	public static final String PARAMETER_END_DATE = "enddate";
+	public static final String PARAMETER_SD = "sd";
+	public static final String PARAMETER_ED = "ed";
+	public static final String PARAMETER_TIME = "time";
+	public static final String PARAMETER_START_TIME = "starttime";
+	public static final String PARAMETER_END_TIME = "endtime";
+	public static final String PARAMETER_ST = "st";
+	public static final String PARAMETER_ET = "et";
+	
 
 	// Array/String lengths
 	public static final int LENGTH_DAY_MONTH_YEAR = 3;
@@ -164,6 +180,7 @@ public class Constants {
 	public static final String FEEDBACK_VIEW_HOMESCREEN = "Displaying Home-Screen!";
 	public static final String FEEDBACK_INVALID = "That is an invalid action!";
 	public static final String FEEDBACK_INVALID_NUMBER_OF_QUOTES = "Invaild number of quotes";
+	public static final String FEEDBACK_INVALID_PARAMETERS_FOR_EDIT = "Invalid parameters for edit command";
 
 	// Switch-case
 	public static final int EMPTY_LIST = 0;
@@ -226,9 +243,14 @@ public class Constants {
 	// strings
 	public static final String STRING_ZERO = "0";
 	public static final String STRING_M_LOWERCASE = "m";
+	
+	// logging
+	public static final String LOGGER_PARSER = "LOLParser";
+	public static final String LOGGER_FILE_NAME = "logfile%g.txt";
 
 	// error messages
 	public static final String ERROR_MULTIPLE_LOCATION = "Error! More than one location.";
+	public static final String ERROR_PROCESSING = "processing error";
 
 	// below are all constants used in GUI
 	final static String LOL_NAME = "LOL - LifeOnLine";

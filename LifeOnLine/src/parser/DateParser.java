@@ -25,7 +25,6 @@
  * 4-9 Dec
  * 4 to 9 December 2015
  * 
- * @author Tania
  */
 
 package parser;

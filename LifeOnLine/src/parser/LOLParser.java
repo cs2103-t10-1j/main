@@ -1,14 +1,16 @@
 /**
- * Parses the user input and returns command name
+ * This class parses the user input and returns command name
+ * 
  * add - returns a Task object with details of task to be added
- * delete, done - returns task index
+ * delete, done - returns array of task indexes
  * edit - returns task index and Task object of the new task
  * show - returns Date object of the date specified after 'show' command
  * search - returns keywords to be searched
+ * 
  */
 package parser;
 
-//import java.util.logging.*;
+import java.util.logging.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,8 +21,8 @@ import lol.Task;
 import lol.Time;
 
 public class LOLParser {
-	// private static Logger logger = Logger.getLogger("LOLParser");
-	// static FileHandler handler;
+	private static Logger logger = Logger.getLogger(Constants.LOGGER_PARSER);
+	static FileHandler handler;
 
 	/*********** Methods to return task details ***************/
 
@@ -123,7 +125,8 @@ public class LOLParser {
 		try {
 			input = cleanUp(input);
 			if (countWords(input) <= 2) {
-				throw new Exception("Invalid parameters for edit command");
+				throw new Exception(
+						Constants.FEEDBACK_INVALID_PARAMETERS_FOR_EDIT);
 			}
 
 			String originalInput = input;
@@ -132,7 +135,7 @@ public class LOLParser {
 			String inputWithoutCommandAndIndex = cleanUp(removeFirst2Words(input));
 			Task newTask = task;
 
-			String[] words = inputWithoutCommandAndIndex.split(" ");
+			String[] words = inputWithoutCommandAndIndex.split(Constants.SPACE);
 			// if the user wants to delete parameters
 			if (containsCommand(words, Constants.DICTIONARY_DELETE)) {
 				for (int i = 0; i < words.length - 1; i++) {
@@ -147,44 +150,44 @@ public class LOLParser {
 										words[index])) {
 							switch (words[index]) {
 
-							case "location":
-							case "loc":
+							case Constants.PARAMETER_LOCATION:
+							case Constants.PARAMETER_LOC:
 								newTask.setLocation(null);
 								break;
 
-							case "date":
+							case Constants.PARAMETER_DATE:
 								newTask.setDueDate(null);
 								newTask.setEndDate(null);
 								newTask.setStartTime(null);
 								newTask.setEndTime(null);
 								break;
 
-							case "startdate":
-							case "sd":
+							case Constants.PARAMETER_START_DATE:
+							case Constants.PARAMETER_SD:
 								newTask.setDueDate(null);
 								newTask.setEndDate(null);
 								newTask.setStartTime(null);
 								newTask.setEndTime(null);
 								break;
 
-							case "enddate":
-							case "ed":
+							case Constants.PARAMETER_END_DATE:
+							case Constants.PARAMETER_ED:
 								newTask.setEndDate(null);
 								break;
 
-							case "time":
+							case Constants.PARAMETER_TIME:
 								newTask.setStartTime(null);
 								newTask.setEndTime(null);
 								break;
 
-							case "starttime":
-							case "st":
+							case Constants.PARAMETER_START_TIME:
+							case Constants.PARAMETER_ST:
 								newTask.setStartTime(null);
 								newTask.setEndTime(null);
 								break;
 
-							case "endtime":
-							case "et":
+							case Constants.PARAMETER_END_TIME:
+							case Constants.PARAMETER_ET:
 								newTask.setEndTime(null);
 								break;
 
@@ -223,7 +226,7 @@ public class LOLParser {
 			if (startDate != null) {
 				newTask.setDueDate(startDate);
 			}
-			
+
 			if (endDate != null) {
 				newTask.setEndDate(endDate);
 			}
@@ -248,7 +251,7 @@ public class LOLParser {
 
 			return newTask;
 		} catch (Exception e) {
-			throw new Exception("Invalid parameters for edit command");
+			throw new Exception(Constants.FEEDBACK_INVALID_PARAMETERS_FOR_EDIT);
 		}
 	}
 
@@ -263,13 +266,13 @@ public class LOLParser {
 	 */
 	public static int getTaskIndex(String input) {
 		try {
-			// handler = new FileHandler("logfile%g.txt", true);
-			// logger.addHandler(handler);
-			// handler.setFormatter(new SimpleFormatter());
-			// logger.log(Level.INFO, "going to start processing");
-			return Integer.parseInt(input.split(" ")[1]);
+			handler = new FileHandler(Constants.LOGGER_FILE_NAME, true);
+			logger.addHandler(handler);
+			handler.setFormatter(new SimpleFormatter());
+			return Integer
+					.parseInt(input.split(Constants.SPACE)[Constants.INDEX_2ND_PART]);
 		} catch (Exception e) {
-			// logger.log(Level.WARNING, "processing error", e);
+			logger.log(Level.WARNING, Constants.ERROR_PROCESSING, e);
 			return -1;
 		}
 	}
@@ -348,7 +351,7 @@ public class LOLParser {
 	 */
 	public static int countWords(String input) {
 		input = cleanUp(input);
-		return input.split(" ").length;
+		return input.split(Constants.SPACE).length;
 	}
 
 	/**
@@ -360,7 +363,8 @@ public class LOLParser {
 	 */
 	public static String cleanUp(String input) {
 		input = input.trim();
-		input = input.replaceAll("\\s+", " ");
+		input = input.replaceAll(Constants.REGEX_ONE_OR_MORE_SPACES,
+				Constants.SPACE);
 		return input;
 	}
 
@@ -373,7 +377,7 @@ public class LOLParser {
 	 */
 	public static String removeFirstWord(String input) {
 		try {
-			return input.split(" ", 2)[1];
+			return input.split(Constants.SPACE, 2)[Constants.INDEX_2ND_PART];
 		} catch (Exception e) {
 			return null;
 		}
@@ -388,7 +392,7 @@ public class LOLParser {
 	 */
 	public static String removeFirst2Words(String input) {
 		try {
-			return input.split(" ", 3)[2];
+			return input.split(Constants.SPACE, 3)[Constants.INDEX_3RD_PART];
 		} catch (Exception e) {
 			return input;
 		}
@@ -403,7 +407,7 @@ public class LOLParser {
 	 */
 	public static String getFirstWord(String input) {
 		try {
-			return input.split(" ", 2)[0];
+			return input.split(Constants.SPACE, 2)[Constants.INDEX_BEGIN];
 		} catch (Exception e) {
 			return input;
 		}
@@ -461,13 +465,15 @@ public class LOLParser {
 		// Delete the 'delete' keywords
 		for (int i = 0; i < Constants.DICTIONARY_DELETE.length; i++) {
 			String word = Constants.DICTIONARY_DELETE[i];
-			input = cleanUp(input.replaceAll("\\b" + word + "\\b", ""));
+			input = cleanUp(input.replaceAll(Constants.REGEX_WORD_START + word
+					+ Constants.REGEX_WORD_END, Constants.EMPTY_STRING));
 		}
 
 		// Delete parameters
 		for (int i = 0; i < Constants.DICTIONARY_PARAMETERS.length; i++) {
 			String word = Constants.DICTIONARY_PARAMETERS[i];
-			input = cleanUp(input.replaceAll("\\b" + word + "\\b", ""));
+			input = cleanUp(input.replaceAll(Constants.REGEX_WORD_START + word
+					+ Constants.REGEX_WORD_END, Constants.EMPTY_STRING));
 		}
 		return input;
 	}
@@ -496,7 +502,7 @@ public class LOLParser {
 
 		return originalInput.substring(start, end);
 	}
-	
+
 	/**
 	 * Removes double quotes, words within double quotes and the preceding
 	 * keyword "at" if any
@@ -510,7 +516,7 @@ public class LOLParser {
 		input = cleanUp(input);
 
 		int countDoubleQuotes = countNumberOfDoubleQuotes(input);
-		Pattern p = Pattern.compile("\"");
+		Pattern p = Pattern.compile(Constants.DOUBLE_QUOTE);
 		Matcher m = p.matcher(input);
 
 		if (countDoubleQuotes == 0) {
@@ -528,12 +534,16 @@ public class LOLParser {
 			}
 			String wordsWithinQuotes = input.substring(startQuoteIndex + 1,
 					endQuoteIndex);
-			String stringToRemove = "\"" + wordsWithinQuotes + "\"";
+			String stringToRemove = Constants.DOUBLE_QUOTE + wordsWithinQuotes
+					+ Constants.DOUBLE_QUOTE;
 
-			if (getWordBeforeQuote(startQuoteIndex, input).equalsIgnoreCase("at")) {
-				stringToRemove = "\\bat\\b\\s*" + stringToRemove;
+			if (getWordBeforeQuote(startQuoteIndex, input).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+				stringToRemove = Constants.REGEX_AT_WITH_SPACES
+						+ stringToRemove;
 			}
-			return cleanUp(input.replaceAll(stringToRemove, ""));
+			return cleanUp(input.replaceAll(stringToRemove,
+					Constants.EMPTY_STRING));
 		} else {
 			assert countDoubleQuotes == 4;
 			int firstQuoteStart = 0, firstQuoteEnd = 0, secondQuoteStart = 0, secondQuoteEnd = 0, count = 0;
@@ -554,40 +564,44 @@ public class LOLParser {
 			// first 2 double quotes
 			String wordsWithinFirstQuotes = input.substring(
 					firstQuoteStart + 1, firstQuoteEnd);
-			String stringToRemoveFromFirstQuotes = "\""
-					+ wordsWithinFirstQuotes + "\"";
+			String stringToRemoveFromFirstQuotes = Constants.DOUBLE_QUOTE
+					+ wordsWithinFirstQuotes + Constants.DOUBLE_QUOTE;
 
-			if (getWordBeforeQuote(firstQuoteStart, input).equalsIgnoreCase("at")) {
-				stringToRemoveFromFirstQuotes = "\\bat\\b\\s*"
+			if (getWordBeforeQuote(firstQuoteStart, input).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+				stringToRemoveFromFirstQuotes = Constants.REGEX_AT_WITH_SPACES
 						+ stringToRemoveFromFirstQuotes;
 			}
 
 			// next 2 double quotes
 			String wordsWithinSecondQuotes = input.substring(
 					secondQuoteStart + 1, secondQuoteEnd);
-			String stringToRemoveFromSecondQuotes = "\""
-					+ wordsWithinSecondQuotes + "\"";
+			String stringToRemoveFromSecondQuotes = Constants.DOUBLE_QUOTE
+					+ wordsWithinSecondQuotes + Constants.DOUBLE_QUOTE;
 
-			if (getWordBeforeQuote(secondQuoteStart, input).equalsIgnoreCase("at")) {
-				stringToRemoveFromSecondQuotes = "\\bat\\b\\s*"
+			if (getWordBeforeQuote(secondQuoteStart, input).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+				stringToRemoveFromSecondQuotes = Constants.REGEX_AT_WITH_SPACES
 						+ stringToRemoveFromSecondQuotes;
 			}
 
 			String temp = cleanUp(input.replaceAll(
-					stringToRemoveFromFirstQuotes, ""));
-			temp = cleanUp(temp.replaceAll(stringToRemoveFromSecondQuotes, ""));
+					stringToRemoveFromFirstQuotes, Constants.EMPTY_STRING));
+			temp = cleanUp(temp.replaceAll(stringToRemoveFromSecondQuotes,
+					Constants.EMPTY_STRING));
 			return temp;
 		}
 	}
-	
+
 	/**
 	 * Returns the number of double quotes(") in the userInput
 	 * 
-	 * @param input  userInput
+	 * @param input
+	 *            userInput
 	 * @return number of double quotes(") in the userInput
 	 */
 	public static int countNumberOfDoubleQuotes(String input) {
-		Pattern p = Pattern.compile("\"");
+		Pattern p = Pattern.compile(Constants.DOUBLE_QUOTE);
 		Matcher m = p.matcher(input);
 
 		int count = 0;
@@ -596,23 +610,24 @@ public class LOLParser {
 		}
 		return count;
 	}
-	
+
 	/**
 	 * Returns the word immediately before the quotation mark whose index is
 	 * specified
 	 * 
 	 * @param indexQuote
 	 *            index of quotation mark
-	 * @param input  user input
+	 * @param input
+	 *            user input
 	 * @return word immediately before the quotation mark. If there are no words
 	 *         before the quotation mark, an empty string is returned.
 	 */
 	public static String getWordBeforeQuote(int indexQuote, String input) {
-		String inputUntilQuote = cleanUp(input
-				.substring(0, indexQuote));
+		String inputUntilQuote = cleanUp(input.substring(Constants.INDEX_BEGIN,
+				indexQuote));
 		return getLastWord(inputUntilQuote);
 	}
-	
+
 	/**
 	 * Returns the last word of a string
 	 * 
@@ -623,16 +638,16 @@ public class LOLParser {
 	public static String getLastWord(String str) {
 		try {
 			str = cleanUp(str);
-			int indexOfLastSpace = str.lastIndexOf(' ');
+			int indexOfLastSpace = str.lastIndexOf(Constants.SPACE_CHAR);
 
-			if (indexOfLastSpace >= 0) {
+			if (indexOfLastSpace >= Constants.LIMIT_ZERO) {
 				return str.substring(indexOfLastSpace).trim();
 			} else {
-				assert indexOfLastSpace == -1;
+				assert indexOfLastSpace == Constants.NOT_FOUND;
 				return str;
 			}
 		} catch (Exception e) {
-			return "";
+			return Constants.EMPTY_STRING;
 		}
 	}
 }

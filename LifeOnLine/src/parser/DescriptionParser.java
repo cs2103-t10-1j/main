@@ -1,7 +1,6 @@
 /**
  * This class parses the description of a task.
  * 
- * @author Tania
  */
 
 package parser;

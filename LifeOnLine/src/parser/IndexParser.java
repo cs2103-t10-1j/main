@@ -1,7 +1,6 @@
 /**
  * This class parses individual task indexes and index ranges.
  * 
- * @author Tania
  */
 
 package parser;
