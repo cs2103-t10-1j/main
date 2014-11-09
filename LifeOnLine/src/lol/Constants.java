@@ -311,6 +311,38 @@ public class Constants {
 	final static String MSG_WELCOME = "Welcome to LOL!";
 	final static String MSG_EMAIL_EXAMPLE = "example@example.com";
 	
+	//message used for Help Popup window
+	final static String MSG_WELCOME_HELP = "Help";
+	final static String TAB = "           ";
+	final static String MSG_HELP_INFO = "LOL can have a task with description, date, date range, time, time range and location.\n"
+			+ "Whereby all of the mentioned parameters can be interchanged.\n\n"
+			+ "Below are all the available functions of LOL:\n"
+			+ "1. Add task\n"
+			+ TAB + "add <description> <date> <time> <location>\n"
+			+ TAB + "Example : Add buy milk on friday at 9am at Fair Price\n"
+			+ "2. Delete task\n"
+			+ TAB + "delete <task id number>\n"
+			+ TAB + "Example : delete 4\n"
+			+ "3. Edit task\n"
+			+ TAB + "edit <task id number> <one parameter that you want to edit>\n"
+			+ TAB + "Example : Edit 2 at 9pm\n"
+			+ "4. Search for keywords (in description and location)\n"
+			+ TAB + "search <keywords>\n"
+			+ TAB + "Example : search milk\n"
+			+ "5. Show tasks with certain date/month and overdue/archive\n"
+			+ TAB + "show <date/ month/ overdue/ archive>\n"
+			+ TAB + "Example : show january\n"
+			+ "6. Mark a task as done\n"
+			+ TAB + "done <task id number>\n"
+			+ "7. Mark a done task as undone\n"
+			+ TAB + "undone <task id number>\n"
+			+ "8. Undo\n"
+			+ TAB + "Type \"undo\" to undo the last action\n"
+			+ "9. Redo\n"
+			+ TAB + "Type \"redo\" to redo the last undo action\n"
+			+ "10. Exit\n"
+			+ TAB + "Type \"exit\" to exit LOL";
+			
 	final static String MSG_LOL_IS_RUNNING = "LOL is Already Running!" ;
 	final static String MSG_RESTORE = "CTRL + L to Restore";
 	final static String MSG_ERROR = "Error occured";
@@ -323,5 +355,6 @@ public class Constants {
 	final static String LOLEmailPasswd = "lifeonline99";
 	final static String LOLEmailHost = "smtp.gmail.com";
 	final static String LOLEmailPort = "587";
-	
 }
+
+
