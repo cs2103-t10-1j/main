@@ -404,6 +404,9 @@ public class LOLGui extends JFrame implements HotkeyListener {
 					inputStr = Constants.COMMAND_NOT_DONE + " "+ inputStr;
 					refreshGUI(listener, timer, inputStr);
 				}
+				else if(aIdentifier == 10){
+					showHelpWindow(); 
+				}
 			}
 
 			private void refreshGUI(InputTextFieldListener listener, Timer timer, String inputStr) {
@@ -466,6 +469,13 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		inputTF.addActionListener(listener);
 		inputTF.addKeyListener(listener);
+	}
+	
+	public static void showHelpWindow(){
+		JOptionPane.showMessageDialog(null, 
+				 Constants.MSG_HELP_INFO, 
+				 Constants.MSG_WELCOME_HELP, 
+				 JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
