@@ -64,7 +64,7 @@ public class LocationParserTest {
 	public void testCountNumberOfAt() {
 		LocationParser lp = new LocationParser(
 				"add buy pizza at clementi on 23 oct at 10am");
-		assertEquals(2, lp.countNumberOfAt("add buy pizza at clementi on 23 oct at 10am"));
+		assertEquals(2, lp.countNumberOfAt());
 	}
 
 	@Test

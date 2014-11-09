@@ -124,8 +124,8 @@ public class DateParserTest {
 	@Test
 	public void testCreateDate() {
 		DateParser dp = new DateParser();
-		assertEquals(new Date(31, 10, 15), dp.createDate("31 oct"));
-		assertEquals(new Date(31, 10, 15), dp.createDate("31/10"));
+		assertEquals(new Date(31, 10, 14), dp.createDate("31 oct"));
+		assertEquals(new Date(31, 10, 14), dp.createDate("31/10"));
 		assertEquals(null, dp.createDate("abcde"));
 	}
 
