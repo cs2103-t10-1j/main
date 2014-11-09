@@ -39,6 +39,7 @@ public class Constants {
 	public static final String[] DICTIONARY_UNDO = { "undo" };
 	public static final String[] DICTIONARY_REDO = { "redo" };
 	public static final String[] DICTIONARY_VIEW_HOMESCREEN = { "home", "h" };
+	public static final String[] DICTIONARY_HELP = { "help" };
 	public static final String[] DICTIONARY_EXIT = { "exit", "ex" };
 	public static final String[] DICTIONARY_PARAMETERS = { "location", "loc",
 			"date", "startdate", "enddate", "sd", "ed", "time", "starttime",
@@ -70,6 +71,7 @@ public class Constants {
 	public static final String COMMAND_DONE = "done";
 	public static final String COMMAND_NOT_DONE = "undone";
 	public static final String COMMAND_VIEW_HOMESCREEN = "home";
+	public static final String COMMAND_HELP = "help";
 	public static final String COMMAND_EXIT = "exit";
 	public static final String COMMAND_INVALID = "invalid command";
 
