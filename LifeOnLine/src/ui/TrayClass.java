@@ -44,7 +44,7 @@ public class TrayClass {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null,
-						"Life on Line\nVersion: 0.2");
+						"LifeonLine\nVersion: 0.5");
 			}
 		});
 
