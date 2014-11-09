@@ -10,7 +10,7 @@
  */
 package parser;
 
-import java.util.logging.*;
+//import java.util.logging.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,8 +21,8 @@ import lol.Task;
 import lol.Time;
 
 public class LOLParser {
-	private static Logger logger = Logger.getLogger(Constants.LOGGER_PARSER);
-	static FileHandler handler;
+	//private static Logger logger = Logger.getLogger(Constants.LOGGER_PARSER);
+	//static FileHandler handler;
 
 	/*********** Methods to return task details ***************/
 
@@ -268,14 +268,14 @@ public class LOLParser {
 	 */
 	public static int getTaskIndex(String input) {
 		try {
-			handler = new FileHandler(Constants.LOGGER_FILE_NAME, true);
-			logger.addHandler(handler);
-			handler.setFormatter(new SimpleFormatter());
+			//handler = new FileHandler(Constants.LOGGER_FILE_NAME, true);
+			//logger.addHandler(handler);
+			//handler.setFormatter(new SimpleFormatter());
 			return Integer
 					.parseInt(input.split(Constants.SPACE)[Constants.INDEX_2ND_PART]);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, Constants.ERROR_PROCESSING, e);
-			return -1;
+			//logger.log(Level.WARNING, Constants.ERROR_PROCESSING, e);
+			return Constants.NOT_FOUND;
 		}
 	}
 
