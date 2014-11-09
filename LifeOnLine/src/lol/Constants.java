@@ -252,7 +252,7 @@ public class Constants {
 	
 	// logging
 	public static final String LOGGER_PARSER = "LOLParser";
-	public static final String LOGGER_FILE_NAME = "logfile%g.txt";
+	public static final String LOGGER_FILE_NAME = "C:\\ParserLogFile%g.txt";
 
 	// error messages
 	public static final String ERROR_MULTIPLE_LOCATION = "Error! More than one location.";
