@@ -24,6 +24,9 @@ public class Constants {
 	public static final String SEPARATOR_DOT = "\\.";
 	public static final String SEPARATOR_TO = " to ";
 	public static final String SEPARATOR_DASH = "-";
+	
+	// double quote
+	public static final String DOUBLE_QUOTE = "\"";
 
 	// Dictionaries
 	public static final String[] DICTIONARY_ADD = { "add", "a" };
@@ -90,6 +93,7 @@ public class Constants {
 	public static final int INDEX_5TH_WORD = 3;
 	public static final int INDEX_1ST_LETTER = 0;
 	public static final int INDEX_2ND_LETTER = 1;
+	public static final int INDEX_2ND_PART = 1;
 
 	// Array/String lengths
 	public static final int LENGTH_DAY_MONTH_YEAR = 3;
@@ -157,6 +161,7 @@ public class Constants {
 	public static final String FEEDBACK_REDO_FAILURE = "Nothing to redo!";
 	public static final String FEEDBACK_VIEW_HOMESCREEN = "Displaying Home-Screen!";
 	public static final String FEEDBACK_INVALID = "That is an invalid action!";
+	public static final String FEEDBACK_INVALID_NUMBER_OF_QUOTES = "Invaild number of quotes";
 
 	// Switch-case
 	public static final int EMPTY_LIST = 0;
@@ -199,6 +204,7 @@ public class Constants {
 	public static final String REGEX_ONE_OR_MORE_SPACES = "\\s+";
 	public static final String REGEX_WORD_START = "\\b";
 	public static final String REGEX_WORD_END = "\\b";
+	public static final String REGEX_AT_WITH_SPACES = "\\bat\\b\\s*";
 	public static final String REGEX_WORD_END_1SPACE_WORD_START = "\\b\\s\\b";
 	public static final String REGEX_WORD_END_SPACES_WORD_START = "\\b\\s*\\b";
 	public static final String[] REGEX_KEYWORDS = { "\\bat\\b", "\\bon\\b", "\\bby\\b", "\\bfrom\\b" };
