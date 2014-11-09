@@ -135,6 +135,11 @@ public class Constants {
 	public static final int LIMIT_MAX_2DIGIT_YEAR = 99;
 	public static final int LIMIT_MIN_4DIGIT_YEAR = 2010;
 	public static final int LIMIT_MAX_4DIGIT_YEAR = 2099;
+	public static final int LIMIT_MIN_MINUTE = 0;
+	public static final int LIMIT_MAX_MINUTE = 59;
+	public static final int LIMIT_MIN_HR = 1;
+	public static final int LIMIT_MAX_12HR = 12;
+	public static final int LIMIT_MAX_24HR = 23;
 
 	// Feedback Strings
 	public static final String QUOTE = "\"";
@@ -221,6 +226,7 @@ public class Constants {
 
 	// regex
 	public static final String REGEX_ONE_OR_MORE_SPACES = "\\s+";
+	public static final String REGEX_ZERO_OR_MORE_SPACES = "\\s*";
 	public static final String REGEX_WORD_START = "\\b";
 	public static final String REGEX_NON_DIGIT = "\\D";
 	public static final String REGEX_WORD_END = "\\b";
