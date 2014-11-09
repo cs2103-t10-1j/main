@@ -281,19 +281,12 @@ public class FormatToString {
 	 * @param task
 	 */
 	private void formatAsTask(int i, Task task) {
-		String description = task.getTaskDescription();
-		Time dueStartTime = task.getStartTime();
-		Time dueEndTime = task.getEndTime();
-		String location = task.getTaskLocation();
-		boolean isDone = task.getIsDone();
-		boolean isJustAdded = task.getIsJustAdded();
-
 		strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK, Constants.FORMAT_NONE));
 		strToShowTemp.add(new StringWithFormat(numbering(i), Constants.FORMAT_NUMBER));
 
-		addDescription(description, isDone, isJustAdded);
-		addTime(dueStartTime, dueEndTime, isDone);
-		addLocation(location, isDone);
+		addDescription(task);
+		addTime(task);
+		addLocation(task);
 	}
 
 	/**
@@ -303,10 +296,14 @@ public class FormatToString {
 	 * @param isDone
 	 * @param isJustAdded
 	 */
-	private void addDescription(String description, boolean isDone, boolean isJustAdded){
+	private void addDescription(Task task){
+		boolean isDone = task.getIsDone();
+		boolean isJustAdded = task.getIsJustAdded();
+		String description = task.getTaskDescription();
+		
 		if (isDone) {
 			strToShowTemp.add(new StringWithFormat(description, Constants.FORMAT_DONE));
-			strToShowTemp.add(new StringWithFormat("   \u2713", Constants.FORMAT_TICK));
+			strToShowTemp.add(new StringWithFormat(Constants.GREEN_TICK, Constants.FORMAT_TICK));
 		} 
 		else if(isJustAdded){
 			StringWithFormat strWithFormat = new StringWithFormat(description, Constants.FORMAT_IS_JUST_ADDED);
@@ -325,33 +322,36 @@ public class FormatToString {
 	 * @param dueEndTime
 	 * @param isDone
 	 */
-	private void addTime(Time dueStartTime, Time dueEndTime, boolean isDone){
+	private void addTime(Task task){
+		Time dueStartTime = task.getStartTime();
+		Time dueEndTime = task.getEndTime();
+		boolean isDone = task.getIsDone();
+		
 		if (dueStartTime != null && dueEndTime != null) {
 			if(isDone){
 				String time = timeStr(dueStartTime, dueEndTime);
 
-				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + "      \u25D5", Constants.FORMAT_DONE));
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_TIME, Constants.FORMAT_DONE));
 				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_DONE));
 			}
 			else{
 				String time = timeStr(dueStartTime, dueEndTime);
 
-				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + "      \u25D5", Constants.FORMAT_TIME));
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_TIME, Constants.FORMAT_TIME));
 				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_NONE));
 			}
 		} 
 		else if (dueStartTime != null) {
 			if(isDone){
 				String time = timeStr(dueStartTime);
-				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + "      \u25D5", Constants.FORMAT_DONE));
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_TIME, Constants.FORMAT_DONE));
 				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_DONE));
 			}
 			else{
 				String time = timeStr(dueStartTime);
-				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + "      \u25D5", Constants.FORMAT_TIME));
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_TIME, Constants.FORMAT_TIME));
 				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_NONE));
 			}
-
 		}
 	}
 
@@ -361,16 +361,19 @@ public class FormatToString {
 	 * @param location
 	 * @param isDone
 	 */
-	private void addLocation(String location, boolean isDone){
+	private void addLocation(Task task){
+		boolean isDone = task.getIsDone();
+		String location = task.getTaskLocation();
+		
 		if (location != null) {
 			if(isDone){
 				location = locationStr(location);
-				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + "      @", Constants.FORMAT_DONE));
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_LOCATION, Constants.FORMAT_DONE));
 				strToShowTemp.add(new StringWithFormat(location, Constants.FORMAT_DONE));	
 			}
 			else{
 				location = locationStr(location);
-				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + "      @", Constants.FORMAT_LOCATION));
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_LOCATION, Constants.FORMAT_LOCATION));
 				strToShowTemp.add(new StringWithFormat(location, Constants.FORMAT_NONE));
 			}
 		}
@@ -425,7 +428,6 @@ public class FormatToString {
 	 * @return String
 	 */
 	private static String dateFormatAsHeader(Date dueDate) {
-		// should somehow change to dueDate.toString() method to lower coupling
 		DateParser dp = new DateParser();
 		String dayOfTheWeek = dp.getDayOfTheWeek(dueDate);
 		return dayOfTheWeek + " " + dueDate.toString();

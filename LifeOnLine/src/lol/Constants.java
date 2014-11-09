@@ -261,8 +261,6 @@ public class Constants {
 	public static final String ERROR_PROCESSING = "processing error";
 
 	// below are all constants used in GUI
-	final static String LOL_NAME = "LOL - LifeOnLine";
-	
 	final static Color DARK_ORANGE = new Color(253, 101, 0);
 	final static Color PURPLE = new Color(204, 0, 204);
 	final static Color BG = new Color(0, 129, 72);
@@ -270,19 +268,19 @@ public class Constants {
 	final static Color MEDIUM_BLUE = new Color(82, 161, 204);
 
 	final static Font TREBUCHET_14 = new Font("Trebuchet MS", Font.PLAIN, 14);
-	final static Font TREBUCHET_BOLD_14 = new Font("Trebuchet MS", Font.BOLD,
-			14);
-	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD,
-			16);
+	final static Font TREBUCHET_BOLD_14 = new Font("Trebuchet MS", Font.BOLD, 14);
+	final static Font TREBUCHET_BOLD_16 = new Font("Trebuchet MS", Font.BOLD, 16);
 	final static Font TREBUCHET_16 = new Font("Trebuchet MS", Font.PLAIN, 16);
 	final static Font CALIBRI_14 = new Font("Calibri", Font.PLAIN, 14);
-	final static Font CALIBRI_BOLD_14 = new Font("Calibri", Font.BOLD,
-			14);
-	final static Font CALIBRI_BOLD_16 = new Font("Calibri", Font.BOLD,
-			16);
+	final static Font CALIBRI_BOLD_14 = new Font("Calibri", Font.BOLD, 14);
+	final static Font CALIBRI_BOLD_16 = new Font("Calibri", Font.BOLD, 16);
 	final static Font CALIBRI_16 = new Font("Calibri", Font.PLAIN, 16);
 	final static Font TAHOMA_14 = new Font("Tahoma", Font.PLAIN, 14);
-
+	
+	final static String LOL_NAME = "LOL - LifeOnLine";
+	final static String TODAY = "Today";
+	final static String PROGRESS_BAR = "Progress Bar";
+	
 	final static String HEADER_OVERDUE = "Overdue Tasks";
 	final static String HEADER_FLOATING = "Tasks With No date \n";
 	final static String HEADER_UPCOMING = "Upcoming Tasks";
@@ -302,6 +300,10 @@ public class Constants {
 	final static String FORMAT_DONE = "done";
 	final static String FORMAT_IS_JUST_ADDED = "is just added";
 	
+	final static String BULLET_TIME = "      \u25D5";
+	final static String BULLET_LOCATION = "      @";
+	final static String GREEN_TICK = "   \u2713";
+	
 	final static Border DISPLAY_PANEL_FOCUS_BORDER = BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createLineBorder(Color.BLACK));
 	final static Border INPUT_TF_FOCUS_BORDER = BorderFactory.createLoweredBevelBorder();
 	final static Border ALERT_BUTTON_FOCUS_BORDER = BorderFactory.createRaisedBevelBorder();
@@ -314,15 +316,16 @@ public class Constants {
 
 	final static int IMPOSSIBLE_ARRAYLIST_INDEX = -1;
 	
-	//message for LOL still run in background
+	//message for LOL still running in background
 	final static String MSG_BACKGROUND_TITLE = "Hey,";
 	final static String MSG_BACKGROUND_CONTENT = "LOL is still running in the background!";
+	
 	//message used in small pop up window for email functionality
 	final static String MSG_PLEASE_ENTER_EMAIL = "Please enter you email id to receive alerts in your inbox.";
 	final static String MSG_WELCOME = "Welcome to LOL!";
 	final static String MSG_EMAIL_EXAMPLE = "example@example.com";
 	
-	//message used for Help Popup window
+	//message used for Help pop up window
 	final static String MSG_WELCOME_HELP = "Help";
 	final static String TAB = "           ";
 	final static String MSG_HELP_INFO = "LOL can have a task with description, date, date range, time, time range and location.\n"
@@ -354,11 +357,12 @@ public class Constants {
 			+ "10. Exit\n"
 			+ TAB + "Type \"exit\" to exit LOL";
 			
+	// Tray icon display messages
 	final static String MSG_LOL_IS_RUNNING = "LOL is Already Running!" ;
 	final static String MSG_RESTORE = "CTRL + L to Restore";
 	final static String MSG_ERROR = "Error occured";
 
-	// separator between today's tasks and upcoming tasks in gui
+	// Separator between today's tasks and upcoming tasks in gui
 	final static String GUI_SEPARATOR = "===========================";
 	
 	//LOLEmail configurations

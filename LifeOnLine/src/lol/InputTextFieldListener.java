@@ -80,7 +80,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * 
 	 * @param doc
 	 */
-	public static void addStyleToDoc(StyledDocument doc) {
+	private static void addStyleToDoc(StyledDocument doc) {
 		Style style = doc.addStyle(Constants.FORMAT_HEADER_FLOATING, null);
 		StyleConstants.setFontSize(style, 18);
 		StyleConstants.setBold(style, true);
@@ -284,7 +284,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * 
 	 * @param taskList
 	 */
-	public void showInMainDisplayTP(TaskList<Task> taskList) {
+	private void showInMainDisplayTP(TaskList<Task> taskList) {
 		FormatToString formatToString = new FormatToString();
 		formatToString.format(taskList);
 
@@ -305,7 +305,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * @param doc2
 	 * @param doc3
 	 */
-	public void addToDisplay(FormatToString formatToString,
+	private void addToDisplay(FormatToString formatToString,
 			StyledDocument doc1, StyledDocument doc2, StyledDocument doc3) {
 		try {
 			for (int j = 1; j <= formatToString.getLinkedListNum(); j++) {

@@ -39,12 +39,12 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 	TrayClass displayTrayIcon = new TrayClass();
 
-	final JFrame frame = new JFrame("LOL - LifeOnLine");
-	final JLabel lblToday = new JLabel("Today");
+	final JFrame frame = new JFrame(Constants.LOL_NAME);
+	final JLabel lblToday = new JLabel(Constants.TODAY);
 	final JTextField inputTF = new JTextField();
 	final JLabel feedbackLabel = new JLabel();
 	final JProgressBar progressBar = new JProgressBar();
-	final JLabel progressLabel = new JLabel("Progress Bar");
+	final JLabel progressLabel = new JLabel(Constants.PROGRESS_BAR);
 	final JTextPane mainDisplayTP1 = new JTextPane();
 	final JTextPane mainDisplayTP2 = new JTextPane();
 	final JTextPane mainDisplayTP3 = new JTextPane();
@@ -71,11 +71,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			System.exit(1);
 		}
 
-		//*************Setting up the GUI****************//
-
 		setUpGUI();
-
-		//*********End of setting up the GUI***********//
 
 		final Timer timer = new Timer(Constants.REFRESH_TIME,
 				new ActionListener() {
@@ -207,7 +203,10 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		inputTF.addActionListener(listener);
 		inputTF.addKeyListener(listener);
 	}
-
+	
+	/** 
+	 * Set up all the components that are needed in LOL's GUI
+	 */
 	private void setUpGUI(){
 		frame.setBackground(new Color(3, 97, 148));
 		frame.getContentPane().setForeground(new Color(47, 79, 79));
