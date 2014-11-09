@@ -405,23 +405,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 					refreshGUI(listener, timer, inputStr);
 				}
 				else if(aIdentifier == 10){
-					/*
-					// create a simple jpanel
-				    JPanel panel = new JPanel();
-				    JTextArea TA = new JTextArea();
-				    panel.add(TA);
-				    TA.setText("help info");
-				     
-				    // display the jpanel in a joptionpane dialog, using showMessageDialog
-				    JFrame frame = new JFrame("JOptionPane showMessageDialog component example");
-				    frame.pack();
-				    JOptionPane.showMessageDialog(frame, panel);
-				    */
-					
-					 JOptionPane.showMessageDialog(null, 
-							 Constants.MSG_HELP_INFO, 
-							 Constants.MSG_WELCOME_HELP, 
-							 JOptionPane.INFORMATION_MESSAGE);
+					showHelpWindow(); 
 				}
 			}
 
@@ -485,6 +469,13 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		inputTF.addActionListener(listener);
 		inputTF.addKeyListener(listener);
+	}
+	
+	public void showHelpWindow(){
+		JOptionPane.showMessageDialog(null, 
+				 Constants.MSG_HELP_INFO, 
+				 Constants.MSG_WELCOME_HELP, 
+				 JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
