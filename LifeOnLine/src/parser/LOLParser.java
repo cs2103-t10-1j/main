@@ -81,7 +81,7 @@ public class LOLParser {
 		DescriptionParser dp = new DescriptionParser(input);
 		LocationParser lp = new LocationParser(input);
 		DateParser dtp = new DateParser(input);
-		TimeParser tp = new TimeParser(input);
+		TimeParser tp = new TimeParser(removeWordsWithinQuotes(input));
 
 		String description = dp.getDescription();
 		String location = lp.getLocation();
@@ -495,5 +495,144 @@ public class LOLParser {
 		}
 
 		return originalInput.substring(start, end);
+	}
+	
+	/**
+	 * Removes double quotes, words within double quotes and the preceding
+	 * keyword "at" if any
+	 * 
+	 * @param input
+	 *            String from which words within quotes are to be removed
+	 * @return input without double quotes, words within double quotes and the
+	 *         preceding keyword "at" if any
+	 */
+	public static String removeWordsWithinQuotes(String input) {
+		input = cleanUp(input);
+
+		int countDoubleQuotes = countNumberOfDoubleQuotes(input);
+		Pattern p = Pattern.compile("\"");
+		Matcher m = p.matcher(input);
+
+		if (countDoubleQuotes == 0) {
+			return input;
+		} else if (countDoubleQuotes == 2) {
+			int startQuoteIndex = 0, endQuoteIndex = 0, count = 0;
+			while (m.find()) {
+				count++;
+				if (count == 1) {
+					startQuoteIndex = m.start();
+				} else {
+					assert count == 2;
+					endQuoteIndex = m.start();
+				}
+			}
+			String wordsWithinQuotes = input.substring(startQuoteIndex + 1,
+					endQuoteIndex);
+			String stringToRemove = "\"" + wordsWithinQuotes + "\"";
+
+			if (getWordBeforeQuote(startQuoteIndex, input).equalsIgnoreCase("at")) {
+				stringToRemove = "\\bat\\b\\s*" + stringToRemove;
+			}
+			return cleanUp(input.replaceAll(stringToRemove, ""));
+		} else {
+			assert countDoubleQuotes == 4;
+			int firstQuoteStart = 0, firstQuoteEnd = 0, secondQuoteStart = 0, secondQuoteEnd = 0, count = 0;
+			while (m.find()) {
+				count++;
+				if (count == 1) {
+					firstQuoteStart = m.start();
+				} else if (count == 2) {
+					firstQuoteEnd = m.start();
+				} else if (count == 3) {
+					secondQuoteStart = m.start();
+				} else {
+					assert count == 4;
+					secondQuoteEnd = m.start();
+				}
+			}
+
+			// first 2 double quotes
+			String wordsWithinFirstQuotes = input.substring(
+					firstQuoteStart + 1, firstQuoteEnd);
+			String stringToRemoveFromFirstQuotes = "\""
+					+ wordsWithinFirstQuotes + "\"";
+
+			if (getWordBeforeQuote(firstQuoteStart, input).equalsIgnoreCase("at")) {
+				stringToRemoveFromFirstQuotes = "\\bat\\b\\s*"
+						+ stringToRemoveFromFirstQuotes;
+			}
+
+			// next 2 double quotes
+			String wordsWithinSecondQuotes = input.substring(
+					secondQuoteStart + 1, secondQuoteEnd);
+			String stringToRemoveFromSecondQuotes = "\""
+					+ wordsWithinSecondQuotes + "\"";
+
+			if (getWordBeforeQuote(secondQuoteStart, input).equalsIgnoreCase("at")) {
+				stringToRemoveFromSecondQuotes = "\\bat\\b\\s*"
+						+ stringToRemoveFromSecondQuotes;
+			}
+
+			String temp = cleanUp(input.replaceAll(
+					stringToRemoveFromFirstQuotes, ""));
+			temp = cleanUp(temp.replaceAll(stringToRemoveFromSecondQuotes, ""));
+			return temp;
+		}
+	}
+	
+	/**
+	 * Returns the number of double quotes(") in the userInput
+	 * 
+	 * @param input  userInput
+	 * @return number of double quotes(") in the userInput
+	 */
+	public static int countNumberOfDoubleQuotes(String input) {
+		Pattern p = Pattern.compile("\"");
+		Matcher m = p.matcher(input);
+
+		int count = 0;
+		while (m.find()) {
+			count++;
+		}
+		return count;
+	}
+	
+	/**
+	 * Returns the word immediately before the quotation mark whose index is
+	 * specified
+	 * 
+	 * @param indexQuote
+	 *            index of quotation mark
+	 * @param input  user input
+	 * @return word immediately before the quotation mark. If there are no words
+	 *         before the quotation mark, an empty string is returned.
+	 */
+	public static String getWordBeforeQuote(int indexQuote, String input) {
+		String inputUntilQuote = cleanUp(input
+				.substring(0, indexQuote));
+		return getLastWord(inputUntilQuote);
+	}
+	
+	/**
+	 * Returns the last word of a string
+	 * 
+	 * @param str
+	 *            string whose last word is to be returned
+	 * @return last word of the string
+	 */
+	public static String getLastWord(String str) {
+		try {
+			str = cleanUp(str);
+			int indexOfLastSpace = str.lastIndexOf(' ');
+
+			if (indexOfLastSpace >= 0) {
+				return str.substring(indexOfLastSpace).trim();
+			} else {
+				assert indexOfLastSpace == -1;
+				return str;
+			}
+		} catch (Exception e) {
+			return "";
+		}
 	}
 }

@@ -102,11 +102,12 @@ public class LocationParser {
 			// either no double quotes in input or no location found within
 			// double quotes
 			input = removeWordsWithinQuotes(input);
+			setUserInput(input);
 
 			TimeParser tp = new TimeParser();
 			DateParser dp = new DateParser();
 
-			if (countNumberOfAt() == 1) {
+			if (countNumberOfAt(input) == 1) {
 				String parameter = getParameterStartingAtIndex(getIndexOfAt()
 						+ Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT]
 								.length() + 1);
@@ -181,14 +182,15 @@ public class LocationParser {
 	}
 
 	/**
-	 * Counts number of "at" in userInput
+	 * Counts number of "at" in input
 	 * 
+	 * @param input  string in which number of 'at's are to be counted
 	 * @return number of "at" in userInput
 	 */
-	public int countNumberOfAt() {
+	public int countNumberOfAt(String input) {
 		Pattern p = Pattern
 				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_AT]);
-		Matcher m = p.matcher(getUserInput());
+		Matcher m = p.matcher(input);
 
 		int count = 0;
 		while (m.find()) {
