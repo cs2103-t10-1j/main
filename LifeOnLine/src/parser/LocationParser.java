@@ -1,5 +1,7 @@
 /**
- * This class parses the location of an input.
+ * This class parses the location of a task.
+ * 
+ * @author Tania
  */
 package parser;
 
@@ -39,7 +41,7 @@ public class LocationParser {
 			String input = getUserInput();
 
 			// check for double quotes
-			Pattern p = Pattern.compile("\"");
+			Pattern p = Pattern.compile(Constants.DOUBLE_QUOTE);
 			Matcher m = p.matcher(input);
 
 			int countDoubleQuotes = countNumberOfDoubleQuotes();
@@ -47,7 +49,7 @@ public class LocationParser {
 			// only location and description can be enclosed in double quotes
 			// more than 4 quotes and odd number of quotes are invalid
 			if (countDoubleQuotes % 2 == 1 || countDoubleQuotes > 4) {
-				throw new Exception("Invaild number of quotes");
+				throw new Exception(Constants.FEEDBACK_INVALID_NUMBER_OF_QUOTES);
 			}
 
 			if (countDoubleQuotes == 2) { // one parameter within quotes
@@ -62,9 +64,12 @@ public class LocationParser {
 					}
 				}
 
-				// if word preceding the quote is "at", the quote encloses a
-				// location, else it contains a description
-				if (getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase("at")) {
+				/*
+				 * if word preceding the quote is "at", the quote encloses a
+				 * location, else it contains a description
+				 */
+				if (getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase(
+						Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
 					return cleanUp(input.substring(startQuoteIndex + 1,
 							endQuoteIndex));
 				}
@@ -86,21 +91,27 @@ public class LocationParser {
 					}
 				}
 
-				// if word preceding the quote is "at", the quote encloses a
-				// location, else it contains a description
-				if (getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase("at")) {
+				/*
+				 * if word preceding the quote is "at", the quote encloses a
+				 * location, else it contains a description
+				 */
+				if (getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase(
+						Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
 					return cleanUp(input.substring(firstQuoteStart + 1,
 							firstQuoteEnd));
 				}
 
-				if (getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase("at")) {
+				if (getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase(
+						Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
 					return cleanUp(input.substring(secondQuoteStart + 1,
 							secondQuoteEnd));
 				}
 			}
 
-			// either no double quotes in input or no location found within
-			// double quotes
+			/*
+			 * either no double quotes in input or no location found within
+			 * double quotes
+			 */
 			input = removeWordsWithinQuotes(input);
 			setUserInput(input);
 
@@ -148,8 +159,9 @@ public class LocationParser {
 	 */
 	public String getUserInputWithoutLocation() {
 		cleanUp();
-		String output = userInput.replaceAll("\\bat\\b\\s\\b" + getLocation()
-				+ "\\b", Constants.EMPTY_STRING);
+		String output = userInput.replaceAll(
+				Constants.REGEX_AT_SPACE_WORD_START + getLocation()
+						+ Constants.REGEX_WORD_END, Constants.EMPTY_STRING);
 		return cleanUp(output);
 	}
 
@@ -177,14 +189,16 @@ public class LocationParser {
 	 */
 	public String cleanUp(String input) {
 		input = input.trim();
-		input = input.replaceAll("\\s+", " ");
+		input = input.replaceAll(Constants.REGEX_ONE_OR_MORE_SPACES,
+				Constants.SPACE);
 		return input;
 	}
 
 	/**
 	 * Counts number of "at" in input
 	 * 
-	 * @param input  string in which number of 'at's are to be counted
+	 * @param input
+	 *            string in which number of 'at's are to be counted
 	 * @return number of "at" in userInput
 	 */
 	public int countNumberOfAt(String input) {
@@ -214,24 +228,24 @@ public class LocationParser {
 			return null;
 		}
 		String stringToCheck = getUserInput().substring(index);
-		int nextSpaceIndex = stringToCheck.indexOf(' ');
-		
+		int nextSpaceIndex = stringToCheck.indexOf(Constants.SPACE_CHAR);
+
 		int nextSpaceIndexInOriginalString;
-		
+
 		if (nextSpaceIndex == Constants.NOT_FOUND) {
 			nextSpaceIndexInOriginalString = Constants.NOT_FOUND;
 		} else {
 			nextSpaceIndexInOriginalString = nextSpaceIndex + index;
 		}
-		
+
 		int nextKeywordIndex;
-		
+
 		if (nextSpaceIndexInOriginalString == Constants.NOT_FOUND) {
 			nextKeywordIndex = Constants.NOT_FOUND;
 		} else {
 			nextKeywordIndex = getIndexOfNextReservedWord(nextSpaceIndexInOriginalString);
 		}
-		
+
 		if (nextKeywordIndex == Constants.NOT_FOUND) {
 			return getUserInput().substring(index).trim();
 		} else {
@@ -254,8 +268,10 @@ public class LocationParser {
 
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
-			// find next 4 words because date and time formats can have at most
-			// 5 words
+			/*
+			 * find next 4 words because date and time formats (excluding date
+			 * range) can have at most 5 words
+			 */
 			String[] nextWords = { Constants.EMPTY_STRING,
 					Constants.EMPTY_STRING, Constants.EMPTY_STRING,
 					Constants.EMPTY_STRING };
@@ -290,9 +306,11 @@ public class LocationParser {
 
 			if (isReservedWord(word)
 					|| hasDate(word, nextWords)
-					|| (hasTime(word, nextWords) && !(word.startsWith("0") && word
-							.endsWith("m")))) {
-				Pattern p = Pattern.compile("\\b" + word + "\\b");
+					|| (hasTime(word, nextWords) && !(word
+							.startsWith(Constants.STRING_ZERO) && word
+							.endsWith(Constants.STRING_M_LOWERCASE)))) {
+				Pattern p = Pattern.compile(Constants.REGEX_WORD_START + word
+						+ Constants.REGEX_WORD_END);
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
@@ -321,14 +339,26 @@ public class LocationParser {
 		DateParser dp = new DateParser();
 		try {
 			return dp.isValidDateFormat(word)
-					|| dp.isValidDateFormat(word + " " + nextWords[0])
-					|| dp.isValidDateFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1])
-					|| dp.isValidDateFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2])
-					|| dp.isValidDateFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2] + " "
-							+ nextWords[3]);
+					|| dp.isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD])
+					|| dp.isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD])
+					|| dp.isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD])
+					|| dp.isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD]);
 		} catch (Exception e) {
 			return false;
 		}
@@ -350,14 +380,26 @@ public class LocationParser {
 		TimeParser tp = new TimeParser();
 		try {
 			return tp.isValidTimeFormat(word)
-					|| tp.isValidTimeFormat(word + " " + nextWords[0])
-					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1])
-					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2])
-					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2] + " "
-							+ nextWords[3]);
+					|| tp.isValidTimeFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD])
+					|| tp.isValidTimeFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD])
+					|| tp.isValidTimeFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD])
+					|| tp.isValidTimeFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD]);
 		} catch (Exception e) {
 			return false;
 		}
@@ -403,7 +445,7 @@ public class LocationParser {
 	 * @return true if index out of bounds, else false
 	 */
 	public boolean isIndexOutOfBounds(int index) {
-		return index < 0 || index >= getUserInput().length();
+		return index < Constants.LIMIT_ZERO || index >= getUserInput().length();
 	}
 
 	/**
@@ -431,7 +473,7 @@ public class LocationParser {
 	 * @return number of double quotes(") in the userInput
 	 */
 	public int countNumberOfDoubleQuotes() {
-		Pattern p = Pattern.compile("\"");
+		Pattern p = Pattern.compile(Constants.DOUBLE_QUOTE);
 		Matcher m = p.matcher(getUserInput());
 
 		int count = 0;
@@ -451,8 +493,8 @@ public class LocationParser {
 	 *         before the quotation mark, an empty string is returned.
 	 */
 	public String getWordBeforeQuote(int indexQuote) {
-		String inputUntilQuote = cleanUp(getUserInput()
-				.substring(0, indexQuote));
+		String inputUntilQuote = cleanUp(getUserInput().substring(
+				Constants.INDEX_BEGIN, indexQuote));
 		return getLastWord(inputUntilQuote);
 	}
 
@@ -466,16 +508,16 @@ public class LocationParser {
 	public String getLastWord(String str) {
 		try {
 			str = cleanUp(str);
-			int indexOfLastSpace = str.lastIndexOf(' ');
+			int indexOfLastSpace = str.lastIndexOf(Constants.SPACE_CHAR);
 
-			if (indexOfLastSpace >= 0) {
+			if (indexOfLastSpace >= Constants.LIMIT_ZERO) {
 				return str.substring(indexOfLastSpace).trim();
 			} else {
-				assert indexOfLastSpace == -1;
+				assert indexOfLastSpace == Constants.NOT_FOUND;
 				return str;
 			}
 		} catch (Exception e) {
-			return "";
+			return Constants.EMPTY_STRING;
 		}
 	}
 
@@ -493,7 +535,7 @@ public class LocationParser {
 		input = cleanUp(input);
 
 		int countDoubleQuotes = countNumberOfDoubleQuotes();
-		Pattern p = Pattern.compile("\"");
+		Pattern p = Pattern.compile(Constants.DOUBLE_QUOTE);
 		Matcher m = p.matcher(input);
 
 		if (countDoubleQuotes == 0) {
@@ -511,12 +553,16 @@ public class LocationParser {
 			}
 			String wordsWithinQuotes = input.substring(startQuoteIndex + 1,
 					endQuoteIndex);
-			String stringToRemove = "\"" + wordsWithinQuotes + "\"";
+			String stringToRemove = Constants.DOUBLE_QUOTE + wordsWithinQuotes
+					+ Constants.DOUBLE_QUOTE;
 
-			if (getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase("at")) {
-				stringToRemove = "\\bat\\b\\s*" + stringToRemove;
+			if (getWordBeforeQuote(startQuoteIndex).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+				stringToRemove = Constants.REGEX_AT_WITH_SPACES
+						+ stringToRemove;
 			}
-			return cleanUp(input.replaceAll(stringToRemove, ""));
+			return cleanUp(input.replaceAll(stringToRemove,
+					Constants.EMPTY_STRING));
 		} else {
 			assert countDoubleQuotes == 4;
 			int firstQuoteStart = 0, firstQuoteEnd = 0, secondQuoteStart = 0, secondQuoteEnd = 0, count = 0;
@@ -537,28 +583,31 @@ public class LocationParser {
 			// first 2 double quotes
 			String wordsWithinFirstQuotes = input.substring(
 					firstQuoteStart + 1, firstQuoteEnd);
-			String stringToRemoveFromFirstQuotes = "\""
-					+ wordsWithinFirstQuotes + "\"";
+			String stringToRemoveFromFirstQuotes = Constants.DOUBLE_QUOTE
+					+ wordsWithinFirstQuotes + Constants.DOUBLE_QUOTE;
 
-			if (getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase("at")) {
-				stringToRemoveFromFirstQuotes = "\\bat\\b\\s*"
+			if (getWordBeforeQuote(firstQuoteStart).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+				stringToRemoveFromFirstQuotes = Constants.REGEX_AT_WITH_SPACES
 						+ stringToRemoveFromFirstQuotes;
 			}
 
 			// next 2 double quotes
 			String wordsWithinSecondQuotes = input.substring(
 					secondQuoteStart + 1, secondQuoteEnd);
-			String stringToRemoveFromSecondQuotes = "\""
-					+ wordsWithinSecondQuotes + "\"";
+			String stringToRemoveFromSecondQuotes = Constants.DOUBLE_QUOTE
+					+ wordsWithinSecondQuotes + Constants.DOUBLE_QUOTE;
 
-			if (getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase("at")) {
-				stringToRemoveFromSecondQuotes = "\\bat\\b\\s*"
+			if (getWordBeforeQuote(secondQuoteStart).equalsIgnoreCase(
+					Constants.KEYWORDS[Constants.INDEX_KEYWORD_AT])) {
+				stringToRemoveFromSecondQuotes = Constants.REGEX_AT_WITH_SPACES
 						+ stringToRemoveFromSecondQuotes;
 			}
 
 			String temp = cleanUp(input.replaceAll(
-					stringToRemoveFromFirstQuotes, ""));
-			temp = cleanUp(temp.replaceAll(stringToRemoveFromSecondQuotes, ""));
+					stringToRemoveFromFirstQuotes, Constants.EMPTY_STRING));
+			temp = cleanUp(temp.replaceAll(stringToRemoveFromSecondQuotes,
+					Constants.EMPTY_STRING));
 			return temp;
 		}
 	}
@@ -572,29 +621,41 @@ public class LocationParser {
 	 * @return due date as a string
 	 */
 	public String removeDescriptionAfterTimeIfAny(String time) {
-		String[] words = time.split(" ");
-		String firstWord = words[0];
-		String[] nextWords = getNext4Words(words, 0);
+		String[] words = time.split(Constants.SPACE);
+		String firstWord = words[Constants.INDEX_BEGIN];
+		String[] nextWords = getNext4Words(words, Constants.INDEX_BEGIN);
 		TimeParser tp = new TimeParser();
 
 		if (tp.isValidTimeFormat(firstWord)
-				&& !(isPartOfTimeFormat(nextWords[0]))) {
+				&& !(isPartOfTimeFormat(nextWords[Constants.INDEX_2ND_WORD]))) {
 			return firstWord.trim();
-		} else if (tp.isValidTimeFormat(firstWord + " " + nextWords[0])
-				&& !(isPartOfTimeFormat(nextWords[1]))) {
-			return (firstWord + " " + nextWords[0]).trim();
-		} else if (tp.isValidTimeFormat(firstWord + " " + nextWords[0] + " "
-				+ nextWords[1])
-				&& !(isPartOfTimeFormat(nextWords[2]))) {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1]).trim();
-		} else if (tp.isValidTimeFormat(firstWord + " " + nextWords[0] + " "
-				+ nextWords[1] + " " + nextWords[2])
-				&& !(isPartOfTimeFormat(nextWords[3]))) {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2])
+		} else if (tp.isValidTimeFormat(firstWord + Constants.SPACE
+				+ nextWords[Constants.INDEX_2ND_WORD])
+				&& !(isPartOfTimeFormat(nextWords[Constants.INDEX_3RD_WORD]))) {
+			return (firstWord + Constants.SPACE + nextWords[Constants.INDEX_2ND_WORD])
+					.trim();
+		} else if (tp.isValidTimeFormat(firstWord + Constants.SPACE
+				+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_3RD_WORD])
+				&& !(isPartOfTimeFormat(nextWords[Constants.INDEX_4TH_WORD]))) {
+			return (firstWord + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE + nextWords[Constants.INDEX_3RD_WORD])
+					.trim();
+		} else if (tp.isValidTimeFormat(firstWord + Constants.SPACE
+				+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_4TH_WORD])
+				&& !(isPartOfTimeFormat(nextWords[Constants.INDEX_5TH_WORD]))) {
+			return (firstWord + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE + nextWords[Constants.INDEX_4TH_WORD])
 					.trim();
 		} else {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " "
-					+ nextWords[2] + " " + nextWords[3]).trim();
+			return (firstWord + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE + nextWords[Constants.INDEX_5TH_WORD])
+					.trim();
 		}
 	}
 
@@ -607,8 +668,10 @@ public class LocationParser {
 	 */
 	public boolean isPartOfTimeFormat(String word) {
 		word = word.trim();
-		return word.equalsIgnoreCase("am") || word.equalsIgnoreCase("pm")
-				|| word.equalsIgnoreCase("to") || word.equalsIgnoreCase("-");
+		return word.equalsIgnoreCase(Constants.STRING_AM)
+				|| word.equalsIgnoreCase(Constants.STRING_PM)
+				|| word.equalsIgnoreCase(Constants.SEPARATOR_TO)
+				|| word.equalsIgnoreCase(Constants.SEPARATOR_DASH);
 	}
 
 	/**
