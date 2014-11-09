@@ -9,6 +9,7 @@ import lol.CommandLine;
 import lol.Constants;
 import lol.Date;
 import lol.History;
+import lol.LOLGui;
 import lol.Task;
 import lol.TaskList;
 import lol.Time;
@@ -87,6 +88,8 @@ public class LOLControl {
 			return executeRedo(userInput);
 		case (Constants.COMMAND_VIEW_HOMESCREEN):
 			return executeHomeScreen(userInput);
+		case (Constants.COMMAND_HELP):
+			return executeHelp(userInput);
 		case (Constants.COMMAND_EXIT):
 			return executeExit(userInput);
 		default:
@@ -762,6 +765,10 @@ public class LOLControl {
 	private static String executeHomeScreen(String userInput) {
 		ControlDisplay.refreshDisplay(toDoList, storageList);
 		return showFeedback(null, Constants.COMMAND_VIEW_HOMESCREEN);
+	}
+	private static String executeHelp(String userInput) {
+		LOLGui.showHelpWindow();
+		return null;
 	}
 
 	private static String executeExit(String userInput) {
