@@ -28,7 +28,7 @@ import logic.LOLControl;
 
 @SuppressWarnings("serial")
 /**
- * Author in the descending order of contributions
+ * 
  * @author Sevin, Aviral
  *
  */
@@ -93,7 +93,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		backgroundLabel.setBackground(new Color(217, 232, 245));
 		BufferedImage img;
 		try {
-			URL url = this.getClass().getResource("/background2.jpg");
+			URL url = this.getClass().getResource("/resources/background2.jpg");
 			img = ImageIO.read(url);
 			backgroundLabel= new JLabel(new ImageIcon(img));
 			} catch (Exception e){
