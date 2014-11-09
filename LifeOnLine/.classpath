@@ -10,6 +10,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="src/lib/activation.jar"/>
 	<classpathentry kind="lib" path="src/lib/mail.jar"/>
-	<classpathentry kind="lib" path="C:/Users/owner/LOL/main/LifeOnLine/src/lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="src/lib/commons-io-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

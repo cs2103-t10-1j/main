@@ -20,6 +20,7 @@ public class Constants {
 	public static final String FILE_NAME = "LOLTaskList.txt";
 	// Separators
 	public static final String SEPARATOR = "\\\\";
+	public static final String SEPARATOR_SLASH = "/";
 	public static final String SEPARATOR_DOT = "\\.";
 	public static final String SEPARATOR_TO = " to ";
 	public static final String SEPARATOR_DASH = "-";
@@ -79,6 +80,16 @@ public class Constants {
 	public static final int INDEX_MINUTE = 1;
 	public static final int INDEX_START_TIME = 0;
 	public static final int INDEX_END_TIME = 1;
+	public static final int INDEX_START_DATE = 0;
+	public static final int INDEX_END_DATE = 1;
+	public static final int INDEX_SEPARATOR = 0;
+	public static final int INDEX_1ST_WORD = 0;
+	public static final int INDEX_2ND_WORD = 0;
+	public static final int INDEX_3RD_WORD = 1;
+	public static final int INDEX_4TH_WORD = 2;
+	public static final int INDEX_5TH_WORD = 3;
+	public static final int INDEX_1ST_LETTER = 0;
+	public static final int INDEX_2ND_LETTER = 1;
 
 	// Array/String lengths
 	public static final int LENGTH_DAY_MONTH_YEAR = 3;
@@ -92,6 +103,16 @@ public class Constants {
 	// am/pm
 	public static final String STRING_AM = "am";
 	public static final String STRING_PM = "pm";
+	
+	// number of days in a week
+	public static final int NUMBER_OF_DAYS_IN_A_WEEK = 7;
+	
+	// limits
+	public static final int LIMIT_ZERO = 0;
+	public static final int LIMIT_MIN_2DIGIT_YEAR = 10;
+	public static final int LIMIT_MAX_2DIGIT_YEAR = 99;
+	public static final int LIMIT_MIN_4DIGIT_YEAR = 2010;
+	public static final int LIMIT_MAX_4DIGIT_YEAR = 2099;
 
 	// Feedback Strings
 	public static final String QUOTE = "\"";
@@ -141,6 +162,17 @@ public class Constants {
 	public static final int EMPTY_LIST = 0;
 	public static final int LIST_SIZE_ONE = 1;
 	public static final int WORD_COUNT_ONE = 1;
+	
+	// date formats
+	public static final String DATE_FORMAT_DAY_NUM_MONTH_NUM_YEAR_LONG = "d/M/yyyy";
+	public static final String DATE_FORMAT_DAY_NUM_MONTH_NUM_YEAR_SHORT = "d/M/yy";
+	public static final String DATE_FORMAT_DAY_NUM_MONTH_LONG_YEAR_LONG = "d MMMM yyyy";
+	public static final String DATE_FORMAT_DAY_NUM_MONTH_LONG_YEAR_SHORT = "d MMMM yy";
+	public static final String DATE_FORMAT_DAY_NUM_MONTH_NUM = "d/M";
+	public static final String DATE_FORMAT_DAY_NUM_MONTH_SHORT_YEAR_LONG = "d MMM yyyy";
+	public static final String DATE_FORMAT_DAY_NUM_MONTH_SHORT_YEAR_SHORT = "d MMM yy";
+	public static final String DATE_FORMAT_DAY_NUM_MONTH_SHORT = "d MMM";
+	public static final String DATE_FORMAT_DAY_NUM_MONTH_LONG = "d MMMM";
 
 	// show parameters (LOWERCASE)
 	public static final String SHOW_OVERDUE = "overdue";
@@ -159,16 +191,28 @@ public class Constants {
 
 	// index of keywords
 	public static final int INDEX_KEYWORD_AT = 0;
+	public static final int INDEX_KEYWORD_ON = 1;
+	public static final int INDEX_KEYWORD_BY = 2;
+	public static final int INDEX_KEYWORD_FROM = 3;
 
 	// regex
 	public static final String REGEX_ONE_OR_MORE_SPACES = "\\s+";
-	public static final String[] REGEX_KEYWORDS = { "\\bat\\b" };
+	public static final String REGEX_WORD_START = "\\b";
+	public static final String REGEX_WORD_END = "\\b";
+	public static final String REGEX_WORD_END_1SPACE_WORD_START = "\\b\\s\\b";
+	public static final String REGEX_WORD_END_SPACES_WORD_START = "\\b\\s*\\b";
+	public static final String[] REGEX_KEYWORDS = { "\\bat\\b", "\\bon\\b", "\\bby\\b", "\\bfrom\\b" };
 
 	// space
 	public static final String SPACE = " ";
+	public static final char SPACE_CHAR = ' ';
 
 	// empty string
 	public static final String EMPTY_STRING = "";
+	
+	// strings
+	public static final String STRING_ZERO = "0";
+	public static final String STRING_M_LOWERCASE = "m";
 
 	// error messages
 	public static final String ERROR_MULTIPLE_LOCATION = "Error! More than one location.";

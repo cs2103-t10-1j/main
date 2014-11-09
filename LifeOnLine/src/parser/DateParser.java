@@ -12,10 +12,20 @@
  * 30 September
  * 30 Sep
  * 
- * Day of the week: Monday, Mon, Sunday, sun
- * Today, tomorrow, tmw
+ * Day of the week: Monday, Mon, Sunday, sun, etc.
+ * Today, tomorrow, tmr, tmw, tmrw
  * 
- * Month names can have 3 or more letters.
+ * Date ranges:
+ * 31 october- 5 November
+ * 31 oct 2014 to 5 Nov 2014
+ * 31/10-5/11
+ * Monday-Wed
+ * tmr-sun
+ * 4-9/12
+ * 4-9 Dec
+ * 4 to 9 December 2015
+ * 
+ * @author Tania
  */
 
 package parser;
@@ -34,7 +44,8 @@ import lol.Date;
 public class DateParser {
 	/************* Attributes ***************/
 	private String userInput;
-	private String dateKeyword; // keyword preceding date - on, by, from or no keyword
+	private String dateKeyword; // keyword preceding date - on, by, from or no
+								// keyword
 
 	/************* Constructors ***************/
 	public DateParser() {
@@ -76,16 +87,17 @@ public class DateParser {
 		String userInput = getUserInput();
 
 		// on
-		Pattern pOn = Pattern.compile("\\bon\\b");
+		Pattern pOn = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_ON]);
 		Matcher mOn = pOn.matcher(getUserInput());
 
 		while (mOn.find()) {
 			String parameter = getParameterStartingAtIndex(mOn.end());
 			if (isValidDateFormat(parameter)) {
-				setDateKeyword("on");
+				setDateKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_ON]);
 
 				if (isDateRange(parameter)) {
-					return createDatesFromRange(parameter)[0];
+					return createDatesFromRange(parameter)[Constants.INDEX_START_DATE];
 				} else {
 					return createDate(parameter);
 				}
@@ -93,16 +105,17 @@ public class DateParser {
 		}
 
 		// by
-		Pattern pBy = Pattern.compile("\\bby\\b");
+		Pattern pBy = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_BY]);
 		Matcher mBy = pBy.matcher(getUserInput());
 
 		while (mBy.find()) {
 			String parameter = getParameterStartingAtIndex(mBy.end());
 			if (isValidDateFormat(parameter)) {
-				setDateKeyword("by");
+				setDateKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_BY]);
 
 				if (isDateRange(parameter)) {
-					return createDatesFromRange(parameter)[0];
+					return createDatesFromRange(parameter)[Constants.INDEX_START_DATE];
 				} else {
 					return createDate(parameter);
 				}
@@ -110,87 +123,134 @@ public class DateParser {
 		}
 
 		// from
-		Pattern pFrom = Pattern.compile("\\bfrom\\b");
+		Pattern pFrom = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_FROM]);
 		Matcher mFrom = pFrom.matcher(userInput);
 
 		while (mFrom.find()) {
 			String parameter = getParameterStartingAtIndex(mFrom.end());
-			
+
 			if (isDateRange(parameter)) {
-				setDateKeyword("from");
-				return createDatesFromRange(parameter)[0];
+				setDateKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_FROM]);
+				return createDatesFromRange(parameter)[Constants.INDEX_START_DATE];
 			}
 		}
 
 		// no keyword
 		String temp = getUserInput();
-		String[] words = temp.split(" ");
+		String[] words = temp.split(Constants.SPACE);
 
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
-			// find next 4 words because date and time formats can have at most
-			// 5 words
+			/*
+			 * find next 4 words because date and time formats (excluding date
+			 * range) can have at most 5 words
+			 */
 			String[] nextWords = getNext4Words(words, i);
 
-			if (isValidDay(word) && !nextWords[0].equalsIgnoreCase("to")
-					&& !nextWords[0].equals("-")) {
+			if (isValidDay(word)
+					&& !nextWords[Constants.INDEX_SEPARATOR]
+							.equalsIgnoreCase(Constants.SEPARATOR_TO)
+					&& !nextWords[Constants.INDEX_SEPARATOR]
+							.equals(Constants.SEPARATOR_DASH)) {
 				return createDate(word);
 			}
 
 			/* check for date range */
 			// 1 word - 24-26/11
 			if (isDateRange(word)) {
-				return createDatesFromRange(word)[0];
+				return createDatesFromRange(word)[Constants.INDEX_START_DATE];
 			}
 			// 2 words - 24-26 nov
-			if (isDateRange(word + " " + nextWords[0])) {
-				return createDatesFromRange(word + " " + nextWords[0])[0];
+			if (isDateRange(word + " " + nextWords[Constants.INDEX_2ND_WORD])) {
+				return createDatesFromRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD])[Constants.INDEX_START_DATE];
 			}
 			// 3 words - sun - tue, 24/11 to 26/11
-			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1])) {
-				return createDatesFromRange(word + " " + nextWords[0] + " "
-						+ nextWords[1])[0];
+			if (isDateRange(word + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD])) {
+				return createDatesFromRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD])[Constants.INDEX_START_DATE];
 			}
 			// 4 words - 24 to 29 Nov
-			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-					+ " " + nextWords[2])) {
-				return createDatesFromRange(word + " " + nextWords[0] + " "
-						+ nextWords[1] + " " + nextWords[2])[0];
+			if (isDateRange(word + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_4TH_WORD])) {
+				return createDatesFromRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_4TH_WORD])[Constants.INDEX_START_DATE];
 			}
 			// 5 words - 24 Nov to 26 Nov
-			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-					+ " " + nextWords[2] + " " + nextWords[3])) {
-				return createDatesFromRange(word + " " + nextWords[0] + " "
-						+ nextWords[1] + " " + nextWords[2] + " "
-						+ nextWords[3])[0];
+			if (isDateRange(word + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_5TH_WORD])) {
+				return createDatesFromRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_5TH_WORD])[Constants.INDEX_START_DATE];
 			}
 
-			if (i + 2 < words.length) {
-				String[] words4to7 = getNext4Words(words, i + 2);
+			// more than 5 words
+			if (i + Constants.INDEX_4TH_WORD < words.length) {
+				// 4th word to 7th word
+				String[] words4to7 = getNext4Words(words, i
+						+ Constants.INDEX_4TH_WORD);
+
 				// 6 words - 24 nov 14 to 26 nov
-				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-						+ " " + nextWords[2] + " " + nextWords[3] + " "
-						+ words4to7[2])) {
-					return createDatesFromRange(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2] + " "
-							+ nextWords[3] + " " + words4to7[2])[0];
+				if (isDateRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_5TH_WORD] + Constants.SPACE
+						+ words4to7[Constants.INDEX_4TH_WORD])) {
+					return createDatesFromRange(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD]
+							+ Constants.SPACE
+							+ words4to7[Constants.INDEX_4TH_WORD])[Constants.INDEX_START_DATE];
 				}
 
 				// 7 words - 30 dec 2014 to 2 jan 2015
-				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-						+ " " + nextWords[2] + " " + nextWords[3] + " "
-						+ words4to7[2] + " " + words4to7[3])) {
-					return createDatesFromRange(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2] + " "
-							+ nextWords[3] + " " + words4to7[2] + " "
-							+ words4to7[3])[0];
+				if (isDateRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_5TH_WORD] + Constants.SPACE
+						+ words4to7[Constants.INDEX_4TH_WORD] + Constants.SPACE
+						+ words4to7[Constants.INDEX_5TH_WORD])) {
+					return createDatesFromRange(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD]
+							+ Constants.SPACE
+							+ words4to7[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ words4to7[Constants.INDEX_5TH_WORD])[Constants.INDEX_START_DATE];
 				}
 			}
-			// no date range starting from this word
 
+			// no date range starting from this word
 			if (hasDate(word, nextWords)) {
-				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
-						+ nextWords[0] + "\\b");
+				Pattern p = Pattern.compile(Constants.REGEX_WORD_START + word
+						+ Constants.REGEX_WORD_END_SPACES_WORD_START
+						+ nextWords[Constants.INDEX_2ND_WORD]
+						+ Constants.REGEX_WORD_END);
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
@@ -211,98 +271,141 @@ public class DateParser {
 		cleanUp();
 
 		// on
-		Pattern pOn = Pattern.compile("\\bon\\b");
+		Pattern pOn = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_ON]);
 		Matcher mOn = pOn.matcher(getUserInput());
 
 		while (mOn.find()) {
 			String parameter = getParameterStartingAtIndex(mOn.end());
 			if (isDateRange(parameter)) {
-				setDateKeyword("on");
-				return createDatesFromRange(parameter)[1];
+				setDateKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_ON]);
+				return createDatesFromRange(parameter)[Constants.INDEX_END_DATE];
 			}
 		}
 
 		// by
-		Pattern pBy = Pattern.compile("\\bby\\b");
+		Pattern pBy = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_BY]);
 		Matcher mBy = pBy.matcher(getUserInput());
 
 		while (mBy.find()) {
 			String parameter = getParameterStartingAtIndex(mBy.end());
 			if (isDateRange(parameter)) {
-				setDateKeyword("by");
-				return createDatesFromRange(parameter)[1];
+				setDateKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_BY]);
+				return createDatesFromRange(parameter)[Constants.INDEX_END_DATE];
 			}
 		}
 
 		// from
-		Pattern pFrom = Pattern.compile("\\bfrom\\b");
+		Pattern pFrom = Pattern
+				.compile(Constants.REGEX_KEYWORDS[Constants.INDEX_KEYWORD_FROM]);
 		Matcher mFrom = pFrom.matcher(getUserInput());
 
 		while (mFrom.find()) {
 			String parameter = getParameterStartingAtIndex(mFrom.end());
 			if (isDateRange(parameter)) {
-				setDateKeyword("from");
-				return createDatesFromRange(parameter)[1];
+				setDateKeyword(Constants.KEYWORDS[Constants.INDEX_KEYWORD_FROM]);
+				return createDatesFromRange(parameter)[Constants.INDEX_END_DATE];
 			}
 		}
 
 		// no keyword
 		String temp = getUserInput();
-		String[] words = temp.split(" ");
+		String[] words = temp.split(Constants.SPACE);
 
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
-			// find next 4 words because date and time formats can have at most
-			// 5 words
+			/*
+			 * find next 4 words because date and time formats (excluding date
+			 * range) can have at most 5 words
+			 */
 			String[] nextWords = getNext4Words(words, i);
 
 			/* check for date range */
 			// 1 word - 24-26/11
 			if (isDateRange(word)) {
-				return createDatesFromRange(word)[1];
+				return createDatesFromRange(word)[Constants.INDEX_END_DATE];
 			}
 			// 2 words - 24-26 nov
-			if (isDateRange(word + " " + nextWords[0])) {
-				return createDatesFromRange(word + " " + nextWords[0])[1];
+			if (isDateRange(word + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD])) {
+				return createDatesFromRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD])[Constants.INDEX_END_DATE];
 			}
 			// 3 words - sun - tue, 24/11 to 26/11
-			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1])) {
-				return createDatesFromRange(word + " " + nextWords[0] + " "
-						+ nextWords[1])[1];
+			if (isDateRange(word + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD])) {
+				return createDatesFromRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD])[Constants.INDEX_END_DATE];
 			}
 			// 4 words - 24 to 29 Nov
-			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-					+ " " + nextWords[2])) {
-				return createDatesFromRange(word + " " + nextWords[0] + " "
-						+ nextWords[1] + " " + nextWords[2])[1];
+			if (isDateRange(word + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_4TH_WORD])) {
+				return createDatesFromRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_4TH_WORD])[Constants.INDEX_END_DATE];
 			}
 			// 5 words - 24 Nov to 26 Nov
-			if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-					+ " " + nextWords[2] + " " + nextWords[3])) {
-				return createDatesFromRange(word + " " + nextWords[0] + " "
-						+ nextWords[1] + " " + nextWords[2] + " "
-						+ nextWords[3])[1];
+			if (isDateRange(word + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_5TH_WORD])) {
+				return createDatesFromRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_5TH_WORD])[Constants.INDEX_END_DATE];
 			}
 
-			if (i + 2 < words.length) {
-				String[] words4to7 = getNext4Words(words, i + 2);
+			// more than 5 words
+			if (i + Constants.INDEX_4TH_WORD < words.length) {
+				String[] words4to7 = getNext4Words(words, i
+						+ Constants.INDEX_4TH_WORD);
 				// 6 words - 24 nov 14 to 26 nov
-				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-						+ " " + nextWords[2] + " " + nextWords[3] + " "
-						+ words4to7[2])) {
-					return createDatesFromRange(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2] + " "
-							+ nextWords[3] + " " + words4to7[2])[1];
+				if (isDateRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_5TH_WORD] + Constants.SPACE
+						+ words4to7[Constants.INDEX_4TH_WORD])) {
+					return createDatesFromRange(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD]
+							+ Constants.SPACE
+							+ words4to7[Constants.INDEX_4TH_WORD])[Constants.INDEX_END_DATE];
 				}
 
 				// 7 words - 30 dec 2014 to 2 jan 2015
-				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-						+ " " + nextWords[2] + " " + nextWords[3] + " "
-						+ words4to7[2] + " " + words4to7[3])) {
-					return createDatesFromRange(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2] + " "
-							+ nextWords[3] + " " + words4to7[2] + " "
-							+ words4to7[3])[1];
+				if (isDateRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_5TH_WORD] + Constants.SPACE
+						+ words4to7[Constants.INDEX_4TH_WORD] + Constants.SPACE
+						+ words4to7[Constants.INDEX_5TH_WORD])) {
+					return createDatesFromRange(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD]
+							+ Constants.SPACE
+							+ words4to7[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ words4to7[Constants.INDEX_5TH_WORD])[Constants.INDEX_END_DATE];
 				}
 			}
 			// no date range starting from this word
@@ -312,7 +415,8 @@ public class DateParser {
 
 	/**
 	 * Returns the userInput without the due date and keywords preceding that
-	 * due date Example: if userInput is "add task on 6 oct", returns "add task"
+	 * due date. Example: if userInput is "add task on 6 oct", returns
+	 * "add task"
 	 * 
 	 * @return userInput without the due date and keywords preceding that due
 	 *         date
@@ -322,24 +426,26 @@ public class DateParser {
 			return getUserInput();
 		}
 		String keyword = getDateKeyword();
-		String date = "";
+		String date = Constants.EMPTY_STRING;
 
 		if (keyword.isEmpty()) {
 			String temp = getUserInput();
-			String[] words = temp.split(" ");
+			String[] words = temp.split(Constants.SPACE);
 
 			for (int i = 0; i < words.length; i++) {
 				String word = words[i];
-				
+
 				if (isValidDay(word) && getEndDate() == null) {
 					date = word.trim();
 					break;
 				}
 
-				// find next 4 words because date and time formats can have at
-				// most
-				// 5 words
+				/*
+				 * find next 4 words because date and time formats (excluding
+				 * date range) can have at most 5 words
+				 */
 				String[] nextWords = getNext4Words(words, i);
+
 				/* check for date range */
 				// 1 word - 24-26/11
 				if (isDateRange(word)) {
@@ -347,61 +453,116 @@ public class DateParser {
 					break;
 				}
 				// 2 words - 24-26 nov
-				if (isDateRange(word + " " + nextWords[0])) {
-					date = word + " " + nextWords[0];
+				if (isDateRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD])) {
+					date = word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD];
 					break;
 				}
 				// 3 words - sun - tue, 24/11 to 26/11
-				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1])) {
-					date = word + " " + nextWords[0] + " " + nextWords[1];
+				if (isDateRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD])) {
+					date = word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD];
 					break;
 				}
 				// 4 words - 24 to 29 Nov
-				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-						+ " " + nextWords[2])) {
-					date = word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2];
+				if (isDateRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_4TH_WORD])) {
+					date = word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD];
 					break;
 				}
 				// 5 words - 24 Nov to 26 Nov
-				if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-						+ " " + nextWords[2] + " " + nextWords[3])) {
-					date = word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2] + " "
-							+ nextWords[3];
+				if (isDateRange(word + Constants.SPACE
+						+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_4TH_WORD] + Constants.SPACE
+						+ nextWords[Constants.INDEX_5TH_WORD])) {
+					date = word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD];
 					break;
 				}
 
-				if (i + 2 < words.length) {
-					String[] words4to7 = getNext4Words(words, i + 2);
-					
+				// more than 5 words
+				if (i + Constants.INDEX_4TH_WORD < words.length) {
+					String[] words4to7 = getNext4Words(words, i
+							+ Constants.INDEX_4TH_WORD);
+
 					// 7 words - 30 dec 2014 to 2 jan 2015
-					if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-							+ " " + nextWords[2] + " " + nextWords[3] + " "
-							+ words4to7[2] + " " + words4to7[3])) {
-						date = word + " " + nextWords[0] + " "
-								+ nextWords[1] + " " + nextWords[2] + " "
-								+ nextWords[3] + " " + words4to7[2] + " "
-								+ words4to7[3];
-						break;
-					}
-					
-					// 6 words - 24 nov 14 to 26 nov
-					if (isDateRange(word + " " + nextWords[0] + " " + nextWords[1]
-							+ " " + nextWords[2] + " " + nextWords[3] + " "
-							+ words4to7[2])) {
-						date = word + " " + nextWords[0] + " "
-								+ nextWords[1] + " " + nextWords[2] + " "
-								+ nextWords[3] + " " + words4to7[2];
+					if (isDateRange(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD]
+							+ Constants.SPACE
+							+ words4to7[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ words4to7[Constants.INDEX_5TH_WORD])) {
+						date = word + Constants.SPACE
+								+ nextWords[Constants.INDEX_2ND_WORD]
+								+ Constants.SPACE
+								+ nextWords[Constants.INDEX_3RD_WORD]
+								+ Constants.SPACE
+								+ nextWords[Constants.INDEX_4TH_WORD]
+								+ Constants.SPACE
+								+ nextWords[Constants.INDEX_5TH_WORD]
+								+ Constants.SPACE
+								+ words4to7[Constants.INDEX_4TH_WORD]
+								+ Constants.SPACE
+								+ words4to7[Constants.INDEX_5TH_WORD];
 						break;
 					}
 
-					
+					// 6 words - 24 nov 14 to 26 nov
+					if (isDateRange(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD]
+							+ Constants.SPACE
+							+ words4to7[Constants.INDEX_4TH_WORD])) {
+						date = word + Constants.SPACE
+								+ nextWords[Constants.INDEX_2ND_WORD]
+								+ Constants.SPACE
+								+ nextWords[Constants.INDEX_3RD_WORD]
+								+ Constants.SPACE
+								+ nextWords[Constants.INDEX_4TH_WORD]
+								+ Constants.SPACE
+								+ nextWords[Constants.INDEX_5TH_WORD]
+								+ Constants.SPACE
+								+ words4to7[Constants.INDEX_4TH_WORD];
+						break;
+					}
+
 				}
 
 				if (hasDate(word, nextWords)) {
-					Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
-							+ nextWords[0] + "\\b");
+					Pattern p = Pattern.compile(Constants.REGEX_WORD_START
+							+ word + Constants.REGEX_WORD_END_SPACES_WORD_START
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.REGEX_WORD_END);
 					Matcher m = p.matcher(temp);
 
 					if (m.find()) {
@@ -412,7 +573,8 @@ public class DateParser {
 			}
 		} else {
 			// there is a keyword
-			Pattern p = Pattern.compile("\\b" + keyword + "\\b");
+			Pattern p = Pattern.compile(Constants.REGEX_WORD_START + keyword
+					+ Constants.REGEX_WORD_END);
 			Matcher m = p.matcher(getUserInput());
 
 			while (m.find()) {
@@ -424,10 +586,14 @@ public class DateParser {
 		}
 
 		if (getDateKeyword().isEmpty()) {
-			return cleanUp(getUserInput().replaceAll("\\b" + date + "\\b", " "));
+			return cleanUp(getUserInput().replaceAll(
+					Constants.REGEX_WORD_START + date
+							+ Constants.REGEX_WORD_END, Constants.SPACE));
 		} else {
 			return cleanUp(getUserInput().replaceAll(
-					"\\b" + keyword + "\\b\\s\\b" + date + "\\b", " "));
+					Constants.REGEX_WORD_START + keyword
+							+ Constants.REGEX_WORD_END_1SPACE_WORD_START + date
+							+ Constants.REGEX_WORD_END, Constants.SPACE));
 		}
 	}
 
@@ -454,11 +620,20 @@ public class DateParser {
 		List<SimpleDateFormat> dateFormats = new ArrayList<SimpleDateFormat>();
 
 		// Allowed date formats
-		dateFormats.add(new SimpleDateFormat("d/M/yyyy")); // 14/3/2014
-		dateFormats.add(new SimpleDateFormat("d/M/yy")); // 14/3/14
-		dateFormats.add(new SimpleDateFormat("d MMMM yyyy")); // 14 March 2014
-		dateFormats.add(new SimpleDateFormat("d MMMM yy")); // 14 March 14
-		dateFormats.add(new SimpleDateFormat("d/M")); // 14/3
+		dateFormats.add(new SimpleDateFormat(
+				Constants.DATE_FORMAT_DAY_NUM_MONTH_NUM_YEAR_LONG)); // 14/3/2014
+		dateFormats.add(new SimpleDateFormat(
+				Constants.DATE_FORMAT_DAY_NUM_MONTH_NUM_YEAR_SHORT)); // 14/3/14
+		dateFormats.add(new SimpleDateFormat(
+				Constants.DATE_FORMAT_DAY_NUM_MONTH_LONG_YEAR_LONG)); // 14
+																		// March
+																		// 2014
+		dateFormats.add(new SimpleDateFormat(
+				Constants.DATE_FORMAT_DAY_NUM_MONTH_LONG_YEAR_SHORT)); // 14
+																		// March
+																		// 14
+		dateFormats.add(new SimpleDateFormat(
+				Constants.DATE_FORMAT_DAY_NUM_MONTH_NUM)); // 14/3
 
 		for (SimpleDateFormat format : dateFormats) {
 			format.setLenient(false);
@@ -471,22 +646,27 @@ public class DateParser {
 		}
 
 		List<SimpleDateFormat> dateFormatsAbbreviatedMonth = new ArrayList<SimpleDateFormat>();
-		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM yyyy")); // 14
-																				// Mar
-																				// 2014
-		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM yy")); // 14
-																			// Mar
-																			// 14
-		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMM")); // 14
-																		// Mar
-		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat("d MMMM")); // 14
-																			// March
+		// 14 Mar 2014
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat(
+				Constants.DATE_FORMAT_DAY_NUM_MONTH_SHORT_YEAR_LONG));
+
+		// 14 Mar 14
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat(
+				Constants.DATE_FORMAT_DAY_NUM_MONTH_SHORT_YEAR_SHORT));
+
+		// 14 Mar
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat(
+				Constants.DATE_FORMAT_DAY_NUM_MONTH_SHORT));
+
+		// 14 March
+		dateFormatsAbbreviatedMonth.add(new SimpleDateFormat(
+				Constants.DATE_FORMAT_DAY_NUM_MONTH_LONG));
 
 		for (SimpleDateFormat format : dateFormatsAbbreviatedMonth) {
 			format.setLenient(false);
 			try {
 				format.parse(inDate.trim());
-				String month = getNthWord(inDate, 2);
+				String month = getNthWord(inDate, 2); // get the 2nd word
 				for (String fullMonthName : Constants.MONTHS_LONG) {
 					if (fullMonthName.contains(month)) {
 						return true;
@@ -511,17 +691,20 @@ public class DateParser {
 			return null;
 		}
 
-		String[] dateSlash = string.split("/"); // separated by forward-slash
+		String[] dateSlash = string.split(Constants.SEPARATOR_SLASH); // separated
+																		// by
+																		// forward-slash
 		dateSlash = cleanUp(dateSlash);
-		String[] dateSpace = string.split(" "); // separated by space
+		String[] dateSpace = string.split(Constants.SPACE); // separated by
+															// space
 		dateSpace = cleanUp(dateSpace);
 
 		// Date format 30/9/2014 or 30/9/14
 		// if the date has 3 parts
 		if (dateSlash.length == Constants.LENGTH_DAY_MONTH_YEAR) {
-			if (Integer.parseInt(dateSlash[Constants.INDEX_DAY]) < 0
-					|| Integer.parseInt(dateSlash[Constants.INDEX_MONTH]) < 0
-					|| Integer.parseInt(dateSlash[Constants.INDEX_YEAR]) < 0) {
+			if (Integer.parseInt(dateSlash[Constants.INDEX_DAY]) < Constants.LIMIT_ZERO
+					|| Integer.parseInt(dateSlash[Constants.INDEX_MONTH]) < Constants.LIMIT_ZERO
+					|| Integer.parseInt(dateSlash[Constants.INDEX_YEAR]) < Constants.LIMIT_ZERO) {
 				return null;
 			}
 			return new Date(Integer.parseInt(dateSlash[Constants.INDEX_DAY]),
@@ -535,9 +718,9 @@ public class DateParser {
 		if (dateSpace.length == Constants.LENGTH_DAY_MONTH_YEAR) {
 			// get number of month e.g 1 for jan
 			int monthNum = getMonthNum(dateSpace[Constants.INDEX_MONTH]);
-			if (Integer.parseInt(dateSpace[Constants.INDEX_DAY]) < 0
-					|| monthNum < 0
-					|| Integer.parseInt(dateSpace[Constants.INDEX_YEAR]) < 0) {
+			if (Integer.parseInt(dateSpace[Constants.INDEX_DAY]) < Constants.LIMIT_ZERO
+					|| monthNum < Constants.LIMIT_ZERO
+					|| Integer.parseInt(dateSpace[Constants.INDEX_YEAR]) < Constants.LIMIT_ZERO) {
 				return null;
 			}
 			return new Date(Integer.parseInt(dateSpace[Constants.INDEX_DAY]),
@@ -547,8 +730,8 @@ public class DateParser {
 		// Date format 30/9
 		// if the date has 2 parts
 		if (dateSlash.length == Constants.LENGTH_DAY_MONTH) {
-			if (Integer.parseInt(dateSlash[Constants.INDEX_DAY]) < 0
-					|| Integer.parseInt(dateSlash[Constants.INDEX_MONTH]) < 0) {
+			if (Integer.parseInt(dateSlash[Constants.INDEX_DAY]) < Constants.LIMIT_ZERO
+					|| Integer.parseInt(dateSlash[Constants.INDEX_MONTH]) < Constants.LIMIT_ZERO) {
 				return null;
 			}
 			return new Date(Integer.parseInt(dateSlash[Constants.INDEX_DAY]),
@@ -560,8 +743,8 @@ public class DateParser {
 		if (dateSpace.length == Constants.LENGTH_DAY_MONTH) {
 			// get number of month e.g 1 for jan
 			int monthNum = getMonthNum(dateSpace[Constants.INDEX_MONTH]);
-			if (Integer.parseInt(dateSpace[Constants.INDEX_DAY]) < 0
-					|| monthNum < 0) {
+			if (Integer.parseInt(dateSpace[Constants.INDEX_DAY]) < Constants.LIMIT_ZERO
+					|| monthNum < Constants.LIMIT_ZERO) {
 				return null;
 			}
 			return new Date(Integer.parseInt(dateSpace[Constants.INDEX_DAY]),
@@ -586,12 +769,12 @@ public class DateParser {
 			// if today's index > due date's index, due date is next week
 			// E.g. If today is Friday, Mon refers to next Monday
 			if (numDaysLater < 1) {
-				numDaysLater += 7;
+				numDaysLater += Constants.NUMBER_OF_DAYS_IN_A_WEEK;
 			}
 			return addDaysToToday(numDaysLater);
 		}
 
-		// today, tomorrow, tmw
+		// today, tomorrow, tmw, tmr, tmrw
 		if (LOLParser.countWords(string) == 1
 				&& LOLParser.hasWordInDictionary(Constants.DAYS_IMMEDIATE,
 						string)) {
@@ -622,7 +805,7 @@ public class DateParser {
 				return i + 1;
 			}
 		}
-		return -1;
+		return Constants.NOT_FOUND;
 	}
 
 	/**
@@ -641,7 +824,7 @@ public class DateParser {
 				return i;
 			}
 		}
-		return -1;
+		return Constants.NOT_FOUND;
 	}
 
 	/**
@@ -730,7 +913,8 @@ public class DateParser {
 		cal.set(date.getYear4Digit(), date.getMonth() - 1, date.getDay());
 		int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // 1-sun to 7-sat
 		String day = Constants.DAYS_SHORT[dayOfWeek - 1];
-		return Character.toUpperCase(day.charAt(0)) + day.substring(1);
+		return Character.toUpperCase(day.charAt(Constants.INDEX_1ST_LETTER))
+				+ day.substring(Constants.INDEX_2ND_LETTER);
 	}
 
 	/**
@@ -742,7 +926,8 @@ public class DateParser {
 	 */
 	public String cleanUp(String input) {
 		input = input.trim();
-		input = input.replaceAll("\\s+", " ");
+		input = input.replaceAll(Constants.REGEX_ONE_OR_MORE_SPACES,
+				Constants.SPACE);
 		return input;
 	}
 
@@ -793,7 +978,7 @@ public class DateParser {
 		input = cleanUp(input);
 		String[] words = input.split(Constants.SPACE);
 		if (words.length < n) {
-			return "";
+			return Constants.EMPTY_STRING;
 		} else {
 			return words[n - 1];
 		}
@@ -818,7 +1003,7 @@ public class DateParser {
 		if (nextKeywordIndex == Constants.NOT_FOUND) {
 			parameter = getUserInput().substring(index).trim();
 		} else {
-			assert nextKeywordIndex > 0;
+			assert nextKeywordIndex > Constants.LIMIT_ZERO;
 			parameter = getUserInput().substring(index, nextKeywordIndex)
 					.trim();
 		}
@@ -842,7 +1027,8 @@ public class DateParser {
 	public boolean isYear(String year) {
 		try {
 			int yr = Integer.parseInt(year);
-			return (yr > 9 && yr < 100) || (yr > 2010 && yr < 2099);
+			return (yr >= Constants.LIMIT_MIN_2DIGIT_YEAR && yr <= Constants.LIMIT_MAX_2DIGIT_YEAR)
+					|| (yr >= Constants.LIMIT_MIN_4DIGIT_YEAR && yr <= Constants.LIMIT_MAX_4DIGIT_YEAR);
 		} catch (Exception e) {
 			return false;
 		}
@@ -854,45 +1040,71 @@ public class DateParser {
 	 * @param date
 	 *            String containing a due date which may or may not be followed
 	 *            by a task description
-	 * @return due date as a string
+	 * @return due date as a String
 	 */
 	public String removeDescriptionFromDueDateIfAny(String date) {
-		String[] words = date.split(" ");
-		String firstWord = words[0];
-		String[] nextWords = getNext4Words(words, 0);
+		String[] words = date.split(Constants.SPACE);
+		String firstWord = words[Constants.INDEX_1ST_WORD];
+		String[] nextWords = getNext4Words(words, Constants.INDEX_1ST_WORD);
 
 		if (isValidDateFormat(firstWord)) {
 			return firstWord.trim();
-		} else if (isValidDateFormat(firstWord + " " + nextWords[0])
-				&& !(isYear(nextWords[1]))) {
-			return (firstWord + " " + nextWords[0]).trim();
-		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " "
-				+ nextWords[1])
-				&& !(isYear(nextWords[2]))) {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1]).trim();
-		} else if (isValidDateFormat(firstWord + " " + nextWords[0] + " "
-				+ nextWords[1] + " " + nextWords[2])
-				&& !(isYear(nextWords[3]))) {
-			return (firstWord + " " + nextWords[0] + " " + nextWords[1] + " " + nextWords[2])
+		} else if (isValidDateFormat(firstWord + Constants.SPACE
+				+ nextWords[Constants.INDEX_2ND_WORD])
+				&& !(isYear(nextWords[Constants.INDEX_3RD_WORD]))) {
+			return (firstWord + Constants.SPACE + nextWords[Constants.INDEX_2ND_WORD])
+					.trim();
+		} else if (isValidDateFormat(firstWord + Constants.SPACE
+				+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_3RD_WORD])
+				&& !(isYear(nextWords[Constants.INDEX_4TH_WORD]))) {
+			return (firstWord + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE + nextWords[Constants.INDEX_3RD_WORD])
+					.trim();
+		} else if (isValidDateFormat(firstWord + Constants.SPACE
+				+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE
+				+ nextWords[Constants.INDEX_4TH_WORD])
+				&& !(isYear(nextWords[Constants.INDEX_5TH_WORD]))) {
+			return (firstWord + Constants.SPACE
+					+ nextWords[Constants.INDEX_2ND_WORD] + Constants.SPACE
+					+ nextWords[Constants.INDEX_3RD_WORD] + Constants.SPACE + nextWords[Constants.INDEX_4TH_WORD])
 					.trim();
 		} else {
 			return date;
 		}
 	}
-	
+
+	/**
+	 * Removes task description after a date range, if any
+	 * 
+	 * @param dateRange
+	 *            String containing a date range which may or may not be
+	 *            followed by a task description
+	 * @return date range as a String
+	 */
 	public String removeDescriptionFromDateRangeIfAny(String dateRange) {
 		while (!dateRange.isEmpty() && !isDateRange(dateRange)) {
 			dateRange = removeLastWord(dateRange);
 		}
 		return dateRange;
 	}
-	
+
+	/**
+	 * Removes the last word from a String
+	 * 
+	 * @param string
+	 *            string from which last word is to be removed
+	 * @return String without the last word. If there is only one word or less,
+	 *         an empty string is returned.
+	 */
 	public String removeLastWord(String string) {
-		int index = string.lastIndexOf(' ');
-		if (index == -1) {
+		string = cleanUp(string);
+		int index = string.lastIndexOf(Constants.SPACE_CHAR);
+		if (index == Constants.NOT_FOUND) {
 			return "";
 		} else {
-			return string.substring(0, index);
+			return string.substring(Constants.INDEX_BEGIN, index);
 		}
 	}
 
@@ -914,9 +1126,12 @@ public class DateParser {
 
 			if (isKeyword(word)
 					|| (hasTime(word, nextWords)
-							&& !(word.startsWith("0") && word.endsWith("m")) && !isBoth24hrTimeAndYear(word))) {
-				Pattern p = Pattern.compile("\\b" + word + "\\b\\s*\\b"
-						+ nextWords[0] + "\\b");
+							&& !(word.startsWith(Constants.STRING_ZERO) && word
+									.endsWith(Constants.STRING_M_LOWERCASE)) && !isBoth24hrTimeAndYear(word))) {
+				Pattern p = Pattern.compile(Constants.REGEX_WORD_START + word
+						+ Constants.REGEX_WORD_END_SPACES_WORD_START
+						+ nextWords[Constants.INDEX_2ND_WORD]
+						+ Constants.REGEX_WORD_END);
 				Matcher m = p.matcher(temp);
 
 				if (m.find()) {
@@ -956,14 +1171,26 @@ public class DateParser {
 	public boolean hasDate(String word, String[] nextWords) {
 		try {
 			return isValidDateFormat(word)
-					|| isValidDateFormat(word + " " + nextWords[0])
-					|| isValidDateFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1])
-					|| isValidDateFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2])
-					|| isValidDateFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2] + " "
-							+ nextWords[3]);
+					|| isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD])
+					|| isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD])
+					|| isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD])
+					|| isValidDateFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD]);
 		} catch (Exception e) {
 			return false;
 		}
@@ -985,14 +1212,26 @@ public class DateParser {
 		TimeParser tp = new TimeParser();
 		try {
 			return tp.isValidTimeFormat(word)
-					|| tp.isValidTimeFormat(word + " " + nextWords[0])
-					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1])
-					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2])
-					|| tp.isValidTimeFormat(word + " " + nextWords[0] + " "
-							+ nextWords[1] + " " + nextWords[2] + " "
-							+ nextWords[3]);
+					|| tp.isValidTimeFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD])
+					|| tp.isValidTimeFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD])
+					|| tp.isValidTimeFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD])
+					|| tp.isValidTimeFormat(word + Constants.SPACE
+							+ nextWords[Constants.INDEX_2ND_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_3RD_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_4TH_WORD]
+							+ Constants.SPACE
+							+ nextWords[Constants.INDEX_5TH_WORD]);
 		} catch (Exception e) {
 			return false;
 		}
@@ -1018,7 +1257,7 @@ public class DateParser {
 	 * @return true if index out of bounds, else false
 	 */
 	public boolean isIndexOutOfBounds(int index) {
-		return index < 0 || index >= getUserInput().length();
+		return index < Constants.LIMIT_ZERO || index >= getUserInput().length();
 	}
 
 	/**
@@ -1112,21 +1351,23 @@ public class DateParser {
 			if (containsSeparator) {
 				// start and end date are both valid dates, e.g. 24 Nov to 26
 				// Nov, 24/11-26/11, sun-tue
-				if ((isValidDate(dates[0]) || isValidDay(dates[0]))
-						&& (isValidDate(dates[1]) || isValidDay(dates[1]))) {
+				if ((isValidDate(dates[Constants.INDEX_START_DATE]) || isValidDay(dates[Constants.INDEX_START_DATE]))
+						&& (isValidDate(dates[Constants.INDEX_END_DATE]) || isValidDay(dates[Constants.INDEX_END_DATE]))) {
 					// if both are days of the week e.g sun-tue
-					if (isDayOfTheWeek(dates[0]) && isDayOfTheWeek(dates[1])) {
+					if (isDayOfTheWeek(dates[Constants.INDEX_START_DATE])
+							&& isDayOfTheWeek(dates[Constants.INDEX_END_DATE])) {
 						return true;
 					}
-					Date start = createDate(dates[0]);
-					Date end = createDate(dates[1]);
+					Date start = createDate(dates[Constants.INDEX_START_DATE]);
+					Date end = createDate(dates[Constants.INDEX_END_DATE]);
 					return start.isBefore(end);
 				}
 				// start date is the day only, end date is a valid date, e.g.
 				// 24-26 Nov, 24 to 26 nov
-				if (isValidDate(dates[1])) {
-					Date end = createDate(dates[1]);
-					return Integer.parseInt(dates[0]) < end.getDay();
+				if (isValidDate(dates[Constants.INDEX_END_DATE])) {
+					Date end = createDate(dates[Constants.INDEX_END_DATE]);
+					return Integer.parseInt(dates[Constants.INDEX_START_DATE]) < end
+							.getDay();
 				}
 			}
 			return false;
@@ -1170,35 +1411,37 @@ public class DateParser {
 
 			// start and end date are both valid dates, e.g. 24 Nov to 26 Nov,
 			// 24/11-26/11, sun-tue
-			if ((isValidDate(dates[0]) || isValidDay(dates[0]))
-					&& (isValidDate(dates[1]) || isValidDay(dates[1]))) {
+			if ((isValidDate(dates[Constants.INDEX_START_DATE]) || isValidDay(dates[Constants.INDEX_START_DATE]))
+					&& (isValidDate(dates[Constants.INDEX_END_DATE]) || isValidDay(dates[Constants.INDEX_END_DATE]))) {
 
 				// if both are days of the week
-				if (isDayOfTheWeek(dates[0]) && isDayOfTheWeek(dates[1])) {
-					Date start = createDate(dates[0]);
+				if (isDayOfTheWeek(dates[Constants.INDEX_START_DATE])
+						&& isDayOfTheWeek(dates[Constants.INDEX_END_DATE])) {
+					Date start = createDate(dates[Constants.INDEX_START_DATE]);
 
-					int startDayIndex = getDayOfTheWeekIndex(dates[0]);
-					int endDayIndex = getDayOfTheWeekIndex(dates[1]);
+					int startDayIndex = getDayOfTheWeekIndex(dates[Constants.INDEX_START_DATE]);
+					int endDayIndex = getDayOfTheWeekIndex(dates[Constants.INDEX_END_DATE]);
 					int duration = endDayIndex - startDayIndex;
 
-					if (duration <= 0) {
-						duration += 7;
+					if (duration <= Constants.LIMIT_ZERO) {
+						duration += Constants.NUMBER_OF_DAYS_IN_A_WEEK;
 					}
 					Date end = addDaysToDate(start, duration);
 
 					Date[] dateArr = { start, end };
 					return dateArr;
 				} else {
-					Date start = createDate(dates[0]);
-					Date end = createDate(dates[1]);
+					Date start = createDate(dates[Constants.INDEX_START_DATE]);
+					Date end = createDate(dates[Constants.INDEX_END_DATE]);
 					Date[] dateArr = { start, end };
 					return dateArr;
 				}
-			} else if (isValidDate(dates[1])) {
+			} else if (isValidDate(dates[Constants.INDEX_END_DATE])) {
 				// start date is the day only, end date is a valid date, e.g.
 				// 24-26 Nov, 24 to 26 nov
-				Date end = createDate(dates[1]);
-				Date start = new Date(Integer.parseInt(dates[0]),
+				Date end = createDate(dates[Constants.INDEX_END_DATE]);
+				Date start = new Date(
+						Integer.parseInt(dates[Constants.INDEX_START_DATE]),
 						end.getMonth(), end.getYear4Digit());
 				Date[] dateArr = { start, end };
 				return dateArr;
@@ -1209,6 +1452,15 @@ public class DateParser {
 		}
 	}
 
+	/**
+	 * Adds a specific number of days to a given date
+	 * 
+	 * @param date
+	 *            date to which days are to be added
+	 * @param amount
+	 *            number of days to be added
+	 * @return advanced date
+	 */
 	public Date addDaysToDate(Date date, int amount) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(date.getYear4Digit(), date.getMonth() - 1, date.getDay());
