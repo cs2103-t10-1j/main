@@ -314,6 +314,9 @@ public class Constants {
 
 	final static int IMPOSSIBLE_ARRAYLIST_INDEX = -1;
 	
+	//message for LOL still run in background
+	final static String MSG_BACKGROUND_TITLE = "Hey,";
+	final static String MSG_BACKGROUND_CONTENT = "LOL is still running in the background!";
 	//message used in small pop up window for email functionality
 	final static String MSG_PLEASE_ENTER_EMAIL = "Please enter you email id to receive alerts in your inbox.";
 	final static String MSG_WELCOME = "Welcome to LOL!";

@@ -38,7 +38,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	private boolean isFocus;
 
 	TrayClass displayTrayIcon = new TrayClass();
-	
+
 	final JFrame frame = new JFrame("LOL - LifeOnLine");
 	final JLabel lblToday = new JLabel("Today");
 	final JTextField inputTF = new JTextField();
@@ -50,7 +50,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	final JTextPane mainDisplayTP3 = new JTextPane();
 	final JLabel labelAlert = new JLabel(LOLControl.isAlertMode?": On":": Off");
 	JButton alertButton;
-	
+
 	public LOLGui() {
 
 		if (!JIntellitype.isJIntellitypeSupported()) {
@@ -73,7 +73,142 @@ public class LOLGui extends JFrame implements HotkeyListener {
 
 		//*************Setting up the GUI****************//
 
+		setUpGUI();
 
+		//*********End of setting up the GUI***********//
+
+		final Timer timer = new Timer(Constants.REFRESH_TIME,
+				new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				LOLControl.executeUserInput("home");
+
+				TaskList<Task> taskList = LOLControl.getTaskList();
+				InputTextFieldListener textfield = new InputTextFieldListener(
+						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
+						feedbackLabel, inputTF, null,
+						progressLabel, progressBar, labelAlert);
+				textfield.refreshMainDisplay(taskList);
+
+				DateParser dp = new DateParser();
+				Date currentDate = dp.getTodaysDate();
+				lblToday.setText(currentDate.toString());
+
+				System.out.println("refreshed");
+			}
+		});
+
+		timer.setInitialDelay(0); // to start first refresh after 0s when program opens
+		timer.start();
+
+		final InputTextFieldListener listener = new InputTextFieldListener(
+				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
+				feedbackLabel, inputTF, timer,
+				progressLabel, progressBar, labelAlert);
+
+		// **HOTKEY-INTERFACE** //
+
+		// Assigning global HotKeys GUI
+		JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL,     //ctrl + L to maximise
+				(int) 'L');
+		JIntellitype.getInstance().registerHotKey(2, 0, KeyEvent.VK_ESCAPE); //escape to minimise
+		JIntellitype.getInstance().registerHotKey(3, 0, KeyEvent.VK_HOME);//home to display main screen
+		JIntellitype.getInstance().registerHotKey(4, 0, 46); //delete to execute delete
+		JIntellitype.getInstance().registerHotKey(5, JIntellitype.MOD_CONTROL, (int) 'Z'); //ctrl+z to undo
+		JIntellitype.getInstance().registerHotKey(6, JIntellitype.MOD_CONTROL, (int) 'Y'); //ctrl+y to redo
+		JIntellitype.getInstance().registerHotKey(7, JIntellitype.MOD_CONTROL, (int) 'F'); //ctrl+f to search
+		JIntellitype.getInstance().registerHotKey(8, JIntellitype.MOD_CONTROL, (int) 'D'); //ctrl+d to mark as done
+		JIntellitype.getInstance().registerHotKey(9, JIntellitype.MOD_CONTROL, (int) 'U'); //ctrl+u to mark as undone
+		JIntellitype.getInstance().registerHotKey(10, 0, 112);//F1 to get help
+
+		//JIntellitype.getInstance().addHotKeyListener(this);
+		//do not need this line?
+
+		JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
+			@Override
+			public void onHotKey(int aIdentifier) {
+				// Restore GUI
+				if (aIdentifier == 1) {
+					frame.setVisible(true);
+					frame.setExtendedState(getExtendedState());
+				}
+				// Minimize GUI
+				else if (aIdentifier == 2) {
+					if ((isFocus == true)) {
+						frame.setState(ICONIFIED);
+						frame.setVisible(false);
+						if (isNewMini) {
+							TrayClass.trayIcon.displayMessage("Minimized!",
+									"CTRL + L to Restore",
+									TrayIcon.MessageType.INFO);
+							isNewMini = false;
+						}
+					}
+				}
+				else if (aIdentifier == 3){
+					System.out.println("home");
+					try{ listener.refreshFeedbackDisplay("home");
+					TaskList<Task> taskList = LOLControl.getTaskList();
+					listener.refreshMainDisplay(taskList);
+					}catch (Exception e1){
+						e1.printStackTrace();
+					}
+				}
+				else if (aIdentifier == 4){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_DELETE + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 5){
+					String inputStr = Constants.COMMAND_UNDO;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 6){
+					String inputStr = Constants.COMMAND_REDO;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 7){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_SEARCH + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 8){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_DONE + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 9){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_NOT_DONE + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if(aIdentifier == 10){
+					showHelpWindow(); 
+				}
+			}
+
+			private void refreshGUI(InputTextFieldListener listener, Timer timer, String inputStr) {
+				listener.refreshFeedbackDisplay(inputStr);
+				TaskList<Task> taskList = LOLControl.getTaskList();
+				listener.refreshMainDisplay(taskList);
+				timer.setInitialDelay(60000);
+				timer.restart();
+				inputTF.setText("");
+			}
+		});
+
+		popUpAnInputDialogForEmailFunctionality();
+		enableLOLToRunInBackground();
+		addFocusListenerToAllPanel();
+		inputTF.addActionListener(listener);
+		inputTF.addKeyListener(listener);
+	}
+
+	private void setUpGUI(){
 		frame.setBackground(new Color(3, 97, 148));
 		frame.getContentPane().setForeground(new Color(47, 79, 79));
 		frame.getContentPane().setBackground(new Color(217, 232, 245));
@@ -100,7 +235,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}*/
-		
+
 		JLabel backgroundLabel = new JLabel();
 		backgroundLabel.setBackground(new Color(217, 232, 245));
 		BufferedImage img;
@@ -108,10 +243,10 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			URL url = this.getClass().getResource("/resources/background2.jpg");
 			img = ImageIO.read(url);
 			backgroundLabel= new JLabel(new ImageIcon(img));
-			} catch (Exception e){
-				e.printStackTrace();
-			}
-		
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+
 
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(3, 97, 148));
@@ -295,158 +430,18 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		inputTF.requestFocus();
-
-		//*********End of setting up the GUI***********//
-
-		final Timer timer = new Timer(Constants.REFRESH_TIME,
-				new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				LOLControl.executeUserInput("home");
-
-				TaskList<Task> taskList = LOLControl.getTaskList();
-				InputTextFieldListener textfield = new InputTextFieldListener(
-						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
-						feedbackLabel, inputTF, null,
-						progressLabel, progressBar, labelAlert);
-				textfield.refreshMainDisplay(taskList);
-
-				DateParser dp = new DateParser();
-				Date currentDate = dp.getTodaysDate();
-				lblToday.setText(currentDate.toString());
-
-				System.out.println("refreshed");
-			}
-		});
-
-		timer.setInitialDelay(0); // to start first refresh after 0s when program opens
-		timer.start();
-
-		final InputTextFieldListener listener = new InputTextFieldListener(
-				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
-				feedbackLabel, inputTF, timer,
-				progressLabel, progressBar, labelAlert);
-
-		// **HOTKEY-INTERFACE** //
-
-		// Assigning global HotKeys GUI
-		JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL,     //ctrl + L to maximise
-				(int) 'L');
-		JIntellitype.getInstance().registerHotKey(2, 0, KeyEvent.VK_ESCAPE); //escape to minimise
-		JIntellitype.getInstance().registerHotKey(3, 0, KeyEvent.VK_HOME);//home to display main screen
-		JIntellitype.getInstance().registerHotKey(4, 0, 46); //delete to execute delete
-		JIntellitype.getInstance().registerHotKey(5, JIntellitype.MOD_CONTROL, (int) 'Z'); //ctrl+z to undo
-		JIntellitype.getInstance().registerHotKey(6, JIntellitype.MOD_CONTROL, (int) 'Y'); //ctrl+y to redo
-		JIntellitype.getInstance().registerHotKey(7, JIntellitype.MOD_CONTROL, (int) 'F'); //ctrl+f to search
-		JIntellitype.getInstance().registerHotKey(8, JIntellitype.MOD_CONTROL, (int) 'D'); //ctrl+d to mark as done
-		JIntellitype.getInstance().registerHotKey(9, JIntellitype.MOD_CONTROL, (int) 'U'); //ctrl+u to mark as undone
-		JIntellitype.getInstance().registerHotKey(10, 0, 112);//F1 to get help
-
-		//JIntellitype.getInstance().addHotKeyListener(this);
-		//do not need this line?
-
-		JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
-			@Override
-			public void onHotKey(int aIdentifier) {
-				// Restore GUI
-				if (aIdentifier == 1) {
-					frame.setVisible(true);
-					frame.setExtendedState(getExtendedState());
-				}
-				// Minimize GUI
-				else if (aIdentifier == 2) {
-					if ((isFocus == true)) {
-						frame.setState(ICONIFIED);
-						frame.setVisible(false);
-						if (isNewMini) {
-							TrayClass.trayIcon.displayMessage("Minimized!",
-									"CTRL + L to Restore",
-									TrayIcon.MessageType.INFO);
-							isNewMini = false;
-						}
-					}
-				}
-				else if (aIdentifier == 3){
-					System.out.println("home");
-					try{ listener.refreshFeedbackDisplay("home");
-					TaskList<Task> taskList = LOLControl.getTaskList();
-					listener.refreshMainDisplay(taskList);
-					}catch (Exception e1){
-						e1.printStackTrace();
-					}
-				}
-				else if (aIdentifier == 4){
-					String inputStr = inputTF.getText();
-					inputStr.trim();
-					inputStr = Constants.COMMAND_DELETE + " "+ inputStr;
-					refreshGUI(listener, timer, inputStr);
-				}
-				else if (aIdentifier == 5){
-					String inputStr = Constants.COMMAND_UNDO;
-					refreshGUI(listener, timer, inputStr);
-				}
-				else if (aIdentifier == 6){
-					String inputStr = Constants.COMMAND_REDO;
-					refreshGUI(listener, timer, inputStr);
-				}
-				else if (aIdentifier == 7){
-					String inputStr = inputTF.getText();
-					inputStr.trim();
-					inputStr = Constants.COMMAND_SEARCH + " "+ inputStr;
-					refreshGUI(listener, timer, inputStr);
-				}
-				else if (aIdentifier == 8){
-					String inputStr = inputTF.getText();
-					inputStr.trim();
-					inputStr = Constants.COMMAND_DONE + " "+ inputStr;
-					refreshGUI(listener, timer, inputStr);
-				}
-				else if (aIdentifier == 9){
-					String inputStr = inputTF.getText();
-					inputStr.trim();
-					inputStr = Constants.COMMAND_NOT_DONE + " "+ inputStr;
-					refreshGUI(listener, timer, inputStr);
-				}
-				else if(aIdentifier == 10){
-					showHelpWindow(); 
-				}
-			}
-
-			private void refreshGUI(InputTextFieldListener listener, Timer timer, String inputStr) {
-				listener.refreshFeedbackDisplay(inputStr);
-				TaskList<Task> taskList = LOLControl.getTaskList();
-				listener.refreshMainDisplay(taskList);
-				timer.setInitialDelay(60000);
-				timer.restart();
-				inputTF.setText("");
-			}
-		});
-
-
-		TrayClass.trayIcon.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() >= 2) {
-					frame.setVisible(true);
-					frame.setExtendedState(getExtendedState());
-				}
-			}
-		});
-		
-		popUpAnInputDialogForEmailFunctionality();
-		enableLOLToRunInBackground();
-		addFocusListenerToAllPanel();
-		inputTF.addActionListener(listener);
-		inputTF.addKeyListener(listener);
 	}
-	
+
 	public static void showHelpWindow(){
 		JOptionPane.showMessageDialog(null, 
-				 Constants.MSG_HELP_INFO, 
-				 Constants.MSG_WELCOME_HELP, 
-				 JOptionPane.INFORMATION_MESSAGE);
+				Constants.MSG_HELP_INFO, 
+				Constants.MSG_WELCOME_HELP, 
+				JOptionPane.INFORMATION_MESSAGE);
 	}
-	
+
+	/**
+	 * enable LOL to run in the background when user press minimize or the exit icon
+	 */
 	private void enableLOLToRunInBackground(){
 		MenuItem restoreItem = TrayClass.trayIcon.getPopupMenu().getItem(0);
 
@@ -462,8 +457,8 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			@Override
 			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 				if (isNewRun) {
-					TrayClass.trayIcon.displayMessage("Hey!",
-							"LOL is still running in the background!",
+					TrayClass.trayIcon.displayMessage(Constants.MSG_BACKGROUND_TITLE,
+							Constants.MSG_BACKGROUND_CONTENT,
 							TrayIcon.MessageType.INFO);
 					isNewRun = false;
 				}
@@ -479,6 +474,17 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			@Override
 			public void windowLostFocus(java.awt.event.WindowEvent windowEvent) {
 				isFocus = false;
+			}
+		});
+
+
+		TrayClass.trayIcon.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() >= 2) {
+					frame.setVisible(true);
+					frame.setExtendedState(getExtendedState());
+				}
 			}
 		});
 	}
