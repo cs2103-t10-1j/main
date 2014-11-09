@@ -28,7 +28,7 @@ import javax.swing.text.StyledDocument;
 import logic.LOLControl;
 
 /**
- * Author in the descending order of contributions
+ * 
  * @author Sevin, Aviral
  *
  */

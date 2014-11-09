@@ -7,7 +7,10 @@
  */
 
 package lol;
-
+/**
+ * 
+ * @author sevin
+ */
 public class StringWithFormat {
 	/******************Attributes******************/
 	private String str;
