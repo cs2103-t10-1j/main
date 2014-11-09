@@ -471,7 +471,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		inputTF.addKeyListener(listener);
 	}
 	
-	public void showHelpWindow(){
+	public static void showHelpWindow(){
 		JOptionPane.showMessageDialog(null, 
 				 Constants.MSG_HELP_INFO, 
 				 Constants.MSG_WELCOME_HELP, 
