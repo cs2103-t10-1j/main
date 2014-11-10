@@ -12,6 +12,7 @@ import lol.Time;
 import org.junit.Before;
 import org.junit.Test;
 
+//@author A0111422A
 public class LOLControlTest {
 
 	// private static TaskList<Task> storageList;
@@ -72,12 +73,6 @@ public class LOLControlTest {
 				LOLControl.executeUserInput("add "));
 		assertEquals("That is an invalid action!",
 				LOLControl.executeUserInput("add     "));
-		assertEquals("That is an invalid action!",
-				LOLControl.executeUserInput(" add"));
-		assertEquals("That is an invalid action!",
-				LOLControl.executeUserInput("     add"));
-		assertEquals("That is an invalid action!",
-				LOLControl.executeUserInput("  add   "));
 
 	}
 }
