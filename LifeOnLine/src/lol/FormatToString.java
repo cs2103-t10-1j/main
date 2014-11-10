@@ -34,10 +34,12 @@ public class FormatToString {
 
 	private static LinkedList<StringWithFormat> strToShowTemp = new LinkedList<StringWithFormat>();
 
+	//below booleans are used to determine whether a separator is needed or not
 	private static boolean hasTodayTask = false;
 	private static boolean thisTaskIsNotTodayTask = false;
 	private static boolean hasSeparator = false; //separator here is the separator between today's tasks and other upcoming tasks
 	private static boolean hasHeader = false;
+	private static boolean hasTodayTaskInUpcomingPanel = false;
 
 	private enum HEADER_TYPE{
 		OVERDUE_DATE, UPCOMING_DATE, INVALID;
@@ -49,6 +51,7 @@ public class FormatToString {
 		thisTaskIsNotTodayTask = false;
 		hasSeparator = false;
 		hasHeader = false;
+		hasTodayTaskInUpcomingPanel = false;
 	}
 
 	/**
@@ -180,7 +183,7 @@ public class FormatToString {
 
 		case UPCOMING_DATE:
 			headerStr = getDateHeader(task);
-			if(isNeedSeparator()){
+			if(isNeedSeparator(task)){
 				addSeparator();
 			}
 			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_DATE));
@@ -214,8 +217,12 @@ public class FormatToString {
 	 * 
 	 * @return boolean
 	 */
-	private boolean isNeedSeparator(){
-		return hasTodayTask && thisTaskIsNotTodayTask && !hasSeparator;
+	private boolean isNeedSeparator(Task task){
+		if(isToday(task.getTaskDueDate())){
+			hasTodayTaskInUpcomingPanel = true;
+		}
+		
+		return  hasTodayTaskInUpcomingPanel && hasTodayTask && thisTaskIsNotTodayTask && !hasSeparator;
 	}
 
 	/**
@@ -244,7 +251,6 @@ public class FormatToString {
 			headerStr = headerStr + addTodayOrTomorrow(task.getEndDate());
 			headerStr = headerStr + dateFormatAsHeader(task.getEndDate());
 		}
-
 		return headerStr;
 	}
 
@@ -255,16 +261,12 @@ public class FormatToString {
 	 * @return
 	 */
 	private String addTodayOrTomorrow(Date date){
-		if(date.getDay() == date.getCurrentDay() 
-				&& date.getMonth() == date.getCurrentMonth() 
-				&& date.getYear4Digit() == date.getCurrentYear()){
+		if(isToday(date)){
 			hasTodayTask = true;
 			thisTaskIsNotTodayTask = false;
 			return "Today, ";
 		}
-		else if(date.getDay() == date.getCurrentDay()+1 && 
-				date.getMonth() == date.getCurrentMonth() && 
-				date.getYear4Digit() == date.getCurrentYear()){
+		else if(isTomorrow(date)){
 			thisTaskIsNotTodayTask = true;
 			return "Tomorrow, ";
 		}
@@ -272,6 +274,18 @@ public class FormatToString {
 			thisTaskIsNotTodayTask = true;
 			return Constants.EMPTY_STRING; //today or tomorrow is not needed because the task is neither today's nor tomorrow's task
 		}
+	}
+	
+	private static boolean isToday(Date date){
+		return date.getDay() == date.getCurrentDay() 
+				&& date.getMonth() == date.getCurrentMonth() 
+				&& date.getYear4Digit() == date.getCurrentYear();
+	}
+	
+	private static boolean isTomorrow(Date date){
+		return date.getDay() == date.getCurrentDay()+1 
+				&& date.getMonth() == date.getCurrentMonth() 
+				&& date.getYear4Digit() == date.getCurrentYear();
 	}
 
 	/**
