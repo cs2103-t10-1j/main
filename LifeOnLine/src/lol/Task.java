@@ -1,5 +1,6 @@
 package lol;
 
+//@author A0111422A
 public class Task implements Comparable<Task> {
 
 	/************ Attributes ***************/
