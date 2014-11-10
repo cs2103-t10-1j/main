@@ -16,6 +16,8 @@ import javax.swing.JOptionPane;
 public class TrayClass {
 
 	public static TrayIcon trayIcon;
+	private static final String appName = "LifeOnLine";
+	private static final String verNum = "Version: 0.5";
 
 	public TrayClass() {
 		show();
@@ -27,7 +29,7 @@ public class TrayClass {
 		}
 
 		trayIcon = new TrayIcon(createIcon("/resources/icon.png", "Icon"));
-		trayIcon.setToolTip("LifeOnLine");
+		trayIcon.setToolTip(appName);
 		final SystemTray tray = SystemTray.getSystemTray();
 
 		final PopupMenu menu = new PopupMenu();
@@ -45,7 +47,7 @@ public class TrayClass {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null,
-						"LifeonLine\nVersion: 0.5");
+						appName + "\n" + verNum);
 			}
 		});
 
