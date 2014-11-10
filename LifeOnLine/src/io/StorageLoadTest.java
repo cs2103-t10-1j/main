@@ -36,7 +36,7 @@ public class StorageLoadTest {
 		testTask1.setIsDone(false);
 		testTask1.setIsOverdue(true);
 		testTask1.setEndDate(null);
-		assertEquals("date and location not loaded", testTask1, storageTest
+		assertFalse("task loaded when description is null", testTask1 == storageTest
 				.loadTasks().get(1));
 
 		// 3
@@ -45,27 +45,27 @@ public class StorageLoadTest {
 		testTask2.setIsDone(false);
 		testTask2.setIsOverdue(false);
 		testTask2.setEndDate(null);
-		assertEquals("dummy date not loaded", testTask2, storageTest
+		assertFalse("task loaded when description is null", testTask2 == storageTest
 				.loadTasks().get(2));
 
 		// 4 - boundary testing
 		Task testTask3 = new Task("", null, null, null, null);
 		testTask3.setIsOverdue(true);
 		testTask3.setEndDate(null);
-		assertEquals("isoverdue not loaded", testTask3, storageTest.loadTasks()
+		assertFalse("task loaded when description is null", testTask3 ==storageTest.loadTasks()
 				.get(3));
 
 		// 5 - boundary testing
 		Task testTask4 = new Task("", null, null, null, null);
 		testTask4.setIsDone(true);
 		testTask4.setEndDate(null);
-		assertEquals("isDone is not loaded", testTask4, storageTest.loadTasks()
+		assertFalse("task loaded when description is null", testTask4 == storageTest.loadTasks()
 				.get(4));
 
 		// 6 - boundary testing
 		Task testTask5 = new Task("", null, null, null, null);
 		testTask5.setEndDate(null);
-		assertEquals("empty variable not loading", testTask5, storageTest
+		assertFalse("task loaded when description is null", testTask5 == storageTest
 				.loadTasks().get(5));
 
 		// 7 - boundary testing
@@ -73,12 +73,12 @@ public class StorageLoadTest {
 				"a bc asdasod 1234 &&**$$ !! //++ by at today null", null,
 				null, null, null);
 		assertEquals("description not loaded", testTask6, storageTest
-				.loadTasks().get(6));
+				.loadTasks().get(1));
 
 		// 8 - boundary testing
 		Task testTask7 = new Task("", null, null, null, null);
 		testTask7.setEndDate(new Date(01, 01, 2001));
-		assertEquals("end date not loaded", testTask7, storageTest.loadTasks()
+		assertFalse("task loaded when description is null", testTask7 == storageTest.loadTasks()
 				.get(7));
 
 		// 9 out of boundary

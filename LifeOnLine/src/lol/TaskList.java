@@ -11,6 +11,7 @@ import java.util.LinkedList;
  *
  * @param <E>
  */
+//@author A0118903H
 public class TaskList<E extends Comparable<Task>> {
 	
 	/******************* Attributes *********************/

@@ -15,9 +15,8 @@ import lol.TaskList;
 import lol.Time;
 import io.StorageFacade;
 
-//@author A0111422A
 public class LOLControl {
-
+	// @author A0111422A
 	public static String userEmail = null;
 
 	private static Logger logger = Logger.getLogger("LOLControl");
@@ -767,6 +766,7 @@ public class LOLControl {
 		ControlDisplay.refreshDisplay(toDoList, storageList);
 		return showFeedback(null, Constants.COMMAND_VIEW_HOMESCREEN);
 	}
+
 	private static String executeHelp(String userInput) {
 		LOLGui.showHelpWindow();
 		return null;
@@ -856,6 +856,13 @@ public class LOLControl {
 		}
 	}
 
+	private static void setAllTaskIsJustAddedAsFalse() {
+		for (int i = 0; i < storageList.size(); i++) {
+			storageList.get(i).setIsJustAdded(false);
+		}
+	}
+
+	// @author A0118903H
 	public static void refreshProgress() {
 
 		progress = 0;
@@ -882,9 +889,12 @@ public class LOLControl {
 
 	}
 
-	// returns a task if it is upcoming withing specified alert time, if no task
-	// then null
+	/*
+	 * returns a task if it is upcoming within specified alert time, if no task
+	 * then null
+	 */
 	public static Task refreshAlert() {
+
 		DateParser dp = new DateParser();
 		Date currentDate = dp.getTodaysDate();
 		Date tomorrowDate = dp.addDaysToToday(1);
@@ -908,7 +918,11 @@ public class LOLControl {
 								&& isAlertRangeToday(temp, currentTime)) {
 							temp.setAlerted(true);
 							return temp;
-
+						}else{
+							if(!temp.getAlerted()
+									&& isAlertRangeTomorrow(temp, currentTime)){
+								
+							}
 						}
 					}
 
@@ -924,6 +938,11 @@ public class LOLControl {
 
 	}
 
+	private static boolean isAlertRangeTomorrow(Task temp, Time currentTime) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	private static boolean isAlertRangeToday(Task temp, Time currentTime) {
 
 		int tempTime = Integer.parseInt(temp.getStartTime().getFormat24hr());
@@ -933,11 +952,5 @@ public class LOLControl {
 			return true;
 
 		return false;
-	}
-
-	private static void setAllTaskIsJustAddedAsFalse() {
-		for (int i = 0; i < storageList.size(); i++) {
-			storageList.get(i).setIsJustAdded(false);
-		}
 	}
 }

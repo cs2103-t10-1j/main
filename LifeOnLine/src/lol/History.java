@@ -6,11 +6,7 @@ package lol;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
-/**
- * 
- * @author aviral
- *
- */
+//@author A0118903H
 public class History {
 
 	/******************* Attributes *********************/
@@ -31,9 +27,11 @@ public class History {
 		newTask.setIsJustAdded(true);
 	}
 
-	// edit function not only pushes new and old task commandLines in the stack
-	// but also a command line with null task and a command type edit for
-	// recognition that the preceding two tasks are under edit command
+	/*
+	 * edit function not only pushes new and old task commandLines in the stack
+	 * but also a command line with null task and a command type edit for
+	 * recognition that the preceding two tasks are under edit command
+	 */
 	public static void undoEdit(Task newTask, Task oldTask) {
 		undoDelete(oldTask);
 		undoAdd(newTask);

@@ -29,7 +29,7 @@ import logic.LOLControl;
 @SuppressWarnings("serial")
 /**
  * 
- * @author Sevin, Aviral
+ * @author Sevin
  *
  */
 public class LOLGui extends JFrame implements HotkeyListener {
@@ -53,12 +53,23 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	Timer timer;
 
 	public LOLGui() {
-		enablePeriodicRefreshInGUI();
+
 		enableOnlyOneLOLToRun();
 		setUpGUI();
 		popUpAnInputDialogForEmailFunctionality();
 		addFocusListenerToAllPanel();
 		enableLOLToRunInBackground();
+		
+		//This piece of code repeats itself after the specified Refresh time
+		timer = new Timer(Constants.REFRESH_TIME,
+				new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				enablePeriodicRefreshInGUI();
+			}
+		});
+		timer.setInitialDelay(0); // to start first refresh after 0s when program opens
+		timer.start();
 		
 		final InputTextFieldListener listener = new InputTextFieldListener(
 				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
@@ -66,9 +77,9 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				progressLabel, progressBar, labelAlert);
 		
 		enableHotKey(listener);
-		
 		inputTF.addActionListener(listener);
 		inputTF.addKeyListener(listener);
+		
 	}
 
 	/**
@@ -289,36 +300,29 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	/**
 	 * enable the GUI to refresh in a periodic manner (by default is every 60 seconds)
 	 */
+	//@author A0118903H-reused
 	private void enablePeriodicRefreshInGUI(){
-		timer = new Timer(Constants.REFRESH_TIME,
-				new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				LOLControl.executeUserInput("home");
+		LOLControl.executeUserInput("home");
 
-				TaskList<Task> taskList = LOLControl.getTaskList();
-				InputTextFieldListener textfield = new InputTextFieldListener(
-						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
-						feedbackLabel, inputTF, null,
-						progressLabel, progressBar, labelAlert);
-				textfield.refreshMainDisplay(taskList);
+		TaskList<Task> taskList = LOLControl.getTaskList();
+		InputTextFieldListener textfield = new InputTextFieldListener(
+				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
+				feedbackLabel, inputTF, null,
+				progressLabel, progressBar, labelAlert);
+		textfield.refreshMainDisplay(taskList);
 
-				DateParser dp = new DateParser();
-				Date currentDate = dp.getTodaysDate();
-				lblToday.setText(currentDate.toString());
+		DateParser dp = new DateParser();
+		Date currentDate = dp.getTodaysDate();
+		lblToday.setText(currentDate.toString());
 
-				System.out.println("refreshed");
-			}
-		});
-
-		timer.setInitialDelay(0); // to start first refresh after 0s when program opens
-		timer.start();
+		System.out.println("refreshed");
 	}
 
 	/**
 	 * this pop up dialog window will ask the user for the user's email and will send an
 	 * email to the user when his task is near deadline if the user enables it
 	 */
+	//@author A0118903H
 	private void popUpAnInputDialogForEmailFunctionality(){
 		String s = (String)JOptionPane.showInputDialog(
 				null,
@@ -343,6 +347,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	 * 2. Three main task display panels
 	 * 3. Alert Button
 	 */
+	//@author sevin
 	private void addFocusListenerToAllPanel(){
 		inputTF.addFocusListener(new FocusAdapter() {
 			Border original = inputTF.getBorder();
@@ -467,6 +472,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	/**
 	 * enable hot key functionalities in GUI
 	*/
+	//@author A0118903H
 	private void enableHotKey(final InputTextFieldListener listener){
 		// **HOTKEY-INTERFACE** //
 
@@ -560,10 +566,15 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			}
 		});
 	}
+	@Override
+	public void onHotKey(int arg0) {
+		// TODO Auto-generated method stub
+	}
 	
 	/**
 	 * show the Help Window when user press F1 or types help
 	 */
+	//@author sevin
 	public static void showHelpWindow(){
 		JOptionPane.showMessageDialog(null, 
 				Constants.MSG_HELP_INFO, 
@@ -571,8 +582,5 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	@Override
-	public void onHotKey(int arg0) {
-		// TODO Auto-generated method stub
-	}
+	
 }

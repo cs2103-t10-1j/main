@@ -7,11 +7,7 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
-/**
- * 
- * @author aviral
- *
- */
+//@author A0118903H
 public class LOLEmail {
 
 	public static void send(String to, String task) {
