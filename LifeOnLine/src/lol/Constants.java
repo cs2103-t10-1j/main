@@ -21,12 +21,15 @@ public class Constants {
 	// Separators
 	public static final String SEPARATOR = "\\\\";
 	public static final String SEPARATOR_SLASH = "/";
-	public static final String SEPARATOR_DOT = ".";
+	public static final String SEPARATOR_DOT = "\\.";
 	public static final String SEPARATOR_TO = " to ";
 	public static final String SEPARATOR_DASH = "-";
 	
 	// double quote
 	public static final String DOUBLE_QUOTE = "\"";
+	
+	//dot
+	public static final String DOT = ".";
 
 	// Dictionaries
 	public static final String[] DICTIONARY_ADD = { "add", "a" };

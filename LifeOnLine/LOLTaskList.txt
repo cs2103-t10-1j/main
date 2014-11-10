@@ -1,0 +1,3 @@
+drink coffeeþþ ŒŒnullþþ ŒŒ10/11/2014þþ ŒŒ2100þþ ŒŒnullþþ ŒŒfalseþþ ŒŒfalseþþ ŒŒnull
+buy milkþþ ŒŒnullþþ ŒŒ11/11/2014þþ ŒŒ1700þþ ŒŒ1900þþ ŒŒfalseþþ ŒŒfalseþþ ŒŒnull
+watch movieþþ ŒŒnullþþ ŒŒ14/11/2014þþ ŒŒ1700þþ ŒŒ1900þþ ŒŒfalseþþ ŒŒfalseþþ ŒŒnull

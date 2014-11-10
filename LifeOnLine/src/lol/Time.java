@@ -82,7 +82,7 @@ public class Time {
 	/********** Overriding methods ***********/
 	public String toString() { // e.g. 1.43pm
 		DecimalFormat df = new DecimalFormat(Constants.FORMAT_2_DIGITS);
-		return getHour() + Constants.SEPARATOR_DOT + df.format(getMin())
+		return getHour() + Constants.DOT + df.format(getMin())
 				+ getAmpm();
 	}
 
