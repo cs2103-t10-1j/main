@@ -1,0 +1,35 @@
+//@author: a0118903h-reused
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+	 */
+
+	private void enablePeriodicRefreshInGUI(){
+		LOLControl.executeUserInput("home");
+
+		TaskList<Task> taskList = LOLControl.getTaskList();
+		InputTextFieldListener textfield = new InputTextFieldListener(
+				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
+				feedbackLabel, inputTF, null,
+				progressLabel, progressBar, labelAlert);
+		textfield.refreshMainDisplay(taskList);
+
+		DateParser dp = new DateParser();
+		Date currentDate = dp.getTodaysDate();
+		lblToday.setText(currentDate.toString());
+
+		System.out.println("refreshed");
+	}
+
+	/**
+	 * this pop up dialog window will ask the user for the user's email and will send an
+	 * email to the user when his task is near deadline if the user enables it
+	 */
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+
+
+
+
+

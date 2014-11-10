@@ -1,0 +1,1346 @@
+//@author: a0118903h
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\io\Storage.java
+	 */
+
+public interface Storage {
+	public TaskList<Task> loadTasks();
+	
+	public void saveTasks(TaskList<Task> list);
+	
+}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\io\Storage.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\io\StorageFacade.java
+	 */
+
+public class StorageFacade implements Storage {
+	private String fileName;
+	private StorageOperations operations;
+	private static StorageFacade instance = null;
+
+	// private constructor to implement singleton object
+	private StorageFacade(String fileName) {
+		this.fileName = fileName;
+		operations = new StorageOperations(this.fileName);
+	}
+
+	/**
+	 * Singleton object method
+	 * 
+	 * @param fileName
+	 * @return StorageFacade Object
+	 */
+	public static StorageFacade getInstance(String fileName) {
+		if (instance == null) {
+			instance = new StorageFacade(fileName);
+		}
+		return instance;
+	}
+
+	/**
+	 * Facade function to load task list
+	 * 
+	 * @return TaskList
+	 */
+	public TaskList<Task> loadTasks() {
+		return operations.load();
+	}
+
+	/**
+	 * Facade function to save task list
+	 * 
+	 * @param TaskList
+	 */
+	public void saveTasks(TaskList<Task> list) {
+		operations.save(list);
+
+	}
+}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\io\StorageFacade.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\io\StorageLoadTest.java
+	 */
+
+public class StorageLoadTest {
+
+	@Test
+	public void loadTest() {
+		StorageFacade storageTest;
+		storageTest = StorageFacade.getInstance("TestLoadList.txt");
+
+		// 1
+		Task testTask = new Task("description", "location", new Date(12, 12,
+				2012), null, null);
+		testTask.setIsDone(false);
+		testTask.setIsOverdue(false);
+		testTask.setEndDate(null);
+		assertEquals("description, location and date not loaded", testTask,
+				storageTest.loadTasks().get(0));
+
+		// gray box - description case
+
+		Task testTask1 = new Task("", "location", new Date(01, 01, 2001), null,
+				null);
+		testTask1.setIsDone(false);
+		testTask1.setIsOverdue(true);
+		testTask1.setEndDate(null);
+		assertFalse("task loaded when description is null", testTask1 == storageTest
+				.loadTasks().get(1));
+
+		// 3
+
+		Task testTask2 = new Task("", null, new Date(01, 01, 2001), null, null);
+		testTask2.setIsDone(false);
+		testTask2.setIsOverdue(false);
+		testTask2.setEndDate(null);
+		assertFalse("task loaded when description is null", testTask2 == storageTest
+				.loadTasks().get(2));
+
+		// 4 - boundary testing
+		Task testTask3 = new Task("", null, null, null, null);
+		testTask3.setIsOverdue(true);
+		testTask3.setEndDate(null);
+		assertFalse("task loaded when description is null", testTask3 ==storageTest.loadTasks()
+				.get(3));
+
+		// 5 - boundary testing
+		Task testTask4 = new Task("", null, null, null, null);
+		testTask4.setIsDone(true);
+		testTask4.setEndDate(null);
+		assertFalse("task loaded when description is null", testTask4 == storageTest.loadTasks()
+				.get(4));
+
+		// 6 - boundary testing
+		Task testTask5 = new Task("", null, null, null, null);
+		testTask5.setEndDate(null);
+		assertFalse("task loaded when description is null", testTask5 == storageTest
+				.loadTasks().get(5));
+
+		// 7 - boundary testing
+		Task testTask6 = new Task(
+				"a bc asdasod 1234 &&**$$ !! //++ by at today null", null,
+				null, null, null);
+		assertEquals("description not loaded", testTask6, storageTest
+				.loadTasks().get(1));
+
+		// 8 - boundary testing
+		Task testTask7 = new Task("", null, null, null, null);
+		testTask7.setEndDate(new Date(01, 01, 2001));
+		assertFalse("task loaded when description is null", testTask7 == storageTest.loadTasks()
+				.get(7));
+
+		// 9 out of boundary
+		Task testTask8 = new Task("", null, null, null, null);
+		testTask8.setEndDate(null);
+		testTask8.setIsDone(false);
+		testTask8.setIsOverdue(false);
+		assertNull("task loaded at null line!", storageTest.loadTasks().get(8));
+
+	}
+
+}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\io\StorageLoadTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\io\StorageOperations.java
+	 */
+
+public class StorageOperations {
+
+	/************* Attributes ***************/
+	
+	/**Using special characters to split because a user is unlikely to enter them in description using keyboard*/
+	protected static final String NEW_LINE = "\r\n";
+	protected static final String WHITESPACE = " ";
+	protected static final String CMD_START = "ŒŒ"; 
+	protected static final String CMD_END = "þþ";
+	protected static final String CMD_SPLIT = CMD_END + WHITESPACE + CMD_START;
+
+	protected String _fileName;
+
+	/**
+	 * each index of _commandStrings stores a string converted task in specified
+	 * format
+	 */
+	protected List<String> _commandStrings;
+	protected TaskList<Task> _taskList;
+
+	/************* Constructor ***************/
+	protected StorageOperations(String fileName) {
+		this._fileName = fileName;
+		_commandStrings = new ArrayList<String>();
+	}
+
+	/************* Other methods ***************/
+
+	/**
+	 * loads the task list from text file
+	 * 
+	 * @return TaskList object
+	 */
+	protected TaskList<Task> load() {
+		boolean isSuccessfulRead = this.readFromFile();
+		_taskList = new TaskList<Task>();
+
+		// return loaded task list if no errors in reading else empty taskList
+		if (isSuccessfulRead) {
+			this.generateTaskList();
+			return _taskList;
+		} else {
+			return _taskList;
+		}
+	}
+
+	/**
+	 * saves the TaskList in text file
+	 * 
+	 * @param list
+	 *            TaskList object
+	 */
+	protected void save(TaskList<Task> list) {
+		_taskList = list;
+		this.recreateCommands();
+		this.writeToFile();
+	}
+
+	/************ Start of methods used for loading **********/
+
+	/**
+	 * reads from the text file specified by the LOLControl and saves the tasks
+	 * in commandString array
+	 * 
+	 * @return boolean value
+	 */
+	private boolean readFromFile() {
+		try {
+
+			String command;
+			File file = new File(_fileName);
+			FileReader fr = new FileReader(file);
+			BufferedReader br = new BufferedReader(fr);
+
+			_commandStrings.clear();
+
+			// stores each line as string into commandStrings array
+			while ((command = br.readLine()) != null) {
+				_commandStrings.add(command);
+			}
+
+			br.close();
+			fr.close();
+
+			return true;
+
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Converts all the tasks stored as string in commadString to task objects
+	 * and stores them in taskList
+	 */
+	private void generateTaskList() {
+		int numberOfTasks = _commandStrings.size();
+		Task tempTask;
+
+		for (int i = 0; i < numberOfTasks; i++) {
+			tempTask = this.createTask(_commandStrings.get(i));
+			//Null tasks should not be added
+			if(tempTask!=null){
+			_taskList.add(tempTask);
+			}
+		}
+
+	}
+
+	/**
+	 * Converts one string of task to task object by loading in the following
+	 * expected format of task string -
+	 * 
+	 * <description>þþ ŒŒ<location>þþ ŒŒ<startDate>þþ ŒŒ<startTime>þþ
+	 * ŒŒ<endTime>þþ ŒŒ<isDone>þþ ŒŒ<isOverdue>þþ ŒŒ<endDate>
+	 * 
+	 * @param command
+	 *            String form of task
+	 * @return Task object
+	 */
+	//This function is designed to handle exceptions when the user changes the text file in incorrect format
+	private Task createTask(String command) {
+		String description = "", location = "", startDate = "", startTime = "", endTime = "", done = "", overdue = "", endDate = "";
+		Date startDateOb, endDateOb;
+		Time startTimeOb, endTimeOb;
+		boolean isDone, isOverdue;
+
+		String[] commandComponents = command.split(CMD_SPLIT);
+
+		try {
+			description = commandComponents[0];
+			location = commandComponents[1];
+			startDate = commandComponents[2];
+			startTime = commandComponents[3];
+			endTime = commandComponents[4];
+			done = commandComponents[5];
+			overdue = commandComponents[6];
+			endDate = commandComponents[7];
+		} catch (Exception e) {
+			System.out.println("File line not in correct format");
+		}
+		finally{	
+			//Does not let a task to be created if description is not present
+		if(!description.equals("")){
+		startTimeOb = getTime(startTime);
+		endTimeOb = getTime(endTime);
+		startDateOb = getDate(startDate);
+		endDateOb = getDate(endDate);
+		isDone = Boolean.parseBoolean(done);
+		isOverdue = Boolean.parseBoolean(overdue);
+
+		Task task = new Task(description, location, startDateOb, startTimeOb,
+				endTimeOb);
+		task.setIsDone(isDone);
+		task.setIsOverdue(isOverdue);
+		if (location.equals("null"))
+			task.setLocation(null);
+		task.setEndDate(endDateOb);
+		return task;
+		}
+		}
+		return null;
+	}
+
+	/**
+	 * This function converts the date written in the format of dd/mm/yy to a
+	 * Date class objects and return it.
+	 * 
+	 * @param String
+	 *            date
+	 * @return Date object
+	 */
+	private Date getDate(String date) {
+		if (!date.equals("null")) {
+			String[] dateComponents = date.split("/");
+			int day, month, year;
+			day = month = year = 0;
+
+			try {
+				day = Integer.parseInt(dateComponents[0]);
+				month = Integer.parseInt(dateComponents[1]);
+				year = Integer.parseInt(dateComponents[2]);
+			} catch (Exception e) {
+				System.out.println("date not in correct format");
+			}
+
+			if (day != 0 && month != 0 && year != 0) {
+				return new Date(day, month, year);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * This function converts the time string to Time class object.
+	 * 
+	 * @param String
+	 *            time
+	 * @return Time object
+	 */
+	private Time getTime(String time) {
+		if (!time.equals("null")) {
+			return new Time(time);
+		} else
+			return null;
+	}
+
+	/************ End of methods used for loading **********/
+
+	/************ Start of methods used for saving **********/
+
+	/**
+	 * This function recreates the task object as string and stores in
+	 * commandsStrings array
+	 */
+	private void recreateCommands() {
+		int numberOfTasks = _taskList.size();
+		String command;
+
+		_commandStrings.clear();
+
+		// storing each task as a String line in commandStrings array
+		for (int i = 0; i < numberOfTasks; i++) {
+			command = generateCommand(_taskList.get(i));
+			_commandStrings.add(command);
+
+		}
+
+	}
+
+	/**
+	 * this method transforms the task object to string type using particular
+	 * format to append different attributes of tasks format of saving-
+	 * 
+	 * <description>þþ ŒŒ<location>þþ ŒŒ<startDate>þþ ŒŒ<startTime>þþ
+	 * ŒŒ<endTime>þþ ŒŒ<isDone>þþ ŒŒ<isOverdue>þþ ŒŒ<endDate>
+	 * 
+	 * @param task
+	 *            object
+	 * @return String of task object
+	 */
+	private String generateCommand(Task task) {
+		StringBuilder sb = new StringBuilder();
+		assert (task != null);
+		try {
+			String description = task.getTaskDescription();
+			String location = task.getTaskLocation();
+
+			Date startDateOb = task.getTaskDueDate();
+			String startDate = null;
+			if (startDateOb != null) {
+				startDate = startDateOb.toString2();
+			}
+
+			String endTime = null;
+			String startTime = null;
+			Time endTimeOb = task.getEndTime();
+			Time startTimeOb = task.getStartTime();
+
+			if (endTimeOb != null) {
+				endTime = endTimeOb.getFormat24hr();
+			}
+
+			if (startTimeOb != null) {
+				startTime = startTimeOb.getFormat24hr();
+			}
+
+			String done = task.getIsDone() ? "true" : "false";
+			String overdue = task.getIsOverdue() ? "true" : "false";
+
+			Date endDateOb = task.getEndDate();
+			String endDate = null;
+			if (endDateOb != null)
+				endDate = endDateOb.toString2();
+
+			sb.append(description);
+			sb.append(CMD_END + WHITESPACE);
+
+			sb.append(CMD_START);
+			sb.append(location);
+			sb.append(CMD_END + WHITESPACE);
+
+			sb.append(CMD_START);
+			sb.append(startDate);
+			sb.append(CMD_END + WHITESPACE);
+
+			sb.append(CMD_START);
+			sb.append(startTime);
+			sb.append(CMD_END + WHITESPACE);
+
+			sb.append(CMD_START);
+			sb.append(endTime);
+			sb.append(CMD_END + WHITESPACE);
+
+			sb.append(CMD_START);
+			sb.append(done);
+			sb.append(CMD_END + WHITESPACE);
+
+			sb.append(CMD_START);
+			sb.append(overdue);
+			sb.append(CMD_END + WHITESPACE);
+
+			sb.append(CMD_START);
+			sb.append(endDate);
+
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
+
+		return sb.toString();
+
+	}
+
+	/**
+	 * This method writes the tasks saved as String in commandStrings array in a
+	 * text file
+	 */
+	private void writeToFile() {
+		try {
+			FileWriter fw = new FileWriter(_fileName);
+			BufferedWriter bw = new BufferedWriter(fw);
+
+			while (_commandStrings.size() != 0) {
+				bw.write(_commandStrings.remove(0) + NEW_LINE);
+			}
+
+			bw.close();
+			fw.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	/************ End of methods used for saving **********/
+
+}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\io\StorageOperations.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\io\StorageSaveTest.java
+	 */
+
+public class StorageSaveTest {
+
+	@Test
+	public void test() {
+		StorageFacade storageTest;
+		storageTest = StorageFacade.getInstance("TestSaveList.txt");
+
+		Task testTask = new Task("description", "location", new Date(12, 12,
+				2012), null, null);
+		// gray box - description case
+		Task testTask1 = new Task("", "location", new Date(01, 01, 0001), null,
+				null);
+		testTask1.setIsOverdue(true);
+		Task testTask2 = new Task("", null, new Date(01, 01, 0001), null, null);
+		// 4 - boundary testing
+		Task testTask3 = new Task("", null, null, null, null);
+		testTask3.setIsOverdue(true);
+		// 5 - boundary testing
+		Task testTask4 = new Task("", null, null, null, null);
+		testTask4.setIsDone(true);
+		// 6 - boundary testing
+		Task testTask5 = new Task("", null, null, null, null);
+		// 7 - boundary testing
+		Task testTask6 = new Task(
+				"a bc asdasod 1234 &&**$$ !! //++ by at today null", null,
+				null, null, null);
+		// 8 - boundary testing
+		Task testTask7 = new Task("", null, null, null, null);
+		testTask7.setEndDate(new Date(01, 01, 0001));
+
+		TaskList<Task> taskList = new TaskList<Task>();
+		taskList.add(testTask);
+		taskList.add(testTask1);
+		taskList.add(testTask2);
+		taskList.add(testTask3);
+		taskList.add(testTask4);
+		taskList.add(testTask5);
+		taskList.add(testTask6);
+		taskList.add(testTask7);
+
+		storageTest.saveTasks(taskList);
+
+		File file1 = new File("TestLoadList.txt");
+		File file2 = new File("TestSaveList.txt");
+		try {
+			assertTrue("The saved file differs from expected file!",
+					FileUtils.contentEquals(file1, file2));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\io\StorageSaveTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\logic\LOLControl.java
+	 */
+
+	public static void refreshProgress() {
+
+		progress = 0;
+		progressMaximum = 0;
+		DateParser dp = new DateParser();
+		Date currentDate = dp.getTodaysDate();
+
+		for (int i = 0; i < storageList.size(); i++) {
+			if (storageList.size() == 0)
+				break;
+			if (storageList.get(i).getTaskDueDate() != null) {
+				if (storageList.get(i).getTaskDueDate().equals(currentDate)) {
+					progressMaximum++;
+				}
+				if (storageList.get(i).getTaskDueDate().equals(currentDate)
+						&& storageList.get(i).getIsDone()) {
+					progress++;
+				}
+				if (storageList.get(i).getTaskDueDate().isAfter(currentDate))
+					break;
+			}
+
+		}
+
+	}
+
+	/*
+	 * returns a task if it is upcoming within specified alert time, if no task
+	 * then null
+	 */
+	public static Task refreshAlert() {
+
+		DateParser dp = new DateParser();
+		Date currentDate = dp.getTodaysDate();
+		Date tomorrowDate = dp.addDaysToToday(1);
+
+		TimeParser tp = new TimeParser();
+		Time currentTime = tp.getCurrentTime();
+
+		for (int i = 0; i < storageList.size(); i++) {
+			Task temp = storageList.get(i);
+			if (storageList.size() == 0)
+				break;
+			if (temp.getIsDone())
+				continue;
+			if (temp.getTaskDueDate() != null) {
+				if (temp.getTaskDueDate().isAfter(tomorrowDate))
+					break;
+				if (!temp.getIsOverdue()) {
+					if (temp.getTaskDueDate().equals(currentDate)
+							&& temp.getStartTime() != null) {
+						if (!temp.getAlerted()
+								&& isAlertRangeToday(temp, currentTime)) {
+							temp.setAlerted(true);
+							return temp;
+						}
+					} else if (temp.getTaskDueDate().equals(tomorrowDate)
+							&& temp.getStartTime() != null) {
+						if (!temp.getAlerted()
+								&& isAlertRangeTomorrow(temp, currentTime)) {
+							temp.setAlerted(true);
+							return temp;
+						}
+
+					}
+
+				} else {
+					continue;
+				}
+
+			} else {
+				break;
+			}
+		}
+		return null;
+
+	}
+
+	/*
+	 * to alert when the task is past midnight time, for example task is due at
+	 * 1am tmrw, current time 11pm and alert time 2 hours
+	 */
+	private static boolean isAlertRangeTomorrow(Task temp, Time currentTime) {
+
+		assert (alertTime % 100 == 0); // this logic works for only alertTime
+										// with minutes as 00
+
+		int tempTime = Integer.parseInt(temp.getStartTime().getFormat24hr());
+		int crrntTime = Integer.parseInt(currentTime.getFormat24hr());
+		crrntTime += alertTime;
+		if (crrntTime > 2339) {
+			crrntTime -= 2400;
+			if (tempTime <= crrntTime) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isAlertRangeToday(Task temp, Time currentTime) {
+
+		assert (alertTime % 100 == 0);
+
+		int tempTime = Integer.parseInt(temp.getStartTime().getFormat24hr());
+		int crrntTime = Integer.parseInt(currentTime.getFormat24hr());
+
+		if ((tempTime - crrntTime) <= alertTime)
+			return true;
+
+		return false;
+	}
+}
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\logic\LOLControl.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\CommandLine.java
+	 */
+
+public class CommandLine {
+
+	/******************* Attributes *********************/
+	private String commandType;
+	private Task object;
+	private int precedingTasks; // keeps the count of tasks/commandLines before
+								// this instance for mass undo and redo
+
+	/******************* Constructor *********************/
+	public CommandLine(String commandType, Task ob) {
+		this.commandType = commandType;
+		this.object = ob;
+		this.precedingTasks = 0;
+	}
+
+	/******************* Accessors *********************/
+	public String getCommandType() {
+		return commandType;
+	}
+
+	public Task getTask() {
+		return object;
+	}
+
+	public int getPrecedingTasks() {
+		return precedingTasks;
+	}
+
+	/******************* Mutators *********************/
+	public void setPrecedingTasks(int num) {
+		this.precedingTasks = num;
+	}
+
+}
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\CommandLine.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\DigitalClock.java
+	 */
+
+public class DigitalClock extends JLabel {
+
+	private static final long serialVersionUID = 1L;
+	private String pattern;
+	private Timer timer;
+	private int delay;
+
+	/**
+	 * Constructs a Digital Clock using the given pattern and the default delay.
+	 * 
+	 * @param pattern
+	 *            - the pattern describing the date and time format
+	 */
+	public DigitalClock(String pattern) {
+		this.pattern = pattern;
+		this.delay = 1000;
+		createTimer();
+		timer.start();
+	}
+
+	/**
+	 * Constructs a Digital Clock using the given pattern and delay.
+	 * 
+	 * @param delay
+	 *            - the number of milliseconds between action events
+	 * @param pattern
+	 *            - the pattern describing the date and time format
+	 */
+
+	public DigitalClock(String pattern, int delay) {
+		this.pattern = pattern;
+		this.delay = delay;
+		createTimer();
+		timer.start();
+	}
+
+	/**
+	 * Constructs a Digital Clock using the default pattern and delay.
+	 */
+
+	public DigitalClock() {
+		pattern = "hh.mm a"; //example 3.18 AM
+		this.delay = 1000;
+		createTimer();
+		timer.start();
+	}
+
+	private void createTimer() {
+		timer = new Timer(delay, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				setText(new SimpleDateFormat(pattern).format(new Date()));
+			}
+		});
+	}
+	
+	/******************* Accessors *********************/
+	public String getPattern() {
+		return pattern;
+	}
+
+	public Timer getTimer() {
+		return timer;
+	}
+
+	public int getDelay() {
+		return delay;
+	}
+	
+	/******************* Mutators *********************/
+	public void setDelay(int delay) {
+		this.delay = delay;
+	}
+	
+	public void setPattern(String pattern) {
+		this.pattern = pattern;
+	}
+}
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\DigitalClock.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\History.java
+	 */
+
+public class History {
+
+	/******************* Attributes *********************/
+	private static final String undoAddCommandType = "add";
+	private static final String undoDeleteCommandType = "delete";
+	private static final String undoEditCommandType = "edit";
+
+	private static Stack<CommandLine> undoStack = new Stack<CommandLine>();
+	private static Stack<CommandLine> redoStack = new Stack<CommandLine>();
+
+	/******************* Methods *********************/
+	public static void undoAdd(Task newTask) {
+		undoStack.push(new CommandLine(undoAddCommandType, newTask));
+	}
+
+	public static void undoDelete(Task newTask) {
+		undoStack.push(new CommandLine(undoDeleteCommandType, newTask));
+		newTask.setIsJustAdded(true);
+	}
+
+	/*
+	 * edit function not only pushes new and old task commandLines in the stack
+	 * but also a command line with null task and a command type edit for
+	 * recognition that the preceding two tasks are under edit command
+	 */
+	public static void undoEdit(Task newTask, Task oldTask) {
+		undoDelete(oldTask);
+		undoAdd(newTask);
+		undoStack.push(new CommandLine(undoEditCommandType, null));
+		newTask.setIsJustAdded(true);
+	}
+
+	public static CommandLine popUndoStack() {
+		assert !undoStack.empty() : "empty undo stack popped";
+		return undoStack.pop();
+	}
+
+	public static boolean isEmptyUndoStack() {
+		return undoStack.empty();
+	}
+
+	public static void redoAdd(CommandLine line) {
+		redoStack.push(line);
+	}
+
+	public static boolean isEmptyRedoStack() {
+		return redoStack.empty();
+	}
+
+	public static CommandLine popRedoStack() {
+		assert !redoStack.empty() : "empty redo stack popped";
+		return redoStack.pop();
+	}
+
+	public static void emptyRedoStack() {
+		redoStack = new Stack<CommandLine>();
+	}
+
+	public static CommandLine peekUndoStack() {
+		try {
+			return undoStack.peek();
+		} catch (EmptyStackException e) {
+			return null;
+		}
+	}
+
+	public static CommandLine peekRedoStack() {
+		try {
+			return redoStack.peek();
+		} catch (EmptyStackException e) {
+			return null;
+		}
+	}
+
+}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\History.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+	 */
+
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		String inputStr = inputTF.getText();
+		addUserInputToCommands(inputStr);
+		if(inputStr.equalsIgnoreCase(Constants.COMMAND_ALERT)){
+			alertToggle();
+		} else {
+		refreshFeedbackDisplay(inputStr);
+		TaskList<Task> taskList = LOLControl.getTaskList();
+		refreshMainDisplay(taskList);
+
+		//GUI already refreshes after each user action therefore we want to restart the refresh timer
+		timer.setInitialDelay(60000);
+		timer.restart();
+		}
+
+		clear(inputTF);
+	}
+
+	private void alertToggle() {
+		LOLControl.isAlertMode = !LOLControl.isAlertMode;
+		alertLabel.setText(LOLControl.isAlertMode ? ": On" : ": Off");
+		label.setText("Alert is now " + (LOLControl.isAlertMode ? "On!" : "Off!"));
+	}
+	
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+	 */
+
+	private void refreshProgressBar() {
+		LOLControl.refreshProgress();
+		if (LOLControl.progressMaximum > 0) {
+			progressLabel.setText("Today's report: " + LOLControl.progress
+					+ "/" + LOLControl.progressMaximum);
+			progressBar.setMaximum(LOLControl.progressMaximum);
+			progressBar.setValue(LOLControl.progressMaximum);
+			progressBar.setValue(LOLControl.progress);
+		} else {
+			progressBar.setMaximum(1);
+			progressBar.setValue(1);
+			progressLabel.setText("No deadlines today");
+		}
+	}
+
+	/**
+	 * refresh the alert time so that tasks that are about to be overdue will
+	 * cause the GUI to pop up an alert window
+	 */
+	private void refreshAlert() {
+
+		// checks if alert mode is on
+		if (LOLControl.isAlertMode) {
+			Task alertTask = LOLControl.refreshAlert();
+
+			// does not alert if there is no task to be alerted
+			if (alertTask != null) {
+				JOptionPane.showMessageDialog(null, alertMessage(alertTask),
+						"LOL Alert", JOptionPane.WARNING_MESSAGE);
+
+				//
+				if (LOLControl.userEmail != null
+						&& !LOLControl.userEmail.equals("example@example.com")) {
+					LOLEmail.send(LOLControl.userEmail, alertMessage(alertTask));
+				}
+			}
+		}
+	}
+
+	/**
+	 * Generate an alert message
+	 * 
+	 * @param alertTask
+	 * @return an alert message String associated with the alertTask
+	 */
+	private String alertMessage(Task alertTask) {
+		String message = "YOU HAVE AN UPCOMING TASK";
+
+		message += "\n" + alertTask.getTaskDescription();
+		message += "\n Time: " + alertTask.getStartTime();
+
+		if (alertTask.getEndTime() != null) {
+			message += "-" + alertTask.getEndTime();
+		}
+		if (alertTask.getTaskLocation() != null) {
+			message += "\n Location: " + alertTask.getTaskLocation();
+		}
+
+		return message;
+	}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+	 */
+
+	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_UP) {
+			if (!commands.isEmpty()) {
+				if (indexOfCurrentShowingTask == Constants.IMPOSSIBLE_ARRAYLIST_INDEX
+						&& commands.size() - 2 >= 0) {
+					indexOfCurrentShowingTask = commands.size() - 1;
+				}
+
+				if (indexOfCurrentShowingTask - 1 >= 0) {
+					inputTF.setText(commands.get(--indexOfCurrentShowingTask));
+					inputTF.grabFocus();
+				}
+			}
+		}
+		if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			if (!commands.isEmpty()
+					&& indexOfCurrentShowingTask != Constants.IMPOSSIBLE_ARRAYLIST_INDEX) {
+				if (indexOfCurrentShowingTask + 1 < commands.size()) {
+					inputTF.setText(commands.get(++indexOfCurrentShowingTask));
+					inputTF.grabFocus();
+				}
+			}
+		}
+	}
+
+	/** Handle the key typed event from the text field. */
+	public void keyTyped(KeyEvent e) {
+		// none
+	}
+
+	/** Handle the key-pressed event from the text field. */
+	public void keyPressed(KeyEvent e) {
+		// none
+	}
+}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLEmail.java
+	 */
+
+public class LOLEmail {
+
+	public static void send(String to, String task) {
+
+		// Sender's email ID needs to be mentioned
+		String from = Constants.LOLEmailId;
+
+		// Get system properties
+		Properties properties = System.getProperties();
+
+		// Setup mail server
+		properties.setProperty("mail.user", Constants.LOLEmailId);
+		properties.setProperty("mail.password", Constants.LOLEmailPasswd);
+		properties.setProperty("mail.smtp.auth", "true");
+		properties.setProperty("mail.smtp.starttls.enable", "true");
+		properties.setProperty("mail.smtp.host", Constants.LOLEmailHost);
+		properties.setProperty("mail.smtp.port", Constants.LOLEmailPort);
+		properties.setProperty("mail.smtp.user", Constants.LOLEmailId);
+		properties.setProperty("mail.smtp.password", Constants.LOLEmailPasswd);
+		// Get the default Session object.
+
+		Session session = Session.getDefaultInstance(properties,
+				new javax.mail.Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(Constants.LOLEmailId,
+								Constants.LOLEmailPasswd); // user name and
+															// password
+					}
+				});
+		try {
+
+			// default MimeMessage object.
+			MimeMessage message = new MimeMessage(session);
+
+			// From: header field of the header.
+			message.setFrom(new InternetAddress(from));
+
+			// To: header field of the header.
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(
+					to));
+
+			// Subject: header field
+			message.setSubject("Alert: You have an upcoming task");
+
+			// the actual message
+			message.setText(task);
+
+			// Send message
+			Transport.send(message);
+			System.out.println("Sent message successfully....");
+		} catch (MessagingException mex) {
+			mex.printStackTrace();
+		}
+	}
+}
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLEmail.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+	 */
+
+	private void popUpAnInputDialogForEmailFunctionality(){
+		String s = (String)JOptionPane.showInputDialog(
+				null,
+				Constants.MSG_PLEASE_ENTER_EMAIL,
+				Constants.MSG_WELCOME,
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				null,
+				Constants.MSG_EMAIL_EXAMPLE);
+
+		//If a string was returned, say so.
+		if ((s != null) && (s.length() > 0)) {
+			LOLControl.userEmail = s.trim();
+		}
+	}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+	 */
+
+	private void enableHotKey(final InputTextFieldListener listener){
+		// **HOTKEY-INTERFACE** //
+
+		// Assigning global HotKeys GUI
+		JIntellitype.getInstance().registerHotKey(1, JIntellitype.MOD_CONTROL,     //ctrl + L to maximise
+				(int) 'L');
+		JIntellitype.getInstance().registerHotKey(2, 0, KeyEvent.VK_ESCAPE); //escape to minimise
+		JIntellitype.getInstance().registerHotKey(3, 0, KeyEvent.VK_HOME);//home to display main screen
+		JIntellitype.getInstance().registerHotKey(4, 0, 46); //delete to execute delete
+		JIntellitype.getInstance().registerHotKey(5, JIntellitype.MOD_CONTROL, (int) 'Z'); //ctrl+z to undo
+		JIntellitype.getInstance().registerHotKey(6, JIntellitype.MOD_CONTROL, (int) 'Y'); //ctrl+y to redo
+		JIntellitype.getInstance().registerHotKey(7, JIntellitype.MOD_CONTROL, (int) 'F'); //ctrl+f to search
+		JIntellitype.getInstance().registerHotKey(8, JIntellitype.MOD_CONTROL, (int) 'D'); //ctrl+d to mark as done
+		JIntellitype.getInstance().registerHotKey(9, JIntellitype.MOD_CONTROL, (int) 'U'); //ctrl+u to mark as undone
+		JIntellitype.getInstance().registerHotKey(10, 0, 112);//F1 to get help
+
+		JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
+			@Override
+			public void onHotKey(int aIdentifier) {
+				// Restore GUI
+				if (aIdentifier == 1) {
+					frame.setVisible(true);
+					frame.setExtendedState(getExtendedState());
+				}
+				// Minimize GUI
+				else if (aIdentifier == 2) {
+					if ((isFocus == true)) {
+						frame.setState(ICONIFIED);
+						frame.setVisible(false);
+						if (isNewMini) {
+							TrayClass.trayIcon.displayMessage("Minimized!",
+									"CTRL + L to Restore",
+									TrayIcon.MessageType.INFO);
+							isNewMini = false;
+						}
+					}
+				}
+				else if (aIdentifier == 3){
+					System.out.println("home");
+					try{ listener.refreshFeedbackDisplay("home");
+					TaskList<Task> taskList = LOLControl.getTaskList();
+					listener.refreshMainDisplay(taskList);
+					}catch (Exception e1){
+						e1.printStackTrace();
+					}
+				}
+				else if (aIdentifier == 4){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_DELETE + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 5){
+					String inputStr = Constants.COMMAND_UNDO;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 6){
+					String inputStr = Constants.COMMAND_REDO;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 7){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_SEARCH + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 8){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_DONE + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if (aIdentifier == 9){
+					String inputStr = inputTF.getText();
+					inputStr.trim();
+					inputStr = Constants.COMMAND_NOT_DONE + " "+ inputStr;
+					refreshGUI(listener, timer, inputStr);
+				}
+				else if(aIdentifier == 10){
+					showHelpWindow(); 
+				}
+			}
+
+			private void refreshGUI(InputTextFieldListener listener, Timer timer, String inputStr) {
+				listener.refreshFeedbackDisplay(inputStr);
+				TaskList<Task> taskList = LOLControl.getTaskList();
+				listener.refreshMainDisplay(taskList);
+				timer.setInitialDelay(60000);
+				timer.restart();
+				inputTF.setText("");
+			}
+		});
+	}
+	@Override
+	public void onHotKey(int arg0) {
+		// TODO Auto-generated method stub
+	}
+	
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\TaskList.java
+	 */
+
+public class TaskList<E extends Comparable<Task>> {
+	
+	/******************* Attributes *********************/
+	private LinkedList<Task> list;
+
+	/******************* Constructors *********************/
+	public TaskList() {
+		list = new LinkedList<Task>();
+	}
+	
+	/******************* Accessors *********************/
+	public LinkedList<Task> getList() {
+		return list;
+	}
+
+	/******************* Methods/Mutators *********************/
+	public boolean add(Task taskObject) {
+		return list.add(taskObject);
+	}
+
+	public boolean delete(Task taskObject) {
+		return list.removeFirstOccurrence(taskObject);
+	}
+
+	public boolean deleteByIndex(int index) {
+		try {
+			list.remove(index);
+		} catch (IndexOutOfBoundsException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	public int indexOf(Task taskObject) {
+		return list.indexOf(taskObject);
+	}
+
+	public void clear() {
+		list.clear();
+	}
+
+	public void sort() {
+		Collections.sort(list);
+	}
+
+	
+	public int size() {
+		return list.size();
+	}
+
+	public Task get(int index) {
+		try {
+			return list.get(index);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+
+	public boolean set(int index, Task taskObject) {
+		try {
+			list.set(index, taskObject);
+		} catch (IndexOutOfBoundsException e) {
+			return false;
+		}
+		return true;
+	}
+}
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\TaskList.java
+
+
+
+
+

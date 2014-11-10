@@ -1,0 +1,1447 @@
+//@author: a0111422a
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\logic\ControlDisplay.java
+	 */
+
+public class ControlDisplay {
+	
+	/********** Load Temporary Lists ***********/	
+	private static TaskList<Task> displayList = LOLControl.getTaskList();
+	private static TaskList<Task> toDoList = LOLControl.getToDoList();
+	private static TaskList<Task> archiveList = LOLControl.getArchiveList();
+	
+	/********** ControlDisplay Methods ***********/	
+
+	public static void refreshDisplay(TaskList<Task> listToDisplay, TaskList<Task> storageList) {
+		//sort the storage (chronological & mark overdue tasks)
+		sortList(storageList);
+		
+		//tasks that are completed/done get saved to archive & wont be displayed by default  
+		addToArchive(storageList);
+		
+		//sort the tasks that are yet to be completed/done (chronological & mark overdue tasks)
+		sortList(listToDisplay);
+		
+		//display the tasks that are yet to be completed/done
+		updateDisplay(listToDisplay);
+	}
+
+	private static void updateDisplay(TaskList<Task> listToDisplay) {
+		displayList.clear();
+		cloneToDisplayList(listToDisplay);
+	}
+
+	private static void cloneToDisplayList(TaskList<Task> fromList) {
+
+		for (int i = 0; i < fromList.size(); i++) {
+			if (fromList.size() == 0) {
+				break;
+			} else {
+				displayList.add(fromList.get(i));
+				sortList(displayList);
+			}
+		}
+	}
+
+	private static void sortList(TaskList<Task> list) {
+		list.sort();
+		markOverdueTasks(list);
+	}
+
+	private static void markOverdueTasks(TaskList<Task> list) {
+
+		TimeParser tp = new TimeParser();
+		DateParser dp = new DateParser();
+
+		Time currentTime = tp.getCurrentTime();
+		Date currentDate = dp.getTodaysDate();
+
+		for (int i = 0; i < list.size(); i++) {
+
+			if (list.size() == 0) {
+				break;
+			}
+
+			else if (list.get(i).getTaskDueDate() == null) {
+				continue;
+			}
+
+			else if (list.get(i).getTaskDueDate() != null
+					&& list.get(i).getStartTime() == null) {
+
+				if (list.get(i).getTaskDueDate().isBefore(currentDate)) {
+
+					list.get(i).setIsOverdue(true);
+				}
+
+				else {
+					continue;
+				}
+			}
+
+			else if (list.get(i).getTaskDueDate() != null
+					&& list.get(i).getStartTime() != null
+					&& list.get(i).getEndTime() != null) {
+
+				if (list.get(i).getTaskDueDate().isBefore(currentDate)
+						|| list.get(i).getTaskDueDate().equals(currentDate)
+						&& list.get(i).getEndTime().isBefore(currentTime)) {
+
+					list.get(i).setIsOverdue(true);
+				}
+
+				else {
+					continue;
+				}
+			}
+
+			else if (list.get(i).getTaskDueDate() != null
+					&& list.get(i).getStartTime() != null
+					&& list.get(i).getEndTime() == null) {
+
+				if (list.get(i).getTaskDueDate().isBefore(currentDate)
+						|| list.get(i).getTaskDueDate().equals(currentDate)
+						&& list.get(i).getStartTime().isBefore(currentTime)) {
+
+					list.get(i).setIsOverdue(true);
+				}
+
+				else {
+					continue;
+				}
+			}
+		}
+	}
+	
+	private static void addToArchive(TaskList<Task> listFromStorage) {
+
+		toDoList.clear();
+		archiveList.clear();
+		
+		// if a task is overdue & done, it gets added to the archive
+		for (int i = 0; i < listFromStorage.size(); i++) {
+			if ((listFromStorage.get(i).getIsOverdue() == true) &&
+					listFromStorage.get(i).getIsDone() == true) {
+				archiveList.add(listFromStorage.get(i));
+			} else {
+				toDoList.add(listFromStorage.get(i));
+			}
+		}
+	}
+}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\logic\ControlDisplay.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\logic\LOLControl.java
+	 */
+
+	public static String userEmail = null;
+
+	private static Logger logger = Logger.getLogger("LOLControl");
+
+	public static int progress = 0;
+	public static int progressMaximum = 0;
+	public static boolean isAlertMode = false;
+	public static boolean isBlockMode = false;
+	public static int alertTime = 200; // default time is 2 hours, also make
+										// sure alertTime%100==0
+
+	/********** Load Storage ***********/
+	private static StorageFacade LOLStorage = StorageFacade
+			.getInstance(Constants.FILE_NAME);
+
+	private static TaskList<Task> storageList;
+
+	/********** Initialize Temporary Storage ***********/
+
+	private static TaskList<Task> displayList = new TaskList<Task>();
+	private static TaskList<Task> searchList = new TaskList<Task>();
+	private static TaskList<Task> toDoList = new TaskList<Task>();
+	private static TaskList<Task> archiveList = new TaskList<Task>();
+
+	/********** Controller methods ***********/
+	public static int getTaskListSize() {
+		return storageList.size();
+	}
+
+	public static TaskList<Task> loadTaskList() {
+		storageList = LOLStorage.loadTasks();
+		return storageList;
+	}
+
+	public static TaskList<Task> getTaskList() {
+		return displayList;
+	}
+
+	public static TaskList<Task> getToDoList() {
+		return toDoList;
+	}
+
+	public static TaskList<Task> getArchiveList() {
+		return archiveList;
+	}
+
+	public static String executeUserInput(String userInput) {
+		setAllTaskIsJustAddedAsFalse();
+
+		String commandType = getCommandType(userInput);
+
+		switch (commandType) {
+		case (Constants.COMMAND_ADD):
+			return executeAdd(userInput);
+		case (Constants.COMMAND_DELETE):
+			return executeDel(userInput);
+		case (Constants.COMMAND_EDIT):
+			return executeEdit(userInput);
+		case (Constants.COMMAND_SHOW):
+			return executeShow(userInput);
+		case (Constants.COMMAND_SEARCH):
+			return executeSearch(userInput);
+		case (Constants.COMMAND_DONE):
+			return executeDone(userInput);
+		case (Constants.COMMAND_NOT_DONE):
+			return executeNotDone(userInput);
+		case (Constants.COMMAND_UNDO):
+			return executeUndo(userInput);
+		case (Constants.COMMAND_REDO):
+			return executeRedo(userInput);
+		case (Constants.COMMAND_VIEW_HOMESCREEN):
+			return executeHomeScreen(userInput);
+		case (Constants.COMMAND_HELP):
+			return executeHelp(userInput);
+		case (Constants.COMMAND_EXIT):
+			return executeExit(userInput);
+		default:
+			// logger.log(Level.WARNING, "Unsupported CommandType entered");
+			return executeAdd(Constants.DICTIONARY_ADD[0] + " " + userInput);
+		}
+	}
+
+	public static String getCommandType(String userInput) {
+		String command = LOLParser.getCommandName(userInput);
+		return command;
+	}
+
+	private static String executeAdd(String userInput) {
+
+		try {
+			LOLParser.getTask(userInput);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "No description entered!");
+			return executeInvalid(userInput);
+		}
+
+		try {
+			if (LOLParser.getTask(userInput) == null) {
+				logger.log(Level.WARNING, "No description entered!");
+				return executeInvalid(userInput);
+			} else {
+				Task newTask = LOLParser.getTask(userInput);
+				newTask.setIsJustAdded(true);
+
+				if (storageList.add(newTask)) {
+					History.emptyRedoStack();
+					History.undoAdd(newTask);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return showFeedback(newTask, Constants.COMMAND_ADD);
+				} else
+					return executeInvalid(userInput);
+			}
+		} catch (Exception e) {
+			// or do some other thing
+			return executeInvalid(userInput);
+		}
+	}
+
+	private static String executeDel(String userInput) {
+
+		int[] taskIndices = LOLParser.getTaskIndexArray(userInput);
+		int numToDel = taskIndices.length;
+
+		for (int i = 0; i < numToDel; i++) {
+			if ((taskIndices[i]) > displayList.size()) {
+				logger.log(Level.WARNING,
+						"Processing Error, deleting invalid index");
+				return Constants.FEEDBACK_MASS_DEL_FAILURE;
+			}
+		}
+
+		for (int i = 0; i < numToDel; i++) {
+			Task delTask = displayList.get(taskIndices[i] - 1);
+
+			if (numToDel == 1) {
+				if (storageList.delete(delTask)) {
+					History.emptyRedoStack();
+					History.undoDelete(delTask);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return showFeedback(delTask, Constants.COMMAND_DELETE);
+				}
+				return executeInvalid(userInput);
+			}
+
+			if (i != numToDel - 1) {
+				if (storageList.delete(delTask)) {
+					History.emptyRedoStack();
+					History.undoDelete(delTask);
+					LOLStorage.saveTasks(storageList);
+					continue;
+				}
+				return executeInvalid(userInput);
+
+			} // need to refresh screen after last index has been deleted
+			if (i == numToDel - 1) {
+				if (storageList.delete(delTask)) {
+					History.emptyRedoStack();
+					History.undoDelete(delTask);
+					History.peekUndoStack().setPrecedingTasks(numToDel);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return Constants.FEEDBACK_MASS_DEL_SUCCESS;
+				}
+				return executeInvalid(userInput);
+			}
+		}
+		return executeInvalid(userInput);
+	}
+
+	private static String executeEdit(String userInput) {
+		boolean runOnce = true;
+		int taskIndex = LOLParser.getTaskIndex(userInput);
+		Task taskAtIndex = displayList.get(taskIndex - 1);
+		Task oldTask = new Task(taskAtIndex.getTaskDescription(),
+				taskAtIndex.getTaskLocation(), taskAtIndex.getTaskDueDate(),
+				taskAtIndex.getEndDate(), taskAtIndex.getStartTime(),
+				taskAtIndex.getEndTime());
+
+		try {
+			Task editTask = LOLParser.getEditTask(userInput, oldTask);
+			editTask.setIsJustAdded(true);
+
+			Task oldTaskDesc = new Task(null, null, null);
+			if (runOnce) {
+				oldTaskDesc.setDescription(taskAtIndex.getTaskDescription());
+				runOnce = false;
+			}
+
+			if ((storageList.delete(taskAtIndex))
+					&& (storageList.add(editTask))) {
+				History.emptyRedoStack();
+				History.undoEdit(editTask, taskAtIndex);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
+				LOLStorage.saveTasks(storageList);
+				return showFeedback(oldTaskDesc, Constants.COMMAND_EDIT);
+			} else
+				return executeInvalid(userInput);
+		} catch (Exception e) {
+			// do something
+			return executeInvalid(userInput);
+		}
+	}
+
+	private static String executeShow(String userInput) {
+
+		DateParser dp = new DateParser();
+		Date searchDate = LOLParser.getDateForShowCommand(userInput);
+		String searchKey = LOLParser.getKeywordsForSearchCommand(userInput);
+
+		if (!dp.isValidDate(userInput)) {
+			switch (searchKey.toLowerCase()) {
+			case (Constants.SHOW_OVERDUE):
+				return showOverdue(userInput);
+			case (Constants.SHOW_ARCHIVE):
+				return showArchive(userInput);
+			case (Constants.SHOW_ALL):
+				return showAll(userInput);
+			case (Constants.SHOW_WEEK):
+				return showWeek(userInput);
+			default:
+				if (searchDate == null) {
+					if ((LOLParser.hasWordInDictionary(Constants.MONTHS_SHORT,
+							searchKey))
+							|| (LOLParser.hasWordInDictionary(
+									Constants.MONTHS_LONG, searchKey))) {
+						return showMonth(searchKey);
+					}
+					return executeInvalid(userInput);
+				}
+				break;
+			}
+		}
+
+		Task searchTask = new Task(null, null, searchDate);
+
+		searchList.clear();
+
+		for (int i = 0; i < storageList.size(); i++) {
+			if (storageList.get(i).getTaskDueDate() == null) {
+				continue;
+			}
+			if (storageList.get(i).getTaskDueDate().equals(searchDate)) {
+				searchList.add(storageList.get(i));
+			}
+		}
+
+		ControlDisplay.refreshDisplay(searchList, storageList);
+
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
+			return Constants.FEEDBACK_SHOW_FAILURE;
+		default:
+			return showFeedback(searchTask, Constants.COMMAND_SHOW);
+		}
+	}
+
+	private static String showOverdue(String userInput) {
+		searchList.clear();
+
+		// Before current date & time + Not marked as done
+		for (int i = 0; i < storageList.size(); i++) {
+			if ((storageList.get(i).getIsOverdue())
+					&& (!storageList.get(i).getIsDone())) {
+				searchList.add(storageList.get(i));
+			}
+		}
+
+		ControlDisplay.refreshDisplay(searchList, storageList);
+
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
+			return Constants.FEEDBACK_SHOW_OVERDUE_FAILURE;
+		case (Constants.LIST_SIZE_ONE):
+			return (Constants.FEEDBACK_SHOW_OVERDUE_SUCCESS
+					+ Constants.LINEBREAK + displayList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
+		default:
+			return (Constants.FEEDBACK_SHOW_OVERDUE_SUCCESS
+					+ Constants.LINEBREAK + displayList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
+		}
+	}
+
+	private static String showArchive(String userInput) {
+
+		ControlDisplay.refreshDisplay(archiveList, storageList);
+
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
+			return Constants.FEEDBACK_SHOW_ARCHIVE_FAILURE;
+		default:
+			return Constants.FEEDBACK_SHOW_ARCHIVE_SUCCESS;
+		}
+	}
+
+	private static String showWeek(String userInput) {
+
+		searchList.clear();
+
+		DateParser dp = new DateParser();
+
+		Date currentDate = dp.getTodaysDate();
+		Date nextWeekDate = dp.addDaysToToday(Constants.ONE_WEEK);
+
+		for (int i = 0; i < storageList.size(); i++) {
+
+			if (storageList.get(i).getTaskDueDate() == null) {
+				continue;
+			}
+
+			else {
+				Date taskDate = storageList.get(i).getTaskDueDate();
+
+				if ((taskDate.equals(currentDate))
+						|| taskDate.isAfter(currentDate)
+						&& taskDate.isBefore(nextWeekDate)) {
+					searchList.add(storageList.get(i));
+				}
+			}
+		}
+
+		ControlDisplay.refreshDisplay(searchList, storageList);
+
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
+			return Constants.FEEDBACK_SHOW_WEEK_FAILURE;
+		default:
+			return Constants.FEEDBACK_SHOW_WEEK_SUCCESS;
+		}
+	}
+
+	private static String showMonth(String monthName) {
+
+		Date date = new Date();
+		int currentYear = date.getYear4Digit();
+
+		DateParser dp = new DateParser();
+		int searchMonth = dp.getMonthNum(monthName);
+
+		searchList.clear();
+
+		for (int i = 0; i < storageList.size(); i++) {
+
+			if (storageList.get(i).getTaskDueDate() == null) {
+				continue;
+			}
+
+			else {
+				Task iteratorTask = storageList.get(i);
+				int iteratorYear = iteratorTask.getTaskDueDate()
+						.getYear4Digit();
+				int iteratorMonth = iteratorTask.getTaskDueDate().getMonth();
+
+				if ((iteratorYear >= currentYear)
+						&& (searchMonth == iteratorMonth)) {
+					searchList.add(storageList.get(i));
+				}
+			}
+		}
+
+		ControlDisplay.refreshDisplay(searchList, storageList);
+
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
+			return Constants.FEEDBACK_SHOW_MONTH_FAILURE
+					+ date.getMonthNameLong(searchMonth);
+		default:
+			return Constants.FEEDBACK_SHOW_MONTH_SUCCESS
+					+ date.getMonthNameLong(searchMonth);
+		}
+	}
+
+	private static String showAll(String userInput) {
+
+		ControlDisplay.refreshDisplay(storageList, storageList);
+
+		switch (displayList.size()) {
+		case (Constants.EMPTY_LIST):
+			return Constants.FEEDBACK_SHOW_ALL_FAILURE;
+		default:
+			return Constants.FEEDBACK_SHOW_ALL_SUCCESS;
+		}
+	}
+
+	private static String executeSearch(String userInput) {
+		DateParser dp = new DateParser();
+		String searchKey = LOLParser.getKeywordsForSearchCommand(userInput);
+		Task searchTask = new Task(searchKey, null, null);
+
+		if (dp.isValidDateFormat(searchKey)) {
+			return executeShow(userInput);
+		}
+
+		else {
+			searchList.clear();
+
+			// searches both Description & Location
+			for (int i = 0; i < storageList.size(); i++) {
+
+				if ((storageList.get(i).getTaskDescription().toLowerCase()
+						.contains(searchKey.toLowerCase()))
+						&& storageList.get(i).getTaskLocation() == null) {
+					searchList.add(storageList.get(i));
+				} else if ((storageList.get(i).getTaskDescription()
+						.toLowerCase().contains(searchKey.toLowerCase()))
+						&& storageList.get(i).getTaskLocation() != null) {
+					if (storageList.get(i).getTaskLocation().toLowerCase()
+							.contains(searchKey.toLowerCase())) {
+						searchList.add(storageList.get(i));
+					} else {
+						searchList.add(storageList.get(i));
+					}
+				} else if (!(storageList.get(i).getTaskDescription()
+						.toLowerCase().contains(searchKey.toLowerCase()))
+						&& storageList.get(i).getTaskLocation() == null) {
+					continue;
+				} else if (!(storageList.get(i).getTaskDescription()
+						.toLowerCase().contains(searchKey.toLowerCase()))
+						&& storageList.get(i).getTaskLocation() != null) {
+					if (storageList.get(i).getTaskLocation().toLowerCase()
+							.contains(searchKey.toLowerCase())) {
+						searchList.add(storageList.get(i));
+					}
+				}
+			}
+
+			ControlDisplay.refreshDisplay(searchList, storageList);
+
+			switch (displayList.size()) {
+			case (Constants.EMPTY_LIST):
+				return showFeedback(searchTask,
+						Constants.FEEDBACK_SEARCH_FAILURE);
+			default:
+				return showFeedback(searchTask, Constants.COMMAND_SEARCH);
+			}
+		}
+	}
+
+	private static String executeDone(String userInput) {
+
+		int[] taskIndices = LOLParser.getTaskIndexArray(userInput);
+		int numToDone = taskIndices.length;
+
+		for (int i = 0; i < numToDone; i++) {
+			if ((taskIndices[i]) > displayList.size()) {
+				return Constants.FEEDBACK_MASS_DONE_FAILURE;
+			}
+		}
+
+		for (int i = 0; i < numToDone; i++) {
+
+			if (numToDone == 1) {
+				Task undoneTask = displayList.get(taskIndices[i] - 1);
+				int undoneTaskStorageIndex = storageList.indexOf(undoneTask);
+
+				if (undoneTask.getIsDone()) {
+					return Constants.FEEDBACK_DONE_FAILURE;
+				}
+				Task doneTask = new Task(undoneTask.getTaskDescription(),
+						undoneTask.getTaskLocation(),
+						undoneTask.getTaskDueDate(), undoneTask.getStartTime(),
+						undoneTask.getEndTime());
+				doneTask.setIsDone(true);
+				doneTask.setIsJustAdded(true);
+
+				if (storageList.set(undoneTaskStorageIndex, doneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(doneTask, undoneTask);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return showFeedback(doneTask, Constants.COMMAND_DONE);
+				}
+			}
+			if (i != numToDone - 1) {
+				Task undoneTask = displayList.get(taskIndices[i] - 1);
+				int undoneTaskStorageIndex = storageList.indexOf(undoneTask);
+
+				Task doneTask = new Task(undoneTask.getTaskDescription(),
+						undoneTask.getTaskLocation(),
+						undoneTask.getTaskDueDate(), undoneTask.getStartTime(),
+						undoneTask.getEndTime());
+
+				doneTask.setIsDone(true);
+
+				if (storageList.set(undoneTaskStorageIndex, doneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(doneTask, undoneTask);
+					LOLStorage.saveTasks(storageList);
+				}
+			}
+			if (i == numToDone - 1) {
+				Task undoneTask = displayList.get(taskIndices[i] - 1);
+				int undoneTaskStorageIndex = storageList.indexOf(undoneTask);
+
+				Task doneTask = new Task(undoneTask.getTaskDescription(),
+						undoneTask.getTaskLocation(),
+						undoneTask.getTaskDueDate(), undoneTask.getStartTime(),
+						undoneTask.getEndTime());
+
+				doneTask.setIsDone(true);
+
+				if (storageList.set(undoneTaskStorageIndex, doneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(doneTask, undoneTask);
+					History.peekUndoStack().setPrecedingTasks(numToDone);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return Constants.FEEDBACK_MASS_DONE_SUCCESS;
+				}
+			}
+		}
+		return executeInvalid(userInput);
+	}
+
+	private static String executeNotDone(String userInput) {
+		int[] taskIndices = LOLParser.getTaskIndexArray(userInput);
+		int numToNotDone = taskIndices.length;
+
+		for (int i = 0; i < numToNotDone; i++) {
+			if ((taskIndices[i]) > displayList.size()) {
+				return Constants.FEEDBACK_MASS_NOT_DONE_FAILURE;
+			}
+		}
+
+		for (int i = 0; i < numToNotDone; i++) {
+
+			if (numToNotDone == 1) {
+				Task doneTask = displayList.get(taskIndices[i] - 1);
+				int doneTaskStorageIndex = storageList.indexOf(doneTask);
+
+				if (!doneTask.getIsDone()) {
+					return Constants.FEEDBACK_NOT_DONE_FAILURE;
+				}
+
+				Task notDoneTask = new Task(doneTask.getTaskDescription(),
+						doneTask.getTaskLocation(), doneTask.getTaskDueDate(),
+						doneTask.getStartTime(), doneTask.getEndTime());
+
+				notDoneTask.setIsDone(false);
+				notDoneTask.setIsJustAdded(true);
+
+				if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(notDoneTask, doneTask);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return showFeedback(notDoneTask, Constants.COMMAND_NOT_DONE);
+				}
+			}
+			if (i != numToNotDone - 1) {
+				Task doneTask = displayList.get(taskIndices[i] - 1);
+				int doneTaskStorageIndex = storageList.indexOf(doneTask);
+
+				Task notDoneTask = new Task(doneTask.getTaskDescription(),
+						doneTask.getTaskLocation(), doneTask.getTaskDueDate(),
+						doneTask.getStartTime(), doneTask.getEndTime());
+
+				notDoneTask.setIsDone(false);
+
+				if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(notDoneTask, doneTask);
+					LOLStorage.saveTasks(storageList);
+				}
+			}
+			if (i == numToNotDone - 1) {
+				Task doneTask = displayList.get(taskIndices[i] - 1);
+				int doneTaskStorageIndex = storageList.indexOf(doneTask);
+
+				Task notDoneTask = new Task(doneTask.getTaskDescription(),
+						doneTask.getTaskLocation(), doneTask.getTaskDueDate(),
+						doneTask.getStartTime(), doneTask.getEndTime());
+
+				notDoneTask.setIsDone(false);
+
+				if (storageList.set(doneTaskStorageIndex, notDoneTask)) {
+					History.emptyRedoStack();
+					History.undoEdit(notDoneTask, doneTask);
+					History.peekUndoStack().setPrecedingTasks(numToNotDone);
+					ControlDisplay.refreshDisplay(toDoList, storageList);
+					LOLStorage.saveTasks(storageList);
+					return Constants.FEEDBACK_MASS_NOT_DONE_SUCCESS;
+				}
+			}
+		}
+		return executeInvalid(userInput);
+	}
+
+	public static String executeUndo(String userInput) {
+
+		if (History.isEmptyUndoStack()) {
+			return Constants.FEEDBACK_UNDO_FAILURE;
+		}
+
+		else {
+
+			CommandLine undoCmd = History.popUndoStack();
+
+			String undoCmdType = undoCmd.getCommandType();
+			Task undoCmdTask = undoCmd.getTask();
+			int undoCmdNum = undoCmd.getPrecedingTasks();
+
+			switch (undoCmdType) {
+			case (Constants.COMMAND_DELETE):
+
+				if (undoCmdNum == 0) {
+					storageList.add(undoCmdTask);
+					History.redoAdd(undoCmd);
+				} else if (undoCmdNum > 0) {
+					storageList.add(undoCmdTask);
+					History.redoAdd(undoCmd);
+					for (int i = 1; i < undoCmdNum; i++) {
+						CommandLine iterateCmd = History.popUndoStack();
+						Task iterateTask = iterateCmd.getTask();
+						storageList.add(iterateTask);
+						History.redoAdd(iterateCmd);
+					}
+					History.peekRedoStack().setPrecedingTasks(undoCmdNum);
+				}
+				ControlDisplay.refreshDisplay(toDoList, storageList);
+				LOLStorage.saveTasks(storageList);
+				break;
+			case (Constants.COMMAND_ADD):
+				storageList.delete(undoCmdTask);
+				History.redoAdd(undoCmd);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
+				LOLStorage.saveTasks(storageList);
+				break;
+			case (Constants.COMMAND_EDIT):
+				CommandLine undoCmdNew = History.popUndoStack();
+				CommandLine undoCmdOld = History.popUndoStack();
+				Task undoCmdTaskNew = undoCmdNew.getTask();
+				Task undoCmdTaskOld = undoCmdOld.getTask();
+
+				if (undoCmdNum == 0) {
+					storageList.delete(undoCmdTaskNew);
+					storageList.add(undoCmdTaskOld);
+					History.redoAdd(undoCmdOld);
+					History.redoAdd(undoCmdNew);
+					History.redoAdd(undoCmd);
+				}
+
+				else if (undoCmdNum > 0) {
+					storageList.delete(undoCmdTaskNew);
+					storageList.add(undoCmdTaskOld);
+					History.redoAdd(undoCmdOld);
+					History.redoAdd(undoCmdNew);
+					History.redoAdd(undoCmd);
+					for (int i = 1; i < undoCmdNum; i++) {
+						History.popUndoStack();
+						CommandLine iterateCmdNew = History.popUndoStack();
+						CommandLine iterateCmdOld = History.popUndoStack();
+						Task iterateCmdTaskNew = iterateCmdNew.getTask();
+						Task iterateCmdTaskOld = iterateCmdOld.getTask();
+
+						storageList.delete(iterateCmdTaskNew);
+						storageList.add(iterateCmdTaskOld);
+						History.redoAdd(iterateCmdOld);
+						History.redoAdd(iterateCmdNew);
+						History.redoAdd(undoCmd);
+					}
+					History.peekRedoStack().setPrecedingTasks(undoCmdNum);
+				}
+				ControlDisplay.refreshDisplay(toDoList, storageList);
+				LOLStorage.saveTasks(storageList);
+				break;
+			}
+			return showFeedback(null, Constants.COMMAND_UNDO);
+		}
+	}
+
+	private static String executeRedo(String userInput) {
+		if (History.isEmptyRedoStack()) {
+			return Constants.FEEDBACK_REDO_FAILURE;
+		}
+
+		else {
+
+			CommandLine undoCmd = History.popRedoStack();
+
+			String undoCmdType = undoCmd.getCommandType();
+			Task undoCmdTask = undoCmd.getTask();
+			int undoCmdNum = undoCmd.getPrecedingTasks();
+
+			switch (undoCmdType) {
+			case (Constants.COMMAND_DELETE):
+				if (undoCmdNum == 0) {
+					storageList.delete(undoCmdTask);
+					History.undoDelete(undoCmdTask);
+				} else if (undoCmdNum > 0) {
+					storageList.delete(undoCmdTask);
+					History.undoDelete(undoCmdTask);
+					for (int i = 1; i < undoCmdNum; i++) {
+						CommandLine iterateCmd = History.popRedoStack();
+						Task iterateTask = iterateCmd.getTask();
+						storageList.delete(iterateTask);
+						History.undoDelete(iterateTask);
+					}
+					History.peekUndoStack().setPrecedingTasks(undoCmdNum);
+				}
+				ControlDisplay.refreshDisplay(toDoList, storageList);
+				LOLStorage.saveTasks(storageList);
+				break;
+			case (Constants.COMMAND_ADD):
+				storageList.add(undoCmdTask);
+				History.undoAdd(undoCmdTask);
+				ControlDisplay.refreshDisplay(toDoList, storageList);
+				LOLStorage.saveTasks(storageList);
+				break;
+			case (Constants.COMMAND_EDIT):
+				CommandLine undoCmdNew = History.popRedoStack();
+				CommandLine undoCmdOld = History.popRedoStack();
+				Task undoCmdTaskNew = undoCmdNew.getTask();
+				Task undoCmdTaskOld = undoCmdOld.getTask();
+
+				if (undoCmdNum == 0) {
+					storageList.add(undoCmdTaskNew);
+					storageList.delete(undoCmdTaskOld);
+					History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
+				}
+
+				else if (undoCmdNum > 0) {
+					storageList.add(undoCmdTaskNew);
+					storageList.delete(undoCmdTaskOld);
+					History.undoEdit(undoCmdTaskNew, undoCmdTaskOld);
+					for (int i = 1; i < undoCmdNum; i++) {
+						History.popRedoStack();
+						CommandLine iterateCmdNew = History.popRedoStack();
+						CommandLine iterateCmdOld = History.popRedoStack();
+						Task iterateCmdTaskNew = iterateCmdNew.getTask();
+						Task iterateCmdTaskOld = iterateCmdOld.getTask();
+
+						storageList.add(iterateCmdTaskNew);
+						storageList.delete(iterateCmdTaskOld);
+						History.undoEdit(iterateCmdTaskNew, iterateCmdTaskOld);
+					}
+					History.peekUndoStack().setPrecedingTasks(undoCmdNum);
+				}
+				ControlDisplay.refreshDisplay(toDoList, storageList);
+				LOLStorage.saveTasks(storageList);
+				break;
+			}
+			return showFeedback(null, Constants.COMMAND_REDO);
+		}
+	}
+
+	private static String executeHomeScreen(String userInput) {
+		ControlDisplay.refreshDisplay(toDoList, storageList);
+		return showFeedback(null, Constants.COMMAND_VIEW_HOMESCREEN);
+	}
+
+	private static String executeHelp(String userInput) {
+		LOLGui.showHelpWindow();
+		return null;
+	}
+
+	private static String executeExit(String userInput) {
+		System.exit(0);
+		return showFeedback(null, Constants.COMMAND_EXIT);
+	}
+
+	private static String executeInvalid(String userInput) {
+		return showFeedback(null, Constants.COMMAND_INVALID);
+	}
+
+	private static String showFeedback(Task task, String commandType) {
+
+		System.out.println("List size= " + getTaskListSize());
+
+		switch (commandType) {
+		case (Constants.COMMAND_ADD):
+			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_ADD_SUCCESS);
+		case (Constants.COMMAND_DELETE):
+			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_DEL_SUCCESS);
+		case (Constants.COMMAND_EDIT):
+			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_EDIT_SUCCESS);
+		case (Constants.COMMAND_SHOW):
+			switch (displayList.size()) {
+			case (Constants.LIST_SIZE_ONE): // 1 search result
+				return (Constants.FEEDBACK_SHOW_SUCCESS + task.getTaskDueDate()
+						+ Constants.LINEBREAK + searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
+			default: // more than 1 search result
+				return (Constants.FEEDBACK_SHOW_SUCCESS + task.getTaskDueDate()
+						+ Constants.LINEBREAK + searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
+			}
+		case (Constants.COMMAND_SEARCH):
+			int numKeys = LOLParser.countWords(task.getTaskDescription());
+			switch (displayList.size()) {
+			case (Constants.LIST_SIZE_ONE): // 1 search result
+				switch (numKeys) {
+				case (Constants.WORD_COUNT_ONE): // 1 keyword
+					return (Constants.FEEDBACK_SEARCH_SUCCESS_SINGLE
+							+ Constants.QUOTE + task.getTaskDescription()
+							+ Constants.QUOTE + Constants.LINEBREAK
+							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
+				default: // more than 1 keyword
+					return (Constants.FEEDBACK_SEARCH_SUCCESS_MULTI
+							+ Constants.QUOTE + task.getTaskDescription()
+							+ Constants.QUOTE + Constants.LINEBREAK
+							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_SINGLE);
+				}
+			default: // more than 1 search result
+				switch (numKeys) {
+				case (Constants.WORD_COUNT_ONE): // 1 keyword
+					return (Constants.FEEDBACK_SEARCH_SUCCESS_SINGLE
+							+ Constants.QUOTE + task.getTaskDescription()
+							+ Constants.QUOTE + Constants.LINEBREAK
+							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
+				default: // more than 1 keyword
+					return (Constants.FEEDBACK_SEARCH_SUCCESS_MULTI
+							+ Constants.QUOTE + task.getTaskDescription()
+							+ Constants.QUOTE + Constants.LINEBREAK
+							+ searchList.size() + Constants.FEEDBACK_SHOW_HITS_MULTI);
+				}
+			}
+		case (Constants.FEEDBACK_SEARCH_FAILURE):
+			int numFailedKeys = LOLParser.countWords(task.getTaskDescription());
+			switch (numFailedKeys) {
+			case (Constants.WORD_COUNT_ONE): // 1 keyword
+				return (Constants.FEEDBACK_SEARCH_FAILURE_SINGLE
+						+ Constants.QUOTE + task.getTaskDescription() + Constants.QUOTE);
+			default:
+				return (Constants.FEEDBACK_SEARCH_FAILURE_MULTI // keywords < 1
+						+ Constants.QUOTE + task.getTaskDescription() + Constants.QUOTE);
+			}
+		case (Constants.COMMAND_DONE):
+			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_DONE_SUCCESS);
+		case (Constants.COMMAND_NOT_DONE):
+			return (Constants.QUOTE + task + Constants.QUOTE + Constants.FEEDBACK_NOT_DONE_SUCCESS);
+		case (Constants.COMMAND_UNDO):
+			return (Constants.FEEDBACK_UNDO_SUCCESS);
+		case (Constants.COMMAND_REDO):
+			return (Constants.FEEDBACK_REDO_SUCCESS);
+		case (Constants.COMMAND_VIEW_HOMESCREEN):
+			return (Constants.FEEDBACK_VIEW_HOMESCREEN);
+		default:
+			return (Constants.FEEDBACK_INVALID);
+		}
+	}
+
+	private static void setAllTaskIsJustAddedAsFalse() {
+		for (int i = 0; i < storageList.size(); i++) {
+			storageList.get(i).setIsJustAdded(false);
+		}
+	}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\logic\LOLControl.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\logic\LOLControlTest.java
+	 */
+
+public class LOLControlTest {
+
+	// private static TaskList<Task> storageList;
+
+	Task testTask = new Task("this is a test task", "home", new Date(13, 7,
+			new Time(10, "am")));
+
+	@Before
+	public void initialize() {
+		LOLControl.loadTaskList();
+	}
+
+	@Test
+	public void testGetCommandType() {
+		assertEquals(Constants.COMMAND_ADD,
+				LOLControl.getCommandType("add do dishes"));
+		assertEquals(Constants.COMMAND_DELETE,
+				LOLControl.getCommandType("delete do dishes"));
+		assertEquals(Constants.COMMAND_INVALID,
+				LOLControl.getCommandType("asfd do dishes"));
+	}
+
+	@Test
+	public void testExecuteUserInput() throws Exception {
+
+		// ADD Task with ALL PARAMETERS
+		assertEquals(
+				Constants.QUOTE + "this is a test task" + Constants.QUOTE
+						+ " added successfully!",
+				LOLControl
+						.executeUserInput("add this is a test task at home by 13/7 at 10am"));
+		LOLControl.executeUndo("undo");
+		// ADD Task with NO LOCATION
+		assertEquals(
+				Constants.QUOTE + "this is a test task" + Constants.QUOTE
+						+ " added successfully!",
+				LOLControl
+						.executeUserInput("add this is a test task by 13/7 at 10am"));
+		LOLControl.executeUndo("undo");
+		// ADD Task with NO DATE
+		assertEquals(
+				Constants.QUOTE + "this is a test task" + Constants.QUOTE
+						+ " added successfully!",
+				LOLControl
+						.executeUserInput("add this is a test task at home by 10am"));
+		LOLControl.executeUndo("undo");
+		// ADD Task with NO TIME
+		assertEquals(
+				Constants.QUOTE + "this is a test task" + Constants.QUOTE
+						+ " added successfully!",
+				LOLControl
+						.executeUserInput("add this is a test task by 13/7 at home by 13/7"));
+		LOLControl.executeUndo("undo");
+		// ADD Task with NO PARAMETERS
+		assertEquals("That is an invalid action!",
+				LOLControl.executeUserInput("add"));
+		assertEquals("That is an invalid action!",
+				LOLControl.executeUserInput("add "));
+		assertEquals("That is an invalid action!",
+				LOLControl.executeUserInput("add     "));
+
+	}
+}
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\logic\LOLControlTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+	 */
+
+	private void enableOnlyOneLOLToRun(){
+		if (!JIntellitype.isJIntellitypeSupported()) {
+			JOptionPane.showMessageDialog(null, Constants.MSG_ERROR);
+			System.exit(1);
+		}
+		// If instance already running, exit new instance
+		// Prevent multiple LOL to run at the same time
+		if (JIntellitype.checkInstanceAlreadyRunning(Constants.LOL_NAME)) {
+			TrayClass.trayIcon.displayMessage(Constants.MSG_LOL_IS_RUNNING,
+					Constants.MSG_RESTORE, TrayIcon.MessageType.INFO);
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}	
+			JIntellitype.getInstance().cleanUp();
+			System.exit(1);
+		}
+
+	}
+
+	/** 
+	 * Set up all the components that are needed in LOL's GUI
+	 */
+	private void setUpGUI(){
+		frame.setBackground(new Color(3, 97, 148));
+		frame.getContentPane().setForeground(new Color(47, 79, 79));
+		frame.getContentPane().setBackground(new Color(217, 232, 245));
+		frame.setBounds(100, 100, 752, 517);
+		frame.getContentPane().setLayout(null);
+		frame.setDefaultCloseOperation(JFrame.ICONIFIED);
+		frame.setResizable(false);
+		frame.getContentPane().setPreferredSize(new Dimension(736, 478));
+		frame.pack();
+
+		JLabel backgroundLabel = new JLabel();
+		backgroundLabel.setBackground(new Color(217, 232, 245));
+		BufferedImage img;
+		try {
+			URL url = this.getClass().getResource("/resources/background2.jpg");
+			img = ImageIO.read(url);
+			backgroundLabel= new JLabel(new ImageIcon(img));
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(3, 97, 148));
+		panel.setBounds(0, 391, 736, 87);
+
+		frame.getContentPane().add(panel);
+		panel.setLayout(null);
+
+		inputTF.setBounds(20, 46, 706, 30);
+		inputTF.setFont(Constants.TREBUCHET_BOLD_16);
+		panel.add(inputTF);
+		inputTF.setColumns(10);
+
+		JPanel panel_10 = new JPanel();
+		panel_10.setBackground(new Color(50, 205, 50));
+		panel_10.setBounds(10, 46, 17, 30);
+		panel.add(panel_10);
+
+		feedbackLabel.setText(Constants.MSG_WELCOME);
+		feedbackLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		feedbackLabel.setBackground(new Color(3, 97, 148));
+		feedbackLabel.setForeground(new Color(255,255,255));
+		feedbackLabel.setBounds(20, 11, 706, 30);
+		feedbackLabel.setFont(Constants.TREBUCHET_BOLD_16);
+		panel.add(feedbackLabel);
+
+		Component horizontalGlue = Box.createHorizontalGlue();
+		horizontalGlue.setBounds(250, 302, 1, 1);
+		frame.getContentPane().add(horizontalGlue);
+
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(new Color(248, 248, 255));
+		panel_1.setBounds(0, 0, 168, 46);
+		frame.getContentPane().add(panel_1);
+		panel_1.setLayout(null);
+
+		progressBar.setBounds(10, 11, 146, 14);
+		progressBar.setForeground(new Color(34, 139, 34));
+		progressBar.setStringPainted(true);
+		progressBar.setMinimum(0);
+		progressBar.setMaximum(0);
+		panel_1.add(progressBar);
+
+		progressLabel.setBounds(10, 21, 146, 25);
+		panel_1.add(progressLabel);
+
+		JPanel panel_6 = new JPanel();
+		panel_6.setBackground(new Color(3, 97, 148));
+		panel_6.setBounds(0, 46, 168, 10);
+		frame.getContentPane().add(panel_6);
+
+		JPanel panel_7 = new JPanel();
+		panel_7.setBackground(new Color(3, 97, 148));
+		panel_7.setBounds(0, 46, 10, 345);
+		frame.getContentPane().add(panel_7);
+
+		//upcoming panel
+		mainDisplayTP1.setFont(Constants.TAHOMA_14);
+		mainDisplayTP1.setBounds(250, 35, 243, 345);
+		mainDisplayTP1.setEditable(false);
+		mainDisplayTP1.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+		mainDisplayTP1.setFont(Constants.CALIBRI_16);
+		DefaultCaret caret1 = (DefaultCaret) mainDisplayTP1.getCaret();
+		caret1.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+		frame.getContentPane().add(mainDisplayTP1);
+
+		//tasks with no date panel
+		mainDisplayTP2.setFont(Constants.TAHOMA_14);
+		mainDisplayTP2.setEditable(false);
+		mainDisplayTP2.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+		mainDisplayTP2.setBounds(513, 94, 203, 231);
+		mainDisplayTP2.setFont(Constants.CALIBRI_16);
+		DefaultCaret caret2 = (DefaultCaret) mainDisplayTP2.getCaret();
+		caret2.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+		frame.getContentPane().add(mainDisplayTP2);
+
+		//overdue tasks panel
+		mainDisplayTP3.setFont(Constants.TAHOMA_14);
+		mainDisplayTP3.setBounds(20, 94, 209, 231);
+		mainDisplayTP3.setEditable(false);
+		mainDisplayTP3.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+		mainDisplayTP3.setFont(Constants.CALIBRI_16);
+		DefaultCaret caret3 = (DefaultCaret) mainDisplayTP3.getCaret();
+		caret3.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+		frame.getContentPane().add(mainDisplayTP3);
+
+		JScrollPane scrollPane = new JScrollPane(mainDisplayTP3);
+		scrollPane.setBounds(20, 94, 209, 231);
+		frame.getContentPane().add(scrollPane);
+
+		JScrollPane scrollPane_1 = new JScrollPane(mainDisplayTP1);
+		scrollPane_1.setBounds(250, 35, 243, 345);
+		frame.getContentPane().add(scrollPane_1);
+
+		JScrollPane scrollPane_2 = new JScrollPane(mainDisplayTP2);
+		scrollPane_2.setBounds(513, 94, 203, 231);
+		frame.getContentPane().add(scrollPane_2);
+
+		DigitalClock digitalClock = new DigitalClock();
+		digitalClock.setFont(Constants.TAHOMA_14);
+		digitalClock.setHorizontalAlignment(SwingConstants.RIGHT);
+		digitalClock.setText("3.18 PM");
+		digitalClock.setBounds(409, 10, 84, 23);
+		frame.getContentPane().add(digitalClock);
+		digitalClock.setForeground(new Color(220, 20, 60));
+
+		lblToday.setFont(Constants.TAHOMA_14);
+		lblToday.setBounds(250, 10, 104, 23);
+		frame.getContentPane().add(lblToday);
+		lblToday.setForeground(new Color(220, 20, 60));
+
+		JPanel panel_2 = new JPanel();
+		panel_2.setLayout(null);
+		panel_2.setBackground(new Color(248, 248, 255));
+		panel_2.setBounds(568, 0, 168, 46);
+		frame.getContentPane().add(panel_2);
+
+		JPanel panel_3 = new JPanel();
+		panel_3.setBackground(new Color(3, 97, 148));
+		panel_3.setBounds(558, 46, 168, 10);
+		frame.getContentPane().add(panel_3);
+
+		JPanel panel_4 = new JPanel();
+		panel_4.setBackground(new Color(3, 97, 148));
+		panel_4.setBounds(726, 46, 10, 345);
+		frame.getContentPane().add(panel_4);
+
+		JPanel panel_8 = new JPanel();
+		panel_8.setBackground(new Color(3, 97, 148));
+		panel_8.setBounds(167, 0, 391, 10);
+		frame.getContentPane().add(panel_8);
+
+		JPanel panel_9 = new JPanel();
+		panel_9.setBackground(new Color(3, 97, 148));
+		panel_9.setBounds(167, 0, 10, 56);
+		frame.getContentPane().add(panel_9);
+
+		JPanel panel_14 = new JPanel();
+		panel_14.setBackground(new Color(3, 97, 148));
+		panel_14.setBounds(558, 0, 10, 56);
+		frame.getContentPane().add(panel_14);
+
+		labelAlert.setBounds(109, 12, 49, 20);
+		panel_2.add(labelAlert);
+
+		alertButton = new JButton("Alert");
+		alertButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LOLControl.isAlertMode = !LOLControl.isAlertMode;
+				if(LOLControl.isAlertMode){
+					labelAlert.setText(": On");
+				}
+				else
+					labelAlert.setText(": Off");
+			}
+		});
+		alertButton.setBounds(10, 11, 89, 23);
+		panel_2.add(alertButton);
+
+		backgroundLabel.setBounds(0, 0, 736, 391);
+		frame.getContentPane().add(backgroundLabel);
+
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		inputTF.requestFocus();
+	}
+	
+	/**
+	 * enable the GUI to refresh in a periodic manner (by default is every 60 seconds)
+	 */
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+	 */
+
+	private void enableLOLToRunInBackground(){
+		MenuItem restoreItem = TrayClass.trayIcon.getPopupMenu().getItem(0);
+
+		restoreItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(true);
+				frame.setExtendedState(getExtendedState());
+			}
+		});
+
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				if (isNewRun) {
+					TrayClass.trayIcon.displayMessage(Constants.MSG_BACKGROUND_TITLE,
+							Constants.MSG_BACKGROUND_CONTENT,
+							TrayIcon.MessageType.INFO);
+					isNewRun = false;
+				}
+			}
+		});
+
+		frame.addWindowFocusListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowGainedFocus(java.awt.event.WindowEvent windowEvent) {
+				isFocus = true;
+			}
+
+			@Override
+			public void windowLostFocus(java.awt.event.WindowEvent windowEvent) {
+				isFocus = false;
+			}
+		});
+
+
+		TrayClass.trayIcon.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() >= 2) {
+					frame.setVisible(true);
+					frame.setExtendedState(getExtendedState());
+				}
+			}
+		});
+	}
+	
+	/**
+	 * enable hot key functionalities in GUI
+	*/
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\Task.java
+	 */
+
+public class Task implements Comparable<Task> {
+
+	/************ Attributes ***************/
+	private String description;
+	private String location;
+	private Date dueDate;
+	private Date endDate;
+	private Time startTime;
+	private Time endTime;
+	private boolean isDone;
+	private boolean isOverdue;
+    private boolean alerted;
+    private boolean isJustAdded;
+    
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\Task.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\ui\TrayClass.java
+	 */
+
+public class TrayClass {
+
+	public static TrayIcon trayIcon;
+	private static final String appName = "LifeOnLine";
+	private static final String verNum = "Version: 0.5";
+
+	public TrayClass() {
+		show();
+	}
+
+	public void show() {
+		if (!SystemTray.isSupported()) {
+			System.exit(0);
+		}
+
+		trayIcon = new TrayIcon(createIcon("/resources/icon.png", "Icon"));
+		trayIcon.setToolTip(appName);
+		final SystemTray tray = SystemTray.getSystemTray();
+
+		final PopupMenu menu = new PopupMenu();
+
+		MenuItem restore = new MenuItem("Restore");
+		MenuItem about = new MenuItem("About");
+		MenuItem exit = new MenuItem("Exit");
+
+		menu.add(restore);
+		menu.add(about);
+		menu.addSeparator();
+		menu.add(exit);
+
+		about.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null,
+						appName + "\n" + verNum);
+			}
+		});
+
+		exit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tray.remove(trayIcon);
+				System.exit(0);
+			}
+		});
+
+		trayIcon.setPopupMenu(menu);
+		try {
+			tray.add(trayIcon);
+		} catch (Exception e) {
+		}
+	}
+
+	protected static Image createIcon(String path, String desc) {
+		URL imageURL = TrayClass.class.getResource(path);
+		return (new ImageIcon(imageURL, desc)).getImage();
+	}
+}
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\ui\TrayClass.java
+
+
+
+
+

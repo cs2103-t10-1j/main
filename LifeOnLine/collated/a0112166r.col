@@ -1,0 +1,1075 @@
+//@author: a0112166r
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\FormatToString.java
+	 */
+
+public class FormatToString {
+	private static LinkedList<StringWithFormat> strToShow1 = new LinkedList<StringWithFormat>(); //for TP1
+	private static LinkedList<StringWithFormat> strToShow2 = new LinkedList<StringWithFormat>(); //for TP2
+	private static LinkedList<StringWithFormat> strToShow3 = new LinkedList<StringWithFormat>(); //for TP3
+
+	private static LinkedList<StringWithFormat> strToShowTemp = new LinkedList<StringWithFormat>();
+
+	//below booleans are used to determine whether a separator is needed or not
+	private static boolean hasTodayTask = false;
+	private static boolean thisTaskIsNotTodayTask = false;
+	private static boolean hasSeparator = false; //separator here is the separator between today's tasks and other upcoming tasks
+	private static boolean hasHeader = false;
+	private static boolean hasTodayTaskInUpcomingPanel = false;
+
+	private enum HEADER_TYPE{
+		OVERDUE_DATE, UPCOMING_DATE, INVALID;
+	}
+
+	public FormatToString() {
+		clearAllLinkedList();
+		hasTodayTask = false;
+		thisTaskIsNotTodayTask = false;
+		hasSeparator = false;
+		hasHeader = false;
+		hasTodayTaskInUpcomingPanel = false;
+	}
+
+	/**
+	 * Format the given taskList with appropriate formats, add them to the appropriate display
+	 * panel and add date header for tasks
+	 * 
+	 * @param taskList
+	 */
+	public void format(TaskList<Task> taskList){
+		Task currentTask, previousTask;
+
+		//set previousTask as impossible task with impossible dates
+		previousTask = new Task("ŒŒŒŒŒŒŒŒ", "", new Date(-1, -1, -9999, null), new Date(-1, -1, -9999, null));
+
+		for(int i = 0; i < taskList.size(); i++){
+			currentTask = taskList.get(i);
+
+			int toBeDisplayedIn = determineToBeDisplayedIn(currentTask);
+			setStrToShowTemp(toBeDisplayedIn);
+
+			if(isNeedHeader(previousTask, currentTask, toBeDisplayedIn)){
+				formatAsHeader(currentTask);
+			}
+
+			formatAsTask(i, currentTask);
+
+			previousTask = currentTask;
+		}	
+	}
+
+	/**
+	 * Return which display panel should the given task be displayed in
+	 * 
+	 * @param task
+	 * @return display panel integer
+	 */
+	private int determineToBeDisplayedIn(Task task){
+		if(task.getIsOverdue()){
+			return Constants.DISPLAY_IN_TP3;
+		}
+		else if(task.getTaskDueDate() != null){
+			return Constants.DISPLAY_IN_TP1;
+		}
+		else if(task.getTaskDueDate() == null){
+			return Constants.DISPLAY_IN_TP2;
+		}
+		else{
+			assert false : "task is neither suitable to be displayed in TP1, TP2 and TP3";
+		return Constants.DISPLAY_IN_TP1;
+		}
+	}
+
+	/**
+	 * Set strToShowX to strToShowTemp which X is determined by toBeDisplayedIn
+	 * strToShow1 is to be displayed in display panel 1 and strToShow2 is to be displayed in
+	 * display panel 2 and the same goes for strToShow3. 
+	 * 
+	 * @param toBeDisplayedIn
+	 */
+	private void setStrToShowTemp(int toBeDisplayedIn){
+		switch (toBeDisplayedIn) {
+		case Constants.DISPLAY_IN_TP1:
+			strToShowTemp = strToShow1;
+			break;
+		case Constants.DISPLAY_IN_TP2:
+			strToShowTemp = strToShow2;
+			break;
+		case Constants.DISPLAY_IN_TP3:
+			strToShowTemp = strToShow3;
+			break;
+		}
+	}
+
+	/**
+	 * determine whether the current task needs header or not
+	 * 
+	 * @param previousTask
+	 * @param currentTask
+	 * @return true if header is needed else false
+	 */
+	private boolean isNeedHeader(Task previousTask, Task currentTask, int toBeDisplayedIn){
+		Date previousDueDate, previousEndDate, currentDueDate, currentEndDate;
+		previousDueDate = previousEndDate = currentDueDate = currentEndDate = null;
+
+		if(previousTask.getTaskDueDate() != null){
+			previousDueDate = previousTask.getTaskDueDate();
+		}
+		if(previousTask.getEndDate() != null){
+			previousEndDate = previousTask.getEndDate();
+		}
+		if(currentTask.getTaskDueDate() != null){
+			currentDueDate = currentTask.getTaskDueDate();
+		}
+		if(currentTask.getEndDate() != null){
+			currentEndDate = currentTask.getEndDate();
+		}
+
+		
+		if(toBeDisplayedIn == Constants.DISPLAY_IN_TP1 && !hasHeader){
+			hasHeader = true;
+			return true;
+		}
+		else if(!Date.equalDate(currentDueDate, previousDueDate)){
+			return true;
+		}
+		else if(!Date.equalDate(currentEndDate, previousEndDate)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	/**
+	 * format the current task as header by adding header to display according to task's details
+	 * 
+	 * @param task
+	 */
+	private void formatAsHeader(Task task) {
+		String headerStr;
+
+		HEADER_TYPE headerType = getHeaderType(task);
+
+		switch(headerType){
+		case OVERDUE_DATE:
+			headerStr = getDateHeader(task);
+			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_DATE));
+			break;
+
+		case UPCOMING_DATE:
+			headerStr = getDateHeader(task);
+			if(isNeedSeparator(task)){
+				addSeparator();
+			}
+			strToShowTemp.add(new StringWithFormat(headerStr, Constants.FORMAT_HEADER_DATE));
+			break;
+
+		default:
+			assert false : "invalid header format";	
+		}
+	}
+
+	/**
+	 * return what type of header does task needs
+	 * 
+	 * @param task
+	 * @return HEADER_TYPE that the task needs
+	 */
+	private HEADER_TYPE getHeaderType(Task task){
+		if(task.getIsOverdue()){
+			return HEADER_TYPE.OVERDUE_DATE;
+		}
+		else if(task.getTaskDueDate() != null){
+			return HEADER_TYPE.UPCOMING_DATE;
+		}
+		return HEADER_TYPE.INVALID;
+	}
+
+	/**
+	 * Determines whether a separator is needed or not
+	 * A separator is needed to differentiate today's tasks and upcoming tasks in upcoming tasks
+	 * display panel.
+	 * 
+	 * @return true if separator is needed else false
+	 */
+	private boolean isNeedSeparator(Task task){
+		if(isToday(task.getTaskDueDate())){
+			hasTodayTaskInUpcomingPanel = true;
+		}
+		
+		return  hasTodayTaskInUpcomingPanel && hasTodayTask && thisTaskIsNotTodayTask && !hasSeparator;
+	}
+
+	/**
+	 * will add the separator to LinkedList
+	 */
+	private void addSeparator(){
+		String separator = Constants.LINEBREAK + Constants.GUI_SEPARATOR;
+		strToShowTemp.add(new StringWithFormat(separator, Constants.FORMAT_NONE));
+		hasSeparator = true;
+	}
+
+	/**
+	 * get the upcoming date as header String
+	 * 
+	 * @param task
+	 * @return String of Header
+	 */
+	private String getDateHeader(Task task){
+		String headerStr;
+		headerStr = Constants.LINEBREAK + Constants.LINEBREAK + addTodayOrTomorrow(task.getTaskDueDate());
+		headerStr = headerStr + dateFormatAsHeader(task.getTaskDueDate());
+
+		// for multi-day tasks
+		if(task.getEndDate() != null){
+			headerStr = headerStr + " to ";
+			headerStr = headerStr + addTodayOrTomorrow(task.getEndDate());
+			headerStr = headerStr + dateFormatAsHeader(task.getEndDate());
+		}
+		return headerStr;
+	}
+
+	/**
+	 * return a String representing today, tomorrow or none at all
+	 * 
+	 * @param date
+	 * @return String of tomorrow or today or none at all
+	 */
+	private String addTodayOrTomorrow(Date date){
+		if(isToday(date)){
+			hasTodayTask = true;
+			thisTaskIsNotTodayTask = false;
+			return "Today, ";
+		}
+		else if(isTomorrow(date)){
+			thisTaskIsNotTodayTask = true;
+			return "Tomorrow, ";
+		}
+		else{
+			thisTaskIsNotTodayTask = true;
+			return Constants.EMPTY_STRING; //today or tomorrow is not needed because the task is neither today's nor tomorrow's task
+		}
+	}
+	
+	/**
+	 * determine whether the date parameter is today or not
+	 * 
+	 * @param date
+	 * @return true when its today else false
+	 */
+	private static boolean isToday(Date date){
+		return date.getDay() == date.getCurrentDay() 
+				&& date.getMonth() == date.getCurrentMonth() 
+				&& date.getYear4Digit() == date.getCurrentYear();
+	}
+	
+	/**
+	 * determine whether the date parameter is tomorrow or not
+	 * 
+	 * @param date
+	 * @return true if its tomorrow else false
+	 */
+	private static boolean isTomorrow(Date date){
+		return date.getDay() == date.getCurrentDay()+1 
+				&& date.getMonth() == date.getCurrentMonth() 
+				&& date.getYear4Digit() == date.getCurrentYear();
+	}
+
+	/**
+	 * format task as non-header and add to strToShow
+	 * 
+	 * @param i
+	 * @param task
+	 */
+	private void formatAsTask(int i, Task task) {
+		strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK, Constants.FORMAT_NONE));
+		strToShowTemp.add(new StringWithFormat(numbering(i), Constants.FORMAT_NUMBER));
+
+		addDescription(task);
+		addTime(task);
+		addLocation(task);
+	}
+
+	/**
+	 * add description to LinkedList
+	 * 
+	 * @param description
+	 * @param isDone
+	 * @param isJustAdded
+	 */
+	private void addDescription(Task task){
+		boolean isDone = task.getIsDone();
+		boolean isJustAdded = task.getIsJustAdded();
+		String description = task.getTaskDescription();
+		
+		if (isDone) {
+			strToShowTemp.add(new StringWithFormat(description, Constants.FORMAT_DONE));
+			strToShowTemp.add(new StringWithFormat(Constants.GREEN_TICK, Constants.FORMAT_TICK));
+		} 
+		else if(isJustAdded){
+			StringWithFormat strWithFormat = new StringWithFormat(description, Constants.FORMAT_IS_JUST_ADDED);
+			strWithFormat.setIsJustAdded(true);
+			strToShowTemp.add(strWithFormat);
+		}
+		else {
+			strToShowTemp.add(new StringWithFormat(description, Constants.FORMAT_DESCRIPTION));
+		}
+	}
+
+	/**
+	 * add time to LinkedList
+	 * 
+	 * @param dueStartTime
+	 * @param dueEndTime
+	 * @param isDone
+	 */
+	private void addTime(Task task){
+		Time dueStartTime = task.getStartTime();
+		Time dueEndTime = task.getEndTime();
+		boolean isDone = task.getIsDone();
+		
+		if (dueStartTime != null && dueEndTime != null) {
+			if(isDone){
+				String time = timeStr(dueStartTime, dueEndTime);
+
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_TIME, Constants.FORMAT_DONE));
+				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_DONE));
+			}
+			else{
+				String time = timeStr(dueStartTime, dueEndTime);
+
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_TIME, Constants.FORMAT_TIME));
+				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_NONE));
+			}
+		} 
+		else if (dueStartTime != null) {
+			if(isDone){
+				String time = timeStr(dueStartTime);
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_TIME, Constants.FORMAT_DONE));
+				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_DONE));
+			}
+			else{
+				String time = timeStr(dueStartTime);
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_TIME, Constants.FORMAT_TIME));
+				strToShowTemp.add(new StringWithFormat(time, Constants.FORMAT_NONE));
+			}
+		}
+	}
+
+	/**
+	 * add location to LinkedList
+	 * 
+	 * @param location
+	 * @param isDone
+	 */
+	private void addLocation(Task task){
+		boolean isDone = task.getIsDone();
+		String location = task.getTaskLocation();
+		
+		if (location != null) {
+			if(isDone){
+				location = locationStr(location);
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_LOCATION, Constants.FORMAT_DONE));
+				strToShowTemp.add(new StringWithFormat(location, Constants.FORMAT_DONE));	
+			}
+			else{
+				location = locationStr(location);
+				strToShowTemp.add(new StringWithFormat(Constants.LINEBREAK + Constants.BULLET_LOCATION, Constants.FORMAT_LOCATION));
+				strToShowTemp.add(new StringWithFormat(location, Constants.FORMAT_NONE));
+			}
+		}
+	}
+
+	/**
+	 * add numbering for displaying task as task id
+	 * 
+	 * @param i
+	 * @return numbering String
+	 */
+	private static String numbering(int i) {
+		return (i + 1) + ") ";
+	}
+
+	/**
+	 * Format time to String with appropriate format
+	 * 
+	 * @param startTime
+	 * @param endTime
+	 * @return String of time 
+	 */
+	private static String timeStr(Time startTime, Time endTime) {
+		return startTime.toString() + " - " + endTime.toString();
+	}
+
+	/**
+	 * format time to String with appropriate format
+	 * 
+	 * @param startTime
+	 * @return String of time
+	 */
+	private static String timeStr(Time startTime) {
+		return startTime.toString();
+
+	}
+
+	/**
+	 * Format location to String with appropriate format
+	 * 
+	 * @param location
+	 * @return String of location
+	 */
+	private static String locationStr(String location) {
+		return location;
+	}
+
+	/**
+	 * Format the date as header with appropriate format
+	 * 
+	 * @param dueDate
+	 * @return String of date which is formatted as header
+	 */
+	private static String dateFormatAsHeader(Date dueDate) {
+		DateParser dp = new DateParser();
+		String dayOfTheWeek = dp.getDayOfTheWeek(dueDate);
+		return dayOfTheWeek + " " + dueDate.toString();
+	}
+
+	/**
+	 * return strToShowX which is determined by num
+	 * 
+	 * @param num
+	 * @return LinkedList of strToShowX where X = 1,2,3
+	 */
+	public LinkedList<StringWithFormat> getLinkedList(int num) {
+		switch (num) {
+		case 1:
+			if(strToShow1.isEmpty()){
+				strToShow1.add(new StringWithFormat("", Constants.FORMAT_NONE));
+			}
+			return strToShow1;
+		case 2:
+			if(strToShow2.isEmpty()){
+				strToShow2.add(new StringWithFormat("", Constants.FORMAT_NONE));
+			}
+			return strToShow2;
+		case 3:
+			if(strToShow3.isEmpty()){
+				strToShow3.add(new StringWithFormat("", Constants.FORMAT_NONE));
+			}
+			return strToShow3;
+		default:
+			assert false : "Parameter of FormatTostring.getLinkedList(num) is wrong";
+		return strToShow1;
+		}
+	}
+
+	/**
+	 * will clear all the LinkedList strToShow
+	 */
+	private static void clearAllLinkedList() {
+		strToShow1.clear();
+		strToShow2.clear();
+		strToShow3.clear();
+
+		//add main header to the three displaying panels
+		strToShow1.add(new StringWithFormat(Constants.HEADER_UPCOMING, Constants.FORMAT_HEADER_UPCOMING));
+		strToShow2.add(new StringWithFormat(Constants.HEADER_FLOATING, Constants.FORMAT_HEADER_FLOATING));
+		strToShow3.add(new StringWithFormat(Constants.HEADER_OVERDUE, Constants.FORMAT_HEADER_OVERDUE));
+	}
+
+	/**
+	 * return total number of LinkedList used
+	 * 
+	 * @return int of total number of LinkedList in FormatToString class
+	 */
+	public int getLinkedListNum() {
+		return 3;
+	}
+}
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\FormatToString.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+	 */
+
+/**
+ * This class is the listener to the input text field in LOL's GUI
+ * This class is responsible to listen to the changes in the input text field and refresh the GUI after every user input.
+ */
+
+package lol;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.Timer;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
+import logic.LOLControl;
+
+
+public class InputTextFieldListener implements ActionListener, KeyListener {
+	JTextField inputTF;
+	JTextPane mainDisplayTP1;
+	static StyledDocument doc1 = new DefaultStyledDocument();
+	JTextPane mainDisplayTP2;
+	static StyledDocument doc2 = new DefaultStyledDocument();
+	JTextPane mainDisplayTP3;
+	static StyledDocument doc3 = new DefaultStyledDocument();
+	JLabel label;
+	JLabel progressLabel;
+	JLabel alertLabel;
+
+	private static ArrayList<String> commands = new ArrayList<String>();
+	private static int indexOfCurrentShowingTask;
+
+	final static boolean IS_HEADER = true;
+	final Timer timer;
+	final JProgressBar progressBar;
+	
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+	 */
+
+	public InputTextFieldListener(JTextPane mainDisplayTP,
+			JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JLabel label,
+			JTextField inputTF, Timer timer, JLabel progressLabel,
+			JProgressBar progressBar, JLabel alertLabel) {
+		this.inputTF = inputTF;
+
+		this.mainDisplayTP1 = mainDisplayTP;
+		this.mainDisplayTP1.setDocument(doc1);
+		addStyleToDoc(doc1);
+		this.mainDisplayTP2 = mainDisplayTP2;
+		this.mainDisplayTP2.setDocument(doc2);
+		addStyleToDoc(doc2);
+		this.mainDisplayTP3 = mainDisplayTP3;
+		this.mainDisplayTP3.setDocument(doc3);
+		addStyleToDoc(doc3);
+
+		this.progressBar = progressBar;
+		this.timer = timer;
+		this.label = label;
+		this.progressLabel = progressLabel;
+		this.alertLabel = alertLabel;
+	}
+	
+	/**
+	 * Add the required Styles that are used in the GUI to doc so that it can be
+	 * used in GUI
+	 * 
+	 * @param doc
+	 */
+	private static void addStyleToDoc(StyledDocument doc) {
+		Style style = doc.addStyle(Constants.FORMAT_HEADER_FLOATING, null);
+		StyleConstants.setFontSize(style, 18);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Constants.DARK_BLUE);
+
+		style = doc.addStyle(Constants.FORMAT_HEADER_NORMAL, null);
+		StyleConstants.setFontSize(style, 18);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Color.BLUE);
+
+		style = doc.addStyle(Constants.FORMAT_HEADER_UPCOMING, null);
+		StyleConstants.setFontSize(style, 18);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Constants.DARK_BLUE);
+
+		style = doc.addStyle(Constants.FORMAT_HEADER_DATE, null);
+		StyleConstants.setFontSize(style, 16);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Constants.MEDIUM_BLUE);
+
+		style = doc.addStyle(Constants.FORMAT_NUMBER, null);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setItalic(style, true);
+		StyleConstants.setForeground(style, Color.BLACK);
+
+		style = doc.addStyle(Constants.FORMAT_TICK, null);
+		StyleConstants.setForeground(style, Constants.BG);
+
+		style = doc.addStyle(Constants.FORMAT_DESCRIPTION, null);
+		StyleConstants.setFontSize(style, 16);
+
+		style = doc.addStyle(Constants.FORMAT_TIME, null);
+		StyleConstants.setFontSize(style, 16);
+		StyleConstants.setForeground(style, Constants.DARK_ORANGE);
+
+		style = doc.addStyle(Constants.FORMAT_LOCATION, null);
+		StyleConstants.setFontSize(style, 16);
+		StyleConstants.setForeground(style, Constants.PURPLE);
+
+		style = doc.addStyle(Constants.FORMAT_HEADER_OVERDUE, null);
+		StyleConstants.setFontSize(style, 18);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setForeground(style, Color.RED);
+
+		style = doc.addStyle(Constants.FORMAT_DONE, null);
+		StyleConstants.setFontSize(style, 16);
+		StyleConstants.setForeground(style, Color.GRAY);
+
+		style = doc.addStyle(Constants.FORMAT_IS_JUST_ADDED, null);
+		StyleConstants.setFontSize(style, 16);
+		StyleConstants.setBackground(style, Color.YELLOW);
+	}
+
+	/**
+	 * This function will be called whenever user key in some text into the
+	 * input text field and press enter.
+	 */
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+	 */
+
+	/**
+	 * add userInput String to an array list call commands and automatically add
+	 * an empty String at the end of the array list
+	 * 
+	 * @param userInput
+	 */
+	private void addUserInputToCommands(String userInput) {
+		if (commands.isEmpty()) {
+			commands.add(userInput);
+			commands.add(Constants.EMPTY_STRING);
+		} else {
+			commands.set(commands.size() - 1, userInput);
+			commands.add(Constants.EMPTY_STRING);
+		}
+
+		indexOfCurrentShowingTask = Constants.IMPOSSIBLE_ARRAYLIST_INDEX;
+	}
+	
+	/**
+	 * Refresh the feedback display panel in GUI
+	 * 
+	 * @param inputStr
+	 */
+	public void refreshFeedbackDisplay(String inputStr) {
+		String feedback = LOLControl.executeUserInput(inputStr);
+		label.setText(feedback);
+	}
+
+	/**
+	 * refresh all the main displaying panels displaying panels include the
+	 * three main display text panes for tasks, progress bar, alerting display
+	 * (on desktop and email)
+	 * 
+	 * @param taskList
+	 */
+	public void refreshMainDisplay(TaskList<Task> taskList) {
+		refreshDisplayTextPanes(taskList);
+		refreshProgressBar();
+		refreshAlert();
+	}
+
+	/**
+	 * refresh the three main display panels for tasks with taskList
+	 * 
+	 * @param taskList
+	 */
+	private void refreshDisplayTextPanes(TaskList<Task> taskList) {
+		resetScrollPanePosition();
+		clear(mainDisplayTP1);
+		clear(mainDisplayTP2);
+		clear(mainDisplayTP3);
+
+		showInMainDisplayTP(taskList);
+	}
+
+	/**
+	 * refresh the progress bar which show today's progress
+	 */
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+	 */
+
+	/**
+	 * determine what will be shown in the display panels
+	 * 
+	 * @param taskList
+	 */
+	private void showInMainDisplayTP(TaskList<Task> taskList) {
+		FormatToString formatToString = new FormatToString();
+		formatToString.format(taskList);
+
+		addToDisplay(formatToString, doc1, doc2, doc3);
+	}
+
+	/**
+	 * add task which is formatted to String in formatToString class to the
+	 * corresponding doc which belongs to its corresponding task display
+	 * JTextPane
+	 * 
+	 * doc1 will be holding display details for upcoming task display panel doc2
+	 * will be holding display details for floating task display panel doc3 will
+	 * be holding display details for overdue task display panel
+	 * 
+	 * @param formatToString
+	 * @param doc1
+	 * @param doc2
+	 * @param doc3
+	 */
+	private void addToDisplay(FormatToString formatToString,
+			StyledDocument doc1, StyledDocument doc2, StyledDocument doc3) {
+		try {
+			for (int j = 1; j <= formatToString.getLinkedListNum(); j++) {
+				LinkedList<StringWithFormat> strToShow = formatToString
+						.getLinkedList(j);
+
+				for (int i = 0; i < strToShow.size(); i++) {
+					if (j == 1) {
+						// if the task is just added, GUI will auto scroll to
+						// the newly added task
+						if (strToShow.get(i).getIsJustAdded()) {
+							mainDisplayTP1.setCaretPosition(doc1.getLength());
+						}
+						doc1.insertString(doc1.getLength(), strToShow.get(i)
+								.getString(), doc1.getStyle(strToShow.get(i)
+								.getFormat()));
+					} else if (j == 2) {
+						if (strToShow.get(i).getIsJustAdded()) {
+							mainDisplayTP2.setCaretPosition(doc2.getLength());
+						}
+						doc2.insertString(doc2.getLength(), strToShow.get(i)
+								.getString(), doc2.getStyle(strToShow.get(i)
+								.getFormat()));
+					} else if (j == 3) {
+						if (strToShow.get(i).getIsJustAdded()) {
+							mainDisplayTP3.setCaretPosition(doc3.getLength());
+						}
+						doc3.insertString(doc3.getLength(), strToShow.get(i)
+								.getString(), doc3.getStyle(strToShow.get(i)
+								.getFormat()));
+					}
+				}
+			}
+		} catch (BadLocationException badLocationException) {
+			System.err.println("Bad Location Exception in reading doc");
+		}
+	}
+
+	/**
+	 * will clear all the words in the text field
+	 * 
+	 * @param TF
+	 */
+	private void clear(JTextField TF) {
+		TF.setText(Constants.EMPTY_STRING);
+	}
+
+	/**
+	 * will clear all the words in the text pane
+	 * 
+	 * @param TP
+	 */
+	private void clear(JTextPane TP) {
+		TP.setText(Constants.EMPTY_STRING);
+	}
+
+	/**
+	 * reset the position of all the scroll pane currently present in GUI to
+	 * their topmost position
+	 */
+	private void resetScrollPanePosition() {
+		mainDisplayTP1.setCaretPosition(0);
+		mainDisplayTP2.setCaretPosition(0);
+		mainDisplayTP3.setCaretPosition(0);
+	}
+
+	/**
+	 * Handle the key-released event from the text field. Will display
+	 * previously entered user input when press up arrow key
+	 * 
+	 * And can navigate through different previously entered user input using up
+	 * and down arrow keys.
+	 */
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\InputTextFieldListener.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+	 */
+
+
+@SuppressWarnings("serial")
+public class LOLGui extends JFrame implements HotkeyListener {
+	private boolean isNewRun = true;
+	private boolean isNewMini = true;
+	private boolean isFocus;
+
+	TrayClass displayTrayIcon = new TrayClass();
+
+	final JFrame frame = new JFrame(Constants.LOL_NAME);
+	final JLabel lblToday = new JLabel(Constants.TODAY);
+	final JTextField inputTF = new JTextField();
+	final JLabel feedbackLabel = new JLabel();
+	final JProgressBar progressBar = new JProgressBar();
+	final JLabel progressLabel = new JLabel(Constants.PROGRESS_BAR);
+	final JTextPane mainDisplayTP1 = new JTextPane();
+	final JTextPane mainDisplayTP2 = new JTextPane();
+	final JTextPane mainDisplayTP3 = new JTextPane();
+	final JLabel labelAlert = new JLabel(LOLControl.isAlertMode?": On":": Off");
+	JButton alertButton;
+	Timer timer;
+
+	public LOLGui() {
+
+		enableOnlyOneLOLToRun();
+		setUpGUI();
+		popUpAnInputDialogForEmailFunctionality();
+		addFocusListenerToAllPanel();
+		enableLOLToRunInBackground();
+		
+		//This piece of code repeats itself after the specified Refresh time
+		timer = new Timer(Constants.REFRESH_TIME,
+				new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				enablePeriodicRefreshInGUI();
+			}
+		});
+		timer.setInitialDelay(0); // to start first refresh after 0s when program opens
+		timer.start();
+		
+		final InputTextFieldListener listener = new InputTextFieldListener(
+				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
+				feedbackLabel, inputTF, timer,
+				progressLabel, progressBar, labelAlert);
+		
+		enableHotKey(listener);
+		inputTF.addActionListener(listener);
+		inputTF.addKeyListener(listener);
+		
+	}
+
+	/**
+	 * this will prevent the user from running multiple application of LOL at the same time
+	 */
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+	 */
+
+	/**
+	 * enable the user to navigate to different panels in GUI by pressing "tab" button and the
+	 * selected panel will be shown in bold black border. The panels which the user can choose are
+	 * as follow : 
+	 * 1. Input Text Field
+	 * 2. Three main task display panels
+	 * 3. Alert Button
+	 */
+	private void addFocusListenerToAllPanel(){
+		inputTF.addFocusListener(new FocusAdapter() {
+			Border original = inputTF.getBorder();
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				inputTF.setBorder(Constants.INPUT_TF_FOCUS_BORDER);
+			}
+			@Override
+			public void focusLost(FocusEvent e) {
+				inputTF.setBorder(original);
+			}
+		});
+
+		mainDisplayTP1.addFocusListener(new FocusAdapter() {
+			Border original = mainDisplayTP1.getBorder();
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				mainDisplayTP1.setBorder(Constants.DISPLAY_PANEL_FOCUS_BORDER);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				mainDisplayTP1.setBorder(original);
+			}
+		});
+
+		mainDisplayTP2.addFocusListener(new FocusAdapter() {
+			Border original = mainDisplayTP2.getBorder();
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				mainDisplayTP2.setBorder(Constants.DISPLAY_PANEL_FOCUS_BORDER);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				mainDisplayTP2.setBorder(original);
+			}
+		});
+
+		mainDisplayTP3.addFocusListener(new FocusAdapter() {
+			Border original = mainDisplayTP3.getBorder();
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				mainDisplayTP3.setBorder(Constants.DISPLAY_PANEL_FOCUS_BORDER);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				mainDisplayTP3.setBorder(original);
+			}
+		});
+
+		alertButton.addFocusListener(new FocusAdapter() {
+			Border original = alertButton.getBorder();
+
+			@Override
+			public void focusGained(FocusEvent e){
+				alertButton.setBorder(Constants.ALERT_BUTTON_FOCUS_BORDER);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e){
+				alertButton.setBorder(original);
+			}
+		});
+	}
+	
+	/**
+	 * enable LOL to run in the background when user press minimize or the exit icon
+	 */
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+	 */
+
+	/**
+	 * show the Help Window when user press F1 or types help
+	 */
+	public static void showHelpWindow(){
+		JOptionPane.showMessageDialog(null, 
+				Constants.MSG_HELP_INFO, 
+				Constants.MSG_WELCOME_HELP, 
+				JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	
+}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\LOLGui.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\StringWithFormat.java
+	 */
+
+public class StringWithFormat {
+	/******************Attributes******************/
+	private String str;
+	private String format;
+	boolean isJustAdded = false; //this boolean stores data which indicate whether the current 
+								 //string is just added by the user
+	
+	/******************Constructor******************/
+	public StringWithFormat(String str, String format){
+		this.str = str;
+		this.format = format;
+	}
+	
+	/******************Accessors******************/
+	public String getString(){
+		return str;
+	}
+	
+	public String getFormat(){
+		return format;
+	}
+	
+	public boolean getIsJustAdded(){
+		return isJustAdded;
+	}
+	
+	/******************Mutators******************/
+	public void setString(String str){
+		this.str = str;
+	}
+	
+	public void setFormat(String format){
+		this.format = format;
+	}
+	
+	public void setIsJustAdded(boolean isJustAdded){
+		this.isJustAdded = true;
+	}
+	
+	/******************Class methods******************/
+
+	/**
+	 * Copy StringWithFormat object strWithFormat1 to StringWithFormat object strWithFormat2
+	 * 
+	 * @param strWithFormat1 
+	 * @param strWithFormat2 
+	 */
+	public static void copy(StringWithFormat strWithFormat1, StringWithFormat strWithFormat2){
+		strWithFormat2.setString(strWithFormat1.getString());
+		strWithFormat2.setFormat(strWithFormat1.getFormat());
+	}
+}
+
+	// End of segment: C:\Users\Rama\Documents\Repositories\Github\project\main\LifeOnLine\src\lol\StringWithFormat.java
+
+
+
+
+
