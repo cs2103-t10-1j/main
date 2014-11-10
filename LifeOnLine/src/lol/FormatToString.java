@@ -130,7 +130,7 @@ public class FormatToString {
 	 * 
 	 * @param previousTask
 	 * @param currentTask
-	 * @return boolean value
+	 * @return true if header is needed else false
 	 */
 	private boolean isNeedHeader(Task previousTask, Task currentTask, int toBeDisplayedIn){
 		Date previousDueDate, previousEndDate, currentDueDate, currentEndDate;
@@ -198,7 +198,7 @@ public class FormatToString {
 	 * return what type of header does task needs
 	 * 
 	 * @param task
-	 * @return HEADER_TYPE
+	 * @return HEADER_TYPE that the task needs
 	 */
 	private HEADER_TYPE getHeaderType(Task task){
 		if(task.getIsOverdue()){
@@ -215,7 +215,7 @@ public class FormatToString {
 	 * A separator is needed to differentiate today's tasks and upcoming tasks in upcoming tasks
 	 * display panel.
 	 * 
-	 * @return boolean
+	 * @return true if separator is needed else false
 	 */
 	private boolean isNeedSeparator(Task task){
 		if(isToday(task.getTaskDueDate())){
@@ -238,7 +238,7 @@ public class FormatToString {
 	 * get the upcoming date as header String
 	 * 
 	 * @param task
-	 * @return String
+	 * @return String of Header
 	 */
 	private String getDateHeader(Task task){
 		String headerStr;
@@ -258,7 +258,7 @@ public class FormatToString {
 	 * return a String representing today, tomorrow or none at all
 	 * 
 	 * @param date
-	 * @return
+	 * @return String of tomorrow or today or none at all
 	 */
 	private String addTodayOrTomorrow(Date date){
 		if(isToday(date)){
@@ -276,12 +276,24 @@ public class FormatToString {
 		}
 	}
 	
+	/**
+	 * determine whether the date parameter is today or not
+	 * 
+	 * @param date
+	 * @return true when its today else false
+	 */
 	private static boolean isToday(Date date){
 		return date.getDay() == date.getCurrentDay() 
 				&& date.getMonth() == date.getCurrentMonth() 
 				&& date.getYear4Digit() == date.getCurrentYear();
 	}
 	
+	/**
+	 * determine whether the date parameter is tomorrow or not
+	 * 
+	 * @param date
+	 * @return true if its tomorrow else false
+	 */
 	private static boolean isTomorrow(Date date){
 		return date.getDay() == date.getCurrentDay()+1 
 				&& date.getMonth() == date.getCurrentMonth() 
@@ -408,7 +420,7 @@ public class FormatToString {
 	 * 
 	 * @param startTime
 	 * @param endTime
-	 * @return String
+	 * @return String of time 
 	 */
 	private static String timeStr(Time startTime, Time endTime) {
 		return startTime.toString() + " - " + endTime.toString();
@@ -418,7 +430,7 @@ public class FormatToString {
 	 * format time to String with appropriate format
 	 * 
 	 * @param startTime
-	 * @return String
+	 * @return String of time
 	 */
 	private static String timeStr(Time startTime) {
 		return startTime.toString();
@@ -429,7 +441,7 @@ public class FormatToString {
 	 * Format location to String with appropriate format
 	 * 
 	 * @param location
-	 * @return String
+	 * @return String of location
 	 */
 	private static String locationStr(String location) {
 		return location;
@@ -439,7 +451,7 @@ public class FormatToString {
 	 * Format the date as header with appropriate format
 	 * 
 	 * @param dueDate
-	 * @return String
+	 * @return String of date which is formatted as header
 	 */
 	private static String dateFormatAsHeader(Date dueDate) {
 		DateParser dp = new DateParser();
@@ -451,7 +463,7 @@ public class FormatToString {
 	 * return strToShowX which is determined by num
 	 * 
 	 * @param num
-	 * @return LinkedList of strToShowX
+	 * @return LinkedList of strToShowX where X = 1,2,3
 	 */
 	public LinkedList<StringWithFormat> getLinkedList(int num) {
 		switch (num) {
@@ -493,7 +505,7 @@ public class FormatToString {
 	/**
 	 * return total number of LinkedList used
 	 * 
-	 * @return int
+	 * @return int of total number of LinkedList in FormatToString class
 	 */
 	public int getLinkedListNum() {
 		return 3;
