@@ -53,17 +53,18 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	Timer timer;
 
 	public LOLGui() {
+		enablePeriodicRefreshInGUI();
+		enableOnlyOneLOLToRun();
+		setUpGUI();
+		popUpAnInputDialogForEmailFunctionality();
+		addFocusListenerToAllPanel();
+		enableLOLToRunInBackground();
+		
 		final InputTextFieldListener listener = new InputTextFieldListener(
 				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
 				feedbackLabel, inputTF, timer,
 				progressLabel, progressBar, labelAlert);
 		
-		enableOnlyOneLOLToRun();
-		setUpGUI();
-		enablePeriodicRefreshInGUI();
-		popUpAnInputDialogForEmailFunctionality();
-		addFocusListenerToAllPanel();
-		enableLOLToRunInBackground();
 		enableHotKey(listener);
 		
 		inputTF.addActionListener(listener);
