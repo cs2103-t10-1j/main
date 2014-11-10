@@ -15,6 +15,7 @@ import lol.TaskList;
 import lol.Time;
 import io.StorageFacade;
 
+//@author A0111422A
 public class LOLControl {
 
 	public static String userEmail = null;

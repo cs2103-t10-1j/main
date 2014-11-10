@@ -12,6 +12,7 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+//@author A0111422A
 public class TrayClass {
 
 	public static TrayIcon trayIcon;
