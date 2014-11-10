@@ -5,9 +5,8 @@ package io;
 
 import lol.TaskList;
 import lol.Task;
-/**
- * @author aviral
- */
+
+//@author aviral
 public interface Storage {
 	public TaskList<Task> loadTasks();
 	

@@ -14,11 +14,8 @@ import lol.TaskList;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-/**
- * 
- * @author aviral
- *
- */
+
+//@author A0118903H
 public class StorageSaveTest {
 
 	@Test

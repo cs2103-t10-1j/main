@@ -16,9 +16,7 @@ import lol.Date;
 import lol.Time;
 import lol.TaskList;
 
-/**
- * @author aviral
- */
+//@author A0118903H
 public class StorageOperations {
 
 	/************* Attributes ***************/

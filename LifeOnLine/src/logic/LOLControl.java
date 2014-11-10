@@ -25,7 +25,8 @@ public class LOLControl {
 	public static int progressMaximum = 0;
 	public static boolean isAlertMode = false;
 	public static boolean isBlockMode = false;
-	public static int alertTime = 200;
+	public static int alertTime = 200; // default time is 2 hours, also make
+										// sure alertTime%100==0
 
 	/********** Load Storage ***********/
 	private static StorageFacade LOLStorage = StorageFacade
@@ -862,7 +863,7 @@ public class LOLControl {
 		}
 	}
 
-	// @author A0118903H
+	//@author A0118903H
 	public static void refreshProgress() {
 
 		progress = 0;
@@ -918,12 +919,15 @@ public class LOLControl {
 								&& isAlertRangeToday(temp, currentTime)) {
 							temp.setAlerted(true);
 							return temp;
-						}else{
-							if(!temp.getAlerted()
-									&& isAlertRangeTomorrow(temp, currentTime)){
-								
-							}
 						}
+					} else if (temp.getTaskDueDate().equals(tomorrowDate)
+							&& temp.getStartTime() != null) {
+						if (!temp.getAlerted()
+								&& isAlertRangeTomorrow(temp, currentTime)) {
+							temp.setAlerted(true);
+							return temp;
+						}
+
 					}
 
 				} else {
@@ -938,12 +942,30 @@ public class LOLControl {
 
 	}
 
+	/*
+	 * to alert when the task is past midnight time, for example task is due at
+	 * 1am tmrw, current time 11pm and alert time 2 hours
+	 */
 	private static boolean isAlertRangeTomorrow(Task temp, Time currentTime) {
-		// TODO Auto-generated method stub
+
+		assert (alertTime % 100 == 0); // this logic works for only alertTime
+										// with minutes as 00
+
+		int tempTime = Integer.parseInt(temp.getStartTime().getFormat24hr());
+		int crrntTime = Integer.parseInt(currentTime.getFormat24hr());
+		crrntTime += alertTime;
+		if (crrntTime > 2339) {
+			crrntTime -= 2400;
+			if (tempTime <= crrntTime) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	private static boolean isAlertRangeToday(Task temp, Time currentTime) {
+
+		assert (alertTime % 100 == 0);
 
 		int tempTime = Integer.parseInt(temp.getStartTime().getFormat24hr());
 		int crrntTime = Integer.parseInt(currentTime.getFormat24hr());

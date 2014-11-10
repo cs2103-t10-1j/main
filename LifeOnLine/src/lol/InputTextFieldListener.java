@@ -48,6 +48,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final Timer timer;
 	final JProgressBar progressBar;
 	
+	//@author A0112166R
 	public InputTextFieldListener(JTextPane mainDisplayTP,
 			JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JLabel label,
 			JTextField inputTF, Timer timer, JLabel progressLabel,

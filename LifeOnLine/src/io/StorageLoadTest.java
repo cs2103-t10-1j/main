@@ -9,10 +9,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-/**
- * @author aviral
- *
- */
+//@author A0118903H
 public class StorageLoadTest {
 
 	@Test
