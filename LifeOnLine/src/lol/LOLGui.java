@@ -85,6 +85,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	/**
 	 * this will prevent the user from running multiple application of LOL at the same time
 	 */
+	//@author A0111422A
 	private void enableOnlyOneLOLToRun(){
 		if (!JIntellitype.isJIntellitypeSupported()) {
 			JOptionPane.showMessageDialog(null, Constants.MSG_ERROR);
@@ -422,6 +423,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	/**
 	 * enable LOL to run in the background when user press minimize or the exit icon
 	 */
+	//@author A0111422A
 	private void enableLOLToRunInBackground(){
 		MenuItem restoreItem = TrayClass.trayIcon.getPopupMenu().getItem(0);
 
