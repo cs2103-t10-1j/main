@@ -3,11 +3,7 @@
  */
 package lol;
 
-/**
- * 
- * @author aviral
- *
- */
+//@author A0118903H
 public class CommandLine {
 
 	/******************* Attributes *********************/

@@ -120,7 +120,10 @@ public class StorageOperations {
 
 		for (int i = 0; i < numberOfTasks; i++) {
 			tempTask = this.createTask(_commandStrings.get(i));
+			//Null tasks should not be added
+			if(tempTask!=null){
 			_taskList.add(tempTask);
+			}
 		}
 
 	}
@@ -136,6 +139,7 @@ public class StorageOperations {
 	 *            String form of task
 	 * @return Task object
 	 */
+	//This function is designed to handle exceptions when the user changes the text file in incorrect format
 	private Task createTask(String command) {
 		String description = "", location = "", startDate = "", startTime = "", endTime = "", done = "", overdue = "", endDate = "";
 		Date startDateOb, endDateOb;
@@ -154,9 +158,11 @@ public class StorageOperations {
 			overdue = commandComponents[6];
 			endDate = commandComponents[7];
 		} catch (Exception e) {
-			System.out.println("file not in correct format");
+			System.out.println("File line not in correct format");
 		}
-
+		finally{	
+			//Does not let a task to be created if description is not present
+		if(!description.equals("")){
 		startTimeOb = getTime(startTime);
 		endTimeOb = getTime(endTime);
 		startDateOb = getDate(startDate);
@@ -172,6 +178,9 @@ public class StorageOperations {
 			task.setLocation(null);
 		task.setEndDate(endDateOb);
 		return task;
+		}
+		}
+		return null;
 	}
 
 	/**
@@ -253,7 +262,7 @@ public class StorageOperations {
 	 */
 	private String generateCommand(Task task) {
 		StringBuilder sb = new StringBuilder();
-
+		assert (task != null);
 		try {
 			String description = task.getTaskDescription();
 			String location = task.getTaskLocation();

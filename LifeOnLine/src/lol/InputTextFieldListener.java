@@ -27,11 +27,7 @@ import javax.swing.text.StyledDocument;
 
 import logic.LOLControl;
 
-/**
- * 
- * @author Sevin, Aviral
- *
- */
+
 public class InputTextFieldListener implements ActionListener, KeyListener {
 	JTextField inputTF;
 	JTextPane mainDisplayTP1;
@@ -50,7 +46,8 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final static boolean IS_HEADER = true;
 	final Timer timer;
 	final JProgressBar progressBar;
-
+	
+	//@author sevin
 	public InputTextFieldListener(JTextPane mainDisplayTP,
 			JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JLabel label,
 			JTextField inputTF, Timer timer, JLabel progressLabel,
@@ -138,17 +135,15 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * This function will be called whenever user key in some text into the
 	 * input text field and press enter.
 	 */
+	//@author A0118903H
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		String inputStr = inputTF.getText();
-		if(inputStr.equalsIgnoreCase("alert")){
-			LOLControl.isAlertMode = !LOLControl.isAlertMode;
-			alertLabel.setText(LOLControl.isAlertMode ? ": On" : ": Off");
-			label.setText("Alert is now " + (LOLControl.isAlertMode ? "On!" : "Off!"));
-		} else {
 		addUserInputToCommands(inputStr);
+		if(inputStr.equalsIgnoreCase(Constants.COMMAND_ALERT)){
+			alertToggle();
+		} else {
 		refreshFeedbackDisplay(inputStr);
-
 		TaskList<Task> taskList = LOLControl.getTaskList();
 		refreshMainDisplay(taskList);
 
@@ -160,12 +155,19 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		clear(inputTF);
 	}
 
+	private void alertToggle() {
+		LOLControl.isAlertMode = !LOLControl.isAlertMode;
+		alertLabel.setText(LOLControl.isAlertMode ? ": On" : ": Off");
+		label.setText("Alert is now " + (LOLControl.isAlertMode ? "On!" : "Off!"));
+	}
+
 	/**
 	 * add userInput String to an array list call commands and automatically add
 	 * an empty String at the end of the array list
 	 * 
 	 * @param userInput
 	 */
+	//@author sevin
 	private void addUserInputToCommands(String userInput) {
 		if (commands.isEmpty()) {
 			commands.add(userInput);
@@ -218,6 +220,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	/**
 	 * refresh the progress bar which show today's progress
 	 */
+	//@author A0118903H
 	private void refreshProgressBar() {
 		LOLControl.refreshProgress();
 		if (LOLControl.progressMaximum > 0) {
@@ -284,6 +287,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * 
 	 * @param taskList
 	 */
+	//@author sevin
 	private void showInMainDisplayTP(TaskList<Task> taskList) {
 		FormatToString formatToString = new FormatToString();
 		formatToString.format(taskList);
@@ -305,6 +309,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * @param doc2
 	 * @param doc3
 	 */
+	
 	private void addToDisplay(FormatToString formatToString,
 			StyledDocument doc1, StyledDocument doc2, StyledDocument doc3) {
 		try {
@@ -379,6 +384,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * And can navigate through different previously entered user input using up
 	 * and down arrow keys.
 	 */
+	//@author A0118903H
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_UP) {
 			if (!commands.isEmpty()) {

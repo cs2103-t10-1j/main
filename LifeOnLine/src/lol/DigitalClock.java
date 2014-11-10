@@ -6,11 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JLabel;
 import javax.swing.Timer;
-/**
- * 
- * @author aviral
- *
- */
+
+//@author A0118903H
 public class DigitalClock extends JLabel {
 
 	private static final long serialVersionUID = 1L;

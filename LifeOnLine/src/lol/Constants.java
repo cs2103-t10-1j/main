@@ -21,7 +21,7 @@ public class Constants {
 	// Separators
 	public static final String SEPARATOR = "\\\\";
 	public static final String SEPARATOR_SLASH = "/";
-	public static final String SEPARATOR_DOT = "\\.";
+	public static final String SEPARATOR_DOT = ".";
 	public static final String SEPARATOR_TO = " to ";
 	public static final String SEPARATOR_DASH = "-";
 	
@@ -79,6 +79,7 @@ public class Constants {
 	public static final String COMMAND_HELP = "help";
 	public static final String COMMAND_EXIT = "exit";
 	public static final String COMMAND_INVALID = "invalid command";
+	public static final String COMMAND_ALERT = "alert";
 
 	// Array indices
 	public static final int INDEX_DAY = 0;
