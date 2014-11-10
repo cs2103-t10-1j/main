@@ -22,11 +22,7 @@ import java.util.LinkedList;
 
 import parser.DateParser;
 
-/**
- * 
- * @author sevin
- *
- */
+//@author A0112166R
 public class FormatToString {
 	private static LinkedList<StringWithFormat> strToShow1 = new LinkedList<StringWithFormat>(); //for TP1
 	private static LinkedList<StringWithFormat> strToShow2 = new LinkedList<StringWithFormat>(); //for TP2

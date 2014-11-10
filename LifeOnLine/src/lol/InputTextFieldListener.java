@@ -1,3 +1,4 @@
+//@author A0112166R
 /**
  * This class is the listener to the input text field in LOL's GUI
  * This class is responsible to listen to the changes in the input text field and refresh the GUI after every user input.
@@ -47,7 +48,6 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	final Timer timer;
 	final JProgressBar progressBar;
 	
-	//@author sevin
 	public InputTextFieldListener(JTextPane mainDisplayTP,
 			JTextPane mainDisplayTP2, JTextPane mainDisplayTP3, JLabel label,
 			JTextField inputTF, Timer timer, JLabel progressLabel,
@@ -70,7 +70,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		this.progressLabel = progressLabel;
 		this.alertLabel = alertLabel;
 	}
-
+	
 	/**
 	 * Add the required Styles that are used in the GUI to doc so that it can be
 	 * used in GUI
@@ -160,14 +160,14 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		alertLabel.setText(LOLControl.isAlertMode ? ": On" : ": Off");
 		label.setText("Alert is now " + (LOLControl.isAlertMode ? "On!" : "Off!"));
 	}
-
+	
+	//@author A0112166R
 	/**
 	 * add userInput String to an array list call commands and automatically add
 	 * an empty String at the end of the array list
 	 * 
 	 * @param userInput
 	 */
-	//@author sevin
 	private void addUserInputToCommands(String userInput) {
 		if (commands.isEmpty()) {
 			commands.add(userInput);
@@ -179,7 +179,7 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 
 		indexOfCurrentShowingTask = Constants.IMPOSSIBLE_ARRAYLIST_INDEX;
 	}
-
+	
 	/**
 	 * Refresh the feedback display panel in GUI
 	 * 
@@ -282,12 +282,12 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 		return message;
 	}
 
+	//@author A0112166R
 	/**
 	 * determine what will be shown in the display panels
 	 * 
 	 * @param taskList
 	 */
-	//@author sevin
 	private void showInMainDisplayTP(TaskList<Task> taskList) {
 		FormatToString formatToString = new FormatToString();
 		formatToString.format(taskList);
@@ -309,7 +309,6 @@ public class InputTextFieldListener implements ActionListener, KeyListener {
 	 * @param doc2
 	 * @param doc3
 	 */
-	
 	private void addToDisplay(FormatToString formatToString,
 			StyledDocument doc1, StyledDocument doc2, StyledDocument doc3) {
 		try {

@@ -26,12 +26,9 @@ import com.melloware.jintellitype.JIntellitype;
 import ui.TrayClass;
 import logic.LOLControl;
 
+//@author A0112166R
+
 @SuppressWarnings("serial")
-/**
- * 
- * @author Sevin
- *
- */
 public class LOLGui extends JFrame implements HotkeyListener {
 	private boolean isNewRun = true;
 	private boolean isNewMini = true;
@@ -340,6 +337,7 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		}
 	}
 
+	//@author A0112166R
 	/**
 	 * enable the user to navigate to different panels in GUI by pressing "tab" button and the
 	 * selected panel will be shown in bold black border. The panels which the user can choose are
@@ -348,7 +346,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	 * 2. Three main task display panels
 	 * 3. Alert Button
 	 */
-	//@author sevin
 	private void addFocusListenerToAllPanel(){
 		inputTF.addFocusListener(new FocusAdapter() {
 			Border original = inputTF.getBorder();
@@ -573,10 +570,10 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		// TODO Auto-generated method stub
 	}
 	
+	//@author A0112166R
 	/**
 	 * show the Help Window when user press F1 or types help
 	 */
-	//@author sevin
 	public static void showHelpWindow(){
 		JOptionPane.showMessageDialog(null, 
 				Constants.MSG_HELP_INFO, 
