@@ -591,12 +591,14 @@ public class TimeParser {
 
 				/*
 				 * For 11-1pm, 10-2pm, the start-time ampm is the opposite of
-				 * end-time ampm However, for times after 12, e.g 12-2pm, do not
-				 * toggle ampm
+				 * end-time ampm. However, for times after 12, e.g 12-2pm, do
+				 * not toggle ampm. If end time is > 12 e.g. 10-12pm, then
+				 * toggle.
 				 */
-				if (Float.parseFloat(startTimeWithoutAmpm) >= Float
-						.parseFloat(endTimeWithoutAmpm)
-						&& Float.parseFloat(startTimeWithoutAmpm) < 12.00) {
+				if ((Float.parseFloat(startTimeWithoutAmpm) >= Float
+						.parseFloat(endTimeWithoutAmpm) && Float
+						.parseFloat(startTimeWithoutAmpm) < Constants.LIMIT_MAX_12HR)
+						|| (Float.parseFloat(endTimeWithoutAmpm) >= Constants.LIMIT_MAX_12HR)) {
 					ampm = toggleAmPm(ampm);
 				}
 				return create12hrTime(startTimeWithoutAmpm + ampm);
