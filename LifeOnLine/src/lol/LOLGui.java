@@ -53,45 +53,19 @@ public class LOLGui extends JFrame implements HotkeyListener {
 	Timer timer;
 
 	public LOLGui() {
-
-		enableOnlyOneLOLToRun();
-		setUpGUI();
-
-		timer = new Timer(Constants.REFRESH_TIME,
-				new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				LOLControl.executeUserInput("home");
-
-				TaskList<Task> taskList = LOLControl.getTaskList();
-				InputTextFieldListener textfield = new InputTextFieldListener(
-						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
-						feedbackLabel, inputTF, null,
-						progressLabel, progressBar, labelAlert);
-				textfield.refreshMainDisplay(taskList);
-
-				DateParser dp = new DateParser();
-				Date currentDate = dp.getTodaysDate();
-				lblToday.setText(currentDate.toString());
-
-				System.out.println("refreshed");
-			}
-		});
-
-		timer.setInitialDelay(0); // to start first refresh after 0s when program opens
-		timer.start();
-
 		final InputTextFieldListener listener = new InputTextFieldListener(
 				mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
 				feedbackLabel, inputTF, timer,
 				progressLabel, progressBar, labelAlert);
-
-		enableHotKey(listener);
-
-
+		
+		enableOnlyOneLOLToRun();
+		setUpGUI();
+		enablePeriodicRefreshInGUI();
 		popUpAnInputDialogForEmailFunctionality();
-		enableLOLToRunInBackground();
 		addFocusListenerToAllPanel();
+		enableLOLToRunInBackground();
+		enableHotKey(listener);
+		
 		inputTF.addActionListener(listener);
 		inputTF.addKeyListener(listener);
 	}
@@ -134,23 +108,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.getContentPane().setPreferredSize(new Dimension(736, 478));
 		frame.pack();
 
-		/*JPanel backgroundLabel = new JPanel();
-		backgroundLabel.setBackground(new Color(217, 232, 245));
-		final Image backgroundImage;
-		try {
-			ClassLoader cldr = this.getClass().getClassLoader();
-			java.net.URL imageURL   = cldr.getResource("resources/background2.jpg");
-			backgroundImage = javax.imageio.ImageIO.read(imageURL);
-			backgroundLabel = new JPanel(new BorderLayout()) {
-				@Override public void paintComponent(Graphics g) {
-					g.drawImage(backgroundImage, 0, 0, null);
-				}
-			};
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}*/
-
 		JLabel backgroundLabel = new JLabel();
 		backgroundLabel.setBackground(new Color(217, 232, 245));
 		BufferedImage img;
@@ -161,7 +118,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
-
 
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(3, 97, 148));
@@ -304,24 +260,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		panel_14.setBounds(558, 0, 10, 56);
 		frame.getContentPane().add(panel_14);
 
-		/*final JLabel blockLabel = new JLabel(LOLControl.isBlockMode?": On":": Off");
-		blockLabel.setBounds(129, 15, 46, 14);
-		panel_2.add(blockLabel);
-
-		JButton blockButton = new JButton("Block Slots");
-		blockButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				LOLControl.isBlockMode = !LOLControl.isBlockMode;
-				if(LOLControl.isBlockMode){
-					blockLabel.setText(": On");
-				}
-				else
-					blockLabel.setText(": Off");
-			}
-		});
-		blockButton.setBounds(10, 11, 109, 23);
-		panel_2.add(blockButton);*/
-
 		labelAlert.setBounds(109, 12, 49, 20);
 		panel_2.add(labelAlert);
 
@@ -346,62 +284,34 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		frame.setVisible(true);
 		inputTF.requestFocus();
 	}
-
-	public static void showHelpWindow(){
-		JOptionPane.showMessageDialog(null, 
-				Constants.MSG_HELP_INFO, 
-				Constants.MSG_WELCOME_HELP, 
-				JOptionPane.INFORMATION_MESSAGE);
-	}
-
+	
 	/**
-	 * enable LOL to run in the background when user press minimize or the exit icon
+	 * enable the GUI to refresh in a periodic manner (by default is every 60 seconds)
 	 */
-	private void enableLOLToRunInBackground(){
-		MenuItem restoreItem = TrayClass.trayIcon.getPopupMenu().getItem(0);
-
-		restoreItem.addActionListener(new ActionListener() {
+	private void enablePeriodicRefreshInGUI(){
+		timer = new Timer(Constants.REFRESH_TIME,
+				new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(true);
-				frame.setExtendedState(getExtendedState());
+			public void actionPerformed(ActionEvent ae) {
+				LOLControl.executeUserInput("home");
+
+				TaskList<Task> taskList = LOLControl.getTaskList();
+				InputTextFieldListener textfield = new InputTextFieldListener(
+						mainDisplayTP1, mainDisplayTP2, mainDisplayTP3,
+						feedbackLabel, inputTF, null,
+						progressLabel, progressBar, labelAlert);
+				textfield.refreshMainDisplay(taskList);
+
+				DateParser dp = new DateParser();
+				Date currentDate = dp.getTodaysDate();
+				lblToday.setText(currentDate.toString());
+
+				System.out.println("refreshed");
 			}
 		});
 
-		frame.addWindowListener(new java.awt.event.WindowAdapter() {
-			@Override
-			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				if (isNewRun) {
-					TrayClass.trayIcon.displayMessage(Constants.MSG_BACKGROUND_TITLE,
-							Constants.MSG_BACKGROUND_CONTENT,
-							TrayIcon.MessageType.INFO);
-					isNewRun = false;
-				}
-			}
-		});
-
-		frame.addWindowFocusListener(new java.awt.event.WindowAdapter() {
-			@Override
-			public void windowGainedFocus(java.awt.event.WindowEvent windowEvent) {
-				isFocus = true;
-			}
-
-			@Override
-			public void windowLostFocus(java.awt.event.WindowEvent windowEvent) {
-				isFocus = false;
-			}
-		});
-
-
-		TrayClass.trayIcon.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() >= 2) {
-					frame.setVisible(true);
-					frame.setExtendedState(getExtendedState());
-				}
-			}
-		});
+		timer.setInitialDelay(0); // to start first refresh after 0s when program opens
+		timer.start();
 	}
 
 	/**
@@ -424,14 +334,10 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		}
 	}
 
-	@Override
-	public void onHotKey(int arg0) {
-		// TODO Auto-generated method stub
-	}
-
 	/**
-	 * enable the user to choose the below panels by pressing tab and showing
-	 * them in bolder border:
+	 * enable the user to navigate to different panels in GUI by pressing "tab" button and the
+	 * selected panel will be shown in bold black border. The panels which the user can choose are
+	 * as follow : 
 	 * 1. Input Text Field
 	 * 2. Three main task display panels
 	 * 3. Alert Button
@@ -506,7 +412,60 @@ public class LOLGui extends JFrame implements HotkeyListener {
 			}
 		});
 	}
+	
+	/**
+	 * enable LOL to run in the background when user press minimize or the exit icon
+	 */
+	private void enableLOLToRunInBackground(){
+		MenuItem restoreItem = TrayClass.trayIcon.getPopupMenu().getItem(0);
 
+		restoreItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(true);
+				frame.setExtendedState(getExtendedState());
+			}
+		});
+
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				if (isNewRun) {
+					TrayClass.trayIcon.displayMessage(Constants.MSG_BACKGROUND_TITLE,
+							Constants.MSG_BACKGROUND_CONTENT,
+							TrayIcon.MessageType.INFO);
+					isNewRun = false;
+				}
+			}
+		});
+
+		frame.addWindowFocusListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowGainedFocus(java.awt.event.WindowEvent windowEvent) {
+				isFocus = true;
+			}
+
+			@Override
+			public void windowLostFocus(java.awt.event.WindowEvent windowEvent) {
+				isFocus = false;
+			}
+		});
+
+
+		TrayClass.trayIcon.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() >= 2) {
+					frame.setVisible(true);
+					frame.setExtendedState(getExtendedState());
+				}
+			}
+		});
+	}
+	
+	/**
+	 * enable hot key functionalities in GUI
+	*/
 	private void enableHotKey(final InputTextFieldListener listener){
 		// **HOTKEY-INTERFACE** //
 
@@ -522,9 +481,6 @@ public class LOLGui extends JFrame implements HotkeyListener {
 		JIntellitype.getInstance().registerHotKey(8, JIntellitype.MOD_CONTROL, (int) 'D'); //ctrl+d to mark as done
 		JIntellitype.getInstance().registerHotKey(9, JIntellitype.MOD_CONTROL, (int) 'U'); //ctrl+u to mark as undone
 		JIntellitype.getInstance().registerHotKey(10, 0, 112);//F1 to get help
-
-		//JIntellitype.getInstance().addHotKeyListener(this);
-		//do not need this line?
 
 		JIntellitype.getInstance().addHotKeyListener(new HotkeyListener() {
 			@Override
@@ -602,5 +558,20 @@ public class LOLGui extends JFrame implements HotkeyListener {
 				inputTF.setText("");
 			}
 		});
+	}
+	
+	/**
+	 * show the Help Window when user press F1 or types help
+	 */
+	public static void showHelpWindow(){
+		JOptionPane.showMessageDialog(null, 
+				Constants.MSG_HELP_INFO, 
+				Constants.MSG_WELCOME_HELP, 
+				JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	@Override
+	public void onHotKey(int arg0) {
+		// TODO Auto-generated method stub
 	}
 }
