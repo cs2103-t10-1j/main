@@ -374,7 +374,9 @@ public class Constants {
 			+ TAB + "Type \"undo\" to undo the last action\n"
 			+ "9. Redo\n"
 			+ TAB + "Type \"redo\" to redo the last undo action\n"
-			+ "10. Exit\n"
+			+ "10. Alert\n"
+			+ TAB + "Type \"Alert\" to toggle the Alert Button on or off\n"
+			+ "11. Exit\n"
 			+ TAB + "Type \"exit\" to exit LOL";
 			
 	// Tray icon display messages
