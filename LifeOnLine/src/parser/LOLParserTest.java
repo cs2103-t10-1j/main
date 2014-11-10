@@ -25,26 +25,19 @@ public class LOLParserTest {
 		assertEquals(new Task("buy milk", null, null),
 				LOLParser.getTask("add buy milk"));
 		assertEquals(null, LOLParser.getTask("add "));
-		
-		assertEquals(new Task("camp", "island", new Date(12, 12, 2014), new Date(15, 12, 2014)), LOLParser.getTask("add camp at island from 12-15 Dec"));
-		assertEquals(new Task("camp", "island", new Date(12, 12, 2014), new Date(15, 12, 2014)), LOLParser.getTask("add camp at island from 12-15/12"));
-		assertEquals(new Task("camp", "island", new Date(24, 11, 2014), new Date(2, 12, 2014)), LOLParser.getTask("add camp at island from 24 nov-2 dec"));
-		assertEquals(new Task("camp", "island", new Date(24, 11, 2014), new Date(2, 12, 2014)), LOLParser.getTask("add camp at island from 24/11 to 2 dec"));
-		
-		/*assertEquals(new Task("sleep", null, new Date(25, 10),
-				new Time("0020"), null),
-				LOLParser.getTask("add sleep at 12.20am"));*/
 
-
-		/*
-		 * assertEquals(new Task("sleep", null, new Date(25, 10), new
-		 * Time("0020"), null), LOLParser.getTask("add sleep at 12.20am"));
-		 */
-		/*
-		 * assertEquals(new Task("buy bread", null, new Date(8, 10), new
-		 * Time(11, 30, "pm"), null),
-		 * LOLParser.getTask("add buy bread\\11.30pm"));
-		 */
+		assertEquals(new Task("camp", "island", new Date(12, 12, 2014),
+				new Date(15, 12, 2014)),
+				LOLParser.getTask("add camp at island from 12-15 Dec"));
+		assertEquals(new Task("camp", "island", new Date(12, 12, 2014),
+				new Date(15, 12, 2014)),
+				LOLParser.getTask("add camp at island from 12-15/12"));
+		assertEquals(new Task("camp", "island", new Date(24, 11, 2014),
+				new Date(2, 12, 2014)),
+				LOLParser.getTask("add camp at island from 24 nov-2 dec"));
+		assertEquals(new Task("camp", "island", new Date(24, 11, 2014),
+				new Date(2, 12, 2014)),
+				LOLParser.getTask("add camp at island from 24/11 to 2 dec"));
 	}
 
 	@Test
@@ -118,8 +111,5 @@ public class LOLParserTest {
 				"pIcNIc AT PicNic SPoT", "picnic"));
 		assertEquals("PicNic SPoT", LOLParser.getParameterInOriginalCase(
 				"pIcNIc AT PicNic SPoT", "picnic spot"));
-		// assertEquals("pIcNIc",
-		// LOLParser.getParameterInOriginalCase("AT PicNic SPoT 12 NOv pIcNIc",
-		// "picnic"));
 	}
 }
