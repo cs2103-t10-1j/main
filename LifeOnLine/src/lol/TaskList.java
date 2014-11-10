@@ -5,12 +5,7 @@ package lol;
 
 import java.util.Collections;
 import java.util.LinkedList;
-/**
- * 
- * @author Aviral
- *
- * @param <E>
- */
+
 //@author A0118903H
 public class TaskList<E extends Comparable<Task>> {
 	
