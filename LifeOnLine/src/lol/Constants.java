@@ -51,6 +51,11 @@ public class Constants {
 	public static final String[] MONTHS_LONG = { "january", "february",
 			"march", "april", "may", "june", "july", "august", "september",
 			"october", "november", "december" };
+	public static final String[] MONTHS_1ST_LETTER_CAPS_SHORT = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+		"Aug", "Sep", "Oct", "Nov", "Dec" };
+	public static final String[] MONTHS_1ST_LETTER_CAPS_LONG = { "January", "February", "March", "April", "May",
+		"June", "July", "August", "September", "October", "November",
+		"December" };
 
 	// Days of the week
 	public static final String[] DAYS_SHORT = { "sun", "mon", "tue", "wed",
@@ -100,6 +105,12 @@ public class Constants {
 	public static final int INDEX_START = 0;
 	public static final int INDEX_END = 1;
 	
+	// year
+	public static final int YEAR_2000 = 2000;
+	
+	// number of milliseconds in a day
+	public static final int MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
+	
 	// parameters
 	public static final String PARAMETER_LOCATION = "location";
 	public static final String PARAMETER_LOC = "loc";
@@ -124,12 +135,17 @@ public class Constants {
 	public static final int LENGTH_24HOUR_FORMAT = 4;
 	public static final int LENGTH_TIME_RANGE = 2;
 
-	// am/pm
+	// time strings
 	public static final String STRING_AM = "am";
 	public static final String STRING_PM = "pm";
+	public static final String STRING_2400 = "2400";
+	public static final String STRING_0000 = "0000";
 	
 	// number of days in a week
 	public static final int NUMBER_OF_DAYS_IN_A_WEEK = 7;
+	
+	// 2 digits
+	public static final String FORMAT_2_DIGITS = "00";
 	
 	// limits
 	public static final int LIMIT_ZERO = 0;

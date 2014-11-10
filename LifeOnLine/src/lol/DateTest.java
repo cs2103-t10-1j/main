@@ -1,3 +1,5 @@
+//@author A0118886M
+
 package lol;
 
 import static org.junit.Assert.*;
@@ -57,11 +59,11 @@ public class DateTest {
 		Date d1 = new Date(4, 2, new Time(10, "am"));
 		Date d2 = new Date(5, 6, 15, new Time(11, "am"));
 		Date d3 = new Date(18, 8, 2013, new Time(10, "am"));
-		Date d4 = new Date(18, 11, new Time(10, "am"));
+		Date d4 = new Date(18, 11, 14, new Time(10, "am"));
 		Date d5 = new Date(19, 10);
 		Date d6 = new Date(11, 10);
 		assertEquals("11 Oct 2015", d6.toString());
-		assertEquals("19 Oct 2014", d5.toString());
+		assertEquals("19 Oct 2015", d5.toString());
 		assertEquals("18 Nov 2014", d4.toString());
 		assertEquals("18 Aug 2013", d3.toString());
 		assertEquals("5 Jun 2015", d2.toString());

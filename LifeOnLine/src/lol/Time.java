@@ -1,7 +1,7 @@
+//@author A0118886M
+
 /**
  * This class represents a time of the day.
- * 
- * @author Tania Chattopadhyay
  */
 package lol;
 
@@ -17,10 +17,10 @@ public class Time {
 
 	/************ Constructors *************/
 	public Time() { // Uninitialized time
-		setHour(0);
-		setMin(0);
-		setAmpm("am");
-		setFormat24hr("2400"); // Time does not exist
+		setHour(Constants.LIMIT_MIN_HR - 1);
+		setMin(Constants.LIMIT_MIN_MINUTE);
+		setAmpm(Constants.STRING_AM);
+		setFormat24hr(Constants.STRING_2400); // Time does not exist
 	}
 
 	public Time(int hour, int min, String ampm) { // e.g. 3.40pm
@@ -32,7 +32,7 @@ public class Time {
 
 	public Time(int hour, String ampm) { // e.g. 2am
 		setHour(hour);
-		setMin(0);
+		setMin(Constants.LIMIT_MIN_MINUTE);
 		setAmpm(ampm);
 		setFormat24hr(convertTo24hr(this.hour, this.min, this.ampm));
 		;
@@ -81,8 +81,9 @@ public class Time {
 
 	/********** Overriding methods ***********/
 	public String toString() { // e.g. 1.43pm
-		DecimalFormat df = new DecimalFormat("00");
-		return getHour() + "." + df.format(getMin()) + getAmpm();
+		DecimalFormat df = new DecimalFormat(Constants.FORMAT_2_DIGITS);
+		return getHour() + Constants.SEPARATOR_DOT + df.format(getMin())
+				+ getAmpm();
 	}
 
 	public boolean equals(Object obj) {
@@ -135,21 +136,22 @@ public class Time {
 	 * @return 4-digit 24-hour format string
 	 */
 	public String convertTo24hr(int hour, int min, String ampm) {
-		DecimalFormat df = new DecimalFormat("00"); // 2 digits
+		DecimalFormat df = new DecimalFormat(Constants.FORMAT_2_DIGITS); // 2
+																			// digits
 
-		if (hour == 12) {
-			hour = 0;
+		if (hour == Constants.LIMIT_MAX_12HR) {
+			hour = Constants.LIMIT_MIN_HR - 1;
 		}
 
 		switch (ampm) {
-		case "am":
+		case Constants.STRING_AM:
 			return df.format(hour) + df.format(min);
 
-		case "pm":
-			return df.format(hour + 12) + df.format(min);
+		case Constants.STRING_PM:
+			return df.format(hour + Constants.LIMIT_MAX_12HR) + df.format(min);
 
 		default:
-			return "0000";
+			return Constants.STRING_0000;
 		}
 	}
 
@@ -162,12 +164,13 @@ public class Time {
 	 * @return hour in 12-hour format
 	 */
 	public int getHour(String format24hr) {
+		// first 2 digits
 		int hr = Integer.parseInt(format24hr.substring(0, 2));
 
-		if (hr == 0) {
-			hr = 12;
-		} else if (hr > 12) {
-			hr -= 12;
+		if (hr == Constants.LIMIT_MIN_HR - 1) {
+			hr = Constants.LIMIT_MAX_12HR;
+		} else if (hr > Constants.LIMIT_MAX_12HR) {
+			hr -= Constants.LIMIT_MAX_12HR;
 		}
 		return hr;
 	}
@@ -194,7 +197,7 @@ public class Time {
 	 */
 	public String getAmpm(String format24hr) {
 		int hr = Integer.parseInt(format24hr.substring(0, 2));
-		return (hr < 12) ? "am" : "pm";
+		return (hr < 12) ? Constants.STRING_AM : Constants.STRING_PM;
 	}
 
 }

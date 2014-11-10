@@ -1,3 +1,5 @@
+//@author A0118886M
+
 /**
  * This class parses a string containing a time or time range.
  * The following formats of time are allowed: (not case-sensitive)

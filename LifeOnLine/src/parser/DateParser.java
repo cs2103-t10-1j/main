@@ -1,3 +1,5 @@
+//@author A0118886M
+
 /**
  * This class parses a string containing a date or day of the week.
  * The following formats of date are allowed: (not case-sensitive)

@@ -1,3 +1,5 @@
+//@author A0118886M
+
 /**
  * This class parses the user input and returns command name
  * 

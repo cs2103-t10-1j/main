@@ -1,3 +1,5 @@
+//@author A0118886M
+
 /**
  * This class parses individual task indexes and index ranges.
  * 

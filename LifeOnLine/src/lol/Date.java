@@ -1,7 +1,7 @@
+//@author A0118886M
+
 /**
  * This class represents a date with a day, month, year and time from 2010 to 2099.
- * 
- * @author Tania Chattopadhyay
  */
 
 package lol;
@@ -51,7 +51,7 @@ public class Date {
 
 		// if date is more than 7 days before today, assume the date is in the
 		// next year
-		
+
 		if (newDate.isBefore(getTodaysDate())
 				&& newDate.getDateDifference(newDate, getTodaysDate()) > Constants.DAYS_OFFSET) {
 			setYear4Digit(currYear + 1);
@@ -85,7 +85,7 @@ public class Date {
 
 		// if date is more than 7 days before today, assume the date is in the
 		// next year
-		
+
 		if (newDate.isBefore(getTodaysDate())
 				&& newDate.getDateDifference(newDate, getTodaysDate()) > Constants.DAYS_OFFSET) {
 			setYear4Digit(currYear + 1);
@@ -162,11 +162,13 @@ public class Date {
 
 	/********** Overriding methods ***********/
 	public String toString() { // e.g. 7 Dec 2015
-		return getDay() + " " + getMonthName() + " " + getYear4Digit();
+		return getDay() + Constants.SPACE + getMonthName() + Constants.SPACE
+				+ getYear4Digit();
 	}
 
 	public String toString2() { // e.g. 7/12/2015
-		return getDay() + "/" + getMonth() + "/" + getYear4Digit();
+		return getDay() + Constants.SEPARATOR_SLASH + getMonth()
+				+ Constants.SEPARATOR_SLASH + getYear4Digit();
 	}
 
 	public boolean equals(Object obj) {
@@ -180,18 +182,15 @@ public class Date {
 			return false;
 		}
 	}
-	
-	public static boolean equalDate(Date date1, Date date2){
-		if(date1 == null && date2 != null){
+
+	public static boolean equalDate(Date date1, Date date2) {
+		if (date1 == null && date2 != null) {
 			return false;
-		}
-		else if(date1 != null && date2 == null){
+		} else if (date1 != null && date2 == null) {
 			return false;
-		}
-		else if(date1 == null && date2 == null){
+		} else if (date1 == null && date2 == null) {
 			return true;
-		}
-		else{ 
+		} else {
 			return date1.getDay() == date2.getDay()
 					&& date1.getMonth() == date2.getMonth()
 					&& date1.getYear4Digit() == date2.getYear4Digit();
@@ -218,7 +217,7 @@ public class Date {
 				return true;
 			} else if (this.getMonth() > other.getMonth()) { // month is greater
 				return false;
-			} else { // saame month
+			} else { // same month
 				if (this.getDay() < other.getDay()) { // day is smaller
 					return true;
 				} else if (this.getDay() > other.getDay()) { // day is greater
@@ -256,12 +255,10 @@ public class Date {
 	 * @return month name
 	 */
 	public String getMonthName(int month) {
-		String[] months = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-				"Aug", "Sep", "Oct", "Nov", "Dec" };
 		if (month >= 1 && month <= 12) {
-			return months[month - 1];
+			return Constants.MONTHS_1ST_LETTER_CAPS_SHORT[month - 1];
 		} else {
-			return months[0];
+			return Constants.MONTHS_1ST_LETTER_CAPS_SHORT[0];
 		}
 	}
 
@@ -273,13 +270,10 @@ public class Date {
 	 * @return month name
 	 */
 	public String getMonthNameLong(int month) {
-		String[] months = { "January", "February", "March", "April", "May",
-				"June", "July", "August", "September", "October", "November",
-				"December" };
 		if (month >= 1 && month <= 12) {
-			return months[month - 1];
+			return Constants.MONTHS_1ST_LETTER_CAPS_LONG[month - 1];
 		} else {
-			return months[0];
+			return Constants.MONTHS_1ST_LETTER_CAPS_LONG[0];
 		}
 	}
 
@@ -291,8 +285,8 @@ public class Date {
 	 * @return 4-digit year
 	 */
 	private int getYear4Digit(int year) {
-		if (year < 100) {
-			return 2000 + year;
+		if (year <= Constants.LIMIT_MAX_2DIGIT_YEAR) {
+			return Constants.YEAR_2000 + year;
 		} else {
 			return year;
 		}
@@ -306,10 +300,10 @@ public class Date {
 	 * @return 10 to 99 - 2-digit year
 	 */
 	private int getYear2Digit(int year) {
-		if (year < 100) {
+		if (year <= Constants.LIMIT_MAX_2DIGIT_YEAR) {
 			return year;
 		} else {
-			return year - 2000;
+			return year - Constants.YEAR_2000;
 		}
 	}
 
@@ -342,8 +336,7 @@ public class Date {
 				earlierDate.getDay());
 		later.set(laterDate.getYear4Digit(), laterDate.getMonth() - 1,
 				laterDate.getDay());
-		
-		return (int) ((later.getTime().getTime() - earlier.getTime().getTime())
-				/ (1000 * 60 * 60 * 24));
+
+		return (int) ((later.getTime().getTime() - earlier.getTime().getTime()) / Constants.MILLISECONDS_IN_A_DAY);
 	}
 }

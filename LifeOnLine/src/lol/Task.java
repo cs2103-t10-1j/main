@@ -13,6 +13,8 @@ public class Task implements Comparable<Task> {
 	private boolean isOverdue;
     private boolean alerted;
     private boolean isJustAdded;
+    
+    //@author A0118886M
 	/************ Constructors *************/
 	public Task(String description, String location, Date dueDate) {
 		setDescription(description);
@@ -149,6 +151,7 @@ public class Task implements Comparable<Task> {
 	public void setIsJustAdded(boolean isJustAdded){
 		this.isJustAdded = isJustAdded;
 	}
+	//@author A0118886M
 	/********** Overriding methods ***********/
 	public String toString() {
 		return getTaskDescription();

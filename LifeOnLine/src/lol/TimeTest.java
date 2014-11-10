@@ -1,3 +1,5 @@
+//@author A0118886M
+
 package lol;
 
 import static org.junit.Assert.*;
@@ -15,6 +17,8 @@ public class TimeTest {
 		assertEquals("0800", t.convertTo24hr(8, 0, "am"));
 		assertEquals("1200", t.convertTo24hr(12, 0, "pm"));
 		assertEquals("1410", t.convertTo24hr(2, 10, "pm"));
+		
+		/* This is a boundary case for a 24-hour time format */
 		assertEquals("2359", t.convertTo24hr(11, 59, "pm"));
 	}
 
